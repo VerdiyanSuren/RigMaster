@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\data">
+      <UniqueIdentifier>{B2CED969-9E31-690E-47B7-A1C433F93491}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\expressions">
+      <UniqueIdentifier>{9BE5E02E-0747-BE3C-90B4-04EFFC14F5FB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\expressions\ui">
+      <UniqueIdentifier>{289BC8C0-1495-F112-FD01-8823E99A577F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\data">
+      <UniqueIdentifier>{D6B02ECF-C27D-89DA-EB96-7782D7C2BE68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\expressions">
+      <UniqueIdentifier>{3F77E524-AB02-53E9-B413-D6DD201EAFE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\expressions\ui">
+      <UniqueIdentifier>{4C7A2978-385E-EACD-A1BE-E4208DC1D44F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\data\vufData.h">
+      <Filter>include\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\data\vufDataTemplate.h">
+      <Filter>include\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\data\vufMayaDataList.h">
+      <Filter>include\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\ui\vufExprWindow.h">
+      <Filter>include\expressions\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\vufMayaLuaExpressionNode.h">
+      <Filter>include\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\vufMayaLuaTxtNode.h">
+      <Filter>include\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufMayaGlobalIncludes.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\data\vufData.cpp">
+      <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\ui\vufExprWindow.cpp">
+      <Filter>src\expressions\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\vufMayaLuaExpressionNode.cpp">
+      <Filter>src\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\vufMayaLuaTxtData.cpp">
+      <Filter>src\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\vufMayaLuaTxtNode.cpp">
+      <Filter>src\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\register.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vufMayaGlobalIncludes.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
