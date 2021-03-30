@@ -184,7 +184,11 @@ project "Core"
 	location 	"Core"
 	kind 		"ConsoleApp"
 	language 	"C++"
-
+	
+	defines
+	{
+		"VF_CONSOLE_USE_COLORS"
+	}
 	includedirs 
 	{
 		"%{prj.name}/include",
