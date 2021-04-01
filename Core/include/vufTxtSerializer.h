@@ -1,6 +1,7 @@
 #ifndef VF_MATH_TXT_SERIALIZER_H
 #define VF_MATH_TXT_SERIALIZER_H
 
+#include <vufCoreInclude.h>
 #include <map>
 #include <vector>
 #include <string>
@@ -30,7 +31,7 @@ std::vector<uint16_t>			vuf::txtSerializer::g_byte_to_char_v;
 
 namespace vuf
 {
-	class txtSerializer
+	class VF_API txtSerializer
 	{
 	public:
 		txtSerializer()

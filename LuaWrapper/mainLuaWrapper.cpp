@@ -2,11 +2,11 @@
 #include <string>
 #include <new>
 
+#include <vufLog.h>
 #include "include/vufLuaWrapper.h"
 #include <vufVectorLua.h>
 #include <vufQuaternionLua.h>
 
-VF_DECLARE_STD_LOGGER();
 VF_LOG_DEFINE_STD_LOGGER();
 
 using namespace vuf;

@@ -20,7 +20,8 @@ outputdir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.platform}_%{cfg.architecture}"
 filter { "system:windows" }
 	defines
 	{
-		"VF_PLATFORM_WINDOWS"
+		"VF_PLATFORM_WINDOWS",		 
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 	
 filter {"system:windows","configurations:Debug" }
@@ -182,7 +183,8 @@ project "Math"
 --------------------------------------------------------------------------------------------		
 project "Core"
 	location 	"Core"
-	kind 		"ConsoleApp"
+	--kind 		"ConsoleApp"
+	kind 		"StaticLib"
 	language 	"C++"
 	
 	defines
@@ -215,6 +217,33 @@ project "Core"
 	--}
 	targetdir 	("bin/" .. outputdir .. "/%{prj.name}")
 	objdir 		("bin-int/" .. outputdir .. "/%{prj.name}")
+	
+	filter { "system:windows", "platforms:Maya2018" }
+	includedirs 
+	{
+		"C:/local/boost_1_69_0_vs_14_0"
+	}
+	libdirs
+	{
+		"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+	}
+
+	filter { "system:windows", "platforms:Maya2019" }
+	includedirs 
+	{
+		"C:/local/boost_1_69_0_vs_14_0"
+	}
+	libdirs
+	{
+		"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+	}
+	postbuildcommands
+	{
+		("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/Sandbox"),
+		("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/Math"),
+		("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/Maya")
+	}
+
 --------------------------------------------------------------------------------------------	
 -- 										Project MAYA
 --------------------------------------------------------------------------------------------		
@@ -233,7 +262,7 @@ project "Maya"
 	}
 	libdirs
 	{
-		"bin/" .. outputdir .. "/Lua"
+		"bin/" .. outputdir .. "/Lua"		
 	}
 	files
 	{
@@ -326,15 +355,18 @@ project "Sandbox"
 	{
 		"Lua/src/",
 		"%{prj.name}/include",
-		"Math/include"
+		"Math/include",
+		"Core/include/"
 	}
 	libdirs
 	{
-		"bin/" .. outputdir .. "/Lua"
+		"bin/" .. outputdir .. "/Lua",
+		"bin/" .. outputdir .. "/Core"
 	}
 	links
 	{
-		"Lua.lib"
+		"Lua.lib",
+		"Core.lib"
 	}
 	files
 	{
@@ -344,3 +376,15 @@ project "Sandbox"
 	}
 	targetdir 	("bin/" .. outputdir .. "/%{prj.name}")
 	objdir 		("bin-int/" .. outputdir .. "/%{prj.name}")
+	
+	filter { "system:windows", "platforms:Maya2018" }
+	libdirs
+	{
+		"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+	}
+
+	filter { "system:windows", "platforms:Maya2019" }
+	libdirs
+	{
+		"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+	}

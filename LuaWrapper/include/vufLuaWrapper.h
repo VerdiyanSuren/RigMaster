@@ -13,7 +13,7 @@ extern "C"
 #include <map>
 #include <vector>
 #include <string>
-#include <vufStringUtils.h>
+#include <Utils/vufStringUtils.h>
 
 
 namespace vuf
@@ -26,7 +26,7 @@ namespace vuf
 			if (p_str != m_script)
 			{
 				m_script == p_str;
-				m_hash = vufStringUtils<VF_STRING>::get_hash_of(m_script);
+				m_hash = vufStringUtils::get_hash_of(m_script);
 			}
 		}
 		uint64_t get_hash() const { return m_hash; }
@@ -80,7 +80,7 @@ namespace vuf
 			int l_top = lua_gettop(L);
 			if (l_top == 0)
 			{
-				vufLog::g_log->log_info("The Lua Stack is empty.");
+				VF_LOG_INFO("The Lua Stack is empty.");
 			}
 			for (int i = 1; i <= l_top; ++i)
 			{
@@ -89,23 +89,23 @@ namespace vuf
 				{
 					case LUA_TSTRING:
 					{
-						vufLog::g_log->log_info(lua_tostring(L, i));
+						VF_LOG_INFO(lua_tostring(L, i));
 						break;
 					}
 					case LUA_TBOOLEAN:
 					{
-						vufLog::g_log->log_info(lua_toboolean(L, i) ? "true": "false" );
+						VF_LOG_INFO(lua_toboolean(L, i) ? "true": "false" );
 						break;
 					}
 					case LUA_TNUMBER:
 					{
 						double l_val = lua_tonumber(L, i);
-						vufLog::g_log->log_info(std::to_string(l_val));
+						VF_LOG_INFO(std::to_string(l_val));
 						break;
 					}
 					default:
 					{
-						vufLog::g_log->log_info(lua_typename(L, l_type));
+						VF_LOG_INFO(lua_typename(L, l_type));
 						break;
 					}
 				}
@@ -127,7 +127,7 @@ namespace vuf
 				// there is a error. get that error
 				VF_STRING l_error_msg = lua_tostring(L, -1);// gete message and remove it from stack
 				lua_pop(L, -1);
-				vufLog::g_log->log_error(l_error_msg);
+				VF_LOG_INFO(l_error_msg);
 				return false;
 			}
 			return true;

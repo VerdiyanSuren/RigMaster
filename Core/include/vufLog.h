@@ -4,6 +4,21 @@
 #include <vufCoreInclude.h>
 #include <memory>
 
+// if you implement your own loger
+// then use this in cpp file to link you logger
+#define VF_DEFINE_CUSTOM_LOGGER(CUSTOM_LOG_CLASS) \
+	std::shared_ptr<vuf::vufLog> vuf::vufLog::g_log =  std::shared_ptr<vuf::CUSTOM_LOG_CLASS>(new vuf::CUSTOM_LOG_CLASS);
+
+#define VF_LOG_DEFINE_STD_LOGGER(); \
+	VF_DEFINE_CUSTOM_LOGGER(vufLogStd)
+
+#define VF_LOG_INFO(STRING) \
+	vuf::vufLog::g_log->info(STRING,__FILE__,__LINE__);
+#define VF_LOG_WARN(STRING) \
+	vuf::vufLog::g_log->warning(STRING,__FILE__,__LINE__);
+#define VF_LOG_ERR(STRING) \
+	vuf::vufLog::g_log->error(STRING,__FILE__,__LINE__);
+
 #pragma region VF_CONSOLE_COLORS
 #ifdef VF_CONSOLE_USE_COLORS
 
@@ -53,49 +68,38 @@
 #endif
 
 #pragma endregion
-// if you implement your own loger
-// then use this in cpp file to link you logger
-#define VF_DEFINE_CUSTOM_LOGGER(CUSTOM_LOG_CLASS) \
-	std::shared_ptr<vuf::vufLog> vuf::vufLog::g_log =  std::shared_ptr<vuf::CUSTOM_LOG_CLASS>(new vuf::CUSTOM_LOG_CLASS);
 
-// some predefined loggers
-#define VF_DECLARE_STD_LOGGER()																					\
-	namespace vuf																								\
-	{																											\
-		class VF_API vufLogStd :public vufLog																	\
-		{																										\
-		public:																									\
-			virtual void log_info(		const VF_STRING& p_str)	override { std::cout << p_str << std::endl; }	\
-			virtual void log_warning(	const VF_STRING& p_str)	override { std::cout << p_str << std::endl; }	\
-			virtual void log_error(		const VF_STRING& p_str)	override { std::cout << p_str << std::endl; }	\
-			static std::shared_ptr<vufLog> g_log;																\
-		};																										\
-	}
 
-#define VF_LOG_DEFINE_STD_LOGGER()			\
-	VF_DEFINE_CUSTOM_LOGGER(vufLogStd);
+
 
 namespace vuf
 {
 	class VF_API vufLog
 	{
 	public:
-		virtual void log_info(		const VF_STRING&)	= 0;
-
-		virtual void log_warning(	const VF_STRING&)	= 0;
-		virtual void log_error(		const VF_STRING&)	= 0;
+		virtual void info(		const std::string&, const char* p_file = nullptr, int p_line = -1)	= 0;
+		virtual void warning(	const std::string&, const char* p_file = nullptr, int p_line = -1)	= 0;
+		virtual void error(		const std::string&, const char* p_file = nullptr, int p_line = -1)	= 0;
+		
+		virtual void info(		const std::wstring&, const char* p_file = nullptr, int p_line = -1) = 0;
+		virtual void warning(	const std::wstring&, const char* p_file = nullptr, int p_line = -1) = 0;
+		virtual void error(		const std::wstring&, const char* p_file = nullptr, int p_line = -1) = 0;
 
 		static std::shared_ptr<vufLog> g_log;
-	private:
-		uint8_t m_color_txt_info;
-		uint8_t m_color_bgr_info;
-		uint8_t m_color_txt_warning;
-		uint8_t m_color_bgr_warning;
-		uint8_t m_color_txt_error;
-		uint8_t m_color_bgr_error;
-
-
 	};
 
+	// some predefined loggers
+	// standart std::cout/ wcout logger
+	class VF_API vufLogStd :public vufLog
+	{
+	public:
+		virtual void info(		const std::string&, const char* p_file = nullptr, int p_line = -1) override;
+		virtual void warning(	const std::string&, const char* p_file = nullptr, int p_line = -1) override;
+		virtual void error(		const std::string&, const char* p_file = nullptr, int p_line = -1) override;
+
+		virtual void info(		const std::wstring&, const char* p_file = nullptr, int p_line = -1) override;
+		virtual void warning(	const std::wstring&, const char* p_file = nullptr, int p_line = -1) override;
+		virtual void error(		const std::wstring&, const char* p_file = nullptr, int p_line = -1) override;
+	};
 }
 #endif // !VF_LOG_H

@@ -20,5 +20,7 @@
 
 // specify string (std::string or custom)
 #define VF_STRING std::string
+#define VF_CHAR	  char
+#define VF_PADDING_MAX 70
 
 #endif // !VF_CORE_INCLUDE_H

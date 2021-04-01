@@ -4,18 +4,36 @@
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Items">
+      <UniqueIdentifier>{BA3C35A3-26FD-B0D9-EF37-FA565BB7F5B5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Utils">
+      <UniqueIdentifier>{A9730EA4-1534-8ADA-DE6E-D3574AEECEB6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Items">
+      <UniqueIdentifier>{5E6326B3-CACD-DA29-130C-8CCF7FB5B87E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Utils">
+      <UniqueIdentifier>{4D9AFFB3-B904-B42A-0243-65D06EEC917F}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Items\vufTreeJsonObject.h">
+      <Filter>include\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\vufFileUtils.h">
+      <Filter>include\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\vufStringUtils.h">
+      <Filter>include\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="include\vufCoreInclude.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufLog.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\vufStringUtils.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufTxtSerializer.h">
@@ -23,7 +41,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\mainCore.cpp">
+    <ClCompile Include="src\Items\vufTreeJsonObject.cpp">
+      <Filter>src\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\vufFileUtils.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\vufStringUtils.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vufStdLog.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
