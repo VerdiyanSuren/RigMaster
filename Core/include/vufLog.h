@@ -90,6 +90,7 @@ namespace vuf
 
 	// some predefined loggers
 	// standart std::cout/ wcout logger
+	
 	class VF_API vufLogStd :public vufLog
 	{
 	public:
@@ -101,5 +102,6 @@ namespace vuf
 		virtual void warning(	const std::wstring&, const char* p_file = nullptr, int p_line = -1) override;
 		virtual void error(		const std::wstring&, const char* p_file = nullptr, int p_line = -1) override;
 	};
+	
 }
 #endif // !VF_LOG_H

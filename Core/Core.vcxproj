@@ -180,8 +180,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2018_x86_64\Lua;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2019|x64'">
@@ -199,8 +198,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2019_x86_64\Lua;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Debug_windows_Maya2019_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Debug_windows_Maya2019_x86_64\Sandbox &gt; nul)
@@ -222,10 +220,6 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2020_x86_64\Lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug vufApp19|x64'">
     <ClCompile>
@@ -241,10 +235,6 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_vufApp19_x86_64\Lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2018|x64'">
     <ClCompile>
@@ -257,8 +247,8 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -266,8 +256,7 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2018_x86_64\Lua;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2019|x64'">
@@ -281,8 +270,8 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -290,8 +279,7 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2019_x86_64\Lua;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
       <Command>IF EXIST ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Release_windows_Maya2019_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Release_windows_Maya2019_x86_64\Sandbox &gt; nul)
@@ -310,18 +298,14 @@ IF EXIST ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <Lib>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2020_x86_64\Lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release vufApp19|x64'">
     <ClCompile>
@@ -334,32 +318,28 @@ IF EXIST ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <Lib>
-      <AdditionalDependencies>Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_vufApp19_x86_64\Lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\Items\vufTreeJsonObject.h" />
-    <ClInclude Include="include\Utils\vufFileUtils.h" />
-    <ClInclude Include="include\Utils\vufStringUtils.h" />
+    <ClInclude Include="include\coreItems\vufTreeJsonObject.h" />
+    <ClInclude Include="include\coreUtils\vufFileUtils.h" />
+    <ClInclude Include="include\coreUtils\vufStringUtils.h" />
     <ClInclude Include="include\vufCoreInclude.h" />
     <ClInclude Include="include\vufLog.h" />
     <ClInclude Include="include\vufTxtSerializer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Items\vufTreeJsonObject.cpp" />
-    <ClCompile Include="src\Utils\vufFileUtils.cpp" />
-    <ClCompile Include="src\Utils\vufStringUtils.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\coreItems\vufTreeJsonObject.cpp" />
+    <ClCompile Include="src\coreUtils\vufFileUtils.cpp" />
+    <ClCompile Include="src\coreUtils\vufStringUtils.cpp" />
+    <ClCompile Include="src\mainConsole.cpp" />
     <ClCompile Include="src\vufStdLog.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

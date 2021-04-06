@@ -4,31 +4,31 @@
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\Items">
-      <UniqueIdentifier>{BA3C35A3-26FD-B0D9-EF37-FA565BB7F5B5}</UniqueIdentifier>
+    <Filter Include="include\coreItems">
+      <UniqueIdentifier>{237F488B-8F95-4621-D80C-D242446217A9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\Utils">
-      <UniqueIdentifier>{A9730EA4-1534-8ADA-DE6E-D3574AEECEB6}</UniqueIdentifier>
+    <Filter Include="include\coreUtils">
+      <UniqueIdentifier>{12B6218C-7ECC-1F22-C743-AB433399F0A9}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Items">
-      <UniqueIdentifier>{5E6326B3-CACD-DA29-130C-8CCF7FB5B87E}</UniqueIdentifier>
+    <Filter Include="src\coreItems">
+      <UniqueIdentifier>{C757F4E6-3318-701D-FC52-B99A68D2B4F9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Utils">
-      <UniqueIdentifier>{4D9AFFB3-B904-B42A-0243-65D06EEC917F}</UniqueIdentifier>
+    <Filter Include="src\coreUtils">
+      <UniqueIdentifier>{B68ECDE7-224F-491E-EB89-929B57098EFA}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Items\vufTreeJsonObject.h">
-      <Filter>include\Items</Filter>
+    <ClInclude Include="include\coreItems\vufTreeJsonObject.h">
+      <Filter>include\coreItems</Filter>
     </ClInclude>
-    <ClInclude Include="include\Utils\vufFileUtils.h">
-      <Filter>include\Utils</Filter>
+    <ClInclude Include="include\coreUtils\vufFileUtils.h">
+      <Filter>include\coreUtils</Filter>
     </ClInclude>
-    <ClInclude Include="include\Utils\vufStringUtils.h">
-      <Filter>include\Utils</Filter>
+    <ClInclude Include="include\coreUtils\vufStringUtils.h">
+      <Filter>include\coreUtils</Filter>
     </ClInclude>
     <ClInclude Include="include\vufCoreInclude.h">
       <Filter>include</Filter>
@@ -41,16 +41,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Items\vufTreeJsonObject.cpp">
-      <Filter>src\Items</Filter>
+    <ClCompile Include="src\coreItems\vufTreeJsonObject.cpp">
+      <Filter>src\coreItems</Filter>
     </ClCompile>
-    <ClCompile Include="src\Utils\vufFileUtils.cpp">
-      <Filter>src\Utils</Filter>
+    <ClCompile Include="src\coreUtils\vufFileUtils.cpp">
+      <Filter>src\coreUtils</Filter>
     </ClCompile>
-    <ClCompile Include="src\Utils\vufStringUtils.cpp">
-      <Filter>src\Utils</Filter>
+    <ClCompile Include="src\coreUtils\vufStringUtils.cpp">
+      <Filter>src\coreUtils</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
+    <ClCompile Include="src\mainConsole.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\vufStdLog.cpp">

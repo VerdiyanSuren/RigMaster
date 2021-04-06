@@ -30,7 +30,8 @@ filter {"system:windows","configurations:Debug" }
 		
 filter { "system:windows", "configurations:Release" }
 	staticruntime 	"On"
-	buildoptions 	"/MT"
+	buildoptions 	"/MD"
+	staticruntime 	"off"
 	optimize 		"On"
 
 filter { "system:windows", "platforms:Maya2018" }
@@ -118,7 +119,11 @@ project "Lua"
 	defines
 	{
 		"LUA_BUILD_AS_DLL"
-	}		
+	}
+	filter { "system:windows", "configurations:Release" }
+		buildoptions 	"/MD"
+		staticruntime 	"off"
+	
 	postbuildcommands
 	{
 		("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/LuaWrapper"),
@@ -151,11 +156,25 @@ project "LuaWrapper"
 	}
 	libdirs
 	{
-		"bin/" .. outputdir .. "/Lua"
+		"bin/" .. outputdir .. "/Lua",
+		"bin/" .. outputdir .. "/Core"
 	}
 	links
 	{
-		"Lua.lib"
+		"Lua.lib",
+		"Core.lib"
+	}
+
+	filter { "system:windows", "platforms:Maya2018" }
+	libdirs
+	{
+		"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+	}
+
+	filter { "system:windows", "platforms:Maya2019" }
+	libdirs
+	{
+		"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
 	}
 --------------------------------------------------------------------------------------------	
 -- 										Project MATH
@@ -196,15 +215,7 @@ project "Core"
 		"%{prj.name}/include",
 		"Lua/src/",		
 		"Math/include"
-	}
-	libdirs
-	{
-		"bin/" .. outputdir .. "/Lua"
-	}
-	links
-	{
-		"Lua.lib"
-	}
+	}	
 	files
 	{
 		"%{prj.name}/src/**.cpp",
@@ -262,7 +273,8 @@ project "Maya"
 	}
 	libdirs
 	{
-		"bin/" .. outputdir .. "/Lua"		
+		"bin/" .. outputdir .. "/Lua",
+		"bin/" .. outputdir .. "/Core"		
 	}
 	files
 	{
@@ -277,13 +289,21 @@ project "Maya"
 		"OpenMayaRender.lib",
 		"OpenMayaUI.lib",
 		"Foundation.lib",
-		"Lua.lib"
+		"Qt5Gui.lib",
+		"Qt5Core.lib",
+		"Qt5Widgets.lib",
+		"Lua.lib",
+		"Core.lib"
 	}
 	targetextension ".mll"
 	targetname  	"vufRigMaster"
 	targetdir 		("bin/" .. outputdir .. "/%{prj.name}")
 	objdir 			("bin-int/" .. outputdir .. "/%{prj.name}")
 
+
+	filter { "system:windows", "configurations:Release" }
+		buildoptions 	"/MD"
+		staticruntime 	"off"
 
 	-- Maya 2018 specialization
 	filter { "system:windows", "platforms:Maya2018" }
@@ -295,7 +315,8 @@ project "Maya"
 		libdirs
 		{
 			"bin/" .. outputdir .. "/Lua",
-			"C:/Program Files/Autodesk/Maya2018/lib"
+			"C:/Program Files/Autodesk/Maya2018/lib",
+			"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
 		}
 		postbuildcommands 
 		{
@@ -314,7 +335,12 @@ project "Maya"
 		libdirs
 		{
 			"bin/" .. outputdir .. "/Lua",
-			"C:/Program Files/Autodesk/Maya2019/lib"
+			"C:/Program Files/Autodesk/Maya2019/lib",
+			"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+		}
+		prebuildcommands 
+		{
+			("\"C:/Program Files/Autodesk/Maya2019/bin/moc.exe\" .%{prj.directory}/include/expressions/ui/vuLuafExprWindow.h -o .%{prj.directory}/src/expressions/ui/vuLuafExprWindow_moc.cpp")
 		}
 		
 		postbuildcommands 

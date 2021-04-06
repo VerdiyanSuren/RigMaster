@@ -25,7 +25,7 @@ How to use. Examples
 	double l_read_dbl = txtSerializer::convert_bytes_to_value<double>(l_bytes_vector);
 	
 */
-#define VF_TXT_WRITER_DEFIEN_STATIC_VARS()								\
+#define VF_TXT_WRITER_DEFINE_STATIC_VARS()								\
 std::map<uint16_t, uint8_t>		vuf::txtSerializer::g_char_to_byte_v;	\
 std::vector<uint16_t>			vuf::txtSerializer::g_byte_to_char_v;	
 

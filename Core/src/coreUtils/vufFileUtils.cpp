@@ -1,5 +1,5 @@
-#include <Utils/vufStringUtils.h>
-#include <Utils/vufFileUtils.h>
+#include <coreUtils/vufStringUtils.h>
+#include <coreUtils/vufFileUtils.h>
 #include <vufLog.h>
 #include <vufCoreInclude.h>
 
@@ -117,6 +117,7 @@ std::wstring			vufFileUtils::format_path_slashes(const std::wstring& p_path)
 std::vector<std::wstring>	vufFileUtils::get_dirs_from_env(const std::wstring& p_env_var)
 {
 #ifdef VF_PLATFORM_WINDOWS
+	/*
 	std::wstring l_buff, l_temp;
 	DWORD l_buff_size = 65535;
 	l_buff.resize(l_buff_size);
@@ -134,7 +135,9 @@ std::vector<std::wstring>	vufFileUtils::get_dirs_from_env(const std::wstring& p_
 		//std::wcout << l_temp.size() << std::endl;
 		l_vec.push_back(l_temp);
 	}
-	return l_vec;
+	*/
+	return std::vector<std::wstring>();
+	//return l_vec;
 #else
 	comile error.course unknown system
 #endif // 

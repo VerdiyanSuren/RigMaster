@@ -29,11 +29,11 @@ MObject	vufMayaLuaExpressionNode::g_output_matrix_attr;
 
 vufMayaLuaExpressionNode::vufMayaLuaExpressionNode()
 {
-	m_lua_machine.open_machine();
+	//m_lua_machine.open_machine();
 }
 vufMayaLuaExpressionNode::~vufMayaLuaExpressionNode()
 {
-	m_lua_machine.close_machine();
+	//m_lua_machine.close_machine();
 }
 void* vufMayaLuaExpressionNode::creator()
 {

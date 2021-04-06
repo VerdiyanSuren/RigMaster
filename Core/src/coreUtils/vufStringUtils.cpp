@@ -1,4 +1,4 @@
-#include "Utils/vufStringUtils.h"
+#include "coreUtils/vufStringUtils.h"
 #include "vufLog.h"
 #include "vufCoreInclude.h"
 
@@ -58,6 +58,7 @@ std::string		vufStringUtils::wstring_to_string(const std::wstring& p_wstr)
 }
 std::wstring	vufStringUtils::get_cur_user_name()
 {
+	/*
 #if VF_OS == VF_OS_WND
 	TCHAR  l_info_buf[512];
 	DWORD  l_buf_char_count = 512;
@@ -78,6 +79,8 @@ std::wstring	vufStringUtils::get_cur_user_name()
 	}
 	return str_to_wstr(l_ch);
 #endif 
+	*/
+	return std::wstring();
 }
 std::wstring	vufStringUtils::get_env_variable(const std::wstring& p_env)
 {

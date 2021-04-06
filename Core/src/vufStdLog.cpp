@@ -84,3 +84,4 @@ void vufLogStd::error(	const std::wstring& p_str, const char* p_file, int  p_lin
 #endif
 
 }
+

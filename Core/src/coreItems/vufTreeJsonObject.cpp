@@ -1,6 +1,6 @@
-#include "Items/vufTreeJsonObject.h"
-#include "Utils/vufFileUtils.h"
-#include "Utils/vufStringUtils.h"
+#include "coreItems/vufTreeJsonObject.h"
+#include "coreUtils/vufFileUtils.h"
+#include "coreUtils/vufStringUtils.h"
 #include "vufLog.h"
 
 #include <boost/property_tree/ptree.hpp>

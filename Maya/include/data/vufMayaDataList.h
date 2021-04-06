@@ -2,11 +2,8 @@
 #define VF_MAYA_DATA_LIST_H
 
 #include <data/vufData.h>
+#include <vufLuaWrapper.h>
 
-namespace vuf
-{
-	class vufTxt;
-}
 namespace vufRM
 {
 

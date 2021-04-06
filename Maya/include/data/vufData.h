@@ -80,7 +80,7 @@ class CLASS_NAME :public vufData																\
 	{																							\
 	public:																						\
 		VF_RM_DECLARE_DATA_BODY(CLASS_NAME);													\
-		std::shared_ptr<INNER_CLASS_NAME> m_txt_ptr = nullptr;									\
+		std::shared_ptr<INNER_CLASS_NAME> m_internal_data = nullptr;									\
 	};																							\
 	using WRAPPER_CALSS_NAME = vufDataTemplate<CLASS_NAME>;
 
@@ -132,5 +132,44 @@ namespace vufRM
 		int			m_type	 = 0; // 1 - child  2- dist
 	};
 	using mpxTestWrapper = vufDataTemplate<vufDataTest>;
+
+	// methods to manipulate with custom data
+	template<typename CLASS_WRAPPER, typename CLASS_NAME, typename INNER_CLASS_NAME>
+	std::shared_ptr<INNER_CLASS_NAME> get_inner_data(MFnDependencyNode& p_node,MObject& p_attr)
+	{
+		MStatus l_status;
+		MPlug	l_txt_plug = p_node.findPlug(p_attr,true, &l_status);
+		MObject l_data;
+		
+		l_status = l_txt_plug.getValue(l_data);
+		if (l_status != MS::kSuccess)
+		{			
+			return nullptr;
+		}
+		
+		MFnPluginData l_data_fn;
+		l_status = l_data_fn.setObject(l_data);
+		if (l_status != MS::kSuccess)
+		{
+			return nullptr;
+		}
+		
+		auto l_data_ptr = (CLASS_WRAPPER*)l_data_fn.constData(&l_status);
+		if (l_status != MS::kSuccess)
+		{
+			return nullptr;
+		}
+		
+		auto l_class_data = l_data_ptr->get_data();
+		if (l_class_data == nullptr)
+		{
+			return nullptr;
+		}
+
+		return l_class_data->m_internal_data;
+	}
+
+
+
 }
 #endif // !VF_RM_DATA_H

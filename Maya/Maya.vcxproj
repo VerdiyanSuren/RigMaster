@@ -186,8 +186,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2018_x86_64\Core;..\bin\Debug_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2018_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -207,10 +207,13 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2019_x86_64\Core;..\bin\Debug_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2019_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
+    <PreBuildEvent>
+      <Command>"C:/Program Files/Autodesk/Maya2019/bin/moc.exe" ./include/expressions/ui/vuLuafExprWindow.h -o ./src/expressions/ui/vuLuafExprWindow_moc.cpp</Command>
+    </PreBuildEvent>
     <PostBuildEvent>
       <Command>copy $(TargetDir)vufRigMaster.mll "C:/Program Files/Autodesk/Maya2019/bin/plug-ins/vufRigMaster.mll"
 copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Command>
@@ -229,8 +232,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2020_x86_64\Core;..\bin\Debug_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2020_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -250,8 +253,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_vufApp19_x86_64\Lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_vufApp19_x86_64\Lua;..\bin\Debug_windows_vufApp19_x86_64\Core;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_vufApp19_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -266,15 +269,15 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2018_x86_64\Core;..\bin\Release_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2018_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -292,17 +295,20 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2019_x86_64\Core;..\bin\Release_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2019_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
+    <PreBuildEvent>
+      <Command>"C:/Program Files/Autodesk/Maya2019/bin/moc.exe" ./include/expressions/ui/vuLuafExprWindow.h -o ./src/expressions/ui/vuLuafExprWindow_moc.cpp</Command>
+    </PreBuildEvent>
     <PostBuildEvent>
       <Command>copy $(TargetDir)vufRigMaster.mll "C:/Program Files/Autodesk/Maya2019/bin/plug-ins/vufRigMaster.mll"
 copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Command>
@@ -319,15 +325,15 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2020_x86_64\Core;..\bin\Release_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2020_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -345,15 +351,15 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Lua.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_vufApp19_x86_64\Lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_vufApp19_x86_64\Lua;..\bin\Release_windows_vufApp19_x86_64\Core;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_vufApp19_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
@@ -361,18 +367,29 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <ClInclude Include="include\data\vufData.h" />
     <ClInclude Include="include\data\vufDataTemplate.h" />
     <ClInclude Include="include\data\vufMayaDataList.h" />
-    <ClInclude Include="include\expressions\ui\vufExprWindow.h" />
+    <ClInclude Include="include\expressions\ui\vuLuafExprWindow.h" />
+    <ClInclude Include="include\expressions\ui\vufExpressionWindowCmd.h" />
+    <ClInclude Include="include\expressions\ui\vufLuaHighliter.h" />
+    <ClInclude Include="include\expressions\ui\vufLuaTextEditor.h" />
     <ClInclude Include="include\expressions\vufMayaLuaExpressionNode.h" />
     <ClInclude Include="include\expressions\vufMayaLuaTxtNode.h" />
+    <ClInclude Include="include\utils\vufMayaUtils.h" />
     <ClInclude Include="include\vufMayaGlobalIncludes.h" />
+    <ClInclude Include="include\vufLogMaya.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\vufLogMaya.cpp" />
     <ClCompile Include="src\data\vufData.cpp" />
-    <ClCompile Include="src\expressions\ui\vufExprWindow.cpp" />
+    <ClCompile Include="src\expressions\ui\vuLuafExprWindow_moc.cpp" />
+    <ClCompile Include="src\expressions\ui\vufExpressionWindowCmd.cpp" />
+    <ClCompile Include="src\expressions\ui\vufLuaExprWindow.cpp" />
+    <ClCompile Include="src\expressions\ui\vufLuaHighliter.cpp" />
+    <ClCompile Include="src\expressions\ui\vufLuaTextEditor.cpp" />
     <ClCompile Include="src\expressions\vufMayaLuaExpressionNode.cpp" />
     <ClCompile Include="src\expressions\vufMayaLuaTxtData.cpp" />
     <ClCompile Include="src\expressions\vufMayaLuaTxtNode.cpp" />
     <ClCompile Include="src\register.cpp" />
+    <ClCompile Include="src\utils\vufMayaUtils.cpp" />
     <ClCompile Include="src\vufMayaGlobalIncludes.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

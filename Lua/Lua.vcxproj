@@ -188,12 +188,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.lib</ImportLibrary>
     </Link>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2018_x86_64\LuaWrapper &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2018_x86_64\LuaWrapper &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2018_x86_64\Core &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2018_x86_64\Core &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2018_x86_64\Math &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2018_x86_64\Math &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2018_x86_64\Maya &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2018_x86_64\Maya &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2019|x64'">
     <ClCompile>
@@ -210,12 +204,6 @@ IF EXIST ..\bin\Debug_windows_Maya2018_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.lib</ImportLibrary>
     </Link>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2019_x86_64\LuaWrapper &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2019_x86_64\LuaWrapper &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2019_x86_64\Core &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2019_x86_64\Core &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2019_x86_64\Math &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2019_x86_64\Math &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2019_x86_64\Maya &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2019_x86_64\Maya &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2020|x64'">
     <ClCompile>
@@ -232,12 +220,6 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.lib</ImportLibrary>
     </Link>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2020_x86_64\LuaWrapper &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2020_x86_64\LuaWrapper &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2020_x86_64\Core &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2020_x86_64\Core &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2020_x86_64\Math &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2020_x86_64\Math &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2020_x86_64\Maya &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll ..\bin\Debug_windows_Maya2020_x86_64\Maya &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug vufApp19|x64'">
     <ClCompile>
@@ -254,12 +236,6 @@ IF EXIST ..\bin\Debug_windows_Maya2020_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImportLibrary>..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.lib</ImportLibrary>
     </Link>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll ..\bin\Debug_windows_vufApp19_x86_64\LuaWrapper &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll ..\bin\Debug_windows_vufApp19_x86_64\LuaWrapper &gt; nul)
-IF EXIST ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll ..\bin\Debug_windows_vufApp19_x86_64\Core &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll ..\bin\Debug_windows_vufApp19_x86_64\Core &gt; nul)
-IF EXIST ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll ..\bin\Debug_windows_vufApp19_x86_64\Math &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll ..\bin\Debug_windows_vufApp19_x86_64\Math &gt; nul)
-IF EXIST ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll ..\bin\Debug_windows_vufApp19_x86_64\Maya &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll ..\bin\Debug_windows_vufApp19_x86_64\Maya &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2018|x64'">
     <ClCompile>
@@ -272,8 +248,8 @@ IF EXIST ..\bin\Debug_windows_vufApp19_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I ..
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -299,8 +275,8 @@ IF EXIST ..\bin\Release_windows_Maya2018_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I 
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -326,8 +302,8 @@ IF EXIST ..\bin\Release_windows_Maya2019_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I 
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -353,8 +329,8 @@ IF EXIST ..\bin\Release_windows_Maya2020_x86_64\Lua\Lua.dll\ (xcopy /Q /E /Y /I 
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalOptions>/MT %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

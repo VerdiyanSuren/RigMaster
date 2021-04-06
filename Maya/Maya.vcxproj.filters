@@ -13,6 +13,9 @@
     <Filter Include="include\expressions\ui">
       <UniqueIdentifier>{289BC8C0-1495-F112-FD01-8823E99A577F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\utils">
+      <UniqueIdentifier>{C98351A6-3544-CDDC-FE7E-165A6AFE11B9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -25,6 +28,9 @@
     <Filter Include="src\expressions\ui">
       <UniqueIdentifier>{4C7A2978-385E-EACD-A1BE-E4208DC1D44F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{6DAA42B6-D914-F72C-2253-A8D28EFCD481}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\data\vufData.h">
@@ -36,7 +42,16 @@
     <ClInclude Include="include\data\vufMayaDataList.h">
       <Filter>include\data</Filter>
     </ClInclude>
-    <ClInclude Include="include\expressions\ui\vufExprWindow.h">
+    <ClInclude Include="include\expressions\ui\vuLuafExprWindow.h">
+      <Filter>include\expressions\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\ui\vufExpressionWindowCmd.h">
+      <Filter>include\expressions\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\ui\vufLuaHighliter.h">
+      <Filter>include\expressions\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\ui\vufLuaTextEditor.h">
       <Filter>include\expressions\ui</Filter>
     </ClInclude>
     <ClInclude Include="include\expressions\vufMayaLuaExpressionNode.h">
@@ -45,7 +60,13 @@
     <ClInclude Include="include\expressions\vufMayaLuaTxtNode.h">
       <Filter>include\expressions</Filter>
     </ClInclude>
+    <ClInclude Include="include\utils\vufMayaUtils.h">
+      <Filter>include\utils</Filter>
+    </ClInclude>
     <ClInclude Include="include\vufMayaGlobalIncludes.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufLogMaya.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,7 +74,19 @@
     <ClCompile Include="src\data\vufData.cpp">
       <Filter>src\data</Filter>
     </ClCompile>
-    <ClCompile Include="src\expressions\ui\vufExprWindow.cpp">
+    <ClCompile Include="src\expressions\ui\vuLuafExprWindow_moc.cpp">
+      <Filter>src\expressions\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\ui\vufExpressionWindowCmd.cpp">
+      <Filter>src\expressions\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\ui\vufLuaExprWindow.cpp">
+      <Filter>src\expressions\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\ui\vufLuaHighliter.cpp">
+      <Filter>src\expressions\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\ui\vufLuaTextEditor.cpp">
       <Filter>src\expressions\ui</Filter>
     </ClCompile>
     <ClCompile Include="src\expressions\vufMayaLuaExpressionNode.cpp">
@@ -68,7 +101,13 @@
     <ClCompile Include="src\register.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\vufMayaUtils.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\vufMayaGlobalIncludes.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="include\vufLogMaya.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

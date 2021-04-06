@@ -29,6 +29,13 @@ namespace vufRM
 	l_status = l_plugin.deregisterNode( NODE_TYPE::g_id);	\
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
+#define VF_REGISTER_COMMAND(CMD_TYPE)	\
+	l_status = l_plugin.registerCommand( CMD_TYPE::g_type_name, CMD_TYPE::creator, CMD_TYPE::newSyntax);	\
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+
+#define VF_DEREGISTER_COMMAND(CMD_TYPE)	\
+	l_status = l_plugin.deregisterCommand( CMD_TYPE::g_type_name );	\
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 //---------------------------------------------------------------------------------
 // Attribete Creation macroces

@@ -13,7 +13,7 @@ extern "C"
 #include <map>
 #include <vector>
 #include <string>
-#include <Utils/vufStringUtils.h>
+#include <coreUtils/vufStringUtils.h>
 
 
 namespace vuf
