@@ -11,6 +11,9 @@
 #include <QtWidgets/qlistwidget.h>
 #include <map>
 #include <vector>
+#include <memory>
+
+#include <data/vufMayaDataList.h>
 
 //#include "files.h"
 //#include "search.h"
@@ -27,12 +30,18 @@ namespace vufRM
 		explicit vufLuaExprWindow(QWidget* parent = 0);
 		~vufLuaExprWindow();
 		// void openWith(QString);
-		void refresh_expression_nodes();
+		void refresh_expression_nodes(); // get list of expression nodes from maya
 		void refresh_explorer();
-		void text_changed(const QString& p_text , const vufLuaTextEditor* p_text_editor_ptr);
+		void text_changed(const QString& p_text , const vufLuaTextEditor* p_text_editor_ptr); //called when any script changed
+	private:
+		void port_text_changed(); // called when port script edited
+		//void script_text_changed();
+
+		std::string get_selected_item_name() const; // name of selected item in explorer
+		//bool set_item_selected(const std::string&);
+		std::string lua_connection_eval(std::string& expression_node_name, const std::string& p_lua_script, std::shared_ptr<vufMayaLuaPortInternalData > p_data);
 	public slots:
 		void selection_changed();
-
 	private:
 		struct vufExpresionPair
 		{
@@ -43,18 +52,17 @@ namespace vufRM
 			{}
 			vufExpresionPair& operator=(const vufExpresionPair& p_other)
 			{
-				m_port_node_name = p_other.m_port_node_name;
-				m_script_node_name = p_other.m_script_node_name;
+				m_port_node_name	= p_other.m_port_node_name;
+				m_script_node_name	= p_other.m_script_node_name;
 				return *this;
 			}
 
-			std::wstring m_port_node_name;
-			std::wstring m_script_node_name;
+			std::string m_port_node_name;
+			std::string m_script_node_name;
 		};
 
-		std::vector<std::wstring>					m_expression_nodes_names;
-		std::map<std::wstring, vufExpresionPair>	m_expression_nodes_map;
-		std::wstring								m_selected_lua;
+		std::vector<std::string>				m_expression_nodes_names;
+		std::map<std::string, vufExpresionPair>	m_expression_nodes_map;
 
 		vufLuaTextEditor*	m_port_editor_ptr		= nullptr;
 		vufLuaTextEditor*	m_script_editor_ptr		= nullptr;

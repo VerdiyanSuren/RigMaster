@@ -3,7 +3,7 @@
 #include <maya/MFnCompoundAttribute.h>
 #include <maya/MFnUnitAttribute.h>
 
-#include <expressions/vufMayaLuaExpressionNode.h>
+#include <expressions/nodes/vufMayaLuaExpressionNode.h>
 #include <data/vufMayaDataList.h>
 #include <vufLuaWrapper.h>
 
@@ -48,7 +48,7 @@ MStatus	vufMayaLuaExpressionNode::initialize()
 	MFnUnitAttribute		l_unit_attr_fn;
 
 	// Ports definition expression
-	g_ports_script_attr = l_typed_attr_fn.create("portsScript", "ps", mpxMayaLuaTxtWrapper::g_id, MObject::kNullObj, &l_status);
+	g_ports_script_attr = l_typed_attr_fn.create("inPortScript", "ips", mpxMayaLuaPortWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_typed_attr_fn.setStorable(true));
 	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
@@ -90,7 +90,7 @@ MStatus	vufMayaLuaExpressionNode::initialize()
 	// Surface
 
 	// Compound input
-	g_input_ports_attr = l_compound_attr_fn.create("imputPorts", "ip", &l_status);
+	g_input_ports_attr = l_compound_attr_fn.create("inputPorts", "ip", &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_compound_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_compound_attr_fn.setReadable(false));

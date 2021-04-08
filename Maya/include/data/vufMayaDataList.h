@@ -3,12 +3,13 @@
 
 #include <data/vufData.h>
 #include <vufLuaWrapper.h>
-
+#include <expressions/data/vufMayaLuaPortInternalData.h>
 namespace vufRM
 {
 
 	VF_RM_DECLARE_STANDART_DATA_CLASS(mpxMayaLuaTxtWrapper, vufMayaLuaTxtData, vuf::vufTxt);
-	
+	VF_RM_DECLARE_STANDART_DATA_CLASS(mpxMayaLuaPortWrapper, vufMayaLuaPortData, vufMayaLuaPortInternalData);
+
 	//add new datas here
 
 	/*

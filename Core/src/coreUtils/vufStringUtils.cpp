@@ -101,5 +101,35 @@ std::wstring	vufStringUtils::wstring_padding(const std::wstring& p_original, int
 		return p_original;
 	}
 	auto l_res = p_original;
-	return l_res.append(p_char_count - l_sz, '.');
+	return l_res.append(p_char_count - l_sz, L'.');
 }
+std::string		vufStringUtils::string_padding(const std::string& p_original, int p_char_count, bool p_cut )
+{
+	//p_original.resize(p_char_count, ' ');
+	auto l_sz = p_original.size();
+	if (l_sz > VF_PADDING_MAX && p_cut == true)
+	{
+		return p_original;
+	}
+	auto l_res = p_original;
+	return l_res.append(p_char_count - l_sz, '.');
+
+}
+
+std::vector<std::string>			vufStringUtils::string_split_by(const std::string& p_string, const std::string& p_delimiter)
+{
+	std::vector<std::string> l_res;
+	std::string		l_s = p_string;
+	size_t			l_pos = 0;
+	std::string		l_token;
+
+	while ((l_pos = l_s.find(p_delimiter)) != std::string::npos) 
+	{
+		l_token = l_s.substr(0, l_pos);
+		l_res.push_back(l_token);
+		l_s.erase(0, l_pos + p_delimiter.length());
+	}
+	l_res.push_back(l_s);
+	return l_res;
+}
+

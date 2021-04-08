@@ -22,6 +22,10 @@
 	lua_pushcfunction(L, FUNCTION);					\
 	lua_settable(L, -3);
 
+// Throw error
+#define VF_LUA_THROW_ERROR(L, ERROR_CHAR_PTR) \
+	return luaL_error(L, "expecting exactly  4 numerical  arguments");
+
 // Implement method
 // myType.method(MyType)->number
 #define VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(META_NAME,CLASS_NAME,CLASS_METHOD,LUA_METHOD_NAME)	\

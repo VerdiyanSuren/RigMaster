@@ -2,7 +2,7 @@
 #define VF_CORE_STRING_UTILS_H
 
 #include <vufCoreInclude.h>
-
+#include <vector>
 namespace vuf
 {
 	class VF_API vufStringUtils
@@ -20,6 +20,9 @@ namespace vuf
 		static std::wstring			get_env_variable(const std::wstring& p_env);
 
 		static std::wstring			wstring_padding(const std::wstring& p_original, int char_pos, bool p_cut = false);
+		static std::string			string_padding( const std::string&  p_original, int char_pos, bool p_cut = false);
+
+		static std::vector<std::string>			string_split_by(const std::string& p_string,const std::string& p_delimiter);
 	};
 }
 #endif // !VF_CORE_STRING_UTILS_H

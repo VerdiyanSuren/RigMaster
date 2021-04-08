@@ -5,6 +5,9 @@
 
 namespace vufRM
 {
+	/*
+	* This command designed to show lua script editor
+	*/
 	class vufLuaExprWindow;
 	class vufExpressionWindowCmd :public MPxCommand
 	{

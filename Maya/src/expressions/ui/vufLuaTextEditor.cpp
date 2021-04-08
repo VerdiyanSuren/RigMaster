@@ -1,4 +1,5 @@
 #include <expressions/ui/vufLuaTextEditor.h>
+#include <expressions/ui/vuLuafExprWindow.h>
 #include <iostream>
 
 using namespace vufRM;
@@ -12,7 +13,6 @@ void vufLuaTextEditor::keyPressEvent(QKeyEvent* p_event)
 	if ( (p_event->key() == Qt::Key_Return)  && 
 		 (p_event->modifiers() & Qt::ControlModifier) )
 	{
-		std::cout << "Got it" << std::endl;
 		// optional: if the QPlainTextEdit should do its normal action 
 		// even when the return button is pressed, uncomment the following line
 		// QPlainTextEdit::keyPressEvent( event )

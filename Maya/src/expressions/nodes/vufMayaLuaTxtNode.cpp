@@ -2,8 +2,10 @@
 #include <maya/MFnNumericAttribute.h>
 
 #include <data/vufMayaDataList.h>
-#include <expressions/vufMayaLuaTxtNode.h>
+#include <expressions/nodes/vufMayaLuaTxtNode.h>
 #include <vufMayaGlobalIncludes.h>
+#include <vufLuaWrapper.h>
+#include <vufLog.h>
 
 using namespace vufRM;
 
@@ -46,6 +48,31 @@ MStatus	vufMayaLuaTxtNode::initialize()
 }
 MStatus	vufMayaLuaTxtNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
-	return MS::kSuccess;
+	if (p_plug == g_expression_attr)
+	{
+		MStatus l_status;
+		std::shared_ptr<vufMayaLuaTxtData>	l_out_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxMayaLuaTxtWrapper, vufMayaLuaTxtData, p_data, g_expression_attr, l_out_data);
+		// reference check
+		auto l_data_owner_id = l_out_data->get_owner_id();
+		if (l_out_data->get_owner_id() != m_gen_id)
+		{
+			//To Do Copy data and make mine
+		}
+		l_out_data->set_owner_id(m_gen_id);
+		if (l_out_data->m_internal_data == nullptr)
+		{
+			VF_LOG_INFO("CONSTRUCTOR");
+			l_out_data->m_internal_data = std::shared_ptr<vuf::vufTxt>(new vuf::vufTxt());
+		}
+		VF_LOG_INFO(l_out_data->m_internal_data->get_script());
+
+
+		p_data.setClean(g_expression_attr);
+
+		return MS::kSuccess;
+	}
+
+	return MS::kUnknownParameter;
 }
 

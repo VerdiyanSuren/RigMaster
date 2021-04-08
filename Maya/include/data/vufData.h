@@ -3,7 +3,7 @@
 
 #include <maya/MPxData.h>
 #include <maya/MFnPluginData.h>
-
+#include <vufLog.h>
 #include "data/vufDataTemplate.h"
 #include <memory>
 
@@ -80,7 +80,7 @@ class CLASS_NAME :public vufData																\
 	{																							\
 	public:																						\
 		VF_RM_DECLARE_DATA_BODY(CLASS_NAME);													\
-		std::shared_ptr<INNER_CLASS_NAME> m_internal_data = nullptr;									\
+		std::shared_ptr<INNER_CLASS_NAME> m_internal_data = nullptr;							\
 	};																							\
 	using WRAPPER_CALSS_NAME = vufDataTemplate<CLASS_NAME>;
 
@@ -101,9 +101,14 @@ namespace vufRM
 			k_test_data,
 			k_curve_data
 		};
-		void		set_owner_id(uint64_t p_new_owner_id) { m_owner_node_id = p_new_owner_id; }
-		uint64_t	get_owner_id() const { return m_owner_node_id; }
-		
+		void		set_owner_id(uint64_t p_new_owner_id)	{ m_owner_node_id = p_new_owner_id; }
+		uint64_t	get_owner_id() const					{ return m_owner_node_id; }
+
+		void		set_owner_ptr(void* p_ptr)				{ m_owner_ptr = p_ptr; }
+		void*		get_owner_ptr() const					{ return m_owner_ptr; }
+
+		void		set_owner_type(uint32_t p_owner_type)	{ m_owner_type = p_owner_type; }
+		uint32_t	get_owner_type() const					{ return m_owner_type; }
 		// serialize methods for mpx data overrides
 		virtual MStatus 	readASCII(	const MArgList& p_args, unsigned int&	p_last_element) = 0;
 		virtual MStatus 	readBinary(	std::istream&	p_in,	unsigned int	length)			= 0;
@@ -119,7 +124,10 @@ namespace vufRM
 			return p_data == nullptr ? k_absent_data : p_data->get_type();
 		}
 	protected:
-		uint64_t m_owner_node_id = 0;
+		uint64_t	m_owner_node_id = 0;
+		void*		m_owner_ptr		= nullptr;
+		uint32_t	m_owner_type	= 0;
+
 	};
 
 	class vufDataTest :public vufData
@@ -139,11 +147,18 @@ namespace vufRM
 	{
 		MStatus l_status;
 		MPlug	l_txt_plug = p_node.findPlug(p_attr,true, &l_status);
+		if (l_status != MS::kSuccess)
+		{
+			VF_LOG_INFO("Failed to find plug");
+			return nullptr;
+		}
+
 		MObject l_data;
 		
 		l_status = l_txt_plug.getValue(l_data);
 		if (l_status != MS::kSuccess)
-		{			
+		{	
+			VF_LOG_INFO("Failed to get value");
 			return nullptr;
 		}
 		
@@ -151,18 +166,21 @@ namespace vufRM
 		l_status = l_data_fn.setObject(l_data);
 		if (l_status != MS::kSuccess)
 		{
+			VF_LOG_INFO("Failed to set Object");
 			return nullptr;
 		}
 		
 		auto l_data_ptr = (CLASS_WRAPPER*)l_data_fn.constData(&l_status);
 		if (l_status != MS::kSuccess)
 		{
+			VF_LOG_INFO("Failed to get MPxData");
 			return nullptr;
 		}
 		
 		auto l_class_data = l_data_ptr->get_data();
 		if (l_class_data == nullptr)
 		{
+			VF_LOG_INFO("Failed to get data");
 			return nullptr;
 		}
 

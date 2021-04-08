@@ -25,7 +25,7 @@ namespace vuf
 		{
 			if (p_str != m_script)
 			{
-				m_script == p_str;
+				m_script = p_str;
 				m_hash = vufStringUtils::get_hash_of(m_script);
 			}
 		}

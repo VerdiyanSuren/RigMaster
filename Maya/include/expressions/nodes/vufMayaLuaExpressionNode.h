@@ -18,7 +18,7 @@ namespace vufRM
 
 		static const MTypeId	g_id;
 		static const MString	g_type_name;
-
+		// attributes
 		static MObject	g_script_attr;
 		static MObject	g_ports_script_attr;
 
@@ -35,6 +35,8 @@ namespace vufRM
 		static MObject	g_output_number_attr;
 		static MObject	g_output_angle_attr;
 		static MObject	g_output_matrix_attr;
+
+
 	private:
 		uint64_t			m_script_hash		= 0;
 		uint64_t			m_scropt_port_hash	= 0;
