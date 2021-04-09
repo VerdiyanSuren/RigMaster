@@ -2,6 +2,7 @@
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnCompoundAttribute.h>
 #include <maya/MFnUnitAttribute.h>
+#include <maya/MFnMatrixAttribute.h>
 
 #include <expressions/nodes/vufMayaLuaExpressionNode.h>
 #include <data/vufMayaDataList.h>
@@ -17,6 +18,8 @@ MObject	vufMayaLuaExpressionNode::g_input_ports_attr;
 MObject	vufMayaLuaExpressionNode::g_input_time_attr;
 MObject	vufMayaLuaExpressionNode::g_input_number_attr;
 MObject	vufMayaLuaExpressionNode::g_input_angle_attr;
+MObject	vufMayaLuaExpressionNode::g_input_vector_attr;
+
 MObject	vufMayaLuaExpressionNode::g_input_matrix_attr;
 MObject	vufMayaLuaExpressionNode::g_input_mesh_attr;
 MObject	vufMayaLuaExpressionNode::g_input_curve_attr;
@@ -44,6 +47,7 @@ MStatus	vufMayaLuaExpressionNode::initialize()
 	MStatus l_status;
 	MFnTypedAttribute		l_typed_attr_fn;
 	MFnNumericAttribute		l_numeric_attr_fn;
+	MFnMatrixAttribute		l_matrix_attr_fn;
 	MFnCompoundAttribute	l_compound_attr_fn;
 	MFnUnitAttribute		l_unit_attr_fn;
 
@@ -64,30 +68,59 @@ MStatus	vufMayaLuaExpressionNode::initialize()
 	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 #pragma region INPUT_PORTS
 	//Time
-	g_input_time_attr = l_unit_attr_fn.create("time", "tm", MFnUnitAttribute::kTime, 0.0, &l_status);
+	g_input_time_attr = l_unit_attr_fn.create("inTime", "int", MFnUnitAttribute::kTime, 0.0, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_unit_attr_fn.setWritable(true));
+	CHECK_MSTATUS(l_unit_attr_fn.setArray(true));
+	CHECK_MSTATUS(l_unit_attr_fn.setUsesArrayDataBuilder(true));
+	CHECK_MSTATUS(l_unit_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
 	// Numbers
-	g_input_number_attr = l_numeric_attr_fn.create("inNumber", "inm", MFnNumericData::kDouble, 0.0, &l_status);
+	g_input_number_attr = l_numeric_attr_fn.create("inNumber", "inn", MFnNumericData::kDouble, 0.0, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_numeric_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_numeric_attr_fn.setArray(true));
 	CHECK_MSTATUS(l_numeric_attr_fn.setUsesArrayDataBuilder(true));
 	CHECK_MSTATUS(l_numeric_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
 	// Angles
-	g_input_angle_attr = l_unit_attr_fn.create("angle", "ngl", MFnUnitAttribute::kAngle, 0.0, &l_status);
+	g_input_angle_attr = l_unit_attr_fn.create("inAngle", "ina", MFnUnitAttribute::kAngle, 0.0, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_unit_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_unit_attr_fn.setArray(true));
 	CHECK_MSTATUS(l_unit_attr_fn.setUsesArrayDataBuilder(true));
 	CHECK_MSTATUS(l_unit_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
+	// Vector
+	g_input_vector_attr = l_numeric_attr_fn.create("inVector", "inv", MFnNumericData::k3Double, 0.0, &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_numeric_attr_fn.setWritable(true));
+	CHECK_MSTATUS(l_numeric_attr_fn.setArray(true));
+	CHECK_MSTATUS(l_numeric_attr_fn.setUsesArrayDataBuilder(true));
+	CHECK_MSTATUS(l_numeric_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
 	// Matrix
-
+	g_input_matrix_attr = l_matrix_attr_fn.create("inMatrix", "inm",MFnMatrixAttribute::kDouble,&l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_matrix_attr_fn.setWritable(true));
+	CHECK_MSTATUS(l_matrix_attr_fn.setArray(true));
+	CHECK_MSTATUS(l_matrix_attr_fn.setUsesArrayDataBuilder(true));
+	CHECK_MSTATUS(l_matrix_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
 	// Mesh
-
+	g_input_mesh_attr = l_typed_attr_fn.create("inMesh", "msh", MFnData::kMesh,MObject::kNullObj, &l_status);
+	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setArray(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setUsesArrayDataBuilder(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
 	// Curve
-
+	g_input_curve_attr = l_typed_attr_fn.create("inCurve", "crv", MFnData::kNurbsCurve, MObject::kNullObj, &l_status);
+	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setArray(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setUsesArrayDataBuilder(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
 	// Surface
+	g_input_surface_attr = l_typed_attr_fn.create("inSurface", "srv", MFnData::kNurbsSurface, MObject::kNullObj, &l_status);
+	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setArray(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setUsesArrayDataBuilder(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
+
 
 	// Compound input
 	g_input_ports_attr = l_compound_attr_fn.create("inputPorts", "ip", &l_status);
@@ -97,6 +130,11 @@ MStatus	vufMayaLuaExpressionNode::initialize()
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_input_time_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_input_number_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_input_angle_attr));
+	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_input_vector_attr)); 
+	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_input_matrix_attr));
+	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_input_mesh_attr));
+	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_input_curve_attr));
+	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_input_surface_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.setKeyable(true));
 
 #pragma endregion

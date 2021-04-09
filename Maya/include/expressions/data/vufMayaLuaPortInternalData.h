@@ -4,16 +4,16 @@
 #include <vector>
 #include <string>
 #include <vufLuaWrapper.h>
+#include <maya/MVector.h>
+#include <maya/MMatrix.h>
+#include <maya/MObject.h>
 
 namespace vufRM
 {
 	template<typename T>
 	struct vufLuaExpressionPort
 	{
-		std::string		m_obj_source_name;
-		std::string		m_plug_source_name;
 		std::string		m_lua_var_name;
-		uint16_t		m_type;
 		uint16_t		m_index;
 		T				m_data;
 	};
@@ -22,11 +22,30 @@ namespace vufRM
 	public:
 		vufMayaLuaPortInternalData() {}
 		~vufMayaLuaPortInternalData() {}
+
+		void clear_ports()
+		{
+			m_in_time_port.clear();
+			m_in_double_port.clear();
+			m_in_vector_port.clear();
+			m_in_angle_port.clear();
+			m_in_matrix_port.clear();
+			m_in_mesh_port.clear();
+			m_in_curve_port.clear();
+			m_in_srv_port.clear();
+
+			m_out_double_port.clear();
+		}
 		//input ports
-		std::vector< vufLuaExpressionPort<double>> m_in_time_port;
-		std::vector< vufLuaExpressionPort<double>> m_in_double_port;
-		//std::vector< vufLuaExpressionPort<MVector>> m_in_vector_port;
-		//std::vector< vufLuaExpressionPort<double>> m_in_angle_port;
+		std::vector< vufLuaExpressionPort<double>>	m_in_time_port;
+		std::vector< vufLuaExpressionPort<double>>	m_in_double_port;
+		std::vector< vufLuaExpressionPort<MVector>> m_in_vector_port;
+		std::vector< vufLuaExpressionPort<double>>	m_in_angle_port;
+		std::vector< vufLuaExpressionPort<MMatrix>>	m_in_matrix_port;
+		std::vector< vufLuaExpressionPort<MObject>>	m_in_mesh_port;
+		std::vector< vufLuaExpressionPort<MObject>>	m_in_curve_port;
+		std::vector< vufLuaExpressionPort<MObject>>	m_in_srv_port;
+
 		//output_ports
 		std::vector< vufLuaExpressionPort<double>>	m_out_double_port;
 		//std::vector< vufLuaExpressionPort<MVector>> m_out_vector_port;

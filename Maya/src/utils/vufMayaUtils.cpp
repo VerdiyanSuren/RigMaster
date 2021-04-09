@@ -6,12 +6,13 @@
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnUnitAttribute.h>
+#include <maya/MFnMatrixAttribute.h>
 #include <maya/MGlobal.h>
 
 using namespace vufRM;
 
 //input plaugs rerieve
-MString vufMayaUtils::get_input_connected_node_name(const MFnDependencyNode& p_node, const MObject& p_attr)
+MString		vufMayaUtils::get_input_connected_node_name(const MFnDependencyNode& p_node, const MObject& p_attr)
 {
 	MStatus l_status;
 	MPlug l_port_plug = p_node.findPlug(p_attr, true, &l_status);
@@ -31,7 +32,7 @@ MString vufMayaUtils::get_input_connected_node_name(const MFnDependencyNode& p_n
 	}
 	return MFnDependencyNode(l_port_input_arr[0].node()).name();
 }
-MObject vufMayaUtils::get_object_by_name(const MString& p_str)
+MObject		vufMayaUtils::get_object_by_name(const MString& p_str)
 {
 	MStatus l_status;
 	MSelectionList l_list;
@@ -141,6 +142,134 @@ std::string vufMayaUtils::get_plug_type(const MPlug& p_plug)
 	}
 	return "unknown";
 }
+bool		vufMayaUtils::is_plug_connectable_to_number(const MPlug& p_plug)
+{
+	MObject l_attribute = p_plug.attribute();
+	if (l_attribute.hasFn(MFn::kNumericAttribute))
+	{
+		MFnNumericAttribute l_fn_attrib(l_attribute);
+		switch (l_fn_attrib.unitType())
+		{
+		case MFnNumericData::kBoolean:
+		case MFnNumericData::kShort:
+		case MFnNumericData::kLong:
+		case MFnNumericData::kFloat:
+		case MFnNumericData::kDouble:
+			return true;
+		default:
+			return false;
+		}
+	}
+	if (l_attribute.hasFn(MFn::kUnitAttribute))
+	{
+		MFnUnitAttribute l_fn_attrib(l_attribute);
+		switch (l_fn_attrib.unitType())
+		{
+		case MFnUnitAttribute::kAngle:		
+		case MFnUnitAttribute::kTime:		
+		case MFnUnitAttribute::kDistance:
+			return true;
+		default:
+			return false;
+		}
+	}
+	return false;
+}
+bool		vufMayaUtils::is_plug_connectable_to_time(const MPlug& p_plug)
+{
+	MObject l_attribute = p_plug.attribute();
+	if (l_attribute.hasFn(MFn::kUnitAttribute))
+	{
+		MFnUnitAttribute l_fn_attrib(l_attribute);
+		return l_fn_attrib.unitType() == MFnUnitAttribute::kTime;
+	}
+	return false;
+}
+bool		vufMayaUtils::is_plug_connectable_to_angle(const MPlug& p_plug)
+{
+	MObject l_attribute = p_plug.attribute();
+	if (l_attribute.hasFn(MFn::kUnitAttribute))
+	{
+		MFnUnitAttribute l_fn_attrib(l_attribute);
+		return l_fn_attrib.unitType() == MFnUnitAttribute::kAngle;
+	}
+	return false;
+}
+bool		vufMayaUtils::is_plug_connectable_to_vector(const MPlug& p_plug)
+{
+	MObject l_attribute = p_plug.attribute();
+	if (l_attribute.hasFn(MFn::kNumericAttribute))
+	{
+		MFnNumericAttribute l_fn_attrib(l_attribute);
+		switch (l_fn_attrib.unitType())
+		{
+		case MFnNumericData::k3Float:
+		case MFnNumericData::k3Double:
+			return true;
+		default:
+			return false;
+		}
+	}
+	return false;
+}
+bool		vufMayaUtils::is_plug_connectable_to_matrix(const MPlug& p_plug)
+{
+	MObject l_attribute = p_plug.attribute();
+	if (l_attribute.hasFn(MFn::kMatrixAttribute) == true)
+	{
+		return true;
+	}
+	if (l_attribute.hasFn(MFn::kTypedAttribute) == true)
+	{
+		MFnTypedAttribute l_fn_attrib(l_attribute);
+		if (l_fn_attrib.attrType() == MFnData::kMatrix)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+bool		vufMayaUtils::is_plug_connectable_to_mesh(const MPlug& p_plug)
+{
+	MObject l_attribute = p_plug.attribute();
+	if (l_attribute.hasFn(MFn::kTypedAttribute) == true)
+	{
+		MFnTypedAttribute l_fn_attrib(l_attribute);
+		if (l_fn_attrib.attrType() == MFnData::kMesh)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+bool		vufMayaUtils::is_plug_connectable_to_curve(const MPlug& p_plug)
+{
+	MObject l_attribute = p_plug.attribute();
+	if (l_attribute.hasFn(MFn::kTypedAttribute) == true)
+	{
+		MFnTypedAttribute l_fn_attrib(l_attribute);
+		if (l_fn_attrib.attrType() == MFnData::kNurbsCurve)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+bool		vufMayaUtils::is_plug_connectable_to_surface(const MPlug& p_plug)
+{
+	MObject l_attribute = p_plug.attribute();
+	if (l_attribute.hasFn(MFn::kTypedAttribute) == true)
+	{
+		MFnTypedAttribute l_fn_attrib(l_attribute);
+		if (l_fn_attrib.attrType() == MFnData::kNurbsSurface)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 
 
 //converssion

@@ -174,6 +174,7 @@ std::string vufLuaExprWindow::get_selected_item_name() const
 std::string vufLuaExprWindow::lua_connection_eval(std::string& expression_node_name, const std::string& p_lua_script, std::shared_ptr<vufMayaLuaPortInternalData > p_data)
 {
 	std::string l_node_name = expression_node_name;
+	p_data->clear_ports();
 	lua_State* L = luaL_newstate();
 	luaL_openlibs(L);
 	vufMayaLuaPorts::register_ports_for_editor(L, &l_node_name, p_data.get());

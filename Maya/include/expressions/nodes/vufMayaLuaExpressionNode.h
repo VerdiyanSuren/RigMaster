@@ -26,6 +26,7 @@ namespace vufRM
 		static MObject	g_input_time_attr;
 		static MObject	g_input_number_attr;
 		static MObject	g_input_angle_attr;
+		static MObject	g_input_vector_attr;
 		static MObject	g_input_matrix_attr;
 		static MObject	g_input_mesh_attr;
 		static MObject	g_input_curve_attr;
