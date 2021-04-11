@@ -21,7 +21,7 @@ MStatus 	vufMayaLuaTxtData::readASCII(const MArgList& p_args, unsigned int& p_la
 		MGlobal::displayError("Failed to read Lua script");
 		return MS::kFailure;
 	}
-	m_internal_data->set_txt(l_str.asChar());
+	m_internal_data->set_script(l_str.asChar());
 	return MS::kSuccess;
 }
 MStatus 	vufMayaLuaTxtData::readBinary(std::istream& p_in, unsigned int	p_length)
@@ -56,7 +56,7 @@ MStatus 	vufMayaLuaTxtData::writeBinary(std::ostream& p_out)
 }
 int			vufMayaLuaTxtData::get_type()	const
 {
-	return vufData::k_txt_data;
+	return vufData::k_lua_script_data;
 }
 
 void		vufMayaLuaTxtData::log_me() const

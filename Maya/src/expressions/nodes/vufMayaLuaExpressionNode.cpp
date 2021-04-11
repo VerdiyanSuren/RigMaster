@@ -168,5 +168,9 @@ MStatus	vufMayaLuaExpressionNode::initialize()
 }
 MStatus	vufMayaLuaExpressionNode::compute(const MPlug& plug, MDataBlock& data)
 {
-	return MS::kSuccess;
+	if (plug == g_output_ports_attr)
+	{
+		return MS::kSuccess;
+	}
+	return MS::kUnknownParameter;
 }

@@ -31,6 +31,7 @@ using namespace vufRM;
 	l_port.m_index = l_index;													\
 	l_port.m_lua_var_name = l_var_name_ptr;										\
 	DATA_PORT.push_back(l_port);												\
+	l_data->m_var_names.insert(l_var_name_ptr);									\
 	return 0;
 
 
@@ -44,7 +45,7 @@ void vufMayaLuaPorts::register_ports_for_editor(lua_State* L, std::string* p_nod
 
 	lua_pushlightuserdata(L, p_node_name);
 	lua_pushlightuserdata(L, p_data);
-	lua_pushcclosure(L, node_out, 1);
+	lua_pushcclosure(L, node_out, 2);
 	lua_setglobal(L, "outputPort");
 
 	lua_pushcfunction(L, node_help);
@@ -61,8 +62,25 @@ int vufMayaLuaPorts::node_in(lua_State* L)// syntax rule    maya_node.attribute,
 	const char* l_obj_name_ptr	= luaL_checkstring(L, -2);
 	const char* l_var_name_ptr	= luaL_checkstring(L, -1);
 	
+	
+
+
 	if (l_obj_name_ptr != nullptr && l_var_name_ptr != nullptr)
 	{
+		// Check is variable name empty
+		if (!isalpha(l_var_name_ptr[0]))
+		{
+			VF_LOG_ERR((std::string("This variable hasd to start by letter: ") + l_var_name_ptr));
+			return luaL_error(L, "This variable hasd to start by letter");
+
+		}
+		// Check if variable with this name already exists
+		if (l_data->m_var_names.find(l_var_name_ptr) != l_data->m_var_names.end())
+		{
+			VF_LOG_ERR((std::string("This variable already exists: ") + l_var_name_ptr));
+			return luaL_error(L, "This variable already exists");
+		}
+
 		MStatus l_status;
 		std::vector<std::string> l_splited_v = vuf::vufStringUtils::string_split_by(l_obj_name_ptr,".");
 		if (l_splited_v.size() < 2)
@@ -81,6 +99,8 @@ int vufMayaLuaPorts::node_in(lua_State* L)// syntax rule    maya_node.attribute,
 			return luaL_error(L, "Cant find plug");
 		}
 		
+		
+
 		// If could be connected to time
 		if (vufMayaUtils::is_plug_connectable_to_time(l_plug) == true)
 		{
@@ -109,17 +129,17 @@ int vufMayaLuaPorts::node_in(lua_State* L)// syntax rule    maya_node.attribute,
 		// If could be connected to Mesh
 		if (vufMayaUtils::is_plug_connectable_to_mesh(l_plug) == true)
 		{
-			VF_LUA_CONNECT_IN_COMMAND_AND_RETURN(l_data->m_in_mesh_port, "inMesh", MObject);
+			VF_LUA_CONNECT_IN_COMMAND_AND_RETURN(l_data->m_in_mesh_port, "inMesh", MFnMesh);
 		}
 		// If could be connected to Curve
 		if (vufMayaUtils::is_plug_connectable_to_curve(l_plug) == true)
 		{
-			VF_LUA_CONNECT_IN_COMMAND_AND_RETURN(l_data->m_in_curve_port, "inCurve", MObject);
+			VF_LUA_CONNECT_IN_COMMAND_AND_RETURN(l_data->m_in_curve_port, "inCurve", MFnNurbsCurve);
 		}
 		// If could be connected to Surface 
 		if (vufMayaUtils::is_plug_connectable_to_surface(l_plug) == true)
 		{
-			VF_LUA_CONNECT_IN_COMMAND_AND_RETURN(l_data->m_in_srv_port, "inSurface", MObject);
+			VF_LUA_CONNECT_IN_COMMAND_AND_RETURN(l_data->m_in_surf_port, "inSurface", MFnNurbsSurface);
 		}
 
 		
@@ -138,6 +158,20 @@ int vufMayaLuaPorts::node_out(lua_State* L)// syntax rule    var_name, maya_node
 
 	if (l_obj_name_ptr != nullptr && l_var_name_ptr != nullptr)
 	{
+		// Check is variable name empty
+		if (!isalpha(l_var_name_ptr[0]))
+		{
+			VF_LOG_ERR((std::string("This variable hasd to start by letter: ") + l_var_name_ptr));
+			return luaL_error(L, "This variable hasd to start by letter");
+
+		}
+		// Check if varible with this name already exists
+		if (l_data->m_var_names.find(l_var_name_ptr) != l_data->m_var_names.end())
+		{
+			VF_LOG_ERR((std::string("This variable already exists: ") + l_var_name_ptr));
+			return luaL_error(L, "This variable already exists");
+		}
+
 		MStatus l_status;
 		std::vector<std::string> l_splited_v = vuf::vufStringUtils::string_split_by(l_obj_name_ptr, ".");
 		if (l_splited_v.size() < 2)
@@ -155,7 +189,7 @@ int vufMayaLuaPorts::node_out(lua_State* L)// syntax rule    var_name, maya_node
 		{
 			return luaL_error(L, "Cant find plug");
 		}
-
+		
 		// If could be connected to number
 		if (vufMayaUtils::is_plug_connectable_to_number(l_plug) == true)
 		{
@@ -169,6 +203,7 @@ int vufMayaLuaPorts::node_out(lua_State* L)// syntax rule    var_name, maya_node
 			l_cmd += "',f = True)";
 
 			VF_LOG_INFO(l_cmd);
+			
 			l_status = MGlobal::executePythonCommand(vufMayaUtils::str_2_mstr(l_cmd));
 			if (l_status != MS::kSuccess)
 			{

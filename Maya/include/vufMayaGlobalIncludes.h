@@ -71,7 +71,7 @@ namespace vufRM
 //---------------------------------------------------------------------------------
 // conversion macroces
 //---------------------------------------------------------------------------------
-#define VF_TP_FROM_MAYA_MATRIX_TO_VUFMATRIX_4X4( VUF_MATR, MAYA_MATR ) \
+#define VF_RM_FROM_MAYA_MATRIX_TO_VUFMATRIX_4X4( VUF_MATR, MAYA_MATR ) \
 	std::memcpy( (void*)&VUF_MATR, (void*)&MAYA_MATR, 16*sizeof(double));
 
 //---------------------------------------------------------------------------------
@@ -91,6 +91,13 @@ std::ostream& operator,(std::ostream& out, const T& t)
 }
 std::ostream& operator,(std::ostream& out, std::ostream& (*f)(std::ostream&));
 
+//---------------------------------------------------------------------------------
+// Serialization macroses
+//---------------------------------------------------------------------------------
+#define VF_READ_SERIALIZED_FROM_ASCII(VAR_NAME,TYPE)													\
+	l_str = p_args.asString(p_last_element++, &l_status); CHECK_MSTATUS_AND_RETURN_IT(l_status);		\
+	l_bytes_vector = txtSerializer::to_bytes(l_str.asChar());											\
+	VAR_NAME = txtSerializer::convert_bytes_to_value<TYPE>(l_bytes_vector);
 
 
 #endif // !VF_TP_GLBL_INCLDS_H

@@ -96,10 +96,11 @@ namespace vufRM
 		virtual ~vufData() {};
 		enum
 		{
-			k_absent_data,
-			k_txt_data,
-			k_test_data,
-			k_curve_data
+			k_absent_data = 0,
+			k_lua_port_data,
+			k_lua_script_data,
+			k_curve_data,
+			k_test_data
 		};
 		void		set_owner_id(uint64_t p_new_owner_id)	{ m_owner_node_id = p_new_owner_id; }
 		uint64_t	get_owner_id() const					{ return m_owner_node_id; }
@@ -141,7 +142,7 @@ namespace vufRM
 	};
 	using mpxTestWrapper = vufDataTemplate<vufDataTest>;
 
-	// methods to manipulate with custom data
+	// methods to manipulate with custom data from command
 	template<typename CLASS_WRAPPER, typename CLASS_NAME, typename INNER_CLASS_NAME>
 	std::shared_ptr<INNER_CLASS_NAME> get_inner_data(MFnDependencyNode& p_node,MObject& p_attr)
 	{

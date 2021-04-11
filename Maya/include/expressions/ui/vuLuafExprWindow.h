@@ -4,6 +4,7 @@
 #include <QtWidgets/QMainWindow>
 //#include <highlighter.h>
 #include <QtWidgets/QShortcut>
+#include <QtWidgets/qaction.h>
 #include <QtCore/QSettings>
 #include <QtWidgets/QPlainTextEdit>
 #include <maya/MString.h>
@@ -30,6 +31,10 @@ namespace vufRM
 		explicit vufLuaExprWindow(QWidget* parent = 0);
 		~vufLuaExprWindow();
 		// void openWith(QString);
+	private:
+		void create_actions();
+		void create_menus();
+	public:
 		void refresh_expression_nodes(); // get list of expression nodes from maya
 		void refresh_explorer();
 		void text_changed(const QString& p_text , const vufLuaTextEditor* p_text_editor_ptr); //called when any script changed
@@ -42,6 +47,7 @@ namespace vufRM
 		std::string lua_connection_eval(std::string& expression_node_name, const std::string& p_lua_script, std::shared_ptr<vufMayaLuaPortInternalData > p_data);
 	public slots:
 		void selection_changed();
+		void refresh_editor();
 	private:
 		struct vufExpresionPair
 		{
@@ -67,6 +73,13 @@ namespace vufRM
 		vufLuaTextEditor*	m_port_editor_ptr		= nullptr;
 		vufLuaTextEditor*	m_script_editor_ptr		= nullptr;
 		QListWidget*		m_lua_nodes_explorer	= nullptr;
+	
+	private:
+		QAction* m_action_refresh_window = nullptr;
+
+		QMenuBar	*m_menu_bar = nullptr;
+		QMenu		*m_main_mau = nullptr;
+
 	};
 }
 

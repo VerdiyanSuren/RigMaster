@@ -3,19 +3,22 @@
 
 #include <vector>
 #include <string>
+#include <set>
 #include <vufLuaWrapper.h>
 #include <maya/MVector.h>
 #include <maya/MMatrix.h>
-#include <maya/MObject.h>
+#include <maya/MFnMesh.h>
+#include <maya/MFnNurbsCurve.h>
+#include <maya/MFnNurbsSurface.h>
 
 namespace vufRM
 {
 	template<typename T>
 	struct vufLuaExpressionPort
 	{
-		std::string		m_lua_var_name;
-		uint16_t		m_index;
-		T				m_data;
+		std::string		m_lua_var_name	= "";
+		uint16_t		m_index			= 0;;
+		T*				m_data			= nullptr;
 	};
 	class vufMayaLuaPortInternalData
 	{
@@ -32,25 +35,29 @@ namespace vufRM
 			m_in_matrix_port.clear();
 			m_in_mesh_port.clear();
 			m_in_curve_port.clear();
-			m_in_srv_port.clear();
+			m_in_surf_port.clear();
 
 			m_out_double_port.clear();
+
+			m_var_names.clear();
 		}
 		//input ports
-		std::vector< vufLuaExpressionPort<double>>	m_in_time_port;
-		std::vector< vufLuaExpressionPort<double>>	m_in_double_port;
-		std::vector< vufLuaExpressionPort<MVector>> m_in_vector_port;
-		std::vector< vufLuaExpressionPort<double>>	m_in_angle_port;
-		std::vector< vufLuaExpressionPort<MMatrix>>	m_in_matrix_port;
-		std::vector< vufLuaExpressionPort<MObject>>	m_in_mesh_port;
-		std::vector< vufLuaExpressionPort<MObject>>	m_in_curve_port;
-		std::vector< vufLuaExpressionPort<MObject>>	m_in_srv_port;
+		std::vector< vufLuaExpressionPort<double>>			m_in_time_port;
+		std::vector< vufLuaExpressionPort<double>>			m_in_double_port;
+		std::vector< vufLuaExpressionPort<MVector>>			m_in_vector_port;
+		std::vector< vufLuaExpressionPort<double>>			m_in_angle_port;
+		std::vector< vufLuaExpressionPort<MMatrix>>			m_in_matrix_port;
+		std::vector< vufLuaExpressionPort<MFnMesh>>			m_in_mesh_port;
+		std::vector< vufLuaExpressionPort<MFnNurbsCurve>>	m_in_curve_port;
+		std::vector< vufLuaExpressionPort<MFnNurbsSurface>>	m_in_surf_port;
 
 		//output_ports
 		std::vector< vufLuaExpressionPort<double>>	m_out_double_port;
 		//std::vector< vufLuaExpressionPort<MVector>> m_out_vector_port;
 		//std::vector< vufLuaExpressionPort<double>	m_out_angle_port;
 
+		std::set<std::string> m_var_names;
+		bool m_need_lua_reset = true; // reset lua machine in exprerssion node
 		vuf::vufTxt	m_lua_txt;
 		uint64_t	m_hash;
 	};

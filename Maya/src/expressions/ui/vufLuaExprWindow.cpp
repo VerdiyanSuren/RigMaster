@@ -2,6 +2,7 @@
 #include <expressions/ui/vufLuaTextEditor.h>
 #include <QtWidgets/qsplitter.h>
 #include <QtWidgets/qlayout.h>
+#include <QtWidgets/qmenubar.h>
 #include <QtWidgets/qpushbutton.h>
 #include <maya/MItDependencyNodes.h>
 #include <maya/MFnDependencyNode.h>
@@ -36,10 +37,12 @@ vufLuaExprWindow::vufLuaExprWindow(QWidget* parent) : QMainWindow(parent)
 	l_horizontal_splitter->addWidget(m_lua_nodes_explorer);
 	l_horizontal_splitter->addWidget(l_vertical_splitter);
 	
+	create_actions();
+	create_menus();
 	setCentralWidget(l_horizontal_splitter);
 
 	connect(m_lua_nodes_explorer, SIGNAL(itemSelectionChanged()),this, SLOT(selection_changed()));
-	
+
 	refresh_expression_nodes();
 	refresh_explorer();
 }
@@ -47,6 +50,20 @@ vufLuaExprWindow::~vufLuaExprWindow()
 {
 
 }
+void vufLuaExprWindow::create_actions()
+{
+	m_action_refresh_window = new QAction(tr("refresh"), this);
+	m_action_refresh_window->setStatusTip(tr("refresh list of nodes and expressions."));
+
+	connect(m_action_refresh_window, &QAction::triggered, this, &vufLuaExprWindow::refresh_editor);
+
+}
+void vufLuaExprWindow::create_menus()
+{
+	m_main_mau = menuBar()->addMenu("&Main");
+	m_main_mau->addAction(m_action_refresh_window);
+}
+
 void vufLuaExprWindow::refresh_expression_nodes()
 {
 	MStatus l_status;
@@ -80,8 +97,10 @@ void vufLuaExprWindow::refresh_expression_nodes()
 void		vufLuaExprWindow::refresh_explorer()
 {
 	std::string l_selected_node_name = get_selected_item_name();
-
+	m_lua_nodes_explorer->blockSignals(true);
 	m_lua_nodes_explorer->clear();
+	m_lua_nodes_explorer->blockSignals(false);
+
 	if (m_expression_nodes_names.size() == 0)
 	{
 		return;
@@ -149,7 +168,7 @@ void		vufLuaExprWindow::port_text_changed()
 
 
 
-	l_port_in_data->m_lua_txt.set_txt(vufMayaUtils::qstr_2_str(l_txt));
+	l_port_in_data->m_lua_txt.set_script(vufMayaUtils::qstr_2_str(l_txt));
 	//VF_LOG_INFO(vufMayaUtils::qstr_2_str(l_txt));
 
 	// demand 
@@ -187,7 +206,6 @@ std::string vufLuaExprWindow::lua_connection_eval(std::string& expression_node_n
 	lua_close(L);
 	return std::string();
 }
-
 void vufLuaExprWindow::selection_changed()
 {
 	auto l_items_list = m_lua_nodes_explorer->selectedItems();
@@ -250,3 +268,9 @@ void vufLuaExprWindow::selection_changed()
 	m_port_editor_ptr->setPlainText(l_port_txt);
 	m_script_editor_ptr->setPlainText(l_script_txt);
 }
+void vufLuaExprWindow::refresh_editor()
+{
+	refresh_expression_nodes();
+	refresh_explorer();
+}
+

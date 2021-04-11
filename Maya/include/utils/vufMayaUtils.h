@@ -41,6 +41,7 @@ namespace vufRM
 		static std::wstring		qstr_2_wstr(const QString& p_qstr);
 		static std::string		qstr_2_str(const QString& p_qstr);
 
+		//  serialization
 
 	};
 }

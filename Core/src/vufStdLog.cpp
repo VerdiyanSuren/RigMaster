@@ -1,5 +1,5 @@
 #include <vufLog.h>
-#include <Utils/vufStringUtils.h>
+#include <coreUtils/vufStringUtils.h>
 #include <iostream>
 
 using namespace vuf;

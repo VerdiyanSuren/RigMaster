@@ -27,6 +27,7 @@ filter { "system:windows" }
 filter {"system:windows","configurations:Debug" }
 	symbols 		"On" 
 	staticruntime 	"On"	
+	defines 		"DEBUG"
 		
 filter { "system:windows", "configurations:Release" }
 	staticruntime 	"On"
@@ -119,11 +120,7 @@ project "Lua"
 	defines
 	{
 		"LUA_BUILD_AS_DLL"
-	}
-	filter { "system:windows", "configurations:Release" }
-		buildoptions 	"/MD"
-		staticruntime 	"off"
-	
+	}	
 	postbuildcommands
 	{
 		("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/LuaWrapper"),
@@ -131,6 +128,10 @@ project "Lua"
 		("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/Math"),
 		("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/Maya")
 	}
+	
+	filter { "system:windows", "configurations:Release" }
+		buildoptions 	"/MD"
+		staticruntime 	"off"
 --------------------------------------------------------------------------------------------	
 -- 										Project LUA WRAPPER
 --------------------------------------------------------------------------------------------

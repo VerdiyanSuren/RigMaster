@@ -38,7 +38,7 @@ MStatus	vufMayaLuaPortNode::initialize()
 	g_port_attr = l_typed_attr_fn.create("port", "prt", mpxMayaLuaPortWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
-	l_typed_attr_fn.setWritable(false);
+	l_typed_attr_fn.setWritable(true);
 
 	// Add Attributes
 	l_status = addAttribute(g_demand_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);

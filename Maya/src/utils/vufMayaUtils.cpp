@@ -283,7 +283,11 @@ std::string			vufMayaUtils::mstr_2_str(const MString& p_mstr)
 }
 QString				vufMayaUtils::mstr_2_qstr(const MString& p_mstr)
 {
+#if DEBUG
 	return QString::fromStdWString( p_mstr.asWChar());
+#else
+	return  QString::fromUtf16((const ushort*)p_mstr.asWChar());
+#endif
 }
 
 std::string			vufMayaUtils::wstr_2_str(const std::wstring& p_wstr)
@@ -303,25 +307,42 @@ std::wstring		vufMayaUtils::str_2_wstr(const std::string& p_str)
 {
 	return vuf::vufStringUtils::string_to_wstring(p_str);
 }
-MString			vufMayaUtils::str_2_mstr(const std::string& p_str)
+MString				vufMayaUtils::str_2_mstr(const std::string& p_str)
 {
 	return MString(p_str.c_str());
 }
-QString			vufMayaUtils::str_2_qstr(const std::string& p_str)
+QString				vufMayaUtils::str_2_qstr(const std::string& p_str)
 {
+#if DEBUG
+	return QString(p_str.c_str());
+#else
 	return QString::fromStdString(p_str);
+#endif
 }
 
 MString			vufMayaUtils::qstr_2_mstr(const QString& p_qstr)
 {
+#if DEBUG
+	return  MString((wchar_t*)p_qstr.unicode(), p_qstr.length());
+#else
 	return MString(wstr_2_mstr( p_qstr.toStdWString() ));
+#endif
 }
 std::wstring	vufMayaUtils::qstr_2_wstr(const QString& p_qstr)
 {
+#if DEBUG
+	return  std::wstring((wchar_t*)p_qstr.unicode(), p_qstr.length());
+#else
 	return p_qstr.toStdWString();
+#endif
 }
 std::string		vufMayaUtils::qstr_2_str(const QString& p_qstr)
 {
+#if DEBUG
+	return  std::string(p_qstr.toUtf8().constData());
+#else
 	return p_qstr.toStdString();
+#endif
+
 }
 

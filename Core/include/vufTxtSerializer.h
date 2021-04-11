@@ -10,17 +10,20 @@
 This class designed to compact writing/reading to/from txt format.
 You should do 2 thinks before use this class in your application
 1. Define static variables by macro
-	VF_TXT_WRITER_DEFIEN_STATIC_VARS();
-2. Call init method. It's not critiacal if your call init more than one time
+	VF_TXT_WRITER_DEFINE_STATIC_VARS();
+2. Call init method. It's not critical if your call init more than one time
 	vuf::txtSerializer::init();
 3. Call release when finish working with serializer
 	vuf::txtSerializer::release();
 
 How to use. Examples
-	double l_dbl = 0.122132;
-	auto l_txt_vector = txtSerializer::to_chars(&l_dbl,sizeof(l_dbl));
-	auto l_string_txt = txtSerializer::to_chars_string(&l_dbl,sizeof(l_dbl));
 
+	//write
+	double l_dbl = 0.122132;
+	auto l_txt_vector = vuf::txtSerializer::to_chars(&l_dbl,sizeof(l_dbl));
+	auto l_string_txt = vuf::txtSerializer::to_chars_string(&l_dbl,sizeof(l_dbl));
+
+	//read
 	auto l_bytes_vector = txtSerializer::to_bytes(l_string_txt);
 	double l_read_dbl = txtSerializer::convert_bytes_to_value<double>(l_bytes_vector);
 	
@@ -62,13 +65,14 @@ namespace vuf
 			g_byte_to_char_v.clear();
 		}
 		// binary -> ASCII(encoded)
-		static std::vector<unsigned char>	to_chars(const unsigned char* p_bytes_ptr, uint64_t p_size)
+		static std::vector<unsigned char>	to_chars(const void* p_bytes_ptr, uint64_t p_size)
 		{
+			const unsigned char* l_p_bytes_ptr = (unsigned char*)p_bytes_ptr;
 			std::vector<unsigned char> l_res;
 			l_res.resize(p_size * 2);
 			for (uint64_t i = 0; i < p_size; ++i)
 			{
-				uint16_t l_value = g_byte_to_char_v[p_bytes_ptr[i]];
+				uint16_t l_value = g_byte_to_char_v[l_p_bytes_ptr[i]];
 				uint16_t l_hi = l_value & 0xff00;
 				l_hi = l_hi >> 8;
 				uint16_t l_low = l_value & 0xff;
@@ -95,7 +99,7 @@ namespace vuf
 		}
 		
 		
-		static std::string					to_chars_string(const unsigned char* p_bytes_ptr, uint64_t p_size)
+		static std::string					to_chars_string(const void* p_bytes_ptr, uint64_t p_size)
 		{
 			auto l_res = to_chars(p_bytes_ptr, p_size);
 			return std::string((const char*)l_res.data(), l_res.size());
@@ -109,9 +113,9 @@ namespace vuf
 		}
 		static std::string					to_chars_string(const std::string& p_str)
 		{
-			uint64_t l_sz = p_str.length();
+			uint64_t l_sz	= p_str.length();
 			auto l_sz_v		= to_chars_string((const unsigned char*)&l_sz, sizeof(l_sz));
-			auto l_string	=  to_chars_string((const unsigned char*)p_str.c_str(), p_str.length());
+			auto l_string	= to_chars_string((const unsigned char*)p_str.c_str(), p_str.length());
 			return l_sz_v + l_string;
 		}
 
@@ -138,7 +142,7 @@ namespace vuf
 
 		// Convertors
 		template<typename T>
-		T convert_bytes_to_value(const std::vector<unsigned char>& p_bytes, uint64_t* p_offset_ptr = nullptr)
+		static T convert_bytes_to_value(const std::vector<unsigned char>& p_bytes, uint64_t* p_offset_ptr = nullptr)
 		{
 			uint64_t l_offset = 0;
 			if (p_offset_ptr != nullptr) l_offset = *p_offset_ptr; 
@@ -148,7 +152,7 @@ namespace vuf
 		}
 		
 		template<>
-		std::string convert_bytes_to_value<std::string>(const std::vector<unsigned char>& p_bytes, uint64_t* p_offset_ptr)
+		static std::string convert_bytes_to_value<std::string>(const std::vector<unsigned char>& p_bytes, uint64_t* p_offset_ptr)
 		{
 			uint64_t l_offset = 0;
 			if (p_offset_ptr != nullptr) l_offset = *p_offset_ptr;

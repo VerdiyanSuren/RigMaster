@@ -1,6 +1,7 @@
 #include <vufLog.h>
 #include <coreUtils/vufStringUtils.h>
 #include <coreUtils/vufFileUtils.h>
+#include <vufTxtSerializer.h>
 #include <iostream>
 
 extern "C"
@@ -8,13 +9,23 @@ extern "C"
 #include "lua.h"
 
 }
-
+VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables
 VF_LOG_DEFINE_STD_LOGGER();
 
 using namespace vuf;
 
 int main()
 {
+	vuf::txtSerializer::init();
+	double l_dbl = 0.122132;
+	auto l_txt_vector = txtSerializer::to_chars(&l_dbl, sizeof(l_dbl));
+	auto l_string_txt = txtSerializer::to_chars_string(&l_dbl, sizeof(l_dbl));
+
+	auto l_str_decode = txtSerializer::to_chars_string("Протестим вывод информации");
+	auto l_str_encode = txtSerializer::to_chars_string("Протестим вывод информации");
+
+	vufLog::g_log->info(txtSerializer::to_chars_string(l_str_decode), __FILE__, __LINE__);
+
 	setlocale(LC_ALL, "");
 	vufLog::g_log->info("Протестим вывод информации", __FILE__, __LINE__);
 	vufLog::g_log->warning("Протестим вывод предупреждения", __FILE__, __LINE__);

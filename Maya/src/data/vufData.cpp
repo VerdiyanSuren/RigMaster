@@ -7,7 +7,8 @@
 using namespace vufRM;
 std::shared_ptr<vufData> vufData::create_data(int p_type)
 {
-	if (p_type == k_txt_data)	return std::shared_ptr<vufMayaLuaTxtData>(new vufMayaLuaTxtData());
+	if (p_type == k_lua_port_data)		return std::shared_ptr<vufMayaLuaPortData>(new vufMayaLuaPortData());
+	if (p_type == k_lua_script_data)	return std::shared_ptr<vufMayaLuaTxtData>(new vufMayaLuaTxtData());
 	//if (p_type == k_curve_data) return std::shared_ptr<vufCurveContainerData_4d>(new vufCurveContainerData_4d());
 
 	return nullptr;

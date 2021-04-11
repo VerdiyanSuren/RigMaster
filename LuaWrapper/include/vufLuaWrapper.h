@@ -21,7 +21,7 @@ namespace vuf
 	class VF_API vufTxt
 	{
 	public:
-		void set_txt(const VF_STRING& p_str)
+		void set_script(const std::string& p_str)
 		{
 			if (p_str != m_script)
 			{
@@ -30,12 +30,12 @@ namespace vuf
 			}
 		}
 		uint64_t get_hash() const { return m_hash; }
-		const VF_STRING& get_script() const
+		const std::string& get_script() const
 		{
 			return m_script;
 		}
 	private:
-		VF_STRING	m_script	= "";
+		std::string	m_script	= "";
 		uint64_t	m_hash		= 0;
 	};
 
@@ -71,7 +71,7 @@ namespace vuf
 
 		void add_script(const VF_STRING& p_str)
 		{
-			m_script.set_txt(p_str);
+			m_script.set_script(p_str);
 		}
 
 

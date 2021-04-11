@@ -169,7 +169,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include;..\Lua\src;..\Math\include;C:\local\boost_1_69_0_vs_14_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -187,7 +187,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include;..\Lua\src;..\Math\include;C:\local\boost_1_69_0_vs_14_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -210,7 +210,7 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include;..\Lua\src;..\Math\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -225,7 +225,7 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include;..\Lua\src;..\Math\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
