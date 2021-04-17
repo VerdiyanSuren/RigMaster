@@ -1,10 +1,13 @@
 #include <data/vufMayaDataList.h>
 #include <vufTxtSerializer.h>
+#include <vufMayaGlobalIncludes.h>
+#include <utils/vufMayaUtils.h>
 #include <vufLuaWrapper.h>
 #include <maya/MGlobal.h>
 
 
 using namespace vufRM;
+
  
 vufMayaLuaTxtData::vufMayaLuaTxtData()
 {
@@ -15,14 +18,21 @@ MStatus 	vufMayaLuaTxtData::readASCII(const MArgList& p_args, unsigned int& p_la
 {
 	MStatus l_status;
 	m_internal_data = std::shared_ptr<vuf::vufTxt>(new vuf::vufTxt());
-	MString l_str	= p_args.asString(p_last_element++, &l_status);
-	if (l_status != MS::kSuccess)
+	
+	// read version
+	uint32_t l_version = 1;
+	VF_READ_SERIALIZED_FROM_ASCII(l_version, uint32_t);
+
+	if (l_version == 1)
 	{
-		MGlobal::displayError("Failed to read Lua script");
-		return MS::kFailure;
+		// read script
+		std::string l_script;
+		VF_READ_SERIALIZED_FROM_ASCII(l_script, std::string);
+		m_internal_data->set_script(l_script);
+		return MS::kSuccess;
 	}
-	m_internal_data->set_script(l_str.asChar());
-	return MS::kSuccess;
+	VF_LOG_ERR("Unknown version for vufMayaLuaTxtData");
+	return MS::kFailure;
 }
 MStatus 	vufMayaLuaTxtData::readBinary(std::istream& p_in, unsigned int	p_length)
 {
@@ -32,17 +42,16 @@ MStatus 	vufMayaLuaTxtData::readBinary(std::istream& p_in, unsigned int	p_length
 	return MS::kSuccess;
 }
 MStatus 	vufMayaLuaTxtData::writeASCII(std::ostream& p_out)
-{
-	
+{	
 	if (m_internal_data != nullptr)
 	{
-		auto l_text = m_internal_data->get_script();
-		if (l_text.empty() == false)
-		{
-			auto l_converted = vuf::txtSerializer::to_chars_string(l_text);
-			p_out << l_converted << " ";
-			return MS::kSuccess;
-		}
+		std::string l_str;
+		// data version
+		uint32_t l_version = 1;
+		p_out << vuf::txtSerializer::to_chars_string(&l_version, sizeof(l_version)) << " ";
+
+		p_out << vuf::txtSerializer::to_chars_string(m_internal_data->get_script()) << std::endl;
+		return MS::kSuccess;
 	}
 	
 	return MS::kSuccess;

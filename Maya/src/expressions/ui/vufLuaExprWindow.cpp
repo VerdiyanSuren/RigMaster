@@ -123,19 +123,6 @@ void		vufLuaExprWindow::refresh_explorer()
 }
 void		vufLuaExprWindow::text_changed(const QString& p_text, const vufLuaTextEditor* p_text_editor_ptr)
 {	
-	if (p_text_editor_ptr == m_port_editor_ptr)
-	{
-		port_text_changed();
-		return;
-	}
-	if (p_text_editor_ptr == m_script_editor_ptr)
-	{
-
-	}
-}
-void		vufLuaExprWindow::port_text_changed()
-{
-	MStatus l_status;
 	// Get selected expression node from explorer 
 	auto l_items_list = m_lua_nodes_explorer->selectedItems();
 	if (l_items_list.size() == 0)
@@ -144,10 +131,24 @@ void		vufLuaExprWindow::port_text_changed()
 		return;
 	}
 	std::string l_expr_node_name = vufMayaUtils::qstr_2_str(l_items_list.first()->text());
+
+	if (p_text_editor_ptr == m_port_editor_ptr)
+	{
+		port_text_changed(l_expr_node_name);
+		return;
+	}
+	if (p_text_editor_ptr == m_script_editor_ptr)
+	{
+		script_changed(l_expr_node_name);
+	}
+}
+void		vufLuaExprWindow::port_text_changed(const std::string& p_expr_node_name)
+{
+	MStatus l_status;
 	QString l_txt = m_port_editor_ptr->toPlainText();
 	
 	// Get_port node 
-	MString l_port_node_name = vufMayaUtils::str_2_mstr(m_expression_nodes_map[l_expr_node_name].m_port_node_name);
+	MString l_port_node_name = vufMayaUtils::str_2_mstr(m_expression_nodes_map[p_expr_node_name].m_port_node_name);
 	MObject l_port_obj = vufMayaUtils::get_object_by_name(l_port_node_name);
 	if (l_port_obj.isNull() == true)
 	{
@@ -158,12 +159,12 @@ void		vufLuaExprWindow::port_text_changed()
 	std::shared_ptr<vufMayaLuaPortInternalData > l_port_in_data = get_inner_data<mpxMayaLuaPortWrapper, vufMayaLuaPortData, vufMayaLuaPortInternalData>(l_port_node, vufMayaLuaPortNode::g_port_attr);
 	if (l_port_in_data == nullptr)
 	{
-		VF_LOG_ERR("internal script object is absent");
+		VF_LOG_ERR("internal port script object is absent");
 		return;
 	}
 	std::string l_script = vufMayaUtils::qstr_2_str(l_txt);
 	//lua machine to connect nodes
-	std::string l_string_to_python = lua_connection_eval(l_expr_node_name, l_script, l_port_in_data);
+	std::string l_string_to_python = lua_connection_eval(p_expr_node_name, l_script, l_port_in_data);
 	// eval puthon script to connect nodes
 
 
@@ -172,7 +173,39 @@ void		vufLuaExprWindow::port_text_changed()
 	//VF_LOG_INFO(vufMayaUtils::qstr_2_str(l_txt));
 
 	// demand 
-	MPlug l_demand_plug = l_port_node.findPlug(vufMayaLuaTxtNode::g_demand_attr, true, &l_status);
+	MPlug l_demand_plug = l_port_node.findPlug(vufMayaLuaPortNode::g_demand_attr, true, &l_status);
+	double l_val;
+	l_demand_plug.getValue(l_val);
+	l_val = l_val != .0 ? .0 : 1;
+	l_demand_plug.setValue(l_val);
+
+}
+void		vufLuaExprWindow::script_changed(const std::string& p_expr_node_name)
+{
+	MStatus l_status;
+	QString l_txt = m_script_editor_ptr->toPlainText();
+
+	// Get script node 
+	MString l_script_node_name = vufMayaUtils::str_2_mstr(m_expression_nodes_map[p_expr_node_name].m_script_node_name);
+	MObject l_script_obj = vufMayaUtils::get_object_by_name(l_script_node_name);
+	if (l_script_obj.isNull() == true)
+	{
+		VF_LOG_ERR("script object is absent");
+		return;
+	}
+	MFnDependencyNode l_script_node(l_script_obj, &l_status);
+	std::shared_ptr<vuf::vufTxt > l_script_in_data = get_inner_data<mpxMayaLuaTxtWrapper, vufMayaLuaTxtData, vuf::vufTxt>(l_script_node, vufMayaLuaTxtNode::g_expression_attr);
+	if (l_script_in_data == nullptr)
+	{
+		VF_LOG_ERR("internal script object is absent");
+		return;
+	}
+	
+	//set script
+	l_script_in_data->set_script(vufMayaUtils::qstr_2_str(l_txt));
+
+	// demand 
+	MPlug l_demand_plug = l_script_node.findPlug(vufMayaLuaTxtNode::g_demand_attr, true, &l_status);
 	double l_val;
 	l_demand_plug.getValue(l_val);
 	l_val = l_val != .0 ? .0 : 1;
@@ -190,7 +223,7 @@ std::string vufLuaExprWindow::get_selected_item_name() const
 	return std::string();
 }
 
-std::string vufLuaExprWindow::lua_connection_eval(std::string& expression_node_name, const std::string& p_lua_script, std::shared_ptr<vufMayaLuaPortInternalData > p_data)
+std::string vufLuaExprWindow::lua_connection_eval(const std::string& expression_node_name, const std::string& p_lua_script, std::shared_ptr<vufMayaLuaPortInternalData > p_data)
 {
 	std::string l_node_name = expression_node_name;
 	p_data->clear_ports();

@@ -39,12 +39,13 @@ namespace vufRM
 		void refresh_explorer();
 		void text_changed(const QString& p_text , const vufLuaTextEditor* p_text_editor_ptr); //called when any script changed
 	private:
-		void port_text_changed(); // called when port script edited
+		void port_text_changed(	const std::string& p_expression_node);	// called when port script edited
+		void script_changed(	const std::string& p_expression_node);	// called when script edited
 		//void script_text_changed();
 
 		std::string get_selected_item_name() const; // name of selected item in explorer
 		//bool set_item_selected(const std::string&);
-		std::string lua_connection_eval(std::string& expression_node_name, const std::string& p_lua_script, std::shared_ptr<vufMayaLuaPortInternalData > p_data);
+		std::string lua_connection_eval(const std::string& expression_node_name, const std::string& p_lua_script, std::shared_ptr<vufMayaLuaPortInternalData > p_data);
 	public slots:
 		void selection_changed();
 		void refresh_editor();

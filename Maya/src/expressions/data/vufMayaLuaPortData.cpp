@@ -16,15 +16,10 @@ vufMayaLuaPortData::~vufMayaLuaPortData()
 MStatus 	vufMayaLuaPortData::readASCII(const MArgList& p_args, unsigned int& p_last_element)
 {
 	MStatus l_status;
-	std::cout << "vufMayaLuaPortData read ascII" << std::endl;
-	VF_LOG_INFO("TRY TO LOAD DATA");
-
 	m_internal_data = std::shared_ptr<vufMayaLuaPortInternalData>(new vufMayaLuaPortInternalData());
 	
 	// read version
 	uint32_t l_version = 1;
-	MString l_str;
-	std::vector<unsigned char> l_bytes_vector;
 	VF_READ_SERIALIZED_FROM_ASCII(l_version, uint32_t);
 
 	if (l_version == 1)
@@ -168,7 +163,6 @@ MStatus 	vufMayaLuaPortData::readASCII(const MArgList& p_args, unsigned int& p_l
 		return MS::kSuccess;
 	}
 	VF_LOG_ERR("Unknown version for vufMayaLuaPortData");
-
 	return MS::kFailure;
 }
 MStatus 	vufMayaLuaPortData::readBinary(std::istream& p_in, unsigned int	p_length)
@@ -180,8 +174,6 @@ MStatus 	vufMayaLuaPortData::readBinary(std::istream& p_in, unsigned int	p_lengt
 }
 MStatus 	vufMayaLuaPortData::writeASCII(std::ostream& p_out)
 {	
-	std::cout << "vufMayaLuaPortData write ascII" << std::endl;
-	VF_LOG_INFO("TRY TO SAVE DATA");
 	if (m_internal_data != nullptr)
 	{
 		std::string l_str;

@@ -12,10 +12,13 @@
     <ClInclude Include="include\vufLuaWrapper.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\vufQuaternionLua.h">
+    <ClInclude Include="include\vufLuaQuaternion.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\vufVectorLua.h">
+    <ClInclude Include="include\vufLuaVector4.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufLuaMatrix4.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

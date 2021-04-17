@@ -51,6 +51,14 @@
 	data_var = (l_wrapp_ptr == nullptr ? nullptr : l_wrapp_ptr->get_data());			\
 }																						\
 
+#define VF_RM_GET_INTERNAL_FROM_IN(WRAPPER_CLASS,INTERNAL_CLASS,data_block, attr, data_var)	\
+{																							\
+	MDataHandle		l_in_handle = data_block.inputValue(attr);								\
+	WRAPPER_CLASS*	l_wrapp_ptr = (WRAPPER_CLASS*)l_in_handle.asPluginData();				\
+	auto l_data_var = (l_wrapp_ptr == nullptr ? nullptr : l_wrapp_ptr->get_data());			\
+	data_var		= (l_data_var == nullptr) ? nullptr : l_data_var->m_internal_data;		\
+}																							\
+
 /**
 *  Try to set out data
 */

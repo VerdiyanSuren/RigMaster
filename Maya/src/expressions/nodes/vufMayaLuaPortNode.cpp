@@ -31,7 +31,7 @@ MStatus	vufMayaLuaPortNode::initialize()
 	MFnNumericAttribute		l_numeric_attr_fn;
 
 	// Demand numeric attribute
-	VF_TP_CREATE_STORABLE_NUMERIC_ATTR(g_demand_attr, "demand", "dmn", kDouble, 0.0);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_demand_attr, "demand", "dmn", kDouble, 0.0);
 	CHECK_MSTATUS(l_numeric_attr_fn.setHidden(true));
 
 	// Expression attribute

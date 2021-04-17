@@ -1,3 +1,7 @@
+// Delete this later
+// ThisIsSuren44 github password
+
+
 #include <vufLog.h>
 #include <coreUtils/vufStringUtils.h>
 #include <coreUtils/vufFileUtils.h>

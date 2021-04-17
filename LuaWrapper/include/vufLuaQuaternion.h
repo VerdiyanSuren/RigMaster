@@ -15,10 +15,10 @@ extern "C"
 namespace vuf
 {
 	template <typename T>
-	class vufQuaternion_4Lua
+	class vufLuaQuaternion_4
 	{
 	public:
-		static void register_vufQuaternion(lua_State* L)
+		static void registrator(lua_State* L)
 		{
 			VF_LUA_NEW_TABLE(L, "quat");
 			VF_LUA_ADD_TABLE_FIELD(L, "new",			quat_create);

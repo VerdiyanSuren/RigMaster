@@ -4,7 +4,7 @@
 using namespace vuf;
 using namespace vufRM;
 
-void vufLogMaya::info(const std::string& p_str, const char* p_file, int p_line)
+void vufLogMaya::info(		const std::string& p_str, const char* p_file, int p_line)
 {
 	MString l_str = vufMayaUtils::str_2_mstr(p_str);
 	if (p_line != -1)
@@ -19,7 +19,7 @@ void vufLogMaya::info(const std::string& p_str, const char* p_file, int p_line)
 	}
 	MGlobal::displayInfo(l_str);
 }
-void vufLogMaya::warning(const std::string& p_str, const char* p_file, int p_line)
+void vufLogMaya::warning(	const std::string& p_str, const char* p_file, int p_line)
 {
 	MString l_str = vufMayaUtils::str_2_mstr(p_str);
 	if (p_line != -1)
@@ -34,7 +34,7 @@ void vufLogMaya::warning(const std::string& p_str, const char* p_file, int p_lin
 	}
 	MGlobal::displayWarning(l_str);
 }
-void vufLogMaya::error(const std::string& p_str, const char* p_file, int p_line)
+void vufLogMaya::error(		const std::string& p_str, const char* p_file, int p_line)
 {
 	MString l_str = vufMayaUtils::str_2_mstr(p_str);
 	if (p_line != -1)
@@ -50,7 +50,7 @@ void vufLogMaya::error(const std::string& p_str, const char* p_file, int p_line)
 	MGlobal::displayError(l_str);
 }
 
-void vufLogMaya::info(const std::wstring& p_str, const char* p_file, int  p_line)
+void vufLogMaya::info(		const std::wstring& p_str, const char* p_file, int  p_line)
 {
 	MString l_str = vufMayaUtils::wstr_2_mstr(p_str);
 	if (p_line != -1)
@@ -65,7 +65,7 @@ void vufLogMaya::info(const std::wstring& p_str, const char* p_file, int  p_line
 	}
 	MGlobal::displayInfo(l_str);
 }
-void vufLogMaya::warning(const std::wstring& p_str, const char* p_file, int p_line)
+void vufLogMaya::warning(	const std::wstring& p_str, const char* p_file, int p_line)
 {
 	MString l_str = vufMayaUtils::wstr_2_mstr(p_str);
 	if (p_line != -1)
@@ -80,7 +80,7 @@ void vufLogMaya::warning(const std::wstring& p_str, const char* p_file, int p_li
 	}
 	MGlobal::displayWarning(l_str);
 }
-void vufLogMaya::error(const std::wstring& p_str, const char* p_file, int  p_line)
+void vufLogMaya::error(		const std::wstring& p_str, const char* p_file, int  p_line)
 {
 	MString l_str = vufMayaUtils::wstr_2_mstr(p_str);
 	if (p_line != -1)

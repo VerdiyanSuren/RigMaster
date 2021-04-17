@@ -3,16 +3,18 @@
 
 #include <maya/MPxNode.h>
 #include <vufLuaWrapper.h>
+#include <memory>
 
 namespace vufRM
 {
+	class vufMayaLuaPortInternalData;
 	class vufMayaLuaExpressionNode :public MPxNode
 	{
 	public:
 		vufMayaLuaExpressionNode();
 		virtual ~vufMayaLuaExpressionNode();
 
-		static  void*	creator();
+		static  void* creator();
 		static  MStatus	initialize();
 		virtual MStatus	compute(const MPlug& plug, MDataBlock& data) override;
 
@@ -37,11 +39,19 @@ namespace vufRM
 		static MObject	g_output_angle_attr;
 		static MObject	g_output_matrix_attr;
 
-
 	private:
-		uint64_t			m_script_hash		= 0;
-		uint64_t			m_scropt_port_hash	= 0;
+		bool set_lua_globals( MDataBlock& p_data, std::shared_ptr<vufMayaLuaPortInternalData> p_port_data);
+		bool set_maya_outputs(MDataBlock& p_data, std::shared_ptr<vufMayaLuaPortInternalData> p_port_data);
+	private:
+		uint64_t			m_script_hash = 0;
+		uint64_t			m_scropt_port_hash = 0;
 		vuf::luaWrapper		m_lua_machine;
+		
+		const char*		m_evaluation_script =
+		R"(
+		compute()
+		)";
+		
 	};
 }
 

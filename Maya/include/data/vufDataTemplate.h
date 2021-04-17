@@ -20,8 +20,7 @@ namespace vufRM
 
 		virtual MStatus 	readASCII(	const MArgList& p_args, unsigned int& p_last_element)	override
 		{
-			VF_LOG_INFO("READ MPXDATA");
-
+			//VF_LOG_INFO("READ MPXDATA");
 			MStatus l_status;
 			int l_type = p_args.asInt(p_last_element++, &l_status);
 			std::shared_ptr<T> l_data = nullptr;
@@ -62,7 +61,7 @@ namespace vufRM
 		}
 		virtual MStatus 	writeASCII(	std::ostream&	p_out)	override
 		{
-			VF_LOG_INFO("WRITE MPXDATA");
+			//VF_LOG_INFO("WRITE MPXDATA");
 			if (m_data == nullptr)
 			{
 				int l_absent_type = vufData::k_absent_data;

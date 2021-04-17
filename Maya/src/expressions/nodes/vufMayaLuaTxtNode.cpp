@@ -28,14 +28,14 @@ MStatus	vufMayaLuaTxtNode::initialize()
 	MFnNumericAttribute		l_numeric_attr_fn;
 
 	// Demand numeric attribute
-	VF_TP_CREATE_STORABLE_NUMERIC_ATTR(g_demand_attr, "demand", "dmn", kDouble, 0.0);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_demand_attr, "demand", "dmn", kDouble, 0.0);
 	CHECK_MSTATUS(l_numeric_attr_fn.setHidden(true));
 
 	// Expression attribute
 	g_expression_attr = l_typed_attr_fn.create("script", "scr", mpxMayaLuaTxtWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
-	l_typed_attr_fn.setWritable(false);
+	l_typed_attr_fn.setWritable(true);
 
 	// Add Attributes
 	l_status = addAttribute(g_demand_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);

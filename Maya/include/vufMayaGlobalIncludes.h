@@ -41,7 +41,7 @@ namespace vufRM
 // Attribete Creation macroces
 //---------------------------------------------------------------------------------
 // Lock Attribute
-#define VF_TP_CREATE_AND_ADD_LOCK_ATTR() \
+#define VF_RM_CREATE_AND_ADD_LOCK_ATTR() \
 	g_lock_attr =	l_numeric_attr_fn.create("lock", "lc", MFnNumericData::kBoolean, false, &l_status); \
 					CHECK_MSTATUS_AND_RETURN_IT(l_status);				\
 					CHECK_MSTATUS(l_numeric_attr_fn.setDefault(false)); \
@@ -51,7 +51,7 @@ namespace vufRM
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 // Pass Attribute 
-#define VF_TP_CREATE_AND_ADD_PASS_ATTR() \
+#define VF_RM_CREATE_AND_ADD_PASS_ATTR() \
 	g_pass_attr =	l_numeric_attr_fn.create("pass", "ps", MFnNumericData::kBoolean, false, &l_status); \
 					CHECK_MSTATUS_AND_RETURN_IT(l_status);				\
 					CHECK_MSTATUS(l_numeric_attr_fn.setDefault(false)); \
@@ -61,7 +61,7 @@ namespace vufRM
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 // Create Numeric Attribute
-#define VF_TP_CREATE_STORABLE_NUMERIC_ATTR(ATTR, LONG_NAME, SHORT_NAME, TYPE, DEFAULT_VALUE)					\
+#define VF_RM_CREATE_STORABLE_NUMERIC_ATTR(ATTR, LONG_NAME, SHORT_NAME, TYPE, DEFAULT_VALUE)					\
 	ATTR = l_numeric_attr_fn.create( #LONG_NAME, #SHORT_NAME, MFnNumericData::TYPE, DEFAULT_VALUE, &l_status);	\
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);																		\
 	CHECK_MSTATUS(l_numeric_attr_fn.setDefault(DEFAULT_VALUE));													\
@@ -95,9 +95,11 @@ std::ostream& operator,(std::ostream& out, std::ostream& (*f)(std::ostream&));
 // Serialization macroses
 //---------------------------------------------------------------------------------
 #define VF_READ_SERIALIZED_FROM_ASCII(VAR_NAME,TYPE)													\
-	l_str = p_args.asString(p_last_element++, &l_status); CHECK_MSTATUS_AND_RETURN_IT(l_status);		\
-	l_bytes_vector = txtSerializer::to_bytes(l_str.asChar());											\
-	VAR_NAME = txtSerializer::convert_bytes_to_value<TYPE>(l_bytes_vector);
+{																										\
+	MString l_str = p_args.asString(p_last_element++, &l_status); CHECK_MSTATUS_AND_RETURN_IT(l_status);\
+	std::vector<unsigned char> l_bytes_vector = vuf::txtSerializer::to_bytes(l_str.asChar());			\
+	VAR_NAME = vuf::txtSerializer::convert_bytes_to_value<TYPE>(l_bytes_vector);						\
+}																										\
 
 
 #endif // !VF_TP_GLBL_INCLDS_H
