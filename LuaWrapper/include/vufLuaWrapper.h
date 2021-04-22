@@ -12,6 +12,7 @@ extern "C"
 
 #include <map>
 #include <vector>
+#include <set>
 #include <string>
 #include <coreUtils/vufStringUtils.h>
 
@@ -54,11 +55,11 @@ namespace vuf
 		uint64_t	m_hash		= 0;
 	};
 
-	class VF_API luaWrapper
+	class VF_API vufLuaWrapper
 	{
 	public:
-		luaWrapper() {}
-		virtual ~luaWrapper() 
+		vufLuaWrapper() {}
+		virtual ~vufLuaWrapper()
 		{
 			close_machine();
 		}
@@ -67,6 +68,7 @@ namespace vuf
 		{
 			close_machine();
 			m_L = luaL_newstate();
+			
 			if (m_L != nullptr)
 			{
 				luaL_openlibs(m_L);
@@ -190,7 +192,7 @@ namespace vuf
 		}		
 		static int			lua_writer(lua_State*, const void* p_data, size_t p_size, void* p_this)
 		{
-			luaWrapper* l_this = (luaWrapper*)p_this;
+			vufLuaWrapper* l_this = (vufLuaWrapper*)p_this;
 			size_t l_old_size = l_this->m_bytes_v.size();
 			l_this->m_bytes_v.resize(l_old_size + p_size);
 			//std::memcpy(&(l_this->m_bytes_v[0]), p_data, p_size);
@@ -203,7 +205,7 @@ namespace vuf
 		}
 		static const char*	lua_reader(lua_State* L, void* p_this, size_t* p_size)
 		{
-			luaWrapper* l_this	= (luaWrapper*)p_this;
+			vufLuaWrapper* l_this	= (vufLuaWrapper*)p_this;
 			*p_size				= l_this->m_bytes_v.size();
 			return	l_this->m_bytes_v.data();
 		}
@@ -245,8 +247,8 @@ namespace vuf
 			}
 		}
 	private:
+		lua_State*			m_L			= nullptr;
 		vufTxt				m_script;
-		lua_State*			m_L = nullptr;
 		std::vector<char>	m_bytes_v;
 		//std::map<std::string,std::map<string,std::vector<std::string>> m_class_map;
 	};

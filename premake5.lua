@@ -190,6 +190,7 @@ project "Math"
 	includedirs 
 	{
 		"Lua/src/",
+		"Core/include/",
 		"%{prj.name}/include"
 	}
 	files
@@ -197,6 +198,14 @@ project "Math"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/**.cpp",
 		"%{prj.name}/include/**.h"
+	}
+	libdirs
+	{
+		"bin/" .. outputdir .. "/Core"		
+	}
+	links
+	{
+		"Core.lib"
 	}
 --------------------------------------------------------------------------------------------	
 -- 										Project CORE

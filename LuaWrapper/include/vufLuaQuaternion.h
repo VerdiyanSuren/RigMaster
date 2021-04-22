@@ -78,9 +78,9 @@ namespace vuf
 			return 0;
 		}
 		
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	"quatMeta",	vufQuaternion<T>, normalize_in_place,	quat_normalize);
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	"quatMeta", vufQuaternion<T>, conjugate_in_place,	quat_conjugated);
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	"quatMeta",	vufQuaternion<T>, invert_in_place,		quat_invert);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE( "quatMeta",	vufQuaternion<T>, normalize_in_place,	quat_normalize);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE( "quatMeta", vufQuaternion<T>, conjugate_in_place,	quat_conjugated);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE( "quatMeta",	vufQuaternion<T>, invert_in_place,		quat_invert);
 
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER("quatMeta", vufQuaternion<T>, length,				quat_length);
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER("quatMeta", vufQuaternion<T>, get_angle,			quat_angle);

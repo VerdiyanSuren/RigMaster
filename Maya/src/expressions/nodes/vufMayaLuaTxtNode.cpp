@@ -1,6 +1,7 @@
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 
+#include <maya/MMatrix.h>
 #include <data/vufMayaDataList.h>
 #include <expressions/nodes/vufMayaLuaTxtNode.h>
 #include <vufMayaGlobalIncludes.h>

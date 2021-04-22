@@ -690,7 +690,7 @@ namespace vuf
 		T z = .0;
 		T w = 1.;
 		vufVector4(const vufVector4& p_v) :x(p_v.x), y(p_v.y), z(p_v.z), w(p_v.w) {}
-		vufVector4(T a = .0, T b = .0, T c = .0, T d = 1.) :x(a), y(b), z(c), w(d) {}
+		vufVector4(T a = .0, T b = .0, T c = .0, T d = 1.) :x(a), y(b), z(c), w(d) {}		
 		static vufVector4 random_vector(bool p_all_component = false)
 		{
 			vufVector4 l_vec;
@@ -702,6 +702,19 @@ namespace vuf
 				l_vec.w = (T)(rand()) / (T)(RAND_MAX);				
 			}			
 			return l_vec;
+		}
+
+		T			operator()(unsigned int p_index) const
+		{
+			return ((T*)&x)[p_index];
+		}
+		const T operator[](unsigned int p_index) const
+		{
+			return ((T*)&x)[p_index];
+		}
+		T& operator[](unsigned int p_index)
+		{
+			return ((T*)&x)[p_index];
 		}
 
 		inline void post_constructor(T a = .0, T b = .0, T c = .0, T d = 1.) { x = a;	y = b;	z = c;	w = d; }

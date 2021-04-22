@@ -4,21 +4,30 @@
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\unitTest">
+      <UniqueIdentifier>{D8EF98CB-C4E8-B71D-ED1A-9DA2D9729729}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\vufLuaWrapUtil.h">
-      <Filter>include</Filter>
+    <ClInclude Include="include\unitTest\vufLuaMathUT.h">
+      <Filter>include\unitTest</Filter>
     </ClInclude>
-    <ClInclude Include="include\vufLuaWrapper.h">
+    <ClInclude Include="include\vufLuaMatrix4.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufLuaQuaternion.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\vufLuaUserDataWrapper.h">
+      <Filter>include</Filter>
+    </ClInclude>
     <ClInclude Include="include\vufLuaVector4.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\vufLuaMatrix4.h">
+    <ClInclude Include="include\vufLuaWrapUtil.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufLuaWrapper.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

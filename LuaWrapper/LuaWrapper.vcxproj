@@ -330,11 +330,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\unitTest\vufLuaMathUT.h" />
     <ClInclude Include="include\vufLuaMatrix4.h" />
+    <ClInclude Include="include\vufLuaQuaternion.h" />
+    <ClInclude Include="include\vufLuaUserDataWrapper.h" />
+    <ClInclude Include="include\vufLuaVector4.h" />
     <ClInclude Include="include\vufLuaWrapUtil.h" />
     <ClInclude Include="include\vufLuaWrapper.h" />
-    <ClInclude Include="include\vufLuaQuaternion.h" />
-    <ClInclude Include="include\vufLuaVector4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainLuaWrapper.cpp" />

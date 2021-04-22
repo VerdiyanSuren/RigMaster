@@ -4,9 +4,21 @@
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\uinitTest">
+      <UniqueIdentifier>{C1B5E10A-2DCC-DFA0-7643-6BC2E298B028}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\uinitTest\vufMatrix4Test.h">
+      <Filter>include\uinitTest</Filter>
+    </ClInclude>
+    <ClInclude Include="include\uinitTest\vufVector4Test.h">
+      <Filter>include\uinitTest</Filter>
+    </ClInclude>
     <ClInclude Include="include\vufMathInclude.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufMatrix.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufQuaternion.h">
