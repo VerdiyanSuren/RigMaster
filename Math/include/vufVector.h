@@ -18,6 +18,7 @@ vufVectorArrayObject4<T>
 */
 namespace vuf
 {
+	template<typename T>	class vufMatrix4;
 //------------------------------------------------------------------------------------------------------------------
 // vufVector 2
 //------------------------------------------------------------------------------------------------------------------
@@ -1019,6 +1020,15 @@ namespace vuf
 		{
 			return vufVector4<T>(x * d, y * d, z * d);
 		}
+		inline vufVector4<T> operator*(const vufMatrix4<T> p_matr) const
+		{
+			vufVector4<T> l_res;
+			l_res.x = x * p_matr[0][0] + y * p_matr[1][0] + z * p_matr[2][0] + w * p_matr[3][0];
+			l_res.y = x * p_matr[0][1] + y * p_matr[1][1] + z * p_matr[2][1] + w * p_matr[3][1];
+			l_res.z = x * p_matr[0][2] + y * p_matr[1][2] + z * p_matr[2][2] + w * p_matr[3][2];
+			l_res.w = x * p_matr[0][3] + y * p_matr[1][3] + z * p_matr[2][3] + w * p_matr[3][3];
+			return l_res;
+		}
 		inline vufVector4<T>& operator-=(const vufVector4<T>& v)
 		{
 			x -= v.x;
@@ -1036,6 +1046,18 @@ namespace vuf
 			x *= d;
 			y *= d;
 			z *= d;
+			return *this;
+		}
+		inline vufVector4<T>& operator*=(const vufMatrix4<T>& p_matr)
+		{
+			T l_x = x * p_matr[0][0] + y * p_matr[1][0] + z * p_matr[2][0] + w * p_matr[3][0];
+			T l_y = x * p_matr[0][1] + y * p_matr[1][1] + z * p_matr[2][1] + w * p_matr[3][1];
+			T l_z = x * p_matr[0][2] + y * p_matr[1][2] + z * p_matr[2][2] + w * p_matr[3][2];
+			T l_w = x * p_matr[0][3] + y * p_matr[1][3] + z * p_matr[2][3] + w * p_matr[3][3];
+			x = l_x;
+			y = l_y;
+			z = l_z;
+			w = l_w;
 			return *this;
 		}
 		inline bool operator==(const vufVector4<T> v) const

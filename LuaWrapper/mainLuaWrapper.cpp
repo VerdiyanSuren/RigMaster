@@ -7,31 +7,34 @@
 #include "include/vufLuaWrapper.h"
 #include <vufLuaVector4.h>
 #include <vufLuaMatrix4.h>
-#include <vufLuaQuaternion.h>
+//#include <vufLuaQuaternion.h>
+#include <vufLuaStatic.h>
 #include <unitTest/vufLuaMathUT.h>
 
 
 VF_LOG_DEFINE_STD_LOGGER();
 
 using namespace vuf;
-std::string vufLuaVector4<double>::g_table_name;
-std::string vufLuaVector4<double>::g_metatable_name;
+std::string vufLuaStatic::g_vec4_tbl_name	= "vec4";
+std::string vufLuaStatic::g_vec4_meta_name	= "vec4M";
+
+std::string vufLuaStatic::g_mat4_tbl_name	= "mat4";
+std::string vufLuaStatic::g_mat4_meta_name	= "mat4M";
+
+std::string vufLuaStatic::g_quat_tbl_name	= "quat";
+std::string vufLuaStatic::g_quat_meta_name	= "quatM";
+
+
 std::string vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::g_table_name;
 std::string vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::g_metatable_name;
 
-std::string vufLuaMatrix4<double>::g_table_name;		// matrix table
-std::string vufLuaMatrix4<double>::g_metatable_name;	// matrix metatable
-std::string vufLuaMatrix4<double>::g_q_table_name;		// quaternion table
-std::string vufLuaMatrix4<double>::g_q_metatable_name;	// quaternion metatable
-std::string vufLuaMatrix4<double>::g_v4_table_name;		// vector4 table
-std::string vufLuaMatrix4<double>::g_v4_metatable_name;	// vector4 metatable
 
 int main()
 {
 	vufLuaMathUT<double> l_lua_math_ut;
 	l_lua_math_ut.run();
 
-
+	system("pause");
 
 
 	vufLuaSessionDataStore< std::vector < vufVector4<double>> > l_vec_arr_store;
@@ -52,8 +55,8 @@ int main()
 	l_w.open_machine();
 	lua_State* L = l_w.get_lua_state();
 
-	vufLuaVector4<double>::registrator(L, "vector4", "vector4Meta"); 
-	vufLuaMatrix4<double>::registrator(L, "matrix4", "matrix4Meta", "quat", "quatMeta","vector4", "vector4Meta");
+	vufLuaVector4<double>::registrator(L); 
+	vufLuaMatrix4<double>::registrator(L);
 	vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::registrator(L, "vectorArray", "vectorArrM", l_vec_arr_store);
 	//vufLuaQuaternion_4<double>::registrator(L);
 

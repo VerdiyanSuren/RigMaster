@@ -30,8 +30,25 @@
 	return luaL_error( L, (vufStringUtils::string_padding(TBL_NAME +  ERROR_CHAR_PTR).c_str()) );
 
 // Implement method
+// myType.copy()->myType
+#define VF_LUA_IMPLEMENT_COPY(META_NAME,CLASS_NAME)									\
+static int copy(lua_State* L)														\
+{																					\
+	auto l_data_ptr = (CLASS_NAME*)luaL_checkudata(L, -1, META_NAME.c_str());		\
+	if (l_data_ptr == nullptr)														\
+	{																				\
+		VF_LUA_THROW_ERROR(L,META_NAME, " got null object.");						\
+	}																				\
+	CLASS_NAME* l_res_ptr = (CLASS_NAME*)lua_newuserdata(L, sizeof(CLASS_NAME));	\
+	new (l_res_ptr) CLASS_NAME();													\
+	luaL_getmetatable(L, META_NAME.c_str());										\
+	lua_setmetatable(L, -2);														\
+	l_res_ptr->set_data(l_data_ptr->get_data());									\
+	return 1;																		\
+}
+
 // myType.method(MyType)->number
-#define VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(META_NAME,CLASS_NAME,CLASS_METHOD,LUA_METHOD_NAME)\
+#define VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(META_NAME,CLASS_NAME,CLASS_METHOD,LUA_METHOD_NAME)	\
 static int LUA_METHOD_NAME(lua_State* L)															\
 {																									\
 	int l_number_of_argiments = lua_gettop(L);														\

@@ -333,6 +333,7 @@
     <ClInclude Include="include\unitTest\vufLuaMathUT.h" />
     <ClInclude Include="include\vufLuaMatrix4.h" />
     <ClInclude Include="include\vufLuaQuaternion.h" />
+    <ClInclude Include="include\vufLuaStatic.h" />
     <ClInclude Include="include\vufLuaUserDataWrapper.h" />
     <ClInclude Include="include\vufLuaVector4.h" />
     <ClInclude Include="include\vufLuaWrapUtil.h" />

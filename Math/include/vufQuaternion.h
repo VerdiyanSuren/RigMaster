@@ -55,6 +55,18 @@ namespace vuf
 			l_q.normalize_in_place();
 			return l_q;
 		}
+		T			operator()(unsigned int p_index) const
+		{
+			return ((T*)&x)[p_index];
+		}
+		const T operator[](unsigned int p_index) const
+		{
+			return ((T*)&x)[p_index];
+		}
+		T& operator[](unsigned int p_index)
+		{
+			return ((T*)&x)[p_index];
+		}
 
 		inline void post_constructor(T a = .0, T b = .0, T c = .0, T d = 1.)
 		{

@@ -13,6 +13,7 @@
 namespace vuf
 {
 	template<typename T>	class vufVector3;
+	template<typename T>	class vufVector4;
 
 	//------------------------------------------------------------------------------------------------------------------------- 
 	//	M A T R I X 2 
@@ -817,15 +818,16 @@ namespace vuf
 			}
 			return l_matr;
 		}
-		static vufMatrix4 numerate_matrix()
+		static vufMatrix4 numerate_matrix(T p_start_val = 0, T p_step = 1)
 		{
 			vufMatrix4 l_matr;
-			T l_count = (T)0;
+			T l_count = (T)p_start_val;
 			for (int i = 0; i < 4; ++i)
 			{
 				for (int j = 0; j < 4; ++j)
 				{
-					l_matr.m_ptr[i][j] = l_count++;
+					l_matr.m_ptr[i][j] = l_count;
+					l_count += p_step;
 				}
 			}
 			return l_matr;
@@ -887,6 +889,13 @@ namespace vuf
 		{
 			new (this) vufMatrix4<T>();
 			return *this;
+		}
+		T				determinant3() const
+		{
+			return 
+				m_ptr[0][0] * (	m_ptr[1][1] * m_ptr[2][2] -	m_ptr[1][2] * m_ptr[2][1] ) -	
+				m_ptr[0][1] *  (m_ptr[1][0] * m_ptr[2][2] - m_ptr[1][2] * m_ptr[2][0] ) +
+				m_ptr[0][2] * ( m_ptr[1][0] * m_ptr[2][1] - m_ptr[1][1] * m_ptr[2][0]);
 		}
 		T				determinant() const
 		{
@@ -950,8 +959,9 @@ namespace vuf
 			m_ptr[0][1] /= l_length;
 			m_ptr[0][2] /= l_length;
 			
-			//y axis
+			//y axis by x axis
 			T l_dot_xy = m_ptr[0][0] * m_ptr[1][0] + m_ptr[0][1] * m_ptr[1][1] + m_ptr[0][2] * m_ptr[1][2];
+			
 			m_ptr[1][0] -= l_dot_xy * m_ptr[0][0];
 			m_ptr[1][1] -= l_dot_xy * m_ptr[0][1];
 			m_ptr[1][2] -= l_dot_xy * m_ptr[0][2];
@@ -964,11 +974,18 @@ namespace vuf
 			m_ptr[1][1] /= l_length;
 			m_ptr[1][2] /= l_length;
 			
-			//z axis
+			//z axis by y axis
 			T l_dot_yz = m_ptr[2][0] * m_ptr[1][0] + m_ptr[2][1] * m_ptr[1][1] + m_ptr[2][2] * m_ptr[1][2];
-			m_ptr[2][0] -= l_dot_xy * m_ptr[1][0];
-			m_ptr[2][1] -= l_dot_xy * m_ptr[1][1];
-			m_ptr[2][2] -= l_dot_xy * m_ptr[1][2];
+			T l_dot_xz = m_ptr[2][0] * m_ptr[0][0] + m_ptr[2][1] * m_ptr[0][1] + m_ptr[2][2] * m_ptr[0][2];
+			m_ptr[2][0] -= l_dot_yz * m_ptr[1][0];
+			m_ptr[2][1] -= l_dot_yz * m_ptr[1][1];
+			m_ptr[2][2] -= l_dot_yz * m_ptr[1][2];
+			// z axis by x axis			
+			m_ptr[2][0] -= l_dot_xz * m_ptr[0][0];
+			m_ptr[2][1] -= l_dot_xz * m_ptr[0][1];
+			m_ptr[2][2] -= l_dot_xz * m_ptr[0][2];
+			
+
 			l_length = sqrt(m_ptr[2][0] * m_ptr[2][0] + m_ptr[2][1] * m_ptr[2][1] + m_ptr[2][2] * m_ptr[2][2]);
 			if (l_length == 0)
 			{
@@ -988,22 +1005,24 @@ namespace vuf
 		}
 		vufMatrix4&		orthogonalize_4_in_place()
 		{
-			T l_length = sqrt(m_ptr[0][0] * m_ptr[0][0] + m_ptr[0][1] * m_ptr[0][1] + m_ptr[0][2] * m_ptr[0][2]);
+			T l_length = sqrt(m_ptr[0][0] * m_ptr[0][0] + m_ptr[0][1] * m_ptr[0][1] + m_ptr[0][2] * m_ptr[0][2] + m_ptr[0][3] * m_ptr[0][3]);
 			if (l_length == 0)
 			{
 				return *this;
 			}
 			//x axis
-			m_ptr[1][0] /= l_length;
-			m_ptr[1][1] /= l_length;
-			m_ptr[1][2] /= l_length;
+			m_ptr[0][0] /= l_length;
+			m_ptr[0][1] /= l_length;
+			m_ptr[0][2] /= l_length;
+			m_ptr[0][3] /= l_length;
 
-			//y axis
-			T l_dot_xy = m_ptr[0][0] * m_ptr[1][0] + m_ptr[0][1] * m_ptr[1][1] + m_ptr[0][2] * m_ptr[1][2];
+			//y axis by x axis
+			T l_dot_xy = m_ptr[0][0] * m_ptr[1][0] + m_ptr[0][1] * m_ptr[1][1] + m_ptr[0][2] * m_ptr[1][2] + m_ptr[0][3] * m_ptr[1][3];
 			m_ptr[1][0] -= l_dot_xy * m_ptr[0][0];
 			m_ptr[1][1] -= l_dot_xy * m_ptr[0][1];
 			m_ptr[1][2] -= l_dot_xy * m_ptr[0][2];
-			l_length = sqrt(m_ptr[1][0] * m_ptr[1][0] + m_ptr[1][1] * m_ptr[1][1] + m_ptr[1][2] * m_ptr[1][2]);
+			m_ptr[1][3] -= l_dot_xy * m_ptr[0][3];
+			l_length = sqrt(m_ptr[1][0] * m_ptr[1][0] + m_ptr[1][1] * m_ptr[1][1] + m_ptr[1][2] * m_ptr[1][2] + m_ptr[1][3] * m_ptr[1][3]);
 			if (l_length == 0)
 			{
 				return *this;
@@ -1011,13 +1030,25 @@ namespace vuf
 			m_ptr[1][0] /= l_length;
 			m_ptr[1][1] /= l_length;
 			m_ptr[1][2] /= l_length;
+			m_ptr[1][3] /= l_length;
 
-			//z axis
-			T l_dot_yz = m_ptr[2][0] * m_ptr[1][0] + m_ptr[2][1] * m_ptr[1][1] + m_ptr[2][2] * m_ptr[1][2];
-			m_ptr[2][0] -= l_dot_xy * m_ptr[1][0];
-			m_ptr[2][1] -= l_dot_xy * m_ptr[1][1];
-			m_ptr[2][2] -= l_dot_xy * m_ptr[1][2];
-			l_length = sqrt(m_ptr[2][0] * m_ptr[2][0] + m_ptr[2][1] * m_ptr[2][1] + m_ptr[2][2] * m_ptr[2][2]);
+
+
+
+			T l_dot_xz = m_ptr[2][0] * m_ptr[0][0] + m_ptr[2][1] * m_ptr[0][1] + m_ptr[2][2] * m_ptr[0][2] + m_ptr[2][3] * m_ptr[0][3];
+			T l_dot_yz = m_ptr[2][0] * m_ptr[1][0] + m_ptr[2][1] * m_ptr[1][1] + m_ptr[2][2] * m_ptr[1][2] + m_ptr[2][3] * m_ptr[1][3];
+			//z axis by y
+			m_ptr[2][0] -= l_dot_yz * m_ptr[1][0];
+			m_ptr[2][1] -= l_dot_yz * m_ptr[1][1];
+			m_ptr[2][2] -= l_dot_yz * m_ptr[1][2];
+			m_ptr[2][3] -= l_dot_yz * m_ptr[1][3];
+			// z axis by x
+			m_ptr[2][0] -= l_dot_xz * m_ptr[0][0];
+			m_ptr[2][1] -= l_dot_xz * m_ptr[0][1];
+			m_ptr[2][2] -= l_dot_xz * m_ptr[0][2];
+			m_ptr[2][3] -= l_dot_xz * m_ptr[0][3];
+
+			l_length = sqrt(m_ptr[2][0] * m_ptr[2][0] + m_ptr[2][1] * m_ptr[2][1] + m_ptr[2][2] * m_ptr[2][2] + m_ptr[2][3] * m_ptr[2][3]);
 			if (l_length == 0)
 			{
 				return *this;
@@ -1025,13 +1056,35 @@ namespace vuf
 			m_ptr[2][0] /= l_length;
 			m_ptr[2][1] /= l_length;
 			m_ptr[2][2] /= l_length;
+			m_ptr[2][3] /= l_length;
 
-			//w axis
-			T l_dot_zw = m_ptr[2][0] * m_ptr[3][0] + m_ptr[2][1] * m_ptr[3][1] + m_ptr[2][2] * m_ptr[3][2];
-			m_ptr[3][0] -= l_dot_xy * m_ptr[2][0];
-			m_ptr[3][1] -= l_dot_xy * m_ptr[2][1];
-			m_ptr[3][2] -= l_dot_xy * m_ptr[2][2];
-			l_length = sqrt(m_ptr[3][0] * m_ptr[3][0] + m_ptr[3][1] * m_ptr[3][1] + m_ptr[3][2] * m_ptr[3][2]);
+
+
+
+			T l_dot_xw = m_ptr[0][0] * m_ptr[3][0] + m_ptr[0][1] * m_ptr[3][1] + m_ptr[0][2] * m_ptr[3][2] + m_ptr[0][3] * m_ptr[3][3];
+			T l_dot_yw = m_ptr[1][0] * m_ptr[3][0] + m_ptr[1][1] * m_ptr[3][1] + m_ptr[1][2] * m_ptr[3][2] + m_ptr[1][3] * m_ptr[3][3];
+			T l_dot_zw = m_ptr[2][0] * m_ptr[3][0] + m_ptr[2][1] * m_ptr[3][1] + m_ptr[2][2] * m_ptr[3][2] + m_ptr[2][3] * m_ptr[3][3];
+			
+			// w axis by z axis
+			m_ptr[3][0] -= l_dot_zw * m_ptr[2][0];
+			m_ptr[3][1] -= l_dot_zw * m_ptr[2][1];
+			m_ptr[3][2] -= l_dot_zw * m_ptr[2][2];
+			m_ptr[3][3] -= l_dot_zw * m_ptr[2][3];
+			// w axis by y axis
+			m_ptr[3][0] -= l_dot_yw * m_ptr[1][0];
+			m_ptr[3][1] -= l_dot_yw * m_ptr[1][1];
+			m_ptr[3][2] -= l_dot_yw * m_ptr[1][2];
+			m_ptr[3][3] -= l_dot_yw * m_ptr[1][3];
+			
+			// w axis by x asis
+			//std::cout << "l_dot_xw " << l_dot_xw << std::endl;
+			m_ptr[3][0] -= l_dot_xw * m_ptr[0][0];
+			m_ptr[3][1] -= l_dot_xw * m_ptr[0][1];
+			m_ptr[3][2] -= l_dot_xw * m_ptr[0][2];
+			m_ptr[3][3] -= l_dot_xw * m_ptr[0][3];
+			
+
+			l_length = sqrt(m_ptr[3][0] * m_ptr[3][0] + m_ptr[3][1] * m_ptr[3][1] + m_ptr[3][2] * m_ptr[3][2] + m_ptr[3][3] * m_ptr[3][3]);
 			if (l_length == 0)
 			{
 				return *this;
@@ -1039,6 +1092,7 @@ namespace vuf
 			m_ptr[3][0] /= l_length;
 			m_ptr[3][1] /= l_length;
 			m_ptr[3][2] /= l_length;
+			m_ptr[3][3] /= l_length;
 
 			return *this;
 		}

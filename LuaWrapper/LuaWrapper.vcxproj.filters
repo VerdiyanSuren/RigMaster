@@ -30,6 +30,9 @@
     <ClInclude Include="include\vufLuaWrapper.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\vufLuaStatic.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainLuaWrapper.cpp" />
