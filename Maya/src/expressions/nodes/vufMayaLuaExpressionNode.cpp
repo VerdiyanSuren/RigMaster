@@ -16,6 +16,7 @@
 #include <utils/vufMayaUtils.h>
 #include <vufLuaVector4.h>
 #include <vufLuaQuaternion.h>
+#include <vufLuaMatrix4.h>
 
 using namespace vuf;
 using namespace vufRM;
@@ -208,7 +209,8 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			m_lua_machine.close_machine();
 			m_lua_machine.open_machine();
 			vufLuaVector4<double>::		registrator( m_lua_machine.get_lua_state() );
-			vufLuaQuaternion_4<double>::registrator( m_lua_machine.get_lua_state() );
+			vufLuaMatrix4<double>::		registrator(m_lua_machine.get_lua_state());
+			vufLuaQuaternion<double>::	registrator( m_lua_machine.get_lua_state() );
 
 			m_script_hash = l_in_script_data->get_hash();
 			l_in_port_data->m_need_lua_reset = false;

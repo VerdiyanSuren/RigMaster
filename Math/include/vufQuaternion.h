@@ -83,7 +83,7 @@ namespace vuf
 			w = d;
 		}
 
-		inline void  set_by_angle_and_axis_in_place(const T angle, const vufVector4<T>& p_axis)
+		inline vufQuaternion<T>&  set_by_angle_and_axis_in_place( T angle, const vufVector4<T>& p_axis)
 		{
 			vufVector4<T> l_ax = p_axis.get_normalized();
 			w = cos(angle / 2.);
@@ -91,8 +91,9 @@ namespace vuf
 			y = x * l_ax.y;
 			z = x * l_ax.z;
 			x *= l_ax.x;
+			return *this;
 		}
-		inline void  set_by_angle_and_axis_in_place(const T angle, const vufVector3<T>& p_axis)
+		inline vufQuaternion<T>&  set_by_angle_and_axis_in_place( T angle, const vufVector3<T>& p_axis)
 		{
 			vufVector3<T> l_ax = p_axis.get_normalized();
 			w = cos(angle / 2.);
@@ -100,6 +101,7 @@ namespace vuf
 			y = x * l_ax.y;
 			z = x * l_ax.z;
 			x *= l_ax.x;
+			return *this;
 		}
 
 		inline T length2() const { return (x * x + y * y + z * z + w * w); }
@@ -350,18 +352,6 @@ namespace vuf
 			return p_offset + l_read_size;
 		}
 
-		
-		static inline vufQuaternion set_by_angle_and_axis(const T p_angle, const vufVector3<T>& p_axis)
-		{
-			vufVector3<T> l_ax = p_axis.get_normalized();
-			vufQuaternion l_q;
-			l_q.w = cos(p_angle / 2.);
-			l_q.x = sin(p_angle / 2);
-			l_q.y = l_q.x * l_ax.y;
-			l_q.z = l_q.x * l_ax.z;
-			l_q.x *= l_ax.x;
-			return  l_q;
-		}
 		static inline vufQuaternion set_by_angle_and_axis(const T p_angle, const vufVector4<T>& p_axis)
 		{
 			vufVector4<T> l_ax = p_axis.get_normalized();
@@ -373,6 +363,18 @@ namespace vuf
 			l_q.x *= l_ax.x;
 			return  l_q;
 		}
+		static inline vufQuaternion set_by_angle_and_axis(const T p_angle, const vufVector3<T>& p_axis)
+		{
+			vufVector3<T> l_ax = p_axis.get_normalized();
+			vufQuaternion l_q;
+			l_q.w = cos(p_angle / 2.);
+			l_q.x = sin(p_angle / 2);
+			l_q.y = l_q.x * l_ax.y;
+			l_q.z = l_q.x * l_ax.z;
+			l_q.x *= l_ax.x;
+			return  l_q;
+		}
+
 		static inline vufQuaternion rotate_arc(const vufVector3<T>& vFrom, const vufVector3<T>& vTo)
 		{
 			//assume vectors are normalized
@@ -518,6 +520,10 @@ namespace vuf
 		{
 			out << "[ " << v.x << ", " << v.y << ", " << v.z << ", " << v.w << " ]";
 			return out;
+		}
+		friend inline vufQuaternion<T>  operator*(T d, const vufQuaternion<T>& q)
+		{
+			return vufQuaternion<T>(q.x * d, q.y * d, q.z * d, q.w * d);
 		}
 		/*
 		*/

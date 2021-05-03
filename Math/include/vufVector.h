@@ -1020,7 +1020,7 @@ namespace vuf
 		{
 			return vufVector4<T>(x * d, y * d, z * d);
 		}
-		inline vufVector4<T> operator*(const vufMatrix4<T> p_matr) const
+		inline vufVector4<T> operator*(const vufMatrix4<T>& p_matr) const
 		{
 			vufVector4<T> l_res;
 			l_res.x = x * p_matr[0][0] + y * p_matr[1][0] + z * p_matr[2][0] + w * p_matr[3][0];

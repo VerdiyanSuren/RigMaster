@@ -45,7 +45,7 @@ namespace vufRM
 	private:
 		uint64_t			m_script_hash = 0;
 		uint64_t			m_scropt_port_hash = 0;
-		vuf::luaWrapper		m_lua_machine;
+		vuf::vufLuaWrapper	m_lua_machine;
 		
 		const char*		m_evaluation_script =
 		R"(

@@ -10,8 +10,7 @@ vufLuaTextEditor::vufLuaTextEditor(vufLuaExprWindow* p_expr_wnd, QWidget* parent
 {}
 void vufLuaTextEditor::keyPressEvent(QKeyEvent* p_event)
 {
-	if ( (p_event->key() == Qt::Key_Return)  && 
-		 (p_event->modifiers() & Qt::ControlModifier) )
+	if ( (p_event->key() == Qt::Key_Return)  &&  (p_event->modifiers() & Qt::ControlModifier) )
 	{
 		// optional: if the QPlainTextEdit should do its normal action 
 		// even when the return button is pressed, uncomment the following line
@@ -20,8 +19,15 @@ void vufLuaTextEditor::keyPressEvent(QKeyEvent* p_event)
 		/* do your stuff here */
 		p_event->accept();
 	}
-	else
+	if ((p_event->key() == Qt::Key_Plus) && (p_event->modifiers() & Qt::ControlModifier))
 	{
-		QPlainTextEdit::keyPressEvent(p_event);
+		zoomIn(2);
+		p_event->accept();
 	}
+	if ((p_event->key() == Qt::Key_Minus) && (p_event->modifiers() & Qt::ControlModifier))
+	{
+		zoomOut(2);
+		p_event->accept();
+	}
+	QPlainTextEdit::keyPressEvent(p_event);
 }

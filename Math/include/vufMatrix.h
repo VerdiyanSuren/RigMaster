@@ -805,7 +805,10 @@ namespace vuf
 		{ 
 			return *( (vufVector4<T>*)m_ptr[p_row] ); 
 		}
-
+		void set_row(unsigned int p_row, const vufVector4<T>& p_vec)
+		{
+			*((vufVector4<T>*)m_ptr[p_row]) = p_vec;
+		}
 		static vufMatrix4 random_matrix()
 		{
 			vufMatrix4 l_matr; 
@@ -1561,6 +1564,18 @@ namespace vuf
 				}
 			}
 			return l_matr;
+		}
+		vufMatrix4<T> operator-() const
+		{
+			vufMatrix4<T> l_res;
+			for (int i = 0; i <4; i++ )
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					l_res.m_ptr[i][j] = -m_ptr[i][j];
+				}
+			}
+			return l_res;
 		}
 		bool		operator==(const vufMatrix4& p_other) const
 		{

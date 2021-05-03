@@ -3,6 +3,14 @@
 
 #include <string>
 
+#define VF_LUA_STATIC_INITIALIZE()							\
+std::string vuf::vufLuaStatic::g_vec4_tbl_name	= "vec4";	\
+std::string vuf::vufLuaStatic::g_vec4_meta_name	= "vec4M";	\
+std::string vuf::vufLuaStatic::g_mat4_tbl_name	= "mat4";	\
+std::string vuf::vufLuaStatic::g_mat4_meta_name	= "mat4M";	\
+std::string vuf::vufLuaStatic::g_quat_tbl_name	= "quat";	\
+std::string vuf::vufLuaStatic::g_quat_meta_name = "quatM";	
+
 namespace vuf
 {
 	class vufLuaStatic

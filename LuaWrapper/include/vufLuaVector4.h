@@ -29,7 +29,7 @@ namespace vuf
 			VF_LUA_ADD_TABLE_FIELD(L, "copy",				copy);
 			VF_LUA_ADD_TABLE_FIELD(L, "set",				set);
 			VF_LUA_ADD_TABLE_FIELD(L, "length",				length);
-			VF_LUA_ADD_TABLE_FIELD(L, "normalize",			normalize);
+			VF_LUA_ADD_TABLE_FIELD(L, "normalized",			normalize);
 			VF_LUA_ADD_TABLE_FIELD(L, "ortho_to",			ortho_to);
 			VF_LUA_ADD_TABLE_FIELD(L, "parallel_to",		parallel_to);
 			VF_LUA_ADD_TABLE_FIELD(L, "distance_to",		distance_to);
@@ -49,63 +49,24 @@ namespace vuf
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__index",		index);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex",	new_index);
 		}
-		
-		static bool	get_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)
-		{
-			lua_getglobal(L, p_var_name.c_str());
-			auto l_vec_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_vec4_meta_name.c_str());
-			if (l_vec_ptr == nullptr)
-			{
-				return false;
-			}
-			p_res = l_vec_ptr->get_data();
-			return true;
-		}
-		static bool	get_param(lua_State* L,int p_lua_index, vufVector4<T>& p_res_ptr)
-		{
-			auto l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, p_lua_index, vufLuaStatic::g_vec4_meta_name.c_str());
-			if ( l_vector_ptr == nullptr)
-			{
-				return false;
-			}
-			p_res_ptr = l_vector_ptr->get_data();
-			return true;
-		}
-		// create as new user data
-		static vufLuaVector4Wrapper<T>*	create_new_ref(lua_State* L, vufVector4<T>* l_ref_vector)
-		{
-			vufLuaVector4Wrapper<T>* l_vector_ptr = (vufLuaVector4Wrapper<T>*)lua_newuserdata(L, sizeof(vufLuaVector4Wrapper<T>));
-			new (l_vector_ptr) vufLuaVector4Wrapper<T>(l_vector_ptr, l_ref_vector);
-			luaL_getmetatable(L, vufLuaStatic::g_vec4_meta_name.c_str());
-			lua_setmetatable(L, -2);
-			return l_vector_ptr;
-		}
+
+		/** bool	get_global(lua_State * L, const std::string & p_var_name, vufVector4<T>& p_res)	*/
+		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_vec4_meta_name, vufVector4<T>,vufLuaVector4Wrapper<T>);
+		/** bool	static bool	get_param(lua_State * L, int p_lua_index, vufVector4<T>& p_res_ptr)*/
+		VF_LUA_GET_USER_DATA_PARAM(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>);
+		/** create as reference of new user data and push to stack
+		* vufLuaVector4Wrapper<T>*	create_new_ref(lua_State* L, vufVector4<T>* l_ref_vector)	*/
+		VF_LUA_CREATE_USER_NEW_REF(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>);
+		/** create mew user data and push to stack 
+		*  vufLuaVector4Wrapper<T>* create_user_data(lua_State* L)*/
+		VF_LUA_CREATE_USER_DATA(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>);
 	private:		
 		static int create(lua_State* L)
 		{
-			void* l_vector_ptr = lua_newuserdata(L, sizeof(vufLuaVector4Wrapper<T>));
-			new (l_vector_ptr) vufLuaVector4Wrapper<T>();
-			luaL_getmetatable(L, vufLuaStatic::g_vec4_meta_name.c_str());
-			lua_setmetatable(L, -2);
+			create_user_data(L);
 			return 1;
-		}
-		/*
-		static int copy(lua_State* L)
-		{
-			auto l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_vec4_meta_name.c_str());
-			if (l_vector_ptr == nullptr)
-			{
-				VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " got null object.");
-			}
-			vufLuaVector4Wrapper<T>* l_res_ptr = (vufLuaVector4Wrapper<T>*)lua_newuserdata(L, sizeof(vufLuaVector4Wrapper<T>));
-			new (l_res_ptr) vufLuaVector4Wrapper<T>();
-			luaL_getmetatable(L, vufLuaStatic::g_vec4_meta_name.c_str());
-			lua_setmetatable(L, -2);
-			l_res_ptr->set_data(l_vector_ptr->get_data());
-			return 1;
-		}
-		*/
-		VF_LUA_IMPLEMENT_COPY(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>);
+		} 
+		VF_LUA_IMPLEMENT_COPY(vufLuaStatic::g_vec4_meta_name, vufVector4<T>,  vufLuaVector4Wrapper<T>);
 		static int set(lua_State* L)
 		{
 			int l_number_of_arguments = lua_gettop(L);
@@ -126,110 +87,96 @@ namespace vuf
 			{
 				l_w = (T)luaL_checknumber(L, -l_number_of_arguments + 4);
 			}
-
-			auto* l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -l_number_of_arguments, vufLuaStatic::g_vec4_meta_name.c_str());
-			if (l_vector_ptr != nullptr)
+			vufVector4<T>* l_vec_ptr;
+			if (get_param(L, -l_number_of_arguments, &l_vec_ptr) == false)
 			{
-				l_vector_ptr->get_data().set(l_x, l_y, l_z, l_w);
-				return 0;
+				VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " Failed tp get vector4.");
 			}
-			VF_LUA_THROW_ERROR( L, vufLuaStatic::g_vec4_tbl_name, " got null object.");
+			l_vec_ptr->set(l_x, l_y, l_z, l_w);
+			return 0;
 		}
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, normalize_in_place,	normalize);
-		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_TYPE(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, get_ortho_to,			ortho_to);
-		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_TYPE(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, get_parallel_to,		parallel_to);
-		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_TYPE(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, get_cross,			cross);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>, get_normalized,	normalize);
+		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_TYPE(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>, get_ortho_to,		ortho_to);
+		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_TYPE(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>, get_parallel_to,	parallel_to);
+		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_TYPE(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>, get_cross,		cross);
 
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, length,				length);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, length,		length);
 
-		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, distance_to,		distance_to);
-		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, dot,				dot);
+		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, distance_to,	distance_to);
+		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, dot,			dot);
 		
 		static int to_string(lua_State* L)
 		{
-			auto* l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_vec4_meta_name.c_str());
-			if (l_vector_ptr != nullptr)
+			vufVector4<T>* l_vec_ptr;
+			if (get_param(L, -1, &l_vec_ptr) == false)
 			{
-				auto l_info = l_vector_ptr->get_data().to_string();
-				lua_pushstring(L, l_info.c_str());
-				return 1;
+				VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " Failed tp get vector4.");
 			}
-			return 0;
+			lua_pushstring(L, l_vec_ptr->to_string().c_str());
+			return 1;
 		}
 		static int to_type(lua_State* L)
 		{
-			auto l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_vec4_meta_name.c_str());
-			if (l_vector_ptr != nullptr)
-			{				
-				lua_pushstring(L, vufLuaStatic::g_vec4_tbl_name.c_str());
-				return 1;
-			}
-			return 0;
+			lua_pushstring(L, vufLuaStatic::g_vec4_tbl_name.c_str());
+			return 1;
 		}
-
 
 		static int destroy(lua_State* L)
 		{
 			auto l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_vec4_meta_name.c_str());
-			//std::cout << "VECTOR DESTROY has to call destructor" << l_vector_ptr->has_to_destroy() <<  std::endl;
+			//std::cout << "VECTOR DESTROY has to call destructor: " << l_vector_ptr->get_ref_count() <<  std::endl;
 			//if (l_vector_ptr->has_to_destroy() == true)
 			//{
 			l_vector_ptr->~vufLuaVector4Wrapper<T>();
 			//}
 			return 0;
 		}
-		VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, add);
-		VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, sub);
-		VF_LUA_IMPLEMENT_TYPE_UNM_TYPE(vufLuaStatic::g_vec4_meta_name, vufLuaVector4Wrapper<T>, unm);
+		VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>, add);
+		VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>, sub);
+		VF_LUA_IMPLEMENT_TYPE_UNM_TYPE(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>, unm);
 		static int mul(lua_State* L)
 		{
 			// double * vector
 			if ( lua_isnumber(L,-2))
 			{
-				auto l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_vec4_meta_name.c_str());
-				if (l_vector_ptr == nullptr)
+				vufVector4<T>* l_vec_ptr;
+				if ( get_param( L, -1, &l_vec_ptr) == false)
 				{
 					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " got null object.");
 				}
-				T l_val = (T)lua_tonumber(L, -2);				
-				auto l_res_ptr = (vufLuaVector4Wrapper<T>*)lua_newuserdata(L, sizeof(vufLuaVector4Wrapper<T>));
-				luaL_getmetatable(L, vufLuaStatic::g_vec4_meta_name.c_str());
-				lua_setmetatable(L, -2);
-				l_res_ptr->set_data(l_vector_ptr->get_data() * l_val);
+				T l_val = (T)lua_tonumber(L, -2);
+				vufLuaVector4Wrapper<T>* l_res_ptr = create_user_data(L);
+				l_res_ptr->set_data( (*l_vec_ptr) * l_val);
 				return 1;
 			}
 			//  vector * number
 			if (lua_isnumber(L, -1))
 			{
 				T l_val = (T)lua_tonumber(L, -1);
-				auto l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -2, vufLuaStatic::g_vec4_meta_name.c_str());
-				if (l_vector_ptr == nullptr)
+				vufVector4<T>* l_vec_ptr;
+				if (get_param(L, -2, &l_vec_ptr) == false)
 				{
 					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " got null object.");
 				}
-				auto l_res_ptr = (vufLuaVector4Wrapper<T>*)lua_newuserdata(L, sizeof(vufLuaVector4Wrapper<T>));
-				luaL_getmetatable(L, vufLuaStatic::g_vec4_meta_name.c_str());
-				lua_setmetatable(L, -2);
-				l_res_ptr->set_data(l_vector_ptr->get_data() * l_val);
+				vufLuaVector4Wrapper<T>* l_res_ptr = create_user_data(L);
+				l_res_ptr->set_data((*l_vec_ptr) * l_val);
 				return 1;
 			}
 			// vector * matrix
 			if (lua_isuserdata(L, -1))
 			{
-				auto l_vector_ptr	= (vufLuaVector4Wrapper<T>*)luaL_checkudata(L,  -2, vufLuaStatic::g_vec4_meta_name.c_str());
-				auto l_matr_ptr		= (vufLuaMattrix4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_mat4_meta_name.c_str());
-				if (l_vector_ptr == nullptr)
+				vufVector4<T>* l_vec_ptr;
+				vufMatrix4<T>* l_mat_ptr;
+				if (get_param(L, -2, &l_vec_ptr) == false)
 				{
-					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " got null object.");
+					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " got null object. Expect vector");
 				}
-				if (l_matr_ptr == nullptr)
+				if (vufLuaMatrix4<T>::get_param(L, -1, &l_mat_ptr) == false)
 				{
-					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_mat4_tbl_name, " got null object.");
+					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_mat4_tbl_name, " got null object. Expect matrix");
 				}
-				auto l_res_ptr = (vufLuaVector4Wrapper<T>*)lua_newuserdata(L, sizeof(vufLuaVector4Wrapper<T>));
-				luaL_getmetatable(L, vufLuaStatic::g_vec4_meta_name.c_str());
-				lua_setmetatable(L, -2);
-				l_res_ptr->set_data(l_vector_ptr->get_data() * l_matr_ptr->get_data());
+				vufLuaVector4Wrapper<T>* l_res_ptr = create_user_data(L);
+				l_res_ptr->set_data((*l_vec_ptr) * (*l_mat_ptr));
 				return 1;
 			}
 			VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " got null object.");
@@ -244,15 +191,13 @@ namespace vuf
 					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " Error dividing by zero.");
 				}
 				l_val = 1. / l_val;
-				auto l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -2, vufLuaStatic::g_vec4_meta_name.c_str());
-				if (l_vector_ptr == nullptr)
+				vufVector4<T>* l_vec_ptr;
+				if (get_param(L, -2, &l_vec_ptr) == false)
 				{
 					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " got null vector object.");
 				}
-				auto l_res_ptr = (vufLuaVector4Wrapper<T>*)lua_newuserdata(L, sizeof(vufLuaVector4Wrapper<T>));
-				luaL_getmetatable(L, vufLuaStatic::g_vec4_meta_name.c_str());
-				lua_setmetatable(L, -2);
-				l_res_ptr->set_data(l_vector_ptr->get_data() * l_val);
+				vufLuaVector4Wrapper<T>* l_res_ptr = create_user_data(L);
+				l_res_ptr->set_data((*l_vec_ptr) * l_val);
 				return 1;
 			}
 			VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " expecting  numerical  argument.");
@@ -261,26 +206,14 @@ namespace vuf
 		{
 			//std::cout << "VECTOR INDEX" << std::endl;
 			int l_number_of_arguments = lua_gettop(L);
-			auto l_vector_ptr = (vufLuaVector4Wrapper<T>*)luaL_checkudata(L, -l_number_of_arguments, vufLuaStatic::g_vec4_meta_name.c_str());
-			if (l_vector_ptr == nullptr)
+			vufVector4<T>* l_vec_ptr;
+			if (get_param(L, -2, &l_vec_ptr) == false)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " got null object.");
-			}
-			vufVector4<T>& l_vec = l_vector_ptr->get_data();
-			if (lua_isinteger(L,-1))
-			{
-				int32_t l_index = (int32_t)lua_tonumber(L, -l_number_of_arguments + 1);
-				if (l_index < 0 || l_index > 3)
-				{
-					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " index is out of range.");
-				}
-				lua_pushnumber(L, l_vec[l_index]);
-				return 1;
-			}
-			
+			}			
 			const char* l_key = luaL_checkstring(L,-1); 
 			
-			if (l_key == nullptr || l_vector_ptr == nullptr)
+			if (l_key == nullptr)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " unknown key");
 			}
@@ -288,22 +221,22 @@ namespace vuf
 			{
 				if (l_key[0] ==  'x')
 				{
-					lua_pushnumber(L, l_vec.x);
+					lua_pushnumber(L, l_vec_ptr->x);
 					return 1;
 				}
 				else if (l_key[0] == 'y') 
 				{
-					lua_pushnumber(L, l_vec.y);
+					lua_pushnumber(L, l_vec_ptr->y);
 					return 1;
 				}
 				else if (l_key[0] ==  'z')
 				{
-					lua_pushnumber(L, l_vec.z);
+					lua_pushnumber(L, l_vec_ptr->z);
 					return 1;
 				}
 				else if (l_key[0] == 'w')
 				{
-					lua_pushnumber(L, l_vec.w);
+					lua_pushnumber(L, l_vec_ptr->w);
 					return 1;
 				}
 			}
@@ -322,23 +255,6 @@ namespace vuf
 			if (l_vector_ptr == nullptr)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " vector object is null.");
-			}
-
-			if (lua_isnumber(L, -l_number_of_arguments + 1) == 1)
-			{
-				int32_t l_index = (int32_t)lua_tonumber(L, -l_number_of_arguments + 1);
-				if (l_index < 0 || l_index > 3)
-				{
-					//return luaL_error(L, "dfdsafdsfdsfds");
-					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " index is out of range.");
-				}
-				if (lua_isnumber(L, -l_number_of_arguments + 2) != 1)
-				{
-					VF_LUA_THROW_ERROR(L, vufLuaStatic::g_vec4_tbl_name, " expect number.");
-				}
-				T l_val = (T)lua_tonumber(L, -l_number_of_arguments + 2);
-				l_vector_ptr->get_data()[l_index] = l_val;
-				return 0;
 			}
 			
 			const char* l_key = luaL_checkstring(L, -l_number_of_arguments + 1);

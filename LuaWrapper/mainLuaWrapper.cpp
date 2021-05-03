@@ -15,14 +15,6 @@
 VF_LOG_DEFINE_STD_LOGGER();
 
 using namespace vuf;
-std::string vufLuaStatic::g_vec4_tbl_name	= "vec4";
-std::string vufLuaStatic::g_vec4_meta_name	= "vec4M";
-
-std::string vufLuaStatic::g_mat4_tbl_name	= "mat4";
-std::string vufLuaStatic::g_mat4_meta_name	= "mat4M";
-
-std::string vufLuaStatic::g_quat_tbl_name	= "quat";
-std::string vufLuaStatic::g_quat_meta_name	= "quatM";
 
 
 std::string vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::g_table_name;
@@ -57,7 +49,8 @@ int main()
 
 	vufLuaVector4<double>::registrator(L); 
 	vufLuaMatrix4<double>::registrator(L);
-	vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::registrator(L, "vectorArray", "vectorArrM", l_vec_arr_store);
+	vufLuaQuaternion<double>::registrator(L);
+	//vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::registrator(L, "vectorArray", "vectorArrM", l_vec_arr_store);
 	//vufLuaQuaternion_4<double>::registrator(L);
 
 	l_w.dump_stack();

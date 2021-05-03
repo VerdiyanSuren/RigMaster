@@ -8,6 +8,13 @@
 #include <vufLuaMatrix4.h>
 #include <vufLuaQuaternion.h>
 
+#define VF_CHECK_STATUS_AND_RETURN_IT(STATUS)											\
+if (STATUS == false)																	\
+{																						\
+	VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to get global.")));	\
+	return false;																		\
+}
+
 namespace vuf
 {	
 	template<typename T>
@@ -96,29 +103,6 @@ namespace vuf
 				if (m_w.do_string("vec = vec4.new()") == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to create vector")));
-					return false;
-				}
-			}
-			// assign by index
-			{
-				l_bool = m_w.do_string("vec[0] = 2");
-				l_bool = l_bool && m_w.do_string("vec[1] = 3");
-				l_bool = l_bool && m_w.do_string("vec[2] = 4");
-				l_bool = l_bool && m_w.do_string("vec[3] = 5");
-				if (l_bool == false)
-				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign vector by index script")));
-					return false;
-				}
-				if (vufLuaVector4<T>::get_global(L, "vec", l_res) == false)
-				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to get global vector")));
-					return false;
-
-				}
-				if (l_res != vufVector4<T>(2, 3, 4, 5))
-				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed assign by index")));
 					return false;
 				}
 			}
@@ -220,15 +204,15 @@ namespace vuf
 			// normalize
 			{
 				l_bool = m_w.do_string("vec:set(3,4,12)");
-				l_bool = l_bool && m_w.do_string("pnt = vec:normalize()");
+				l_bool = l_bool && m_w.do_string("pnt = vec:normalized()");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector normalize script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
+				//vufLuaVector4<T>::get_global(L, "vec", l_res);
 				vufLuaVector4<T>::get_global(L, "pnt", l_res_b);
-				if (l_res.length() != 1 || l_res_b.length() != 1)
+				if ( l_res_b.length() != 1)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector normalize.")));
 					return false;
@@ -388,12 +372,12 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector + script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "ort", l_res);
+				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", l_res));
 				if (l_res != vufVector4<T>(3, 5, 7))
 				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector + .")));
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector + . Got ") + l_res.to_string() + " experct " + vufVector4<T>(3, 5, 7).to_string()));
 					return false;
-				}
+				}				
 			}
 			// sub
 			{
@@ -405,10 +389,10 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector - script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "ort", l_res);
+				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", l_res));
 				if (l_res != vufVector4<T>(-1, -1, -1))
 				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector - .")));
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector - . Got ") + l_res.to_string() + " experct " + vufVector4<T>(-1, -1, -1).to_string()));
 					return false;
 				}
 			}
@@ -438,16 +422,17 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector  mul script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "ort", l_res);
-				vufLuaVector4<T>::get_global(L, "pnt", l_res_b);
+				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", l_res));
+				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "pnt", l_res_b));
 				if (l_res != vufVector4<T>(4, 8, 12) || l_res_b != vufVector4<T>(5, 10, 15))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector  mul .")));
 					return false;
 				}				
 				// Test Matrix mult
+				
 				l_bool = m_w.do_string("mat = mat4.new()");
-				l_bool = l_bool && m_w.do_string("mat = mat:numerate()");				
+				l_bool = l_bool && m_w.do_string("mat = mat4.numerate()");				
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix create for vecotor4 mul script.")));
@@ -461,7 +446,7 @@ namespace vuf
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector * matrix.")));
 					return false;
-				}				
+				}
 			}			
 			// div
 			{
@@ -486,6 +471,7 @@ namespace vuf
 		}
 		bool quaternion_ut()
 		{
+
 			lua_State* L = m_w.get_lua_state();
 			vufQuaternion<T> l_q_1, l_q_2, l_q_3;
 			vufVector4<T> l_v;
@@ -498,28 +484,6 @@ namespace vuf
 				if (m_w.do_string("q = quat.new()") == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to create quaternion")));
-					return false;
-				}
-			}
-			// assign by index
-			{
-				l_bool = m_w.do_string("q[0] = 2");
-				l_bool = l_bool && m_w.do_string("q[1] = 3");
-				l_bool = l_bool && m_w.do_string("q[2] = 4");
-				l_bool = l_bool && m_w.do_string("q[3] = 5");
-				if (l_bool == false)
-				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign quaternion by index script")));
-					return false;
-				}
-				if (vufLuaQuaternion<T>::get_global(L, "q", l_q_1) == false)
-				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to get global quaternion")));
-					return false;
-				}
-				if (l_q_1 != vufQuaternion<T>(2, 3, 4, 5))
-				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed assign by index")));
 					return false;
 				}
 			}
@@ -544,7 +508,7 @@ namespace vuf
 			// assign copy
 			{
 				l_bool = m_w.do_string("q2 = q:copy()");
-				vufLuaQuaternion<T>::get_global(L, "q",  l_q_1);
+				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
 				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
 				if (l_q_2 != l_q_1)
 				{
@@ -621,34 +585,33 @@ namespace vuf
 			{
 				l_bool = m_w.do_string("v = vec4.new()");
 				l_bool = l_bool && m_w.do_string("v:set(1,1,1)");
-				l_bool = l_bool && m_w.do_string("v:normalize()");
+				l_bool = l_bool && m_w.do_string("v = v:normalized()");
 				l_bool = l_bool && m_w.do_string("a = 60");
-				l_bool = l_bool && m_w.do_string("q:set_by_angle_and_axis(a, v)");
+				l_bool = l_bool && m_w.do_string("q = quat.by_axis_and_angle(v,a)");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set quaternion by angle and axis script")));
 					return false;
-				}				
-				vufLuaVector4<T>::get_global(L, "v", l_v); 
+				}
+				vufLuaVector4<T>::get_global(L, "v", l_v);
 				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
 				if (l_q_1 != vufQuaternion<T>().set_by_angle_and_axis(60., l_v))
 				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set by angle and axis.")));
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Test Failed.( by_axis_and_angle ).")));
 					return false;
 				}
 			}
 			// normalize
 			{
 				l_bool = m_w.do_string("q:set(3,4,12)");
-				l_bool = l_bool && m_w.do_string("q2 = q:normalize()");
+				l_bool = l_bool && m_w.do_string("q2 = q:normalized()");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion normalize script.")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q",  l_q_1);
 				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				if (std::abs(l_q_1.length() - 1) >VF_MATH_EPSILON || std::abs(l_q_2.length() - 1) > VF_MATH_EPSILON)
+				if (std::abs(l_q_2.length() - 1) > VF_MATH_EPSILON)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion normalize.")));
 					return false;
@@ -657,8 +620,8 @@ namespace vuf
 			// conjugate
 			{
 				l_bool = m_w.do_string("q:set(3,4,12)");
-				l_bool = l_bool && m_w.do_string("q:normalize()");
-				l_bool = l_bool && m_w.do_string("q2 = q:conjugate()");
+				l_bool = l_bool && m_w.do_string("q = q:normalized()");
+				l_bool = l_bool && m_w.do_string("q2 = q:conjugated()");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion conjugate script.")));
@@ -666,7 +629,7 @@ namespace vuf
 				}
 				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
 				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				if (l_q_2 != l_q_1 )
+				if (l_q_2 != l_q_1.get_conjugated())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion conjugate.")));
 					return false;
@@ -675,8 +638,8 @@ namespace vuf
 			// invert
 			{
 				l_bool = m_w.do_string("q:set(3,4,12)");
-				l_bool = l_bool && m_w.do_string("q:normalize()");
-				l_bool = l_bool && m_w.do_string("q2 = q:invert()");
+				l_bool = l_bool && m_w.do_string("q = q:normalized()");
+				l_bool = l_bool && m_w.do_string("q2 = q:inverted()");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion invert script.")));
@@ -684,7 +647,7 @@ namespace vuf
 				}
 				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
 				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				if (l_q_2 != l_q_1)
+				if (l_q_2 != l_q_1.get_inverted())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion invert.")));
 					return false;
@@ -693,7 +656,7 @@ namespace vuf
 			//length
 			{
 				l_bool = m_w.do_string("q:set(3,4,12)");
-				l_bool = l_bool && m_w.do_string("q:normalize()");
+				l_bool = l_bool && m_w.do_string("q = q:normalized()");
 				l_bool = l_bool && m_w.do_string("l = q:length()");
 				if (l_bool == false)
 				{
@@ -704,32 +667,96 @@ namespace vuf
 				T l_lngth = (T)lua_tonumber(L, -1);
 				if (std::abs(l_lngth - 1) > VF_MATH_EPSILON)
 				{
+					std::cout << l_lngth << std::endl;
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion length.")));
 					return false;
 				}
 			}
 			// angle
 			{
-				l_bool = m_w.do_string("q:set(3,4,12)");
-				l_bool = l_bool && m_w.do_string("q:normalize()");
-				l_bool = l_bool && m_w.do_string("l = q:angle()");
+				l_bool = m_w.do_string("q:set(3,4,12,5)");
+				l_bool = l_bool && m_w.do_string("q = q:normalized()");
+				l_bool = l_bool && m_w.do_string("a = q:angle()");
 				if (l_bool == false)
 				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion length script.")));
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion angle script.")));
 					return false;
 				}
-				lua_getglobal(L, "l");
-				T l_lngth = (T)lua_tonumber(L, -1);
-				//std::cout << l_lngth << std::endl;
-				//if (std::abs(l_lngth - 1) > VF_MATH_EPSILON)
-				//{
-				//	VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion length.")));
-				//	return false;
-				//}
+				lua_getglobal(L, "a");
+				T l_angle = (T)lua_tonumber(L, -1);
+				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
+				if (l_angle != l_q_1.get_angle())
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion angle.")));
+					return false;
+				}
 			}
 			// axis
 			{
-
+				l_bool = m_w.do_string("q:set(3,4,12,5)");
+				l_bool = l_bool && m_w.do_string("q = q:normalized()");
+				l_bool = l_bool && m_w.do_string("v = q:axis()");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion axis script.")));
+					return false;
+				}
+				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
+				vufLuaVector4<T>::get_global(L, "v", l_v);
+				if (l_v != l_q_1.get_axis_as_v4())
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion axis.")));
+					return false;
+				}
+			}
+			// dot 
+			{
+				l_bool = true;
+				l_bool = l_bool && m_w.do_string("q2 = quat.new()");
+				l_bool = l_bool && m_w.do_string("q:set(3,-4,3,1)");
+				l_bool = l_bool && m_w.do_string("q2:set(3,4,12,5)");
+				l_bool = l_bool && m_w.do_string("d = q:dot(q2)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion dot script.")));
+					return false;
+				}
+				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
+				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
+				lua_getglobal(L, "d");
+				T l_d = (T)lua_tonumber(L, -1);
+				if (l_d != l_q_1.dot(l_q_2))
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion dot.")));
+					return false;
+				}
+			}
+			// mul
+			{
+				l_bool = true;
+				l_bool = l_bool && m_w.do_string("q1 = quat.new()");
+				l_bool = l_bool && m_w.do_string("q2 = quat.new()");
+				l_bool = l_bool && m_w.do_string("q1:set(3,-4,3,1)");
+				l_bool = l_bool && m_w.do_string("q2:set(3,4,12,5)");
+				l_bool = l_bool && m_w.do_string("qm1 = q1*2");
+				l_bool = l_bool && m_w.do_string("qm2 = 3*q1");
+				l_bool = l_bool && m_w.do_string("qm3 = q1*q2");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion mul script.")));
+					return false;
+				}
+				vufLuaQuaternion<T>::get_global(L, "q1", l_q_1);
+				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
+				vufQuaternion<T> l_qm_1, l_qm_2, l_qm_3;
+				vufLuaQuaternion<T>::get_global(L, "qm1", l_qm_1);
+				vufLuaQuaternion<T>::get_global(L, "qm2", l_qm_2);
+				vufLuaQuaternion<T>::get_global(L, "qm3", l_qm_3);
+				if (l_qm_1 != l_q_1*2 || l_qm_2 != 3 * l_q_1 || l_qm_3 != l_q_1 * l_q_2)
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion mul .")));
+					return false;
+				}
 			}
 			return true;
 		}
@@ -747,29 +774,30 @@ namespace vuf
 				return false;
 			}
 
-			// assign by index
-			l_bool = l_bool && m_w.do_string("mat[0][0] = 3");
-			l_bool = l_bool && m_w.do_string("mat[1][2] = 4");
-			l_bool = l_bool && m_w.do_string("mat[2][3] = 5");
-			l_bool = l_bool && m_w.do_string("mat[3][1] = 5");
-			if (l_bool == false)
+			// assign by set
 			{
-				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign matrix by index script")));
-				return false;
-			}
-			if (vufLuaMatrix4<T>::get_global(L, "mat", l_m) == false)
-			{
-				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to get global matrix")));
-				return false;
-			}			
-			if (l_m[0][0] !=3 || l_m[1][2] != 4 || l_m[2][3] != 5 || l_m[3][1] != 5)
-			{
-				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed assign by indeses")));
-				return false;
-			}
-			
+				l_bool = l_bool && m_w.do_string("mat:set(0,0,3)");
+				l_bool = l_bool && m_w.do_string("mat:set(1,2,4)");
+				l_bool = l_bool && m_w.do_string("mat:set(2,3,5)");
+				l_bool = l_bool && m_w.do_string("mat:set(3,1,5)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign matrix by index script")));
+					return false;
+				}
+				if (vufLuaMatrix4<T>::get_global(L, "mat", l_m) == false)
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to get global matrix")));
+					return false;
+				}
+				if (l_m[0][0] != 3 || l_m[1][2] != 4 || l_m[2][3] != 5 || l_m[3][1] != 5)
+				{
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed assign by indeses")));
+					return false;
+				}
+		}
 			// assign maatrix element to variable
-			l_bool = m_w.do_string("a = mat[3][1]");
+			l_bool = m_w.do_string("a = mat:get(3,1)");
 			if (l_bool == false)
 			{
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed assign maatrix element to variable script.")));
@@ -798,10 +826,10 @@ namespace vuf
 			}
 
 			// Transpose 4
-			l_bool = m_w.do_string("tr = mat:get_transpose()");
+			l_bool = m_w.do_string("tr = mat:transpose()");
 			if (l_bool == false)
 			{
-				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix get_transpose script")));
+				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix transpose script")));
 				return false;
 			}
 			vufLuaMatrix4<T>::get_global(L, "tr", l_m_b);
@@ -811,24 +839,10 @@ namespace vuf
 				return false;
 			}
 			
-			// Transpose 4 in place
-			l_bool = m_w.do_string("tr:transpose()");
-			if (l_bool == false)
-			{
-				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix transpose3 script")));
-				return false;
-			}
-			vufLuaMatrix4<T>::get_global(L, "tr", l_m_b);
-			if (l_m_b != vufMatrix4<T>::numerate_matrix())
-			{
-				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix transpose.")));
-				return false;
-			}
-			return true;
 
 			// Transpose 3
 			l_bool = m_w.do_string("mat = mat4.numerate()");
-			l_bool = l_bool && m_w.do_string("tr = mat:get_transpose3()");
+			l_bool = l_bool && m_w.do_string("tr = mat:transpose3()");
 			if (l_bool == false)
 			{
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix get_transpose script")));
@@ -840,26 +854,12 @@ namespace vuf
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix get_transpose3.")));
 				return false;
 			}
-
-			// Transpose 3 in place
-			l_bool = m_w.do_string("tr:transpose3()");
-			if (l_bool == false)
-			{
-				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix transpose3 script")));
-				return false;
-			}
-			vufLuaMatrix4<T>::get_global(L, "tr", l_m_b);
-			if (l_m.get_transposed_3() != l_m_b)
-			{
-				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix transpose3.")));
-				return false;
-			}
 			
 			// determinant
 			l_bool = m_w.do_string("mat = mat4.numerate()");
-			l_bool = l_bool && m_w.do_string("mat[0][0] = 1");
-			l_bool = l_bool && m_w.do_string("mat[1][1] = -10");
-			l_bool = l_bool && m_w.do_string("mat[2][2] = -10");
+			l_bool = l_bool && m_w.do_string("mat:set(0,0,1)");
+			l_bool = l_bool && m_w.do_string("mat:set(1,1,-10)");
+			l_bool = l_bool && m_w.do_string("mat:set(2,2,-10)");
 			l_bool = l_bool && m_w.do_string("a = mat:determinant()");
 			if (l_bool == false)
 			{
@@ -873,8 +873,7 @@ namespace vuf
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix determinant.")));
 				return false;
 			}
-			
-			
+
 			return true;
 		}
 		void release()

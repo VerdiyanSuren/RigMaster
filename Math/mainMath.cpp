@@ -16,6 +16,10 @@ int main()
 
 	l_vctr4d_test.run();
 	l_mtrx4d_test.run();
-
+	
+	vufQuaternion<double> l_q;
+	vufVector4<double> l_v;
+	l_q.set_by_angle_and_axis(60., l_v);
+	std::cout << l_q << std::endl;
 	system("pause");
 }

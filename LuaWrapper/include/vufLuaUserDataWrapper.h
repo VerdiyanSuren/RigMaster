@@ -14,40 +14,42 @@ namespace vuf
 	class vufLuaDataWrapper
 	{
 	public:
-		vufLuaDataWrapper(	vufLuaDataWrapper<T>* p_lua_user_data_ptr = nullptr,  T* p_ref_data_ptr = nullptr) :
-			  m_lua_ptr(p_lua_user_data_ptr)
-			, m_ref_ptr(p_ref_data_ptr)			
-			, m_data()
-		{}
-		bool has_to_destroy() const
+		vufLuaDataWrapper(const T& p_data, T* p_ref_ptr = nullptr) :			 
+			m_ref_ptr(p_ref_ptr)
+			, m_data(p_data)
 		{
-			if (m_lua_ptr == nullptr)
-			{
-				return true;
-			}
-			return (this != m_lua_ptr || m_ref_ptr == nullptr);
+			m_ref_count = p_ref_ptr == nullptr ? 0 : 2;
 		}
 		T& get_data() 					
 		{
-			if (this == m_lua_ptr && m_ref_ptr != nullptr)
+			if (m_ref_count == 0)
 			{
+				return m_data;
+			}
+			if (m_ref_ptr != nullptr)
+			{
+				m_ref_count--;
+				VF_LOG_WARN("Decrement ref couter");
+				if (m_ref_count == 0)
+				{
+					VF_LOG_WARN("MAKE UNIQUE");
+					m_data = *m_ref_ptr;
+					return m_data;
+				}
 				return *m_ref_ptr;
 			}
 			return m_data; 
 		}
 		void set_data(const T& p_data)	
-		{ 
-			if (this == m_lua_ptr && m_ref_ptr != nullptr)
-			{
-				*m_ref_ptr = p_data;
-				return;
-			}
+		{ 			
 			m_data = p_data; 
 		}
+		uint16_t	get_ref_count() const	{ return m_ref_count; }
+		T* get_ref_ptr() const				{ return p_ref_ptr; }
 	private:
-		vufLuaDataWrapper<T>*	m_lua_ptr = nullptr; // lua user_data
-		T*						m_ref_ptr = nullptr; // reference to data
-		T						m_data;
+		uint16_t				m_ref_count		= 0;	// reference count
+		T*						m_ref_ptr	= nullptr;	// reference to data
+		T						m_data;					// lvalue
 	};
 	
 	// class session storage for arrays created in lua
