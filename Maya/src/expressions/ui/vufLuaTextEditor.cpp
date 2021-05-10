@@ -19,7 +19,7 @@ void vufLuaTextEditor::keyPressEvent(QKeyEvent* p_event)
 		/* do your stuff here */
 		p_event->accept();
 	}
-	if ((p_event->key() == Qt::Key_Plus) && (p_event->modifiers() & Qt::ControlModifier))
+	if ((p_event->key() == Qt::Key_Equal) && (p_event->modifiers() & Qt::ControlModifier))
 	{
 		zoomIn(2);
 		p_event->accept();

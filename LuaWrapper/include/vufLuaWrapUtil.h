@@ -69,6 +69,17 @@ if ( lua_isnumber(L,INDEX))								\
 }
 
 // Implement method
+// Set global variable of user
+#define VF_LUA_SET_USER_DATA_GLOBAL(META_NAME, DATA_TYPE, WRAPPER_TYPE )						\
+static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p_res)			\
+{																								\
+	auto l_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));						\
+	new (l_ptr) WRAPPER_TYPE(p_res);															\
+	luaL_getmetatable(L, META_NAME.c_str());													\
+	lua_setmetatable(L, -2);																	\
+	lua_setglobal(L, p_var_name.c_str());														\
+	return true;																				\
+}
 // Get global variable of user
 #define VF_LUA_GET_USER_DATA_GLOBAL(META_NAME, DATA_TYPE, WRAPPER_TYPE )				\
 static bool	get_global(lua_State * L, const std::string & p_var_name, DATA_TYPE& p_res)	\

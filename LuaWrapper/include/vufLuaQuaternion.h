@@ -67,6 +67,8 @@ namespace vuf
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__index",	index);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex",new_index);
 		}
+		/** bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)	*/
+		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_quat_meta_name, vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
 		/** bool	get_global(lua_State * L, const std::string & p_var_name, vufVector4<T>& p_res)	*/
 		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_quat_meta_name, vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
 		/** bool	static bool	get_param(lua_State * L, int p_lua_index, vufVector4<T>& p_res_ptr)*/

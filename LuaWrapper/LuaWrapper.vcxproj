@@ -340,7 +340,8 @@
     <ClInclude Include="include\vufLuaWrapper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mainLuaWrapper.cpp" />
+    <ClCompile Include="include\vufLuaMemPool.h" />
+    <ClCompile Include="src\mainLuaWrapper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

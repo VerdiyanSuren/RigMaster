@@ -4,16 +4,17 @@
 #include <new>
 
 #include <vufLog.h>
-#include "include/vufLuaWrapper.h"
+#include "vufLuaWrapper.h"
 #include <vufLuaVector4.h>
 #include <vufLuaMatrix4.h>
 //#include <vufLuaQuaternion.h>
 #include <vufLuaStatic.h>
 #include <unitTest/vufLuaMathUT.h>
+#include <vufLuaMemPool.h>
 
 
 VF_LOG_DEFINE_STD_LOGGER();
-
+VF_LUA_STATIC_INITIALIZE()
 using namespace vuf;
 
 
@@ -21,12 +22,59 @@ std::string vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<doubl
 std::string vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::g_metatable_name;
 
 
+//constexpr uint64_t			vufLuaChunk <std::vector<double>>::m_chunk_size = 2048;
+void vec_init(void* p_ptr)
+{
+	//std::cout << "vec constructor" << std::endl;
+	std::vector<double>* l_vec = (std::vector<double>*)p_ptr;
+	new (l_vec) std::vector<double>();
+}
+void vec_clear(void* p_ptr)
+{
+	std::cout << "vec destructor" << std::endl;
+	std::vector<double>* l_vec = (std::vector<double>*)p_ptr;
+	l_vec->~vector();
+}
+std::function<void(void*)>	vufLuaMemPoolChunk <std::vector<double>>::m_init_function		= vec_init;
+std::function<void(void*)>	vufLuaMemPoolChunk <std::vector<double>>::m_release_function	= vec_clear;
+
+
 int main()
 {
+	vufLuaMemPoolChunk <std::vector<double>> l_chunk;
+	for (int j = 0; j < 5; ++j)
+	{
+		std::vector<double>* l_vector = l_chunk.new_pointer();
+		l_vector->resize(10);
+		for (int i = 0; i < 10; ++i)
+		{
+			l_vector->operator[](i) = i;
+		}
+	}
+	std::cout << "data size: " << sizeof(std::vector<double>) << std::endl;
+	std::cout << "chunk counts: " << l_chunk.get_chunk_count() << std::endl;
+	l_chunk.reset();
+	for (int j = 0; j < 5; ++j)
+	{
+		std::vector<double>* l_vector = l_chunk.new_pointer();
+		l_vector->resize(10);
+		for (int i = 0; i < 10; ++i)
+		{
+			l_vector->operator[](i) = i;
+		}
+	}
+	std::cout << "chunk counts: " << l_chunk.get_chunk_count() << std::endl;
+
+
+
+	l_chunk.delete_chunks();
+	system("pause");
+	return 0;
+
+
 	vufLuaMathUT<double> l_lua_math_ut;
 	l_lua_math_ut.run();
 
-	system("pause");
 
 
 	vufLuaSessionDataStore< std::vector < vufVector4<double>> > l_vec_arr_store;
@@ -70,10 +118,16 @@ int main()
 	l_w.dump_stack(); 
 	//l_w.do_string(l_lua_str_1);
 	
-	
+	vufVector4<double> l_vec;
+	l_vec.x = 13;
+	l_vec.y = -2;
+	l_vec.z = 9;
+	l_vec.w = 2;
+
 	
 	l_w.do_string(l_lua_str_3);
-
+	vufLuaVector4<double>::set_global(l_w.get_lua_state(), "vctr", l_vec);
+	l_w.do_string("print(vctr:to_string())");
 	std::string l_str;
 	std::getline(std::cin, l_str);
 	while (l_str.empty() == false)

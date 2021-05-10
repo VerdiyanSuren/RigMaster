@@ -52,6 +52,39 @@ filter { "system:windows", "platforms:vufApp19" }
 	systemversion 	"latest"
 
 --------------------------------------------------------------------------------------------	
+-- 									    PROJECT OPENCL
+--------------------------------------------------------------------------------------------
+project "OpenCL"
+	location 	"OpenCL"
+	kind 		"ConsoleApp"
+	language 	"C++"
+	
+	targetdir 	("bin/" .. outputdir .. "/%{prj.name}")
+	objdir 	("bin-int/" .. outputdir .. "/%{prj.name}")
+	includedirs 
+	{
+		"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/include",
+		"Core/include/",
+		"Math/include/",
+		"%{prj.name}/include"
+	}
+	files
+	{
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/**.cpp",
+		"%{prj.name}/include/**.h"		
+	}
+	libdirs
+	{
+		"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2/lib/x64",
+		"bin/" .. outputdir .. "/Core"
+	}
+	links
+	{
+		"openCL.lib",
+		"Core.lib"
+	}
+--------------------------------------------------------------------------------------------	
 -- 									    PROJECT GLFW
 --------------------------------------------------------------------------------------------
 project "GLFW"

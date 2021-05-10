@@ -7,6 +7,9 @@
     <Filter Include="include\unitTest">
       <UniqueIdentifier>{D8EF98CB-C4E8-B71D-ED1A-9DA2D9729729}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\unitTest\vufLuaMathUT.h">
@@ -16,6 +19,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufLuaQuaternion.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufLuaStatic.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufLuaUserDataWrapper.h">
@@ -30,11 +36,13 @@
     <ClInclude Include="include\vufLuaWrapper.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\vufLuaStatic.h">
-      <Filter>include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mainLuaWrapper.cpp" />
+    <ClCompile Include="include\vufLuaMemPool.h">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mainLuaWrapper.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

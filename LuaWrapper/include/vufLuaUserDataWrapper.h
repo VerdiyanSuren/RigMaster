@@ -93,9 +93,9 @@ namespace vuf
 		size_t			m_last_ndx = 0;
 	};
 
-	template<typename T>	using vufLuaQuaternionWrapper = vufLuaDataWrapper< vufQuaternion<T>>;
-	template<typename T>	using vufLuaVector4Wrapper = vufLuaDataWrapper< vufVector4<T>>;
-	template<typename T>	using vufLuaMattrix4Wrapper = vufLuaDataWrapper< vufMatrix4<T>>;
+	template<typename T>	using vufLuaQuaternionWrapper	= vufLuaDataWrapper< vufQuaternion<T>>;
+	template<typename T>	using vufLuaVector4Wrapper		= vufLuaDataWrapper< vufVector4<T>>;
+	template<typename T>	using vufLuaMattrix4Wrapper		= vufLuaDataWrapper< vufMatrix4<T>>;
 
 }
 

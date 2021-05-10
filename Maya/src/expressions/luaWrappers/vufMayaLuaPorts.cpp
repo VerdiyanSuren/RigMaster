@@ -8,6 +8,7 @@
 #include <maya/MPlug.h>
 #include <maya/MGlobal.h>
 #include <maya/MVectorArray.h>
+#include <maya/MIntArray.h>
 
 using namespace vufRM;
 #define VF_LUA_CONNECT_IN_COMMAND_AND_RETURN(DATA_PORT,EXPR_PLUG,TYPE)		\

@@ -49,7 +49,19 @@ namespace vuf
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__index",		index);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex",	new_index);
 		}
-
+		/** bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)	*/
+		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>);
+		/*
+		static bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)
+		{
+			auto l_ptr = (vufLuaVector4Wrapper<T>*)lua_newuserdata(L, sizeof(vufLuaVector4Wrapper<T>));
+			new (l_ptr) vufLuaVector4Wrapper<T>(p_res);
+			luaL_getmetatable(L, vufLuaStatic::g_vec4_meta_name.c_str());
+			lua_setmetatable(L, -2);
+			lua_setglobal(L, p_var_name.c_str());
+			return true;
+		}
+		*/
 		/** bool	get_global(lua_State * L, const std::string & p_var_name, vufVector4<T>& p_res)	*/
 		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_vec4_meta_name, vufVector4<T>,vufLuaVector4Wrapper<T>);
 		/** bool	static bool	get_param(lua_State * L, int p_lua_index, vufVector4<T>& p_res_ptr)*/

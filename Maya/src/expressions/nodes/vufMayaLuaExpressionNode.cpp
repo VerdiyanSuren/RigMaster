@@ -205,11 +205,11 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 		// Check should we restart lua machune or not
 		if (l_should_restart == true)
 		{
-			//VF_LOG_INFO("RESTART LUA_MACHINE");
+			VF_LOG_INFO("RESTART LUA_MACHINE");
 			m_lua_machine.close_machine();
 			m_lua_machine.open_machine();
 			vufLuaVector4<double>::		registrator( m_lua_machine.get_lua_state() );
-			vufLuaMatrix4<double>::		registrator(m_lua_machine.get_lua_state());
+			vufLuaMatrix4<double>::		registrator( m_lua_machine.get_lua_state());
 			vufLuaQuaternion<double>::	registrator( m_lua_machine.get_lua_state() );
 
 			m_script_hash = l_in_script_data->get_hash();
@@ -218,6 +218,7 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 		
 		if (set_lua_globals(p_data, l_in_port_data) == false)
 		{
+			VF_LOG_INFO("Failed to set Globals");
 			return MS::kSuccess;
 		}
 
@@ -330,21 +331,26 @@ bool vufMayaLuaExpressionNode::set_lua_globals( MDataBlock& p_data, std::shared_
 				VF_LOG_ERR(vufMayaUtils::mstr_2_str(this->name() + " Cant handle in vector port "));
 				return false;
 			}
-			MVector l_vec = l_in_vector_array_h.inputValue().asVector();
-			vufVector4<double>* l_vector_ptr = (vufVector4<double>*)lua_newuserdata(L, sizeof(vufVector4<double>));
-			l_vector_ptr->x = l_vec.x;
-			l_vector_ptr->y = l_vec.y;
-			l_vector_ptr->z = l_vec.z;
-			l_vector_ptr->w = 1.0;
-
-			luaL_getmetatable(L, "vector4Meta");
-			lua_setmetatable(L, -2);			
-			lua_setglobal(L, p_port_data->m_in_vector_port[i].m_lua_var_name.c_str());		// push Lua global variable
+			MVector l_mvec = l_in_vector_array_h.inputValue().asVector();
+			vufVector4<double>* l_vec = (vufVector4<double>*) & l_mvec;
+			vufLuaVector4<double>::set_global(L, p_port_data->m_in_vector_port[i].m_lua_var_name, *l_vec);
 		}
 	}
 	// read in matrix
 	{
-
+		MArrayDataHandle l_in_matrix_array_h = p_data.inputValue(g_input_matrix_attr);
+		for (uint64_t i = 0; i < p_port_data->m_in_matrix_port.size(); ++i)
+		{
+			l_status = l_in_matrix_array_h.jumpToElement(p_port_data->m_in_matrix_port[i].m_index);
+			if (l_status != MS::kSuccess)
+			{
+				VF_LOG_ERR(vufMayaUtils::mstr_2_str(this->name() + " Cant handle in vector port "));
+				return false;
+			}
+			MMatrix l_mmatr = l_in_matrix_array_h.inputValue().asMatrix();
+			vufMatrix4<double>* l_mat = (vufMatrix4<double>*) & l_mmatr;
+			vufLuaMatrix4<double>::set_global(L, p_port_data->m_in_matrix_port[i].m_lua_var_name, *l_mat);
+		}
 	}
 	// read in mesh
 	// read in curve
