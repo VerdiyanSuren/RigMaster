@@ -49,7 +49,15 @@
 
 // Throw error
 #define VF_LUA_THROW_ERROR(L,TBL_NAME, ERROR_CHAR_PTR)			\
-	return luaL_error( L, (vufStringUtils::string_padding(TBL_NAME +  ERROR_CHAR_PTR).c_str()) );
+	return luaL_error( L, (vuf::vufStringUtils::string_padding(std::string(TBL_NAME) +  ERROR_CHAR_PTR).c_str()) );
+
+#define VF_LUA_THROW_ERROR_BY_BOOL(L,STATUS, TBL_NAME, ERROR_CHAR_PTR)											\
+	if (STATUS == false)																						\
+	{																											\
+		return luaL_error(L, (vuf::vufStringUtils::string_padding(std::string(TBL_NAME) + ERROR_CHAR_PTR).c_str()));	\
+	}
+
+
 //---------------------------------------------------------------------------
 //  Read Save params
 #define VF_LUA_READ_NUMBER(L, INDEX, NUMBER, BOOL_RES)	\
@@ -70,35 +78,47 @@ if ( lua_isnumber(L,INDEX))								\
 
 // Implement method
 // Set global variable of user
-#define VF_LUA_SET_USER_DATA_GLOBAL(META_NAME, DATA_TYPE, WRAPPER_TYPE )						\
-static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p_res)			\
-{																								\
-	auto l_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));						\
-	new (l_ptr) WRAPPER_TYPE(p_res);															\
-	luaL_getmetatable(L, META_NAME.c_str());													\
-	lua_setmetatable(L, -2);																	\
-	lua_setglobal(L, p_var_name.c_str());														\
-	return true;																				\
+#pragma region LUA_SET_USER_DATA_GLOABAL
+#define VF_LUA_SET_USER_DATA_GLOBAL(META_NAME, DATA_TYPE, WRAPPER_TYPE )				\
+static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p_res)	\
+{																						\
+	auto l_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));				\
+	new (l_ptr) WRAPPER_TYPE(p_res);													\
+	luaL_getmetatable(L, META_NAME);													\
+	lua_setmetatable(L, -2);															\
+	lua_setglobal(L, p_var_name.c_str());												\
+	return true;																		\
 }
+// Set global variable of user
+#define VF_LUA_SET_USER_DATA_GLOBAL_S(META_NAME, DATA_TYPE )							\
+static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p_res)	\
+{																						\
+	auto l_ptr = (DATA_TYPE*)lua_newuserdata(L, sizeof(DATA_TYPE));						\
+	new (l_ptr) DATA_TYPE(p_res);														\
+	luaL_getmetatable(L, META_NAME);													\
+	lua_setmetatable(L, -2);															\
+	lua_setglobal(L, p_var_name.c_str());												\
+	return true;																		\
+}
+#pragma endregion
 // Get global variable of user
 #define VF_LUA_GET_USER_DATA_GLOBAL(META_NAME, DATA_TYPE, WRAPPER_TYPE )				\
-static bool	get_global(lua_State * L, const std::string & p_var_name, DATA_TYPE& p_res)	\
+static bool	get_global(lua_State * L, const std::string & p_var_name, DATA_TYPE** p_res)\
 {																						\
 	lua_getglobal(L, p_var_name.c_str());												\
-	auto l_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME.c_str());				\
+	auto l_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);						\
 	if (l_ptr == nullptr)																\
 	{																					\
 		return false;																	\
 	}																					\
-	p_res = l_ptr->get_data();															\
+	*p_res = &(l_ptr->get_data());														\
 	return true;																		\
 }
-
 // Get user data as new param by index in stack 
 #define VF_LUA_GET_USER_DATA_PARAM(META_NAME, DATA_TYPE, WRAPPER_TYPE)					\
 static bool	get_param(lua_State * L, int p_lua_index, DATA_TYPE** p_res_ptr)			\
 {																						\
-	auto l_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, p_lua_index, META_NAME.c_str());		\
+	auto l_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, p_lua_index, META_NAME);				\
 	if (l_ptr == nullptr)																\
 	{																					\
 		*p_res_ptr = nullptr;															\
@@ -113,7 +133,7 @@ static WRAPPER_TYPE*	create_new_ref(lua_State* L,DATA_TYPE* l_ref_data)			\
 {																					\
 	auto  l_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));			\
 	new (l_ptr) WRAPPER_TYPE(*l_ref_data, l_ref_data);								\
-	luaL_getmetatable(L, META_NAME.c_str());										\
+	luaL_getmetatable(L, META_NAME);												\
 	lua_setmetatable(L, -2);														\
 	return l_ptr;																	\
 }
@@ -123,23 +143,49 @@ static WRAPPER_TYPE* create_user_data(lua_State* L)									\
 {																					\
 	auto l_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));			\
 	new (l_ptr) WRAPPER_TYPE(DATA_TYPE());											\
-	luaL_getmetatable(L, META_NAME.c_str());										\
+	luaL_getmetatable(L, META_NAME);												\
 	lua_setmetatable(L, -2);														\
 	return l_ptr;																	\
+}
+
+// destructor
+#define VF_LUA_IMPLEMENT_DESTROY(META_NAME,WRAPPER_TYPE)							\
+static int destroy(lua_State * L)													\
+{																					\
+	/*std::cout << "DESTROY " << META_NAME << std::endl;*/							\
+	auto l_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);					\
+	l_ptr->~WRAPPER_TYPE();															\
+	return 0;																		\
+}
+
+// myType.copy constructor
+#define VF_LUA_IMPLEMENT_COPY_CONSTRUCTOR(META_NAME,DATA_TYPE,WRAPPER_TYPE)			\
+static int copy(lua_State* L)														\
+{																					\
+	auto l_data_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);				\
+	if (l_data_ptr == nullptr)														\
+	{																				\
+		VF_LUA_THROW_ERROR(L,META_NAME, " got null object.");						\
+	}																				\
+	auto l_res_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));		\
+	new (l_res_ptr) WRAPPER_TYPE( DATA_TYPE(l_data_ptr->get_data()) );				\
+	luaL_getmetatable(L, META_NAME);												\
+	lua_setmetatable(L, -2);														\
+	return 1;																		\
 }
 
 // myType.copy()->myType
 #define VF_LUA_IMPLEMENT_COPY(META_NAME,DATA_TYPE,WRAPPER_TYPE)						\
 static int copy(lua_State* L)														\
 {																					\
-	auto l_data_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME.c_str());		\
+	auto l_data_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);				\
 	if (l_data_ptr == nullptr)														\
 	{																				\
 		VF_LUA_THROW_ERROR(L,META_NAME, " got null object.");						\
 	}																				\
 	auto l_res_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));		\
 	new (l_res_ptr) WRAPPER_TYPE( DATA_TYPE() );									\
-	luaL_getmetatable(L, META_NAME.c_str());										\
+	luaL_getmetatable(L, META_NAME);												\
 	lua_setmetatable(L, -2);														\
 	l_res_ptr->set_data(l_data_ptr->get_data());									\
 	return 1;																		\
@@ -154,8 +200,8 @@ static int LUA_METHOD_NAME(lua_State* L)															\
 	{																								\
 		VF_LUA_THROW_ERROR(L,META_NAME,"expects 1 argument");										\
 	}																								\
-	auto l_arg_ptr		= (CLASS_NAME*)luaL_checkudata(L, -1, META_NAME.c_str());					\
-	auto l_master_ptr	=  (CLASS_NAME*)luaL_checkudata(L, -2, META_NAME.c_str());					\
+	auto l_arg_ptr		= (CLASS_NAME*)luaL_checkudata(L, -1, META_NAME);							\
+	auto l_master_ptr	=  (CLASS_NAME*)luaL_checkudata(L, -2, META_NAME);							\
 	if (l_arg_ptr != nullptr && l_master_ptr != nullptr)											\
 	{																								\
 		auto l_dist = l_master_ptr->get_data().CLASS_METHOD(l_arg_ptr->get_data());					\
@@ -175,13 +221,13 @@ static int LUA_METHOD_NAME(lua_State* L)																		\
 	{																											\
 		VF_LUA_THROW_ERROR(L,META_NAME,"expects 1 argument");													\
 	}																											\
-	auto l_arg_ptr		= (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME.c_str());								\
-	auto l_master_ptr	= (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME.c_str());								\
+	auto l_arg_ptr		= (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);										\
+	auto l_master_ptr	= (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME);										\
 	if (l_arg_ptr != nullptr && l_master_ptr != nullptr)														\
 	{																											\
 		auto l_res_ptr =	(WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));							\
 		new (l_res_ptr)		WRAPPER_TYPE(DATA_TYPE());															\
-		luaL_getmetatable(L, META_NAME.c_str());																\
+		luaL_getmetatable(L, META_NAME);																		\
 		lua_setmetatable(L, -2);																				\
 		l_res_ptr->set_data( l_master_ptr->get_data().CLASS_METHOD(l_arg_ptr->get_data()));						\
 		return 1;					/*number of return  values*/												\
@@ -190,16 +236,30 @@ static int LUA_METHOD_NAME(lua_State* L)																		\
 }
 
 // Implement method
-// myType.method()->number
-#define VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER(META_NAME,CLASS_NAME,CLASS_METHOD,LUA_METHOD_NAME)	\
+// myType.method()->void
+#define VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_VOID(META_NAME,WRAPPER_TYPE,CLASS_METHOD,LUA_METHOD_NAME)	\
 static int LUA_METHOD_NAME(lua_State* L)															\
 {																									\
-	auto* l_arg_ptr = (CLASS_NAME*)luaL_checkudata(L, -1, META_NAME.c_str());						\
+	auto* l_arg_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);								\
 	if (l_arg_ptr == nullptr)																		\
 	{																								\
 		VF_LUA_THROW_ERROR(L, META_NAME, " got null");												\
 	}																								\
-	T l_res = l_arg_ptr->get_data().CLASS_METHOD();													\
+	l_arg_ptr->get_data().CLASS_METHOD();													\
+	return 0;					/*number of return  values*/										\
+}
+
+// Implement method
+// myType.method()->number
+#define VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER(META_NAME,WRAPPER_TYPE,CLASS_METHOD,LUA_METHOD_NAME)\
+static int LUA_METHOD_NAME(lua_State* L)															\
+{																									\
+	auto* l_arg_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);								\
+	if (l_arg_ptr == nullptr)																		\
+	{																								\
+		VF_LUA_THROW_ERROR(L, META_NAME, " got null");												\
+	}																								\
+	double l_res = l_arg_ptr->get_data().CLASS_METHOD();											\
 	lua_pushnumber(L, l_res);	/* set result of function*/											\
 	return 1;					/*number of return  values*/										\
 }
@@ -209,14 +269,14 @@ static int LUA_METHOD_NAME(lua_State* L)															\
 #define VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE( META_NAME,DATA_TYPE,WRAPPER_TYPE,CLASS_METHOD,LUA_METHOD_NAME)	\
 static int LUA_METHOD_NAME(lua_State* L)																		\
 {																												\
-	auto l_arg_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME.c_str());									\
+	auto l_arg_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);											\
 	if (l_arg_ptr == nullptr)																					\
 	{																											\
 		VF_LUA_THROW_ERROR(L,META_NAME," got a null");															\
 	}																											\
 	auto l_res_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));									\
 	new (l_res_ptr) WRAPPER_TYPE(DATA_TYPE());																	\
-	luaL_getmetatable(L, META_NAME.c_str());																	\
+	luaL_getmetatable(L, META_NAME);																			\
 	lua_setmetatable(L, -2);																					\
 	l_res_ptr->set_data( l_arg_ptr->get_data().CLASS_METHOD());													\
 	return 1;					/*number of return  values*/													\
@@ -229,13 +289,13 @@ static int LUA_METHOD_NAME(lua_State* L)																		\
 #define VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(META_NAME, DATA_TYPE, WRAPPER_TYPE, LUA_METHOD_NAME)	\
 static int LUA_METHOD_NAME(lua_State* L)													\
 {																							\
-	auto l_arg_1_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME.c_str());			\
-	auto l_arg_2_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME.c_str());			\
+	auto l_arg_1_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);					\
+	auto l_arg_2_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME);					\
 	if (l_arg_1_ptr != nullptr && l_arg_2_ptr != nullptr)									\
 	{																						\
 		auto l_res_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));			\
 		new (l_res_ptr) WRAPPER_TYPE(DATA_TYPE());											\
-		luaL_getmetatable(L, META_NAME.c_str());											\
+		luaL_getmetatable(L, META_NAME);													\
 		lua_setmetatable(L, -2);															\
 		l_res_ptr->set_data(l_arg_1_ptr->get_data() + l_arg_2_ptr->get_data());				\
 		return 1;																			\
@@ -246,13 +306,13 @@ static int LUA_METHOD_NAME(lua_State* L)													\
 #define VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(META_NAME,DATA_TYPE,WRAPPER_TYPE, LUA_METHOD_NAME)	\
 static int LUA_METHOD_NAME(lua_State* L)													\
 {																							\
-	auto l_arg_1_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME.c_str());			\
-	auto l_arg_2_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME.c_str());			\
+	auto l_arg_1_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);					\
+	auto l_arg_2_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME);					\
 	if (l_arg_1_ptr != nullptr && l_arg_2_ptr != nullptr)									\
 	{																						\
 		auto l_res_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));			\
 		new (l_res_ptr) WRAPPER_TYPE(DATA_TYPE());											\
-		luaL_getmetatable(L, META_NAME.c_str());											\
+		luaL_getmetatable(L, META_NAME);													\
 		lua_setmetatable(L, -2);															\
 		l_res_ptr->set_data(l_arg_2_ptr->get_data() - l_arg_1_ptr->get_data());				\
 		return 1;																			\
@@ -263,12 +323,12 @@ static int LUA_METHOD_NAME(lua_State* L)													\
 #define VF_LUA_IMPLEMENT_TYPE_UNM_TYPE(META_NAME,DATA_TYPE, WRAPPER_TYPE,LUA_METHOD_NAME)	\
 static int LUA_METHOD_NAME(lua_State* L)													\
 {																							\
-	auto l_arg_1_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME.c_str());			\
+	auto l_arg_1_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);					\
 	if (l_arg_1_ptr != nullptr )															\
 	{																						\
 		auto l_res_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));			\
 		new (l_res_ptr) WRAPPER_TYPE(DATA_TYPE());											\
-		luaL_getmetatable(L, META_NAME.c_str());											\
+		luaL_getmetatable(L, META_NAME);													\
 		lua_setmetatable(L, -2);															\
 		l_res_ptr->set_data( -l_arg_1_ptr->get_data());										\
 		return 1;																			\
@@ -279,13 +339,13 @@ static int LUA_METHOD_NAME(lua_State* L)													\
 #define VF_LUA_IMPLEMENT_TYPE_MUL_TYPE(META_NAME,DATA_TYPE,WRAPPER_TYPE, LUA_METHOD_NAME)	\
 static int LUA_METHOD_NAME(lua_State* L)													\
 {																							\
-	auto l_arg_1_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME.c_str());			\
-	auto l_arg_2_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME.c_str());			\
+	auto l_arg_1_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);					\
+	auto l_arg_2_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME);					\
 	if (l_arg_1_ptr != nullptr && l_arg_2_ptr != nullptr)									\
 	{																						\
 		auto l_res_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));			\
 		new (l_res_ptr) WRAPPER_TYPE(DATA_TYPE());											\
-		luaL_getmetatable(L, META_NAME.c_str());											\
+		luaL_getmetatable(L, META_NAME);													\
 		lua_setmetatable(L, -2);															\
 		l_res_ptr->set_data(l_arg_2_ptr->get_data() * l_arg_1_ptr->get_data());				\
 		return 1;																			\

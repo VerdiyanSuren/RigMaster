@@ -96,6 +96,27 @@
     <ClInclude Include="include\vufMayaGlobalIncludes.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMVector.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaStatic.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaDataWrapper.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMVectorArray.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMPoint.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMPointArray.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMMatrix.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\vufLogMaya.cpp">

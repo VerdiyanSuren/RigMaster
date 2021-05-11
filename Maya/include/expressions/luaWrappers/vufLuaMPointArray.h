@@ -1,0 +1,6 @@
+#ifndef VF_LUA_MPOINT_ARRAY_H
+#define VF_LUA_MPOINT_ARRAY_H
+
+
+
+#endif // !VF_LUA_MPOINT_ARRAY_H

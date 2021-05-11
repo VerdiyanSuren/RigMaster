@@ -338,6 +338,7 @@
     <ClInclude Include="include\vufLuaVector4.h" />
     <ClInclude Include="include\vufLuaWrapUtil.h" />
     <ClInclude Include="include\vufLuaWrapper.h" />
+    <ClInclude Include="include\vufLuaSTDVector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\vufLuaMemPool.h" />

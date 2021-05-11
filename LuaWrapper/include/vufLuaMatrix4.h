@@ -24,7 +24,7 @@ namespace vuf
 	public:
 		static void registrator(lua_State* L )
 		{
-			VF_LUA_NEW_TABLE(L, vufLuaStatic::g_mat4_tbl_name.c_str());
+			VF_LUA_NEW_TABLE(L, vufLuaStatic::g_mat4_tbl_name);
 			VF_LUA_ADD_TABLE_FIELD(L, "new",			create);
 			VF_LUA_ADD_TABLE_FIELD(L, "copy",			copy);
 			VF_LUA_ADD_TABLE_FIELD(L, "set",			set);	// in place
@@ -40,7 +40,7 @@ namespace vuf
 			VF_LUA_ADD_TABLE_FIELD(L, "to_type",		to_type);
 			//VF_LUA_ADD_TABLE_FIELD(L, "log", to_string);
 
-			VF_LUA_NEW_META_TABLE(L, vufLuaStatic::g_mat4_meta_name.c_str());
+			VF_LUA_NEW_META_TABLE(L, vufLuaStatic::g_mat4_meta_name);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__gc",	destroy);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__add", add);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__sub", sub);
@@ -244,13 +244,13 @@ namespace vuf
 		}
 		static int to_type(lua_State* L)
 		{
-			lua_pushstring(L, vufLuaStatic::g_mat4_tbl_name.c_str());
+			lua_pushstring(L, vufLuaStatic::g_mat4_tbl_name);
 			return 1;
 		}
 
 		static int destroy(lua_State* L)
 		{
-			auto l_ptr = (vufLuaMattrix4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_mat4_meta_name.c_str());
+			auto l_ptr = (vufLuaMattrix4Wrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_mat4_meta_name);
 			//std::cout << "MARIX DESTROY has to call destructor" << l_ptr->get_ref_count() <<  std::endl;
 			l_ptr->~vufLuaMattrix4Wrapper<T>();
 			return 0;
@@ -273,7 +273,7 @@ namespace vuf
 			const char* l_key = luaL_checkstring(L, -1);
 			if (l_key != nullptr)
 			{
-				lua_getglobal(L, vufLuaStatic::g_mat4_tbl_name.c_str());
+				lua_getglobal(L, vufLuaStatic::g_mat4_tbl_name);
 				lua_pushstring(L, l_key);
 				lua_rawget(L, -2);
 				return 1;

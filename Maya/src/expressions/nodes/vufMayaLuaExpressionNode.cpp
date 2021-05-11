@@ -17,6 +17,10 @@
 #include <vufLuaVector4.h>
 #include <vufLuaQuaternion.h>
 #include <vufLuaMatrix4.h>
+#include <expressions/luaWrappers/vufLuaMVector.h>
+#include <expressions/luaWrappers/vufLuaMPoint.h>
+#include <expressions/luaWrappers/vufLuaMMatrix.h>
+#include <expressions/luaWrappers/vufLuaMVectorArray.h>
 
 using namespace vuf;
 using namespace vufRM;
@@ -208,10 +212,13 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			VF_LOG_INFO("RESTART LUA_MACHINE");
 			m_lua_machine.close_machine();
 			m_lua_machine.open_machine();
-			vufLuaVector4<double>::		registrator( m_lua_machine.get_lua_state() );
+			vufLuaVector4<double>::		registrator( m_lua_machine.get_lua_state());
 			vufLuaMatrix4<double>::		registrator( m_lua_machine.get_lua_state());
-			vufLuaQuaternion<double>::	registrator( m_lua_machine.get_lua_state() );
-
+			vufLuaQuaternion<double>::	registrator( m_lua_machine.get_lua_state());
+			vufLuaMVector::				registrator(m_lua_machine.get_lua_state());
+			vufLuaMPoint::				registrator(m_lua_machine.get_lua_state());
+			vufLuaMMatrix::				registrator(m_lua_machine.get_lua_state());
+			vufLuaMVectorArray::		registrator(m_lua_machine.get_lua_state());
 			m_script_hash = l_in_script_data->get_hash();
 			l_in_port_data->m_need_lua_reset = false;
 		}

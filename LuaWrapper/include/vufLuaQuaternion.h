@@ -32,7 +32,7 @@ namespace vuf
 	public:
 		static void registrator(lua_State* L)
 		{
-			VF_LUA_NEW_TABLE(L, vufLuaStatic::g_quat_tbl_name.c_str());
+			VF_LUA_NEW_TABLE(L, vufLuaStatic::g_quat_tbl_name);
 			VF_LUA_ADD_TABLE_FIELD(L, "new",				create);
 			VF_LUA_ADD_TABLE_FIELD(L, "copy",				copy);
 
@@ -56,7 +56,7 @@ namespace vuf
 			VF_LUA_ADD_TABLE_FIELD(L, "to_string",		to_string);
 			VF_LUA_ADD_TABLE_FIELD(L, "to_type",		to_type);  
 
-			VF_LUA_NEW_META_TABLE(L, vufLuaStatic::g_quat_meta_name.c_str());
+			VF_LUA_NEW_META_TABLE(L, vufLuaStatic::g_quat_meta_name);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__gc",		destroy);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__add",		add);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__sub",		sub);
@@ -169,13 +169,13 @@ namespace vuf
 		}
 		static int to_type(lua_State* L)
 		{
-			lua_pushstring(L, vufLuaStatic::g_quat_tbl_name.c_str());
+			lua_pushstring(L, vufLuaStatic::g_quat_tbl_name);
 			return 1;
 		}
 
 		static int destroy(lua_State* L)
 		{
-			auto l_q_ptr = (vufLuaQuaternionWrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_quat_meta_name.c_str());
+			auto l_q_ptr = (vufLuaQuaternionWrapper<T>*)luaL_checkudata(L, -1, vufLuaStatic::g_quat_meta_name);
 			l_q_ptr->~vufLuaQuaternionWrapper<T>();
 			return 0;
 		}
@@ -233,7 +233,7 @@ namespace vuf
 		{
 			int l_number_of_arguments = lua_gettop(L);
 			
-			auto l_q_ptr = (vufLuaQuaternionWrapper<T>*)luaL_checkudata(L, -l_number_of_arguments, vufLuaStatic::g_quat_meta_name.c_str());
+			auto l_q_ptr = (vufLuaQuaternionWrapper<T>*)luaL_checkudata(L, -l_number_of_arguments, vufLuaStatic::g_quat_meta_name);
 			if (l_q_ptr == nullptr)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaStatic::g_quat_tbl_name, " got null object.");
@@ -268,7 +268,7 @@ namespace vuf
 					return 1;
 				}
 			}
-			lua_getglobal(L, vufLuaStatic::g_quat_tbl_name.c_str());
+			lua_getglobal(L, vufLuaStatic::g_quat_tbl_name);
 			lua_pushstring(L, l_key);
 			lua_rawget(L, -2);
 			return 1;
@@ -277,7 +277,7 @@ namespace vuf
 		{
 			//std::cout << "VECTOR NEW_INDEX" << std::endl;
 			int l_number_of_arguments = lua_gettop(L);
-			auto* l_q_ptr = (vufLuaQuaternionWrapper<T>*)luaL_checkudata(L, -l_number_of_arguments, vufLuaStatic::g_quat_meta_name.c_str());
+			auto* l_q_ptr = (vufLuaQuaternionWrapper<T>*)luaL_checkudata(L, -l_number_of_arguments, vufLuaStatic::g_quat_meta_name);
 			if (l_q_ptr == nullptr)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaStatic::g_quat_tbl_name, " quaternion object is null.");

@@ -7,6 +7,7 @@
 #include "vufLuaWrapper.h"
 #include <vufLuaVector4.h>
 #include <vufLuaMatrix4.h>
+#include <vufLuaSTDVector.h>
 //#include <vufLuaQuaternion.h>
 #include <vufLuaStatic.h>
 #include <unitTest/vufLuaMathUT.h>
@@ -14,12 +15,7 @@
 
 
 VF_LOG_DEFINE_STD_LOGGER();
-VF_LUA_STATIC_INITIALIZE()
 using namespace vuf;
-
-
-std::string vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::g_table_name;
-std::string vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::g_metatable_name;
 
 
 //constexpr uint64_t			vufLuaChunk <std::vector<double>>::m_chunk_size = 2048;
@@ -68,8 +64,8 @@ int main()
 
 
 	l_chunk.delete_chunks();
-	system("pause");
-	return 0;
+	//system("pause");
+	//return 0;
 
 
 	vufLuaMathUT<double> l_lua_math_ut;
@@ -98,6 +94,9 @@ int main()
 	vufLuaVector4<double>::registrator(L); 
 	vufLuaMatrix4<double>::registrator(L);
 	vufLuaQuaternion<double>::registrator(L);
+
+	typedef  vufLuaSTDVector<double, l_tbl, l_mtbl> raka ;
+	raka::registrator(L);
 	//vufLuaVector4Array< vufVector4<double>, std::vector<vufVector4<double>>>::registrator(L, "vectorArray", "vectorArrM", l_vec_arr_store);
 	//vufLuaQuaternion_4<double>::registrator(L);
 

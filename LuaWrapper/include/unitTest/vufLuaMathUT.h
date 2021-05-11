@@ -72,16 +72,6 @@ namespace vuf
 				VF_LOG_ERR( vufStringUtils::string_padding(std::string("Failed to create lua machune.") ));
 				return false;
 			}
-			vufLuaStatic::g_vec4_tbl_name = "vec4";
-			vufLuaStatic::g_vec4_meta_name = "vec4M";
-
-			vufLuaStatic::g_mat4_tbl_name = "mat4";
-			vufLuaStatic::g_mat4_meta_name = "mat4M";
-
-			vufLuaStatic::g_quat_tbl_name = "quat";
-			vufLuaStatic::g_quat_meta_name = "quatM";
-
-
 			lua_State* L = m_w.get_lua_state();
 			vufLuaVector4<double>::registrator(L);
 			//vufLuaVector3<double>::registrator(L);
@@ -93,7 +83,7 @@ namespace vuf
 		bool vector4_ut()
 		{
 			lua_State* L = m_w.get_lua_state();			
-			vufVector4<T> l_res,l_res_b,l_ort;
+			vufVector4<T> *l_res_ptr, *l_res_b_ptr,*l_ort_ptr;
 			bool l_bool = false;
 			T l_val;
 			std::string l_str;
@@ -117,8 +107,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign vector by key script")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				if (l_res != vufVector4<T>(12, 13, 14, 15))
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				if (*l_res_ptr != vufVector4<T>(12, 13, 14, 15))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed assign by key")));
 					return false;
@@ -126,18 +116,20 @@ namespace vuf
 			}
 			// assign copy
 			{
+
 				l_bool = m_w.do_string("pnt = vec:copy()");
-				vufLuaVector4<T>::get_global(L, "pnt", l_res_b);
-				if (l_res_b != l_res)
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				vufLuaVector4<T>::get_global(L, "pnt", &l_res_b_ptr);
+				if (*l_res_b_ptr != *l_res_ptr)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign vector copy")));
 					return false;
 				}
 				l_bool = m_w.do_string("pnt = vec:copy()");
 				l_bool = m_w.do_string("vec.x = 100");
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				vufLuaVector4<T>::get_global(L, "pnt", l_res_b);
-				if (l_res_b == l_res)
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				vufLuaVector4<T>::get_global(L, "pnt", &l_res_b_ptr);
+				if (*l_res_b_ptr == *l_res_ptr)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign vector copy.It's instance.")));
 					return false;
@@ -150,8 +142,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  vector set() script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				if (l_res != vufVector4<T>())
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				if (*l_res_ptr != vufVector4<T>())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set().")));
 					return false;
@@ -161,8 +153,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  vector set(5) script")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				if (l_res != vufVector4<T>(5))
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				if (*l_res_ptr != vufVector4<T>(5))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set(5).")));
 					return false;
@@ -172,8 +164,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  vector set(5,6) script")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				if (l_res != vufVector4<T>(5, 6))
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				if (*l_res_ptr != vufVector4<T>(5, 6))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set(5,6).")));
 					return false;
@@ -183,8 +175,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  vector set(5,6,7) script")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				if (l_res != vufVector4<T>(5, 6, 7))
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				if (*l_res_ptr != vufVector4<T>(5, 6, 7))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set(5,6,7).")));
 					return false;
@@ -194,8 +186,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  vector set(5,6,7,8) script")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				if (l_res != vufVector4<T>(5, 6, 7, 8))
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				if (*l_res_ptr != vufVector4<T>(5, 6, 7, 8))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set(5,6,7,8).")));
 					return false;
@@ -211,8 +203,8 @@ namespace vuf
 					return false;
 				}
 				//vufLuaVector4<T>::get_global(L, "vec", l_res);
-				vufLuaVector4<T>::get_global(L, "pnt", l_res_b);
-				if ( l_res_b.length() != 1)
+				vufLuaVector4<T>::get_global(L, "pnt", &l_res_b_ptr);
+				if ( (*l_res_b_ptr).length() != 1)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector normalize.")));
 					return false;
@@ -228,10 +220,10 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector ortho script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				vufLuaVector4<T>::get_global(L, "pnt", l_res_b);
-				vufLuaVector4<T>::get_global(L, "ort", l_ort);
-				if (l_ort.dot(l_res_b) != 0)
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				vufLuaVector4<T>::get_global(L, "pnt", &l_res_b_ptr);
+				vufLuaVector4<T>::get_global(L, "ort", &l_ort_ptr);
+				if ((*l_ort_ptr).dot(*l_res_b_ptr) != 0)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector ortho.")));
 					return false;
@@ -247,10 +239,10 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector parallel_to script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				vufLuaVector4<T>::get_global(L, "pnt", l_res_b);
-				vufLuaVector4<T>::get_global(L, "ort", l_ort);
-				if (l_ort.get_cross(l_res_b).length() != 0)
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				vufLuaVector4<T>::get_global(L, "pnt", &l_res_b_ptr);
+				vufLuaVector4<T>::get_global(L, "ort", &l_ort_ptr);
+				if ((*l_ort_ptr).get_cross(*l_res_b_ptr).length() != 0)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector parallel_to.")));
 					return false;
@@ -266,10 +258,10 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector cross script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				vufLuaVector4<T>::get_global(L, "pnt", l_res_b);
-				vufLuaVector4<T>::get_global(L, "ort", l_ort);
-				if (l_ort.dot(l_res_b) != 0 || l_ort.dot(l_res))
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				vufLuaVector4<T>::get_global(L, "pnt", &l_res_b_ptr);
+				vufLuaVector4<T>::get_global(L, "ort", &l_ort_ptr);
+				if ((*l_ort_ptr).dot(*l_res_b_ptr) != 0 || (*l_ort_ptr).dot(*l_res_ptr))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector cross.")));
 					return false;
@@ -339,8 +331,8 @@ namespace vuf
 				}
 				lua_getglobal(L, "s");
 				l_str = lua_tostring(L, -1);
-				vufLuaVector4<T>::get_global(L, "vec", l_res);
-				if (l_str != l_res.to_string())
+				vufLuaVector4<T>::get_global(L, "vec", &l_res_ptr);
+				if (l_str != (*l_res_ptr).to_string())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector to_string.")));
 					return false;
@@ -372,10 +364,10 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector + script.")));
 					return false;
 				}
-				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", l_res));
-				if (l_res != vufVector4<T>(3, 5, 7))
+				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", &l_res_ptr));
+				if (*l_res_ptr != vufVector4<T>(3, 5, 7))
 				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector + . Got ") + l_res.to_string() + " experct " + vufVector4<T>(3, 5, 7).to_string()));
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector + . Got ") + (*l_res_ptr).to_string() + " experct " + vufVector4<T>(3, 5, 7).to_string()));
 					return false;
 				}				
 			}
@@ -389,10 +381,10 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector - script.")));
 					return false;
 				}
-				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", l_res));
-				if (l_res != vufVector4<T>(-1, -1, -1))
+				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", &l_res_ptr));
+				if (*l_res_ptr != vufVector4<T>(-1, -1, -1))
 				{
-					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector - . Got ") + l_res.to_string() + " experct " + vufVector4<T>(-1, -1, -1).to_string()));
+					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector - . Got ") + (*l_res_ptr).to_string() + " experct " + vufVector4<T>(-1, -1, -1).to_string()));
 					return false;
 				}
 			}
@@ -405,8 +397,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector unar - script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "ort", l_res);
-				if (l_res != vufVector4<T>(-1, -2, -3))
+				vufLuaVector4<T>::get_global(L, "ort", &l_res_ptr);
+				if (*l_res_ptr != vufVector4<T>(-1, -2, -3))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector unar- ")));
 					return false;
@@ -422,9 +414,9 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector  mul script.")));
 					return false;
 				}
-				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", l_res));
-				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "pnt", l_res_b));
-				if (l_res != vufVector4<T>(4, 8, 12) || l_res_b != vufVector4<T>(5, 10, 15))
+				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "ort", &l_res_ptr));
+				VF_CHECK_STATUS_AND_RETURN_IT(vufLuaVector4<T>::get_global(L, "pnt", &l_res_b_ptr));
+				if (*l_res_ptr != vufVector4<T>(4, 8, 12) || *l_res_b_ptr != vufVector4<T>(5, 10, 15))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector  mul .")));
 					return false;
@@ -438,11 +430,11 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix create for vecotor4 mul script.")));
 					return false;
 				}
-				vufMatrix4<T> l_matr;
-				vufLuaMatrix4<T>::get_global( L, "mat", l_matr);
+				vufMatrix4<T> *l_matr_ptr;
+				vufLuaMatrix4<T>::get_global( L, "mat", &l_matr_ptr);
 				l_bool = m_w.do_string("vt = ort * mat");
-				vufLuaVector4<T>::get_global(L, "vt", l_res_b);
-				if (l_res_b != vufVector4<T>(140, 165, 190, 215))
+				vufLuaVector4<T>::get_global(L, "vt", &l_res_b_ptr);
+				if (*l_res_b_ptr != vufVector4<T>(140, 165, 190, 215))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector * matrix.")));
 					return false;
@@ -457,8 +449,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector  div script.")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "ort", l_res);
-				if (l_res != vufVector4<T>(1, 2, 3))
+				vufLuaVector4<T>::get_global(L, "ort", &l_res_ptr);
+				if (*l_res_ptr != vufVector4<T>(1, 2, 3))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to vector  div .")));
 					return false;
@@ -473,8 +465,9 @@ namespace vuf
 		{
 
 			lua_State* L = m_w.get_lua_state();
-			vufQuaternion<T> l_q_1, l_q_2, l_q_3;
-			vufVector4<T> l_v;
+			//vufQuaternion<T> l_q_1, l_q_2, l_q_3;
+			vufQuaternion<T> *l_q_1_ptr, *l_q_2_ptr;
+			vufVector4<T> *l_v_ptr;
 			bool l_bool = false;
 			//T l_val;
 			std::string l_str;
@@ -498,8 +491,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign quaternion by key script")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				if (l_q_1 != vufQuaternion<T>(12, 13, 14, 15))
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				if (*l_q_1_ptr != vufQuaternion<T>(12, 13, 14, 15))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed assign by key")));
 					return false;
@@ -508,16 +501,16 @@ namespace vuf
 			// assign copy
 			{
 				l_bool = m_w.do_string("q2 = q:copy()");
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				if (l_q_2 != l_q_1)
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				vufLuaQuaternion<T>::get_global(L, "q2", &l_q_2_ptr);
+				if (*l_q_2_ptr != *l_q_1_ptr)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign quaternion copy")));
 					return false;
 				}
 				l_bool = m_w.do_string("q2.x = -10");
-				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				if (l_q_2 == l_q_1)
+				vufLuaQuaternion<T>::get_global(L, "q2", &l_q_2_ptr);
+				if (*l_q_2_ptr == *l_q_1_ptr)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign quaternion copy.It's instance.")));
 					return false;
@@ -530,8 +523,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  quaternion set() script.")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				if (l_q_1 != vufQuaternion<T>())
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				if (*l_q_1_ptr != vufQuaternion<T>())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set().")));
 					return false;
@@ -541,8 +534,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  quaternion set(5) script")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				if (l_q_1 != vufQuaternion<T>(5))
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				if (*l_q_1_ptr != vufQuaternion<T>(5))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set(5).")));
 					return false;
@@ -552,8 +545,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  quaternion set(5,6) script")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				if (l_q_1 != vufQuaternion<T>(5, 6))
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				if (*l_q_1_ptr != vufQuaternion<T>(5, 6))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set(5,6).")));
 					return false;
@@ -563,8 +556,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  quaternion set(5,6,7) script")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				if (l_q_1 != vufQuaternion<T>(5, 6, 7))
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				if (*l_q_1_ptr != vufQuaternion<T>(5, 6, 7))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set(5,6,7).")));
 					return false;
@@ -574,8 +567,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to  quaternion set(5,6,7,8) script")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				if (l_q_1 != vufQuaternion<T>(5, 6, 7, 8))
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				if (*l_q_1_ptr != vufQuaternion<T>(5, 6, 7, 8))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set(5,6,7,8).")));
 					return false;
@@ -593,9 +586,9 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to set quaternion by angle and axis script")));
 					return false;
 				}
-				vufLuaVector4<T>::get_global(L, "v", l_v);
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				if (l_q_1 != vufQuaternion<T>().set_by_angle_and_axis(60., l_v))
+				vufLuaVector4<T>::get_global(L, "v", &l_v_ptr);
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				if ( *l_q_1_ptr != vufQuaternion<T>().set_by_angle_and_axis(60., *l_v_ptr))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Test Failed.( by_axis_and_angle ).")));
 					return false;
@@ -610,8 +603,8 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion normalize script.")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				if (std::abs(l_q_2.length() - 1) > VF_MATH_EPSILON)
+				vufLuaQuaternion<T>::get_global(L, "q2", &l_q_2_ptr);
+				if (std::abs((*l_q_2_ptr).length() - 1) > VF_MATH_EPSILON)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion normalize.")));
 					return false;
@@ -627,9 +620,9 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion conjugate script.")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				if (l_q_2 != l_q_1.get_conjugated())
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				vufLuaQuaternion<T>::get_global(L, "q2", &l_q_2_ptr);
+				if (*l_q_2_ptr != (*l_q_1_ptr).get_conjugated())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion conjugate.")));
 					return false;
@@ -645,9 +638,9 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion invert script.")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				if (l_q_2 != l_q_1.get_inverted())
+				vufLuaQuaternion<T>::get_global(L, "q",  &l_q_1_ptr);
+				vufLuaQuaternion<T>::get_global(L, "q2", &l_q_2_ptr);
+				if (*l_q_2_ptr != (*l_q_1_ptr).get_inverted())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion invert.")));
 					return false;
@@ -684,8 +677,8 @@ namespace vuf
 				}
 				lua_getglobal(L, "a");
 				T l_angle = (T)lua_tonumber(L, -1);
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				if (l_angle != l_q_1.get_angle())
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				if (l_angle != (*l_q_1_ptr).get_angle())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion angle.")));
 					return false;
@@ -701,9 +694,9 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion axis script.")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				vufLuaVector4<T>::get_global(L, "v", l_v);
-				if (l_v != l_q_1.get_axis_as_v4())
+				vufLuaQuaternion<T>::get_global(L, "q", &l_q_1_ptr);
+				vufLuaVector4<T>::get_global(L, "v", &l_v_ptr);
+				if (*l_v_ptr != (*l_q_1_ptr).get_axis_as_v4())
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion axis.")));
 					return false;
@@ -721,11 +714,11 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion dot script.")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q", l_q_1);
-				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
+				vufLuaQuaternion<T>::get_global(L, "q",  &l_q_1_ptr);
+				vufLuaQuaternion<T>::get_global(L, "q2", &l_q_2_ptr);
 				lua_getglobal(L, "d");
 				T l_d = (T)lua_tonumber(L, -1);
-				if (l_d != l_q_1.dot(l_q_2))
+				if (l_d != (*l_q_1_ptr).dot(*l_q_2_ptr))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion dot.")));
 					return false;
@@ -746,13 +739,13 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion mul script.")));
 					return false;
 				}
-				vufLuaQuaternion<T>::get_global(L, "q1", l_q_1);
-				vufLuaQuaternion<T>::get_global(L, "q2", l_q_2);
-				vufQuaternion<T> l_qm_1, l_qm_2, l_qm_3;
-				vufLuaQuaternion<T>::get_global(L, "qm1", l_qm_1);
-				vufLuaQuaternion<T>::get_global(L, "qm2", l_qm_2);
-				vufLuaQuaternion<T>::get_global(L, "qm3", l_qm_3);
-				if (l_qm_1 != l_q_1*2 || l_qm_2 != 3 * l_q_1 || l_qm_3 != l_q_1 * l_q_2)
+				vufLuaQuaternion<T>::get_global(L, "q1", &l_q_1_ptr);
+				vufLuaQuaternion<T>::get_global(L, "q2", &l_q_2_ptr);
+				vufQuaternion<T> *l_qm_1_ptr, *l_qm_2_ptr, *l_qm_3_ptr;
+				vufLuaQuaternion<T>::get_global(L, "qm1", &l_qm_1_ptr);
+				vufLuaQuaternion<T>::get_global(L, "qm2", &l_qm_2_ptr);
+				vufLuaQuaternion<T>::get_global(L, "qm3", &l_qm_3_ptr);
+				if (*l_qm_1_ptr != (*l_q_1_ptr)*2 || *l_qm_2_ptr != 3 * (*l_q_1_ptr) || *l_qm_3_ptr != (*l_q_1_ptr) * (*l_q_2_ptr))
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to quaternion mul .")));
 					return false;
@@ -763,8 +756,8 @@ namespace vuf
 		bool matrix_ut()
 		{
 			lua_State* L = m_w.get_lua_state();
-			vufVector4<T> l_res, l_res_b, l_ort;
-			vufMatrix4<T> l_m, l_m_b;
+			//vufVector4<T>* l_res_b_ptr;// *l_ort_ptr;
+			vufMatrix4<T>* l_m_a_ptr, *l_m_b_ptr;
 			T l_val;
 			bool l_bool = true;
 			// create
@@ -785,12 +778,12 @@ namespace vuf
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to asssign matrix by index script")));
 					return false;
 				}
-				if (vufLuaMatrix4<T>::get_global(L, "mat", l_m) == false)
+				if (vufLuaMatrix4<T>::get_global(L, "mat", &l_m_a_ptr) == false)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to get global matrix")));
 					return false;
 				}
-				if (l_m[0][0] != 3 || l_m[1][2] != 4 || l_m[2][3] != 5 || l_m[3][1] != 5)
+				if ((*l_m_a_ptr)[0][0] != 3 || (*l_m_a_ptr)[1][2] != 4 || (*l_m_a_ptr)[2][3] != 5 || (*l_m_a_ptr)[3][1] != 5)
 				{
 					VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed assign by indeses")));
 					return false;
@@ -818,8 +811,8 @@ namespace vuf
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix numerate script")));
 				return false;
 			}
-			vufLuaMatrix4<T>::get_global(L, "mat", l_m);
-			if (l_m != vufMatrix4<T>::numerate_matrix())
+			vufLuaMatrix4<T>::get_global(L, "mat", &l_m_a_ptr);
+			if (*l_m_a_ptr != vufMatrix4<T>::numerate_matrix())
 			{
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix numerate")));
 				return false;
@@ -832,8 +825,8 @@ namespace vuf
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix transpose script")));
 				return false;
 			}
-			vufLuaMatrix4<T>::get_global(L, "tr", l_m_b);
-			if (l_m.get_transposed_4() != l_m_b)
+			vufLuaMatrix4<T>::get_global(L, "tr", &l_m_b_ptr);
+			if ((*l_m_a_ptr).get_transposed_4() != *l_m_b_ptr)
 			{
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix get_transpose.")));
 				return false;
@@ -848,8 +841,8 @@ namespace vuf
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix get_transpose script")));
 				return false;
 			}
-			vufLuaMatrix4<T>::get_global(L, "tr", l_m_b);
-			if (l_m.get_transposed_3() != l_m_b)
+			vufLuaMatrix4<T>::get_global(L, "tr", &l_m_b_ptr);
+			if ((*l_m_a_ptr).get_transposed_3() != *l_m_b_ptr)
 			{
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("Failed to matrix get_transpose3.")));
 				return false;

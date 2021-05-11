@@ -1,6 +1,7 @@
 #ifndef VF_LUA_USR_DATA_ERPR_H
 #define VF_LUA_USR_DATA_ERPR_H
 
+#include <vector>
 
 namespace vuf
 {
@@ -96,7 +97,7 @@ namespace vuf
 	template<typename T>	using vufLuaQuaternionWrapper	= vufLuaDataWrapper< vufQuaternion<T>>;
 	template<typename T>	using vufLuaVector4Wrapper		= vufLuaDataWrapper< vufVector4<T>>;
 	template<typename T>	using vufLuaMattrix4Wrapper		= vufLuaDataWrapper< vufMatrix4<T>>;
-
+	template<typename T>	using vufLuaSTDVectorWrapper	= vufLuaDataWrapper< std::vector<T>>;
 }
 
 #endif // !VF_LUA_USR_DATA_ERPR_H

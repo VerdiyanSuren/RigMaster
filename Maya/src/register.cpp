@@ -22,7 +22,6 @@ const MTypeId	vufMayaLuaPortNode::		g_id(0x197330);	const MString	vufMayaLuaPort
 const MTypeId	vufMayaLuaTxtNode::			g_id(0x197430);	const MString	vufMayaLuaTxtNode::g_type_name("vufLuaTxt");
 const MTypeId	vufMayaLuaExpressionNode::	g_id(0x197530);	const MString	vufMayaLuaExpressionNode::g_type_name("vufLuaExpression");
 
-VF_LUA_STATIC_INITIALIZE()
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
 VF_DEFINE_CUSTOM_LOGGER(vufLogMaya);
 //std::shared_ptr<vuf::vufLog> vuf::vufLog::g_log = nullptr;
