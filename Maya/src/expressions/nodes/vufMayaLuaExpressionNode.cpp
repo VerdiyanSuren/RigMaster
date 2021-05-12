@@ -17,9 +17,10 @@
 #include <vufLuaVector4.h>
 #include <vufLuaQuaternion.h>
 #include <vufLuaMatrix4.h>
-#include <expressions/luaWrappers/vufLuaMVector.h>
 #include <expressions/luaWrappers/vufLuaMPoint.h>
+#include <expressions/luaWrappers/vufLuaMVector.h>
 #include <expressions/luaWrappers/vufLuaMMatrix.h>
+#include <expressions/luaWrappers/vufLuaMQuaternion.h>
 #include <expressions/luaWrappers/vufLuaMVectorArray.h>
 
 using namespace vuf;
@@ -183,8 +184,10 @@ MStatus	vufMayaLuaExpressionNode::initialize()
 }
 MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
-	if (p_plug == g_output_ports_attr)
-	{				
+	std::cout << "COMPUTE: " << name() << " " << p_plug.name() << std::endl;
+	if (p_plug == g_output_ports_attr || p_plug == g_output_number_attr)
+	{
+		std::cout << "COMPUTE PLUG: " << name() << std::endl;
 		MStatus l_status;
 		std::shared_ptr<vufMayaLuaPortInternalData>		l_in_port_data;
 		std::shared_ptr<vuf::vufTxt>					l_in_script_data;
@@ -218,6 +221,7 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			vufLuaMVector::				registrator(m_lua_machine.get_lua_state());
 			vufLuaMPoint::				registrator(m_lua_machine.get_lua_state());
 			vufLuaMMatrix::				registrator(m_lua_machine.get_lua_state());
+			vufLuaMQuaternion::			registrator(m_lua_machine.get_lua_state());
 			vufLuaMVectorArray::		registrator(m_lua_machine.get_lua_state());
 			m_script_hash = l_in_script_data->get_hash();
 			l_in_port_data->m_need_lua_reset = false;
@@ -262,7 +266,8 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			return MS::kSuccess;
 		}	
 		//m_lua_machine.dump_stack();
-		p_data.setClean(p_plug);
+		p_data.setClean(g_output_ports_attr);
+		p_data.setClean(g_output_number_attr);
 		
 		return MS::kSuccess;
 

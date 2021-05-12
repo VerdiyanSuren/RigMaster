@@ -11,21 +11,25 @@ extern "C"
 #include "lauxlib.h"
 #include "lualib.h"
 }
-#include <maya/MVector.h>
 
-
+#include <sstream>
 namespace vufRM
 {
+	class vufLuaMPoint;
 	class vufLuaMVector
 	{
 	public:
 		static void registrator(lua_State* L)
 		{
 			VF_LUA_NEW_TABLE(L, vufLuaMayaStatic::g_mvec_tbl_name);
-			VF_LUA_ADD_TABLE_FIELD(L, "new", create);
-			VF_LUA_ADD_TABLE_FIELD(L, "copy", copy);
-			VF_LUA_ADD_TABLE_FIELD(L, "length", length);
-			VF_LUA_ADD_TABLE_FIELD(L, "normalize", normalize);
+			VF_LUA_ADD_TABLE_FIELD(L, "new",		create);
+			VF_LUA_ADD_TABLE_FIELD(L, "copy",		copy);
+			VF_LUA_ADD_TABLE_FIELD(L, "cross",		cross);
+			VF_LUA_ADD_TABLE_FIELD(L, "dot",		dot);
+			VF_LUA_ADD_TABLE_FIELD(L, "rotateBy",	rotate);
+
+			VF_LUA_ADD_TABLE_FIELD(L, "length",		length);
+			VF_LUA_ADD_TABLE_FIELD(L, "normalize",	normalize);
 			//VF_LUA_ADD_TABLE_FIELD(L, "normal", normal);
 			//VF_LUA_ADD_TABLE_FIELD(L, "ortho_to", ortho_to);
 			//VF_LUA_ADD_TABLE_FIELD(L, "parallel_to", parallel_to);
@@ -35,7 +39,6 @@ namespace vufRM
 			
 			VF_LUA_ADD_TABLE_FIELD(L, "angle", angle);
 			///VF_LUA_ADD_TABLE_FIELD(L, "dot", dot);
-			//VF_LUA_ADD_TABLE_FIELD(L, "cross", cross);
 			VF_LUA_ADD_TABLE_FIELD(L, "to_string", to_string);
 			VF_LUA_ADD_TABLE_FIELD(L, "to_type", to_type);
 
@@ -63,34 +66,11 @@ namespace vufRM
 		*  vufLuaVector4Wrapper<T>* create_user_data(lua_State* L)*/
 		VF_LUA_CREATE_USER_DATA(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper);
 	private:
-		static int create(lua_State* L)
-		{
-			int l_number_of_arguments = lua_gettop(L);
-			if (l_number_of_arguments == 0)
-			{
-				create_user_data(L);
-				return 1;
-			}
-			if (l_number_of_arguments == 3)
-			{
-				bool l_status = false;
-				double l_x, l_y, l_z;
-				VF_LUA_READ_NUMBER(L, -3, l_x, l_status);
-				VF_LUA_THROW_ERROR_BY_BOOL(L,l_status, vufLuaMayaStatic::g_mvec_tbl_name, "wrong nunber of arguments. Expect  o or 3 numbers");
-				VF_LUA_READ_NUMBER(L, -2, l_y, l_status);
-				VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_mvec_tbl_name, "wrong nunber of arguments. Expect  o or 3 numbers");
-				VF_LUA_READ_NUMBER(L, -1, l_z, l_status);
-				VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_mvec_tbl_name, "wrong nunber of arguments. Expect  o or 3 numbers");
-				auto l_wrapper = create_user_data(L);
-				MVector& l_vec = l_wrapper->get_data();
-				l_vec.x = l_x; 
-				l_vec.y = l_y; 
-				l_vec.z = l_z;
-				return 1;
-			}
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Fauled to create MVector. Wrong arguments.");
-		}
+		static int create(	lua_State* L);		
 		VF_LUA_IMPLEMENT_COPY(vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper);
+		static int cross(	lua_State* L);
+		static int dot(		lua_State* L);
+		static int rotate(	lua_State* L);
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER(vufLuaMayaStatic::g_mvec_meta_name, vufLuaMVectorWrapper, length, length);
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_VOID(	vufLuaMayaStatic::g_mvec_meta_name, vufLuaMVectorWrapper, normalize, normalize);
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper, normal, normal);
@@ -104,11 +84,12 @@ namespace vufRM
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed tp get MVector object.");
 			}
-			std::string l_str = "[";
-			l_str += l_vec_ptr->x; l_str += ", ";
-			l_str += l_vec_ptr->y; l_str += ", ";
-			l_str += l_vec_ptr->z; l_str += "]";
-			lua_pushstring(L, l_str.c_str());
+			std::stringstream l_ss;
+			l_ss << "[";
+			l_ss << l_vec_ptr->x << ", ";
+			l_ss << l_vec_ptr->y << ", ";
+			l_ss << l_vec_ptr->z <<  "]";
+			lua_pushstring(L, l_ss.str().c_str());
 			return 1;
 		}
 		static int to_type(lua_State* L)

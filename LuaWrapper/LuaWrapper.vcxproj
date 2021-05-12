@@ -332,16 +332,16 @@
   <ItemGroup>
     <ClInclude Include="include\unitTest\vufLuaMathUT.h" />
     <ClInclude Include="include\vufLuaMatrix4.h" />
+    <ClInclude Include="include\vufLuaMemPool.h" />
     <ClInclude Include="include\vufLuaQuaternion.h" />
+    <ClInclude Include="include\vufLuaSTDVector.h" />
     <ClInclude Include="include\vufLuaStatic.h" />
     <ClInclude Include="include\vufLuaUserDataWrapper.h" />
     <ClInclude Include="include\vufLuaVector4.h" />
     <ClInclude Include="include\vufLuaWrapUtil.h" />
     <ClInclude Include="include\vufLuaWrapper.h" />
-    <ClInclude Include="include\vufLuaSTDVector.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\vufLuaMemPool.h" />
     <ClCompile Include="src\mainLuaWrapper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

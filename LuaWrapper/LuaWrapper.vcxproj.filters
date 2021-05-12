@@ -18,7 +18,13 @@
     <ClInclude Include="include\vufLuaMatrix4.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\vufLuaMemPool.h">
+      <Filter>include</Filter>
+    </ClInclude>
     <ClInclude Include="include\vufLuaQuaternion.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufLuaSTDVector.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufLuaStatic.h">
@@ -36,14 +42,8 @@
     <ClInclude Include="include\vufLuaWrapper.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\vufLuaSTDVector.h">
-      <Filter>include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\vufLuaMemPool.h">
-      <Filter>include</Filter>
-    </ClCompile>
     <ClCompile Include="src\mainLuaWrapper.cpp">
       <Filter>src</Filter>
     </ClCompile>

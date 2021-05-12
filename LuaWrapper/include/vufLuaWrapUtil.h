@@ -89,17 +89,6 @@ static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p
 	lua_setglobal(L, p_var_name.c_str());												\
 	return true;																		\
 }
-// Set global variable of user
-#define VF_LUA_SET_USER_DATA_GLOBAL_S(META_NAME, DATA_TYPE )							\
-static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p_res)	\
-{																						\
-	auto l_ptr = (DATA_TYPE*)lua_newuserdata(L, sizeof(DATA_TYPE));						\
-	new (l_ptr) DATA_TYPE(p_res);														\
-	luaL_getmetatable(L, META_NAME);													\
-	lua_setmetatable(L, -2);															\
-	lua_setglobal(L, p_var_name.c_str());												\
-	return true;																		\
-}
 #pragma endregion
 // Get global variable of user
 #define VF_LUA_GET_USER_DATA_GLOBAL(META_NAME, DATA_TYPE, WRAPPER_TYPE )				\
@@ -259,7 +248,7 @@ static int LUA_METHOD_NAME(lua_State* L)															\
 	{																								\
 		VF_LUA_THROW_ERROR(L, META_NAME, " got null");												\
 	}																								\
-	double l_res = l_arg_ptr->get_data().CLASS_METHOD();											\
+	double l_res = (double)l_arg_ptr->get_data().CLASS_METHOD();									\
 	lua_pushnumber(L, l_res);	/* set result of function*/											\
 	return 1;					/*number of return  values*/										\
 }

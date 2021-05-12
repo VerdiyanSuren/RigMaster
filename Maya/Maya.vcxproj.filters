@@ -16,6 +16,9 @@
     <Filter Include="include\expressions\luaWrappers">
       <UniqueIdentifier>{E092ED48-4C76-FC88-5579-2AC5C1DBC2D9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\expressions\luaWrappers\luaUnitTest">
+      <UniqueIdentifier>{71FF7879-DD64-0C00-663D-AED8D2A1016F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\expressions\nodes">
       <UniqueIdentifier>{C3FF62C0-2FC2-964A-7872-25D7E4736F28}</UniqueIdentifier>
     </Filter>
@@ -63,6 +66,33 @@
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h">
       <Filter>include\expressions\data</Filter>
     </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\luaUnitTest\vufLuaMayaMathUnitTest.h">
+      <Filter>include\expressions\luaWrappers\luaUnitTest</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMMatrix.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMPoint.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMPointArray.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMQuaternion.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMVector.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMVectorArray.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaDataWrapper.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaStatic.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
     <ClInclude Include="include\expressions\luaWrappers\vufMayaLuaPorts.h">
       <Filter>include\expressions\luaWrappers</Filter>
     </ClInclude>
@@ -95,27 +125,6 @@
     </ClInclude>
     <ClInclude Include="include\vufMayaGlobalIncludes.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMVector.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaStatic.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaDataWrapper.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMVectorArray.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMPoint.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMPointArray.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMMatrix.h">
-      <Filter>include\expressions\luaWrappers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +175,12 @@
     </ClCompile>
     <ClCompile Include="src\vufMayaGlobalIncludes.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMVector.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMPoint.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

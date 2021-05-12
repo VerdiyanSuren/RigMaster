@@ -11,9 +11,11 @@ extern "C"
 #include "lauxlib.h"
 #include "lualib.h"
 }
+#include <sstream>
 
 namespace vufRM
 {
+	class vufLuaMVector;
 	class vufLuaMPoint
 	{
 	public:
@@ -22,7 +24,7 @@ namespace vufRM
 			VF_LUA_NEW_TABLE(L, vufLuaMayaStatic::g_mpoint_tbl_name);
 			VF_LUA_ADD_TABLE_FIELD(L, "new", create);
 			VF_LUA_ADD_TABLE_FIELD(L, "copy", copy);
-			VF_LUA_ADD_TABLE_FIELD(L, "MVector", to_mvector);
+			//VF_LUA_ADD_TABLE_FIELD(L, "MVector", to_mvector);
 
 
 			VF_LUA_ADD_TABLE_FIELD(L, "to_string", to_string);
@@ -85,6 +87,7 @@ namespace vufRM
 		}
 		VF_LUA_IMPLEMENT_COPY(		vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper);
 		VF_LUA_IMPLEMENT_DESTROY(	vufLuaMayaStatic::g_mpoint_meta_name, vufLuaMPointWrapper);
+		/*
 		static int to_mvector(lua_State* L)
 		{
 			MPoint* l_pnt;
@@ -99,7 +102,7 @@ namespace vufRM
 			l_vec.z = l_pnt->z;
 			return 1;
 		}
-
+		*/
 		static int to_string(lua_State* L)
 		{
 			MPoint* l_pnt_ptr;
@@ -107,12 +110,13 @@ namespace vufRM
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_tbl_name, " Failed tp get MPoint object.");
 			}
-			std::string l_str = "[";
-			l_str += l_pnt_ptr->x; l_str += ", ";
-			l_str += l_pnt_ptr->y; l_str += ", ";
-			l_str += l_pnt_ptr->z; l_str += ",";
-			l_str += l_pnt_ptr->w; l_str += "]";
-			lua_pushstring(L, l_str.c_str());
+			std::stringstream l_ss;
+			l_ss << "[";
+			l_ss << l_pnt_ptr->x << ", ";
+			l_ss << l_pnt_ptr->y << ", ";
+			l_ss << l_pnt_ptr->z << ",";
+			l_ss << l_pnt_ptr->w << "]";
+			lua_pushstring(L, l_ss.str().c_str());
 			return 1;
 		}
 		static int to_type(lua_State* L)

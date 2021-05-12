@@ -69,7 +69,7 @@ namespace vuf
 		{
 			if (m_w.open_machine() == false)
 			{
-				VF_LOG_ERR( vufStringUtils::string_padding(std::string("Failed to create lua machune.") ));
+				VF_LOG_ERR( vufStringUtils::string_padding(std::string("Failed to create lua machine.") ));
 				return false;
 			}
 			lua_State* L = m_w.get_lua_state();

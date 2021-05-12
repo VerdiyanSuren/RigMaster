@@ -13,6 +13,9 @@
 
 #include <vufMayaGlobalIncludes.h>
 #include <vufTxtSerializer.h>
+
+#include <expressions/luaWrappers/luaUnitTest/vufLuaMayaMathUnitTest.h>
+
 using namespace vufRM;
 // Lua Data
 const MTypeId	mpxMayaLuaPortWrapper::		g_id(0x197130);	const MString	mpxMayaLuaPortWrapper::g_type_name("LuaPortData");
@@ -45,6 +48,10 @@ MStatus initializePlugin(MObject obj)
 	// register commands
 	VF_REGISTER_COMMAND(vufExpressionWindowCmd);
 	std::cout << "---------------------vufRigMaster  Loaded----------------" << std::endl;
+
+	vufLuaMayaMathUT l_ut;
+	l_ut.run();
+
 	return MS::kSuccess;
 }
 

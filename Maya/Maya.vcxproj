@@ -368,13 +368,15 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <ClInclude Include="include\data\vufDataTemplate.h" />
     <ClInclude Include="include\data\vufMayaDataList.h" />
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h" />
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaDataWrapper.h" />
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaStatic.h" />
+    <ClInclude Include="include\expressions\luaWrappers\luaUnitTest\vufLuaMayaMathUnitTest.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMMatrix.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMPoint.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMPointArray.h" />
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMQuaternion.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMVector.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMVectorArray.h" />
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaDataWrapper.h" />
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMayaStatic.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufMayaLuaPorts.h" />
     <ClInclude Include="include\expressions\nodes\vufMayaLuaExpressionNode.h" />
     <ClInclude Include="include\expressions\nodes\vufMayaLuaPortNode.h" />
@@ -392,6 +394,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <ClCompile Include="src\data\vufData.cpp" />
     <ClCompile Include="src\expressions\data\vufMayaLuaPortData.cpp" />
     <ClCompile Include="src\expressions\data\vufMayaLuaTxtData.cpp" />
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMPoint.cpp" />
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMVector.cpp" />
     <ClCompile Include="src\expressions\luaWrappers\vufMayaLuaPorts.cpp" />
     <ClCompile Include="src\expressions\nodes\vufMayaLuaExpressionNode.cpp" />
     <ClCompile Include="src\expressions\nodes\vufMayaLuaPortNode.cpp" />
