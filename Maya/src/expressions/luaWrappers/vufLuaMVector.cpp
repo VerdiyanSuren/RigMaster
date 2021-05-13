@@ -159,7 +159,7 @@ int vufLuaMVector::is_equivalent(lua_State* L)
 		MVector* l_vec,*l_vec_to;
 		if (get_param(L, -1, &l_vec_to) == false)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed (MVector::isEquivalent). EXpect first argument as MVector.");
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed (MVector::isEquivalent). Expect first argument as MVector.");
 		}
 		if (get_param(L, -2, &l_vec) == false)
 		{
@@ -375,7 +375,7 @@ int vufLuaMVector::mul(lua_State* L)
 		l_wrapper->set_data((*l_mat) * (*l_vec));
 		return 1;
 	}
-	// matrix * vector
+	// vector * vector
 	MVector* l_vec2;
 	if (get_param(L, -2, &l_vec2) == true)
 	{

@@ -22,10 +22,13 @@ namespace vufRM
 		static void registrator(lua_State* L)
 		{
 			VF_LUA_NEW_TABLE(L, vufLuaMayaStatic::g_mpoint_tbl_name);
-			VF_LUA_ADD_TABLE_FIELD(L, "new", create);
-			VF_LUA_ADD_TABLE_FIELD(L, "copy", copy);
-			//VF_LUA_ADD_TABLE_FIELD(L, "MVector", to_mvector);
-
+			VF_LUA_ADD_TABLE_FIELD(L, "new",			create);
+			VF_LUA_ADD_TABLE_FIELD(L, "copy",			copy);
+			VF_LUA_ADD_TABLE_FIELD(L, "cartesianize",	cartesianize);
+			VF_LUA_ADD_TABLE_FIELD(L, "rationalize",	rationalize);
+			VF_LUA_ADD_TABLE_FIELD(L, "homogenize",		homogenize);
+			VF_LUA_ADD_TABLE_FIELD(L, "distanceTo",		distance_to);
+			VF_LUA_ADD_TABLE_FIELD(L, "isEquivalent",	is_equivalent);
 
 			VF_LUA_ADD_TABLE_FIELD(L, "to_string", to_string);
 			VF_LUA_ADD_TABLE_FIELD(L, "to_type", to_type);
@@ -34,9 +37,9 @@ namespace vufRM
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__gc", destroy);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__add", add);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__sub", sub);
-			//VF_LUA_ADD_META_TABLE_FIELD(L, "__unm", unm);
-			//VF_LUA_ADD_META_TABLE_FIELD(L, "__mul", mul);
-			//VF_LUA_ADD_META_TABLE_FIELD(L, "__div", div);
+			VF_LUA_ADD_META_TABLE_FIELD(L, "__unm", unm);
+			VF_LUA_ADD_META_TABLE_FIELD(L, "__mul", mul);
+			VF_LUA_ADD_META_TABLE_FIELD(L, "__div", div);
 
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__index", index);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex", new_index);
@@ -54,55 +57,16 @@ namespace vufRM
 		*  vufLuaVector4Wrapper<T>* create_user_data(lua_State* L)*/
 		VF_LUA_CREATE_USER_DATA(vufLuaMayaStatic::g_mpoint_meta_name,		MPoint, vufLuaMPointWrapper);
 	private:
-		static int create(lua_State* L)
-		{
-			int l_number_of_arguments = lua_gettop(L);
-			if (l_number_of_arguments == 0)
-			{
-				create_user_data(L);
-				return 1;
-			}
-			if (l_number_of_arguments == 4)
-			{
-				bool l_status = false;
-				double l_x, l_y, l_z,l_w;
-				VF_LUA_READ_NUMBER(L, -4, l_x, l_status);
-				VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_mpoint_meta_name, " first arg has to be a number");
-				VF_LUA_READ_NUMBER(L, -3, l_y, l_status);
-				VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_mpoint_meta_name, " second arg has to be a number");
-				VF_LUA_READ_NUMBER(L, -2, l_z, l_status);
-				VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_mpoint_meta_name, " third  arg has to be a number");
-				VF_LUA_READ_NUMBER(L, -1, l_w, l_status);
-				VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_mpoint_meta_name, " fourth arg has to be a number");
-
-				auto l_wrapper = create_user_data(L);
-				MPoint& l_pnt = l_wrapper->get_data();
-				l_pnt.x = l_x;
-				l_pnt.y = l_y;
-				l_pnt.z = l_z;
-				l_pnt.w = l_w;
-				return 1;
-			}
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_meta_name, " Fauled to create MPoint. Wrong arguments count. Expect  0 or 4 numbers");
-		}
+		static int create(lua_State* L);
 		VF_LUA_IMPLEMENT_COPY(		vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper);
 		VF_LUA_IMPLEMENT_DESTROY(	vufLuaMayaStatic::g_mpoint_meta_name, vufLuaMPointWrapper);
-		/*
-		static int to_mvector(lua_State* L)
-		{
-			MPoint* l_pnt;
-			if (get_param(L, -1, &l_pnt) == false)
-			{
-				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_tbl_name, "Failed to get Mpoint object");
-			}
-			auto l_vec_wrap = vufLuaMVector::create_user_data(L);
-			auto& l_vec =  l_vec_wrap->get_data();
-			l_vec.x = l_pnt->x;
-			l_vec.y = l_pnt->y;
-			l_vec.z = l_pnt->z;
-			return 1;
-		}
-		*/
+
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaMayaStatic::g_mpoint_meta_name, MPoint,	vufLuaMPointWrapper, cartesianize,	cartesianize);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaMayaStatic::g_mpoint_meta_name, MPoint,	vufLuaMPointWrapper, rationalize,	rationalize);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaMayaStatic::g_mpoint_meta_name, MPoint,	vufLuaMPointWrapper, homogenize,	homogenize);
+		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(vufLuaMayaStatic::g_mpoint_meta_name,			vufLuaMPointWrapper, distanceTo,	distance_to);
+		static int is_equivalent(lua_State* L);
+
 		static int to_string(lua_State* L)
 		{
 			MPoint* l_pnt_ptr;
@@ -111,11 +75,7 @@ namespace vufRM
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_tbl_name, " Failed tp get MPoint object.");
 			}
 			std::stringstream l_ss;
-			l_ss << "[";
-			l_ss << l_pnt_ptr->x << ", ";
-			l_ss << l_pnt_ptr->y << ", ";
-			l_ss << l_pnt_ptr->z << ",";
-			l_ss << l_pnt_ptr->w << "]";
+			l_ss << *l_pnt_ptr;
 			lua_pushstring(L, l_ss.str().c_str());
 			return 1;
 		}
@@ -127,7 +87,9 @@ namespace vufRM
 
 		VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper, add);
 		VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper, sub);
-		//VF_LUA_IMPLEMENT_TYPE_UNM_TYPE(vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper, unm);
+		static int unm(lua_State* L);
+		static int mul(lua_State* L);
+		static int div(lua_State* L);
 
 		static int index(lua_State* L)
 		{

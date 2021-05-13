@@ -8,6 +8,7 @@
 #include <maya/MPointArray.h>
 #include <maya/MQuaternion.h>
 #include <maya/MMatrix.h>
+#include <maya/MEulerRotation.h>
 
 namespace vufRM
 {
@@ -17,6 +18,7 @@ namespace vufRM
 	using vufLuaMVectorArrayWrapper = vuf::vufLuaDataWrapper<MVectorArray>;
 	using vufLuaMPointArrayWrapper	= vuf::vufLuaDataWrapper<MPointArray>;
 	using vufLuaMQuaternionWrapper	= vuf::vufLuaDataWrapper<MQuaternion>;
+	using vufLuaMEulerRotaionWrapper = vuf::vufLuaDataWrapper<MEulerRotation>;
 
 }
 #endif // !VF_LUA_MAYA_DATA_WRAWPPER_H
