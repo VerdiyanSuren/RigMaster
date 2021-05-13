@@ -148,24 +148,7 @@ namespace vufRM
 		}
 		VF_LUA_IMPLEMENT_COPY(vufLuaMayaStatic::g_mquat_meta_name, MQuaternion, vufLuaMQuaternionWrapper);
 		VF_LUA_IMPLEMENT_DESTROY(vufLuaMayaStatic::g_mquat_meta_name, vufLuaMQuaternionWrapper);
-		static int as_matrix(lua_State* L)
-		{
-			int l_number_of_arguments = lua_gettop(L);
-			if (l_number_of_arguments == 1)
-			{
-				MQuaternion* l_quat;
-				if (get_param(L,-1,&l_quat) == false)
-				{
-					VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mquat_tbl_name, "Failed to get MQuaternion.");
-				}
-				MMatrix l_m = l_quat->asMatrix();
-				auto l_matr_wrapper = vufLuaMMatrix::create_user_data(L);
-				l_matr_wrapper->set_data(l_m);
-				return 1;
-			}
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mquat_tbl_name, "Failed to parse arguments.");
-		}
-
+		static int as_matrix(lua_State* L);
 		static int to_string(lua_State* L)
 		{
 			MQuaternion* l_quat_ptr;

@@ -26,19 +26,20 @@ namespace vufRM
 			VF_LUA_ADD_TABLE_FIELD(L, "copy",		copy);
 			VF_LUA_ADD_TABLE_FIELD(L, "cross",		cross);
 			VF_LUA_ADD_TABLE_FIELD(L, "dot",		dot);
-			VF_LUA_ADD_TABLE_FIELD(L, "rotateBy",	rotate);
+			VF_LUA_ADD_TABLE_FIELD(L, "rotateBy",	rotate_by);
+			VF_LUA_ADD_TABLE_FIELD(L, "rotateTo",	rotate_to);
 
-			VF_LUA_ADD_TABLE_FIELD(L, "length",		length);
-			VF_LUA_ADD_TABLE_FIELD(L, "normalize",	normalize);
-			//VF_LUA_ADD_TABLE_FIELD(L, "normal", normal);
-			//VF_LUA_ADD_TABLE_FIELD(L, "ortho_to", ortho_to);
-			//VF_LUA_ADD_TABLE_FIELD(L, "parallel_to", parallel_to);
-			//VF_LUA_ADD_TABLE_FIELD(L, "distance_to", distance_to);
-			//VF_LUA_ADD_TABLE_FIELD(L, "rotateBy", distance_to);
-			//VF_LUA_ADD_TABLE_FIELD(L, "rotateTo", distance_to);
+			VF_LUA_ADD_TABLE_FIELD(L, "length",			length);
+			VF_LUA_ADD_TABLE_FIELD(L, "normal",			normal);
+			VF_LUA_ADD_TABLE_FIELD(L, "normalize",		normalize);
+			VF_LUA_ADD_TABLE_FIELD(L, "isEquivalent",	is_equivalent);
+			VF_LUA_ADD_TABLE_FIELD(L, "isParallel",		is_parallel);
+			VF_LUA_ADD_TABLE_FIELD(L, "orthoTo",		ortho_to);
+			VF_LUA_ADD_TABLE_FIELD(L, "parallelTo",		parallel_to);
+			VF_LUA_ADD_TABLE_FIELD(L, "distanceTo",		distance_to);
+			VF_LUA_ADD_TABLE_FIELD(L, "transformAsNormal", transform_as_normal);
 			
 			VF_LUA_ADD_TABLE_FIELD(L, "angle", angle);
-			///VF_LUA_ADD_TABLE_FIELD(L, "dot", dot);
 			VF_LUA_ADD_TABLE_FIELD(L, "to_string", to_string);
 			VF_LUA_ADD_TABLE_FIELD(L, "to_type", to_type);
 
@@ -47,8 +48,8 @@ namespace vufRM
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__add", add);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__sub", sub);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__unm", unm);
-			//VF_LUA_ADD_META_TABLE_FIELD(L, "__mul", mul);
-			//VF_LUA_ADD_META_TABLE_FIELD(L, "__div", div);
+			VF_LUA_ADD_META_TABLE_FIELD(L, "__mul", mul);
+			VF_LUA_ADD_META_TABLE_FIELD(L, "__div", div);
 
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__index", index);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex", new_index);
@@ -70,12 +71,18 @@ namespace vufRM
 		VF_LUA_IMPLEMENT_COPY(vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper);
 		static int cross(	lua_State* L);
 		static int dot(		lua_State* L);
-		static int rotate(	lua_State* L);
+		static int rotate_by(lua_State* L);
+		static int rotate_to(lua_State* L);
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER(vufLuaMayaStatic::g_mvec_meta_name, vufLuaMVectorWrapper, length, length);
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_VOID(	vufLuaMayaStatic::g_mvec_meta_name, vufLuaMVectorWrapper, normalize, normalize);
+		static int normalize(		lua_State* L);
+		static int is_equivalent(	lua_State* L);
+		static int is_parallel(		lua_State* L);
+		static int ortho_to(		lua_State* L);
+		static int parallel_to(		lua_State* L);
+		static int distance_to(		lua_State* L);
+		static int transform_as_normal(lua_State* L);
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper, normal, normal);
 		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(vufLuaMayaStatic::g_mvec_meta_name, vufLuaMVectorWrapper, angle, angle);
-
 
 		static int to_string(lua_State* L)
 		{
@@ -85,10 +92,7 @@ namespace vufRM
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed tp get MVector object.");
 			}
 			std::stringstream l_ss;
-			l_ss << "[";
-			l_ss << l_vec_ptr->x << ", ";
-			l_ss << l_vec_ptr->y << ", ";
-			l_ss << l_vec_ptr->z <<  "]";
+			l_ss << *l_vec_ptr;
 			lua_pushstring(L, l_ss.str().c_str());
 			return 1;
 		}
@@ -102,7 +106,8 @@ namespace vufRM
 		VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper, add);
 		VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper, sub);
 		VF_LUA_IMPLEMENT_TYPE_UNM_TYPE(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper, unm);
-
+		static int mul(lua_State* L);
+		static int div(lua_State* L);
 		static int index(lua_State* L)
 		{
 			int l_number_of_arguments = lua_gettop(L);

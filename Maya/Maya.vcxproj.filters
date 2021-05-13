@@ -182,5 +182,8 @@
     <ClCompile Include="src\expressions\luaWrappers\vufLuaMPoint.cpp">
       <Filter>src\expressions\luaWrappers</Filter>
     </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMQuaternion.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

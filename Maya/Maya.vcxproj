@@ -395,6 +395,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <ClCompile Include="src\expressions\data\vufMayaLuaPortData.cpp" />
     <ClCompile Include="src\expressions\data\vufMayaLuaTxtData.cpp" />
     <ClCompile Include="src\expressions\luaWrappers\vufLuaMPoint.cpp" />
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMQuaternion.cpp" />
     <ClCompile Include="src\expressions\luaWrappers\vufLuaMVector.cpp" />
     <ClCompile Include="src\expressions\luaWrappers\vufMayaLuaPorts.cpp" />
     <ClCompile Include="src\expressions\nodes\vufMayaLuaExpressionNode.cpp" />
