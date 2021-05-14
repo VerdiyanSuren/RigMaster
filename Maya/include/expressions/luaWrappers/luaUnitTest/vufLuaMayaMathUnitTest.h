@@ -5,6 +5,7 @@
 #include <expressions/luaWrappers/vufLuaMVector.h>
 #include <expressions/luaWrappers/vufLuaMMatrix.h>
 #include <expressions/luaWrappers/vufLuaMQuaternion.h>
+#include <expressions/luaWrappers/vufLuaMEulerRotaion.h>
 #include <expressions/luaWrappers/vufLuaMVectorArray.h>
 #include <coreUtils/vufStringUtils.h>
 
@@ -24,10 +25,14 @@ namespace vufRM
 			}
 			if (MVector_ut() == false)
 			{
-				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA MVECTOR")));
+				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA M_VECTOR")));
 				return false;
 			}
-
+			if (MEulerRotation_ut() == false)
+			{
+				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA M_EULER_ROTATION")));
+				return false;
+			}
 			VF_LOG_INFO(vuf::vufStringUtils::string_padding("..................................................."));
 			release();
 			return true;
@@ -41,11 +46,12 @@ namespace vufRM
 				return false;
 			}
 			lua_State* L = m_w.get_lua_state();
-			vufLuaMVector::		registrator(L);
-			vufLuaMPoint::		registrator(L);
-			vufLuaMMatrix::		registrator(L);
-			vufLuaMQuaternion::	registrator(L);
-			vufLuaMVectorArray::registrator(L);
+			vufLuaMVector::			registrator(L);
+			vufLuaMPoint::			registrator(L);
+			vufLuaMMatrix::			registrator(L);
+			vufLuaMQuaternion::		registrator(L);
+			vufLuaMVectorArray::	registrator(L);
+			vufLuaMEulerRotation::	registrator(L);
 
 			return true;
 		}
@@ -173,8 +179,51 @@ namespace vufRM
 				//l_bool = l_bool & m_w.do_string("vec_3 = vec_1:rotateBy(vec_2)");
 			}
 
-			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR MVECTOR PASSED.")));
+			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR M_VECTOR PASSED.")));
 			return true;
+		}
+		bool MEulerRotation_ut()
+		{
+			bool l_bool = false;
+			lua_State* L = m_w.get_lua_state();
+			// MEulerRotation constructor
+			{
+				l_bool =			m_w.do_string("r_1 = MEulerRotation.new()");
+				l_bool = l_bool &&	m_w.do_string("r_2 = MEulerRotation.new(30,60,90)");
+				l_bool = l_bool &&	m_w.do_string("r_3 = MEulerRotation.new(10,11,12,\"xzy\")");
+				l_bool = l_bool &&	m_w.do_string("v_1 = MVector.new(90,30,60)");
+				l_bool = l_bool &&	m_w.do_string("r_4 = MEulerRotation.new(v_1)");
+				l_bool = l_bool &&	m_w.do_string("r_5 = MEulerRotation.new(v_1,\"zyx\")");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MEulerRotation constructor script")));
+					return false;
+				}
+				MEulerRotation* l_r1, * l_r2, * l_r3, * l_r4, * l_r5;
+				MVector *l_v1;
+
+				l_bool =			vufLuaMEulerRotation::get_global(L, "r_1", &l_r1);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_2", &l_r2);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_3", &l_r3); 
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_4", &l_r4);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_5", &l_r5);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_1", &l_v1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MEulerRotation constructor get globals.")));
+					return false;
+				}
+				if (*l_r1 != MEulerRotation() ||
+					*l_r2 != MEulerRotation(30, 60, 90) ||
+					*l_r3 != MEulerRotation(10, 11, 12, MEulerRotation::kXZY) )
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MEulerRotation constructor failed")));
+					return false;
+				}
+			}
+			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR M_EULER_ROTATION PASSED.")));
+			return true;
+
 		}
 	private:
 		vuf::vufLuaWrapper	m_w;

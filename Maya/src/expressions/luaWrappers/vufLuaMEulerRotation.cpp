@@ -92,11 +92,11 @@ int vufLuaMEulerRotation::create(lua_State* L)
 		bool l_status;
 		double l_x, l_y, l_z;
 		VF_LUA_READ_NUMBER(L, -3, l_x, l_status);
-		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation). Expect first argument as number");
+		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect first argument as number");
 		VF_LUA_READ_NUMBER(L, -2, l_y, l_status);
-		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation). Expect secons argument as number");
+		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect secons argument as number");
 		VF_LUA_READ_NUMBER(L, -1, l_z, l_status);
-		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation). Expect third argument as number");
+		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect third argument as number");
 		auto l_wrap = create_user_data(L);
 		l_wrap->set_data(MEulerRotation(l_x, l_y, l_z));
 		return 1;
@@ -108,11 +108,11 @@ int vufLuaMEulerRotation::create(lua_State* L)
 		double l_x, l_y, l_z;
 		MEulerRotation::RotationOrder l_rotate_order = MEulerRotation::kXYZ;
 		VF_LUA_READ_NUMBER(L, -4, l_x, l_status);
-		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation). Expect first argument as number");
+		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect first argument as number");
 		VF_LUA_READ_NUMBER(L, -3, l_y, l_status);
-		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation). Expect secons argument as number");
+		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect secons argument as number");
 		VF_LUA_READ_NUMBER(L, -2, l_z, l_status);
-		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation). Expect third argument as number");
+		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect third argument as number");
 		if (rotate_order_from_str(L, -1, l_rotate_order) == false)
 		{
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name," Failed (MEulerRotation) to get rotation order.")
@@ -121,16 +121,17 @@ int vufLuaMEulerRotation::create(lua_State* L)
 		l_wrap->set_data(MEulerRotation(l_x,l_y,l_z, l_rotate_order));
 		return 1;
 	}
-	// MEulerRotation (const MVector &v)
+	// MEulerRotation (MVector)
 	if (l_number_of_arguments == 1)
 	{
 		MVector* l_vec;
 		if (vufLuaMVector::get_param(L, -1, &l_vec) == false)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation). Expect MVector as first argument.");
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect MVector as first argument.");
 		}
 		auto l_wrap = create_user_data(L);
 		l_wrap->set_data(MEulerRotation(*l_vec));
+		return 1;
 	}
 	// MEulerRotation (const MVector &v, RotationOrder ord=kXYZ)
 	if (l_number_of_arguments == 2)
@@ -139,17 +140,17 @@ int vufLuaMEulerRotation::create(lua_State* L)
 		MEulerRotation::RotationOrder l_rotate_order = MEulerRotation::kXYZ;
 		if (vufLuaMVector::get_param(L, -2, &l_vec) == false)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation). Expect MVector as first argument.");
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect MVector as first argument.");
 		}
 		if (rotate_order_from_str(L, -1, l_rotate_order) == false)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation) to get rotation order.")
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new) to get rotation order.")
 		}
 		auto l_wrap = create_user_data(L);
 		l_wrap->set_data(MEulerRotation(*l_vec, l_rotate_order));
 		return 1;
 	}
-	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, "  Failed (MEulerRotation) to create MEulerRotatipm. Wrong arguments.");
+	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, "  Failed (MEulerRotation:new) to create MEulerRotation. Wrong arguments.");
 }
 int vufLuaMEulerRotation::set_value(lua_State* L)
 {

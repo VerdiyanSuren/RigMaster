@@ -94,7 +94,7 @@ static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p
 #define VF_LUA_GET_USER_DATA_GLOBAL(META_NAME, DATA_TYPE, WRAPPER_TYPE )				\
 static bool	get_global(lua_State * L, const std::string & p_var_name, DATA_TYPE** p_res)\
 {																						\
-	lua_getglobal(L, p_var_name.c_str());												\
+	if (lua_getglobal(L, p_var_name.c_str()) == 0 ) return false;						\
 	auto l_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);						\
 	if (l_ptr == nullptr)																\
 	{																					\
