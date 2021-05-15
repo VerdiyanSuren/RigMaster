@@ -23,7 +23,7 @@ namespace vufRM
 		{
 			VF_LUA_NEW_TABLE(L, vufLuaMayaStatic::g_meuler_tbl_name);
 			VF_LUA_ADD_TABLE_FIELD(L, "new",				create);
-			//VF_LUA_ADD_TABLE_FIELD(L, "decompose", decompose);
+			VF_LUA_ADD_TABLE_FIELD(L, "decompose",			decompose);
 			VF_LUA_ADD_TABLE_FIELD(L, "copy",				copy);
 			VF_LUA_ADD_TABLE_FIELD(L, "setValue",			set_value);
 			VF_LUA_ADD_TABLE_FIELD(L, "asQuaternion",		as_quaternion);
@@ -42,7 +42,7 @@ namespace vufRM
 			VF_LUA_ADD_TABLE_FIELD(L, "setToAlternateSolution", set_alternate_solution);
 			VF_LUA_ADD_TABLE_FIELD(L, "closestSolution",		closest_solution);
 			VF_LUA_ADD_TABLE_FIELD(L, "setToClosestSolution",	set_closest_solution);
-			VF_LUA_ADD_TABLE_FIELD(L, "closestCut ",			closest_cut);
+			VF_LUA_ADD_TABLE_FIELD(L, "closestCut",				closest_cut);
 			VF_LUA_ADD_TABLE_FIELD(L, "setToClosestCut",		set_closest_cut);
 
 			VF_LUA_ADD_TABLE_FIELD(L, "to_string", to_string);
@@ -77,6 +77,7 @@ namespace vufRM
 		static int create(lua_State* L);
 		VF_LUA_IMPLEMENT_COPY(vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
 		VF_LUA_IMPLEMENT_DESTROY(vufLuaMayaStatic::g_meuler_meta_name, vufLuaMEulerRotaionWrapper);
+		static int decompose(lua_State* L);
 		static int set_value(lua_State* L);
 		static int as_quaternion(lua_State* L);
 		static int as_matrix(lua_State* L);
@@ -166,15 +167,45 @@ namespace vufRM
 		{
 			int l_number_of_arguments = lua_gettop(L);
 			MEulerRotation* l_rot;
-			MEulerRotation::RotationOrder l_order;
+			
 			if (get_param(L, -l_number_of_arguments, &l_rot) == false)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " got null object.");
 			}
-			if (rotate_order_from_str(L, -l_number_of_arguments + 1, l_order) == true)
+			const char* l_key = luaL_checkstring(L, -l_number_of_arguments + 1);
+			if (l_key == nullptr)
 			{
-				l_rot->order = l_order;
+				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " unknown key");
 			}
+			if (l_key[1] == '\0')
+			{
+				if (l_key[0] == 'x')
+				{
+					l_rot->x = (double)luaL_checknumber(L, -l_number_of_arguments + 2);
+					return 0;
+				}
+				else if (l_key[0] == 'y')
+				{
+					l_rot->y = (double)luaL_checknumber(L, -l_number_of_arguments + 2);
+					return 0;
+				}
+				else if (l_key[0] == 'z')
+				{
+					l_rot->z = (double)luaL_checknumber(L, -l_number_of_arguments + 2);
+					return 0;
+				}
+				else if (l_key[0] == 'r')
+				{
+					MEulerRotation::RotationOrder l_order;
+					if (rotate_order_from_str(L, -l_number_of_arguments + 2, l_order) == false)
+					{
+						VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " unknown rotate order.");
+					}
+					l_rot->order = l_order;
+					return 0;
+				}
+			}			
+			
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " unknown key");
 		}
 	};

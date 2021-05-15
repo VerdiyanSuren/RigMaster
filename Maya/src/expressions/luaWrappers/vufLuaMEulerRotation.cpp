@@ -77,6 +77,41 @@ std::string vufLuaMEulerRotation::rotate_order_as_string(const MEulerRotation& p
 	}
 	return "xyz";
 }
+int vufLuaMEulerRotation::decompose(lua_State* L)
+{
+	int l_number_of_arguments = lua_gettop(L);
+	// decompose (MMatrix  )
+	if (l_number_of_arguments == 1)
+	{
+		MMatrix *l_m;
+		if (vufLuaMMatrix::get_param(L, -1, &l_m) == false)
+		{
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, "  Failed (MEulerRotation:decompose) to get first argument. expect MMatrix");
+		}
+		auto l_wrap = create_user_data(L);
+		l_wrap->set_data(MEulerRotation::decompose(*l_m, MEulerRotation::kXYZ));
+		return 1;
+	}
+	// decompose (MMatrix , RotationOrder )
+	if (l_number_of_arguments == 2)
+	{
+		MMatrix* l_m;
+		MEulerRotation::RotationOrder l_rotate_order;
+		if (rotate_order_from_str(L, -1, l_rotate_order) == false)
+		{
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, "  Failed (MEulerRotation:decompose) to get second argument. expect rjtation order");
+		}
+		if (vufLuaMMatrix::get_param(L, -2, &l_m) == false)
+		{
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, "  Failed (MEulerRotation:decompose) to get first argument. expect MMatrix");
+		}
+		auto l_wrap = create_user_data(L);
+		l_wrap->set_data(MEulerRotation::decompose(*l_m, l_rotate_order));
+		return 1;
+	}
+	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation::decompose ). Unexpected count of arguments.");
+
+}
 int vufLuaMEulerRotation::create(lua_State* L)
 {
 	int l_number_of_arguments = lua_gettop(L);
@@ -352,7 +387,7 @@ int vufLuaMEulerRotation::is_zero(lua_State* L)
 }
 int vufLuaMEulerRotation::increment_rotate(lua_State* L)
 {
-	//incrementalRotateBy (const MVector &axis, double angle)
+	//incrementalRotateBy (MVector axis, double angle)
 	int l_number_of_arguments = lua_gettop(L);
 	if (l_number_of_arguments == 3)
 	{
@@ -396,7 +431,6 @@ int vufLuaMEulerRotation::reorder(lua_State* L)
 		return 1;
 	}
 	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation::reorder ). Unexpected count of arguments.");
-
 }
 int vufLuaMEulerRotation::reorder_it(lua_State* L)
 {
@@ -472,7 +506,7 @@ int vufLuaMEulerRotation::set_alternate_solution(lua_State* L)
 	if (l_number_of_arguments == 2)
 	{
 		MEulerRotation* l_rot, * l_rot_to;
-		if (get_param(L, -2, &l_rot_to) == false)
+		if (get_param(L, -1, &l_rot_to) == false)
 		{
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, "  Failed (MEulerRotation:setToAlternateSolution) to get MEulerRotation as argument.");
 		}
@@ -490,7 +524,7 @@ int vufLuaMEulerRotation::set_closest_solution(lua_State* L)
 {
 	int l_number_of_arguments = lua_gettop(L);
 	// setToClosestSolution (MEulerRotation)
-	if (l_number_of_arguments = 2)
+	if (l_number_of_arguments == 2)
 	{
 		MEulerRotation* l_rot, * l_rot_to;
 		if (get_param(L, -1, &l_rot_to) == false)
@@ -506,7 +540,7 @@ int vufLuaMEulerRotation::set_closest_solution(lua_State* L)
 		return 1;
 	}
 	// setToClosestSolution ( MEulerRotation, MEulerRotation )
-	if (l_number_of_arguments = 3)
+	if (l_number_of_arguments == 3)
 	{
 		MEulerRotation* l_rot, * l_rot_src, * l_rot_dst;
 		if (get_param(L, -1, &l_rot_dst) == false)
@@ -531,7 +565,7 @@ int vufLuaMEulerRotation::set_closest_cut(lua_State* L)
 {
 	int l_number_of_arguments = lua_gettop(L);
 	// setToClosestCut (MEulerRotation)
-	if (l_number_of_arguments = 2)
+	if (l_number_of_arguments == 2)
 	{
 		MEulerRotation* l_rot, * l_rot_to;
 		if (get_param(L, -1, &l_rot_to) == false)
@@ -547,7 +581,7 @@ int vufLuaMEulerRotation::set_closest_cut(lua_State* L)
 		return 1;
 	}
 	// setToClosestSolution ( MEulerRotation, MEulerRotation )
-	if (l_number_of_arguments = 3)
+	if (l_number_of_arguments == 3)
 	{
 		MEulerRotation* l_rot, * l_rot_src, * l_rot_dst;
 		if (get_param(L, -1, &l_rot_dst) == false)

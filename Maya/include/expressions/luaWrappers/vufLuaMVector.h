@@ -182,7 +182,6 @@ namespace vufRM
 			}
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " unknown key");
 		}
-
 	};
 }
 #endif // !VF_LUA_MVECTOR_H
