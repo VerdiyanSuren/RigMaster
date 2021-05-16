@@ -2,7 +2,7 @@
 #include <expressions/luaWrappers/vufLuaMPoint.h>
 #include <expressions/luaWrappers/vufLuaMQuaternion.h>
 #include <expressions/luaWrappers/vufLuaMMatrix.h>
-#include <expressions/luaWrappers/vufLuaMEulerRotaion.h>
+#include <expressions/luaWrappers/vufLuaMEulerRotation.h>
 
 
 using namespace vufRM;
@@ -631,6 +631,7 @@ int vufLuaMEulerRotation::mul(lua_State* L)
 		return 1;
 	}
 	// rotation * rotation
+	//luaL_testudata(L, ud, tname);
 	MEulerRotation *l_rot2;
 	if (get_param(L, -1, &l_rot2) == true)
 	{
@@ -655,7 +656,6 @@ int vufLuaMEulerRotation::mul(lua_State* L)
 		auto l_wrap = create_user_data(L);
 		l_wrap->set_data((*l_rot) * (*l_q));
 		return 1;
-	}
-	
+	}	
 	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation::mul ). Unexpected of arguments.");
 }

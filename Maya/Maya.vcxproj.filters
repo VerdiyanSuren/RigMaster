@@ -126,7 +126,7 @@
     <ClInclude Include="include\vufMayaGlobalIncludes.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMEulerRotaion.h">
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMEulerRotation.h">
       <Filter>include\expressions\luaWrappers</Filter>
     </ClInclude>
   </ItemGroup>

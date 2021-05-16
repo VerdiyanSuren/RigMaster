@@ -369,7 +369,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <ClInclude Include="include\data\vufMayaDataList.h" />
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h" />
     <ClInclude Include="include\expressions\luaWrappers\luaUnitTest\vufLuaMayaMathUnitTest.h" />
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMEulerRotaion.h" />
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMEulerRotation.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMMatrix.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMPoint.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMPointArray.h" />

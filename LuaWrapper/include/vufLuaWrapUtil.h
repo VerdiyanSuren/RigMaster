@@ -95,7 +95,8 @@ static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p
 static bool	get_global(lua_State * L, const std::string & p_var_name, DATA_TYPE** p_res)\
 {																						\
 	if (lua_getglobal(L, p_var_name.c_str()) == 0 ) return false;						\
-	auto l_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -1, META_NAME);						\
+	if (lua_isuserdata(L, -1) == 0) return false;										\
+	auto l_ptr = (WRAPPER_TYPE*)luaL_testudata(L, -1, META_NAME);						\
 	if (l_ptr == nullptr)																\
 	{																					\
 		return false;																	\
@@ -107,7 +108,8 @@ static bool	get_global(lua_State * L, const std::string & p_var_name, DATA_TYPE*
 #define VF_LUA_GET_USER_DATA_PARAM(META_NAME, DATA_TYPE, WRAPPER_TYPE)					\
 static bool	get_param(lua_State * L, int p_lua_index, DATA_TYPE** p_res_ptr)			\
 {																						\
-	auto l_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, p_lua_index, META_NAME);				\
+	if (lua_isuserdata(L, p_lua_index) == 0) return false;								\
+	auto l_ptr = (WRAPPER_TYPE*)luaL_testudata(L, p_lua_index, META_NAME);				\
 	if (l_ptr == nullptr)																\
 	{																					\
 		*p_res_ptr = nullptr;															\
@@ -268,6 +270,28 @@ static int LUA_METHOD_NAME(lua_State* L)																		\
 	luaL_getmetatable(L, META_NAME);																			\
 	lua_setmetatable(L, -2);																					\
 	l_res_ptr->set_data( l_arg_ptr->get_data().CLASS_METHOD());													\
+	return 1;					/*number of return  values*/													\
+}
+
+// myType.method(number)->myType
+#define VF_LUA_IMPLEMENT_TYPE_OF_NUMBER_TO_TYPE( META_NAME,DATA_TYPE,WRAPPER_TYPE,CLASS_METHOD,LUA_METHOD_NAME)	\
+static int LUA_METHOD_NAME(lua_State* L)																		\
+{																												\
+	if (lua_isnumber(L,-1) == 0)																				\
+	{																											\
+		VF_LUA_THROW_ERROR(L, META_NAME, " param ha to be number");												\
+	}																											\
+	double l_val = (double)lua_tonumber(L,-1);																	\
+	auto l_arg_ptr = (WRAPPER_TYPE*)luaL_checkudata(L, -2, META_NAME);											\
+	if (l_arg_ptr == nullptr)																					\
+	{																											\
+		VF_LUA_THROW_ERROR(L,META_NAME," got a null");															\
+	}																											\
+	auto l_res_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));									\
+	new (l_res_ptr) WRAPPER_TYPE(DATA_TYPE());																	\
+	luaL_getmetatable(L, META_NAME);																			\
+	lua_setmetatable(L, -2);																					\
+	l_res_ptr->set_data( l_arg_ptr->get_data().CLASS_METHOD(l_val));											\
 	return 1;					/*number of return  values*/													\
 }
 
