@@ -93,6 +93,75 @@ int vufLuaMPoint::is_equivalent(lua_State* L)
 	}
 	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_tbl_name, " Failed (MPoint::isEquivalent). Unexpected count of arguments.");
 }
+int vufLuaMPoint::add(lua_State* L)
+{
+	MPoint* l_p1;
+	//mpoint + *
+	if (get_param(L, -2, &l_p1) == true)
+	{
+		MPoint* l_p2;
+		if (get_param(L, -1, &l_p2) == true)
+		{
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data((*l_p1) + (*l_p2));
+			return 1;
+		}
+		MVector* l_v;
+		if (vufLuaMVector::get_param(L, -1, &l_v) == true)
+		{
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data((*l_p1) + (*l_v));
+			return 1;
+		}
+	}
+	// vector + point
+	MVector* l_v;
+	if (vufLuaMVector::get_param(L, -2, &l_v) == true)
+	{
+		MPoint* l_p2;
+		if (get_param(L, -1, &l_p2) == true)
+		{
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data((*l_v) + (*l_p2));
+			return 1;
+		}
+	}
+	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_tbl_name, " Failed (MPoint::add). Unexpected of arguments.");
+}
+int vufLuaMPoint::sub(lua_State* L)
+{
+	MPoint* l_p1;
+	//mpoint - *
+	if (get_param(L, -2, &l_p1) == true)
+	{
+		MPoint* l_p2;
+		if (get_param(L, -1, &l_p2) == true)
+		{
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data((*l_p1) - (*l_p2));
+			return 1;
+		}
+		MVector* l_v;
+		if (vufLuaMVector::get_param(L, -1, &l_v) == true)
+		{
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data((*l_p1) - (*l_v));
+			return 1;
+		}
+	}
+	MVector* l_v;
+	if (vufLuaMVector::get_param(L, -2, &l_v) == true)
+	{
+		MPoint* l_p2;
+		if (get_param(L, -1, &l_p2) == true)
+		{
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data((*l_v) - (*l_p2));
+			return 1;
+		}
+	}
+	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_tbl_name, " Failed (MPoint::sub). Unexpected of arguments.");
+}
 int vufLuaMPoint::unm(lua_State* L)
 {
 	int l_number_of_arguments = lua_gettop(L);
@@ -154,7 +223,7 @@ int vufLuaMPoint::mul(lua_State* L)
 		l_wrapper->set_data((*l_pnt) * (*l_mat));
 		return 1;
 	}
-	// matrix * vecotor
+	// matrix * mpoint
 	if (vufLuaMMatrix::get_param(L, -2, &l_mat) == true)
 	{
 		MPoint* l_pnt;

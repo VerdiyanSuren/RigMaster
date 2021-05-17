@@ -374,6 +374,53 @@ int vufLuaMVector::transform_as_normal(lua_State* L)
 	}
 	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed (MVector::transformAsNormal). Unexpected count of arguments.");
 }
+int vufLuaMVector::add(lua_State* L)
+{
+	MVector* l_v1;
+	//mvector + *
+	if (get_param(L, -2, &l_v1) == true)
+	{
+		MPoint* l_p1;
+		if (vufLuaMPoint::get_param(L, -1, &l_p1) == true)
+		{
+			auto l_wrap = vufLuaMPoint::create_user_data(L);
+			l_wrap->set_data((*l_v1) + (*l_p1));
+			return 1;
+		}
+		MVector* l_v;
+		if (get_param(L, -1, &l_v) == true)
+		{
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data((*l_v1) + (*l_v));
+			return 1;
+		}
+	}
+	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_tbl_name, " Failed (MVector::add). Unexpected of arguments.");
+}
+int vufLuaMVector::sub(lua_State* L)
+{
+	MVector* l_v1;
+	//mvector + *
+	if (get_param(L, -2, &l_v1) == true)
+	{
+		MPoint* l_p1;
+		if (vufLuaMPoint::get_param(L, -1, &l_p1) == true)
+		{
+			auto l_wrap = vufLuaMPoint::create_user_data(L);
+			l_wrap->set_data((*l_v1) - (*l_p1));
+			return 1;
+		}
+		MVector* l_v;
+		if (get_param(L, -1, &l_v) == true)
+		{
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data((*l_v1) - (*l_v));
+			return 1;
+		}
+	}
+	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mpoint_tbl_name, " Failed (MVector::sub). Unexpected of arguments.");
+}
+
 int vufLuaMVector::mul(lua_State* L)
 {
 	// double * vector

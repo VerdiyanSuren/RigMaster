@@ -79,8 +79,10 @@ namespace vufRM
 			return 1;
 		}
 
-		VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper, add);
-		VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper, sub);
+		//VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper, add);
+		static int add(lua_State* L);
+		static int sub(lua_State* L);
+		//VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(vufLuaMayaStatic::g_mpoint_meta_name, MPoint, vufLuaMPointWrapper, sub);
 		static int unm(lua_State* L);
 		static int mul(lua_State* L);
 		static int div(lua_State* L);

@@ -98,8 +98,10 @@ namespace vufRM
 		}
 		
 		VF_LUA_IMPLEMENT_DESTROY(		vufLuaMayaStatic::g_mvec_meta_name, vufLuaMVectorWrapper);
-		VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper, add);
-		VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper, sub);
+		//VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper, add);
+		//VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper, sub);
+		static int add(lua_State* L);
+		static int sub(lua_State* L);
 		VF_LUA_IMPLEMENT_TYPE_UNM_TYPE(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper, unm);
 		static int mul(lua_State* L);
 		static int div(lua_State* L);

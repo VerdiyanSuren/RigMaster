@@ -30,6 +30,11 @@ namespace vufRM
 				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA M_VECTOR")));
 				return false;
 			}
+			if (MPoint_ut() == false)
+			{
+				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA M_POINT")));
+				return false;
+			}
 			if (MEulerRotation_ut() == false)
 			{
 				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA M_EULER_ROTATION")));
@@ -377,6 +382,74 @@ namespace vufRM
 					return false;
 				}
 			}
+			// add
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(60,20,30)");
+				l_bool = l_bool &&	m_w.do_string("v_2 = MVector.new(10,40,60)");
+				l_bool = l_bool &&	m_w.do_string("p_1 = MPoint.new(0.1,0.2,0.3,1)");
+				l_bool = l_bool &&	m_w.do_string("v_3 = v_1 + v_2");
+				l_bool = l_bool &&	m_w.do_string("p_2 = v_1 + p_1");
+				l_bool = l_bool &&	m_w.do_string("p_3 = p_1 + v_1");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:add script")));
+					return false;
+				}
+				MVector* l_v1,*l_v2,*l_v3;
+				MPoint*  l_p1, *l_p2, *l_p3;
+				l_bool =			vufLuaMPoint::get_global(L, "p_1", &l_p1);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_3", &l_p3);
+
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_2", &l_v2);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_3", &l_v3);
+
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:add get globals.")));
+					return false;
+				}
+				if (*l_v3 != (*l_v1) + (*l_v2) || *l_p2 != (*l_v1) + (*l_p1) || *l_p3 != (*l_p1) + (*l_v1))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:add failed")));
+					return false;
+				}
+			}
+			// sub
+			{
+				l_bool = m_w.do_string("v_1 = MVector.new(60,20,30)");
+				l_bool = l_bool && m_w.do_string("v_2 = MVector.new(10,40,60)");
+				l_bool = l_bool && m_w.do_string("p_1 = MPoint.new(0.1,0.2,0.3,1)");
+				l_bool = l_bool && m_w.do_string("v_3 = v_1 - v_2");
+				l_bool = l_bool && m_w.do_string("p_2 = v_1 - p_1");
+				l_bool = l_bool && m_w.do_string("p_3 = p_1 - v_1");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:sub script")));
+					return false;
+				}
+				MVector* l_v1, * l_v2, * l_v3;
+				MPoint* l_p1, * l_p2, * l_p3;
+				l_bool = vufLuaMPoint::get_global(L, "p_1", &l_p1);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_3", &l_p3);
+
+				l_bool = l_bool && vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool && vufLuaMVector::get_global(L, "v_2", &l_v2);
+				l_bool = l_bool && vufLuaMVector::get_global(L, "v_3", &l_v3);
+
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:sub get globals.")));
+					return false;
+				}
+				if (*l_v3 != (*l_v1) - (*l_v2) || *l_p2 != (*l_v1) - (*l_p1) || *l_p3 != (*l_p1) - (*l_v1))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:sub failed")));
+					return false;
+				}
+			}
 			// mul
 			{
 				l_bool =			m_w.do_string("v_1 = MVector.new(60,20,30)");
@@ -450,6 +523,214 @@ namespace vufRM
 			}
 
 			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR M_VECTOR PASSED.")));
+			return true;
+		}
+		bool MPoint_ut()
+		{
+			bool l_bool = false;
+			lua_State* L = m_w.get_lua_state();
+			// constructor
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&  m_w.do_string("p_1 = MPoint.new(0.5,0.2,-0.7,1)");
+				l_bool = l_bool &&  m_w.do_string("p_2 = MPoint.new(v_1)");
+				l_bool = l_bool &&  m_w.do_string("p_3 = MPoint.new()");
+
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint constructor script")));
+					return false;
+				}
+				MVector* l_v1;;
+				MPoint* l_p1,*l_p2,*l_p3;
+				l_bool = l_bool && vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_1", &l_p1);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_3", &l_p3);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint constructor get_global")));
+					return false;
+				}
+				if (*l_p3 != MPoint() || *l_p1 != MPoint(0.5, 0.2, -0.7, 1) || *l_p2 != MPoint(*l_v1))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint constructor(MPoint).")));
+					return false;
+				}
+			}
+			// isEquivalent
+			{
+				l_bool =			m_w.do_string("p_1 = MPoint.new(0.5,0.6,0.7,1)");
+				l_bool = l_bool &&	m_w.do_string("v_2 = MPoint.new(0.2,0.4,0.8,1)");
+				l_bool = l_bool &&	m_w.do_string("b_1 = p_1:isEquivalent(p_2)");
+				l_bool = l_bool &&	m_w.do_string("b_2 = p_1:isEquivalent(p_2,5)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:isEquivalent script")));
+					return false;
+				}
+				MPoint* l_p1, * l_p2;
+				int l_b1, l_b2;
+				l_bool =			vufLuaMPoint::get_global(L, "p_1", &l_p1);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				lua_getglobal(L, "b_1");
+				l_b1 = lua_toboolean(L, -1);
+				lua_getglobal(L, "b_2");
+				l_b2 = lua_toboolean(L, -1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:isEquivalent get globals.")));
+					return false;
+				}
+				if (l_b1 != (int)l_p1->isEquivalent(*l_p2) ||
+					l_b2 != (int)l_p1->isEquivalent(*l_p2, 5))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:isEquivalent failed")));
+					return false;
+				}
+			}
+			// add
+			{
+				l_bool =			m_w.do_string("p_1 = MPoint.new(60,20,30,1)");
+				l_bool = l_bool &&	m_w.do_string("p_2 = MPoint.new(10,40,60,1)");
+				l_bool = l_bool &&	m_w.do_string("v_1 = MVector.new()");
+				l_bool = l_bool &&	m_w.do_string("p_3 = p_1 + p_2");
+				l_bool = l_bool &&	m_w.do_string("p_4 = v_1 + p_1");
+				l_bool = l_bool &&	m_w.do_string("p_5 = p_1 + v_1");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:add script")));
+					return false;
+				}
+				MVector* l_v1;
+				MPoint* l_p1, * l_p2, * l_p3, * l_p4, * l_p5;
+				l_bool = vufLuaMPoint::get_global(L, "p_1", &l_p1);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_3", &l_p3);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_4", &l_p4);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_5", &l_p5);
+				l_bool = l_bool && vufLuaMVector::get_global(L,"v_1", &l_v1);
+
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:add get globals.")));
+					return false;
+				}
+				if ( *l_p3 != (*l_p1) +(*l_p2) || *l_p4 != (*l_v1) + (*l_p1) || *l_p5 != (*l_p1) + (*l_v1) )
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:add failed")));
+					return false;
+				}
+			}
+			// sub
+			{
+				l_bool =			m_w.do_string("p_1 = MPoint.new(60,20,30,1)");
+				l_bool = l_bool &&	m_w.do_string("p_2 = MPoint.new(10,40,60,1)");
+				l_bool = l_bool &&	m_w.do_string("v_1 = MVector.new()");
+				l_bool = l_bool &&	m_w.do_string("p_3 = p_1 - p_2");
+				l_bool = l_bool &&	m_w.do_string("p_4 = v_1 - p_1");
+				l_bool = l_bool &&	m_w.do_string("p_5 = p_1 - v_1");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:sub script")));
+					return false;
+				}
+				MVector* l_v1;
+				MPoint* l_p1, * l_p2, * l_p3, * l_p4, * l_p5;
+				l_bool = vufLuaMPoint::get_global(L, "p_1", &l_p1);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_3", &l_p3);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_4", &l_p4);
+				l_bool = l_bool && vufLuaMPoint::get_global(L, "p_5", &l_p5);
+				l_bool = l_bool && vufLuaMVector::get_global(L, "v_1", &l_v1);
+
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:sub get globals.")));
+					return false;
+				}
+				if (*l_p3 != (*l_p1) - (*l_p2) || *l_p4 != (*l_v1) - (*l_p1) || *l_p5 != (*l_p1) - (*l_v1))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:sub failed")));
+					return false;
+				}
+			}
+			// mul
+			{
+				l_bool =			m_w.do_string("p_1 = MPoint.new(60,20,30,1)");
+				l_bool = l_bool &&	m_w.do_string("p_2 = MPoint.new(10,40,60,1)");
+				l_bool = l_bool &&	m_w.do_string("m_1 = MMatrix.new()");
+				l_bool = l_bool &&	m_w.do_string("p_3 = p_1 * 2");
+				l_bool = l_bool &&	m_w.do_string("p_4 =  2 * p_1");
+				l_bool = l_bool &&	m_w.do_string("p_5 = p_1 * m_1");
+				l_bool = l_bool &&	m_w.do_string("p_6 = m_1 * p_1");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:mul script")));
+					return false;
+				}
+				MMatrix* l_m1;
+				MPoint* l_p1, * l_p2, * l_p3, * l_p4, * l_p5, * l_p6;
+				l_bool =			vufLuaMPoint::get_global(L, "p_1", &l_p1);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_3", &l_p3);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_4", &l_p4);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_5", &l_p5);
+				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "p_6", &l_p6);
+				l_bool = l_bool &&	vufLuaMMatrix::get_global(L, "m_1", &l_m1);
+
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:mul get globals.")));
+					return false;
+				}
+				if (*l_p3 != (*l_p1) * 2 || *l_p4 != 2 * (*l_p1) || *l_p5 != (*l_p1) * (*l_m1) || *l_p6 != (*l_m1) * (*l_p1) )
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:mul failed")));
+					return false;
+				}
+			}
+			// indecies
+			{
+				l_bool =			m_w.do_string("p_1 = MPoint.new(0.1,0.2,0.3,0.9)");
+				l_bool = l_bool &&	m_w.do_string("p_2 = MPoint.new(0.6,0.1,-0.3, 0.9)");
+				l_bool = l_bool &&	m_w.do_string("x = p_1.x");
+				l_bool = l_bool &&	m_w.do_string("y = p_1.y");
+				l_bool = l_bool &&	m_w.do_string("z = p_1.z");
+				l_bool = l_bool &&	m_w.do_string("w = p_1.w");
+				l_bool = l_bool &&	m_w.do_string("p_2.x = 0.9");
+				l_bool = l_bool &&	m_w.do_string("p_2.y = 0.8");
+				l_bool = l_bool &&	m_w.do_string("p_2.z = 0.1");
+				l_bool = l_bool &&	m_w.do_string("p_2.w = 0.2");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:indecies script")));
+					return false;
+				}
+				MPoint* l_p1, * l_p2;
+				vufLuaMPoint::get_global(L, "p_1", &l_p1);
+				vufLuaMPoint::get_global(L, "p_2", &l_p2);
+				double l_x, l_y, l_z, l_w;
+				lua_getglobal(L, "x"); l_x = (double)lua_tonumber(L, -1);
+				lua_getglobal(L, "y"); l_y = (double)lua_tonumber(L, -1);
+				lua_getglobal(L, "z"); l_z = (double)lua_tonumber(L, -1);
+				lua_getglobal(L, "w"); l_w = (double)lua_tonumber(L, -1);
+				const char* l_char = lua_tostring(L, -1);
+				std::string l_str(l_char);
+
+				if (l_x != l_p1->x || l_y != l_p1->y || l_z != l_p1->z || l_w != l_p1->w ||
+					*l_p2 != MPoint(0.9, 0.8, 0.1, 0.2))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPoint:indecies failed")));
+					return false;
+				}
+			}
+
+
+			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR M_POINT PASSED.")));
 			return true;
 		}
 		bool MQuaternion_ut()
