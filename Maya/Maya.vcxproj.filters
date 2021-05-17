@@ -129,6 +129,12 @@
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMEulerRotation.h">
       <Filter>include\expressions\luaWrappers</Filter>
     </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMDoubleArray.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMIntArray.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\vufLogMaya.cpp">
@@ -189,6 +195,9 @@
       <Filter>src\expressions\luaWrappers</Filter>
     </ClCompile>
     <ClCompile Include="src\expressions\luaWrappers\vufLuaMEulerRotation.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMMatrix.cpp">
       <Filter>src\expressions\luaWrappers</Filter>
     </ClCompile>
   </ItemGroup>

@@ -59,18 +59,12 @@ namespace vufRM
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__index", index);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex", new_index);
 		}
-		/** bool	set_global(lua_State* L, const std::string& p_var_name, MEulerRotation& p_res)	*/
-		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
-		/** bool	get_global(lua_State * L, const std::string & p_var_name, MEulerRotation& p_res)	*/
-		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
-		/** bool	static bool	get_param(lua_State * L, int p_lua_index, MEulerRotation** p_res_ptr)*/
-		VF_LUA_GET_USER_DATA_PARAM(vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
-		/** create as reference of new user data and push to stack
-		* vufLuaVector4Wrapper<T>*	create_new_ref(lua_State* L, MEulerRotation* l_ref_vector)	*/
-		VF_LUA_CREATE_USER_NEW_REF(vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
-		/** create mew user data and push to stack
-		*  vufLuaMEulerRotaionWrapper* create_user_data(lua_State* L)*/
-		VF_LUA_CREATE_USER_DATA(vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
+		VF_LUA_SET_USER_DATA_GLOBAL(	vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
+		VF_LUA_SET_USER_DATA_GLOBAL_REF(vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
+		VF_LUA_GET_USER_DATA_GLOBAL(	vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
+		VF_LUA_GET_USER_DATA_PARAM(		vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
+		VF_LUA_CREATE_USER_NEW_REF(		vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
+		VF_LUA_CREATE_USER_DATA(		vufLuaMayaStatic::g_meuler_meta_name, MEulerRotation, vufLuaMEulerRotaionWrapper);
 		static bool rotate_order_from_str(lua_State* L, int index, MEulerRotation::RotationOrder& p_res);
 		static std::string rotate_order_as_string( const MEulerRotation& p_rot);
 	private:

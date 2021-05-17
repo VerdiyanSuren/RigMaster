@@ -89,6 +89,18 @@ static bool	set_global(lua_State* L, const std::string& p_var_name, DATA_TYPE& p
 	lua_setglobal(L, p_var_name.c_str());												\
 	return true;																		\
 }
+
+#define VF_LUA_SET_USER_DATA_GLOBAL_REF(META_NAME, DATA_TYPE, WRAPPER_TYPE);				\
+static bool	set_global_ref(lua_State * L, const std::string & p_var_name, DATA_TYPE* p_res)	\
+{																							\
+	auto l_ptr = (WRAPPER_TYPE*)lua_newuserdata(L, sizeof(WRAPPER_TYPE));					\
+	new (l_ptr) WRAPPER_TYPE(*p_res,p_res);													\
+	luaL_getmetatable(L, META_NAME);														\
+	lua_setmetatable(L, -2);																\
+	lua_setglobal(L, p_var_name.c_str());													\
+	return true;																			\
+}
+
 #pragma endregion
 // Get global variable of user
 #define VF_LUA_GET_USER_DATA_GLOBAL(META_NAME, DATA_TYPE, WRAPPER_TYPE )				\

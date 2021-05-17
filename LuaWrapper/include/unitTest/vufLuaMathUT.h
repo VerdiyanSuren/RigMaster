@@ -63,6 +63,7 @@ namespace vuf
 			VF_LOG_INFO( vufStringUtils::string_padding(""));
 			std::cout << std::endl;
 
+
 			return true;
 		}
 		bool prepare()

@@ -22,6 +22,7 @@
 #include <expressions/luaWrappers/vufLuaMMatrix.h>
 #include <expressions/luaWrappers/vufLuaMQuaternion.h>
 #include <expressions/luaWrappers/vufLuaMVectorArray.h>
+#include <expressions/luaWrappers/vufLuaMPointArray.h>
 
 using namespace vuf;
 using namespace vufRM;
@@ -223,16 +224,15 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			vufLuaMMatrix::				registrator(m_lua_machine.get_lua_state());
 			vufLuaMQuaternion::			registrator(m_lua_machine.get_lua_state());
 			vufLuaMVectorArray::		registrator(m_lua_machine.get_lua_state());
+			vufLuaMPointArray::			registrator(m_lua_machine.get_lua_state());
 			m_script_hash = l_in_script_data->get_hash();
 			l_in_port_data->m_need_lua_reset = false;
-		}
-		
+		}		
 		if (set_lua_globals(p_data, l_in_port_data) == false)
 		{
 			VF_LOG_INFO("Failed to set Globals");
 			return MS::kSuccess;
 		}
-
 		// Check should we redefine function
 		if (l_should_restart == true)
 		{
@@ -249,15 +249,13 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 				VF_LOG_ERR(vufMayaUtils::mstr_2_str(this->name() + " failed to compile."));
 				return MS::kSuccess;
 			}
-		}
-		
+		}		
 		// call compiled function call 
 		if (m_lua_machine.do_compiled() == false)
 		{
 			VF_LOG_ERR(vufMayaUtils::mstr_2_str(this->name() + " Failed to evaluate compiled script."));
 			return MS::kSuccess;
-		}
-		
+		}		
 		//--------------------------------------------------------------------------------------------------------------
 		// Set outputs
 		if (set_maya_outputs(p_data, l_in_port_data) == false)
@@ -270,7 +268,6 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 		p_data.setClean(g_output_number_attr);
 		
 		return MS::kSuccess;
-
 	}
 	return MS::kUnknownParameter;
 }

@@ -1,6 +1,7 @@
 #include <expressions/luaWrappers/vufLuaMVector.h>
 #include <expressions/luaWrappers/vufLuaMPoint.h>
 #include <expressions/luaWrappers/vufLuaMQuaternion.h>
+#include <expressions/luaWrappers/vufLuaMEulerRotation.h>
 #include <expressions/luaWrappers/vufLuaMMatrix.h>
 #include <vufVector.h>
 
@@ -90,24 +91,75 @@ int vufLuaMVector::dot(lua_State* L)
 int vufLuaMVector::rotate_by(lua_State* L)
 {
 	int l_number_of_arguments = lua_gettop(L);
+	// rotate_by(double, double, double,double)
+	if (l_number_of_arguments == 5)
+	{
+		double l_x, l_y, l_z, l_w;
+		MVector* l_v;
+		l_w = (double)luaL_checknumber(L, -1);
+		l_z = (double)luaL_checknumber(L, -2);
+		l_y = (double)luaL_checknumber(L, -3);
+		l_x = (double)luaL_checknumber(L, -4);
+		if (get_param(L, -5, &l_v) == false)
+		{
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed(MVector:rotateBy) to get MVector object.");
+		}
+		auto l_wrap = create_user_data(L);
+		l_wrap->set_data(l_v->rotateBy(l_x, l_y, l_z, l_w));
+		return 1;
+	}
+	// rotate_by(MVector:axis,double)
+	if (l_number_of_arguments == 3)
+	{
+		double l_angle;
+		MVector* l_v;
+		l_angle = (double)luaL_checknumber(L, -1);
+		const char* l_str = luaL_checkstring(L, -2);
+		if (get_param(L, -3, &l_v) == false)
+		{
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed(MVector:rotateBy) to get arg-3 as MVector.");
+		}
+		if (l_str != nullptr && l_str[0] != '\0' && l_str[1] == '\0')
+		{
+			auto l_wrap = create_user_data(L);
+			if (l_str[0] == 'x')
+			{
+				l_wrap->set_data(l_v->rotateBy(MVector::kXaxis, l_angle));
+			}
+			else if(l_str[0] == 'y')
+			{
+				l_wrap->set_data(l_v->rotateBy(MVector::kYaxis, l_angle));
+			}
+			else if (l_str[0] == 'z')
+			{
+				l_wrap->set_data(l_v->rotateBy(MVector::kZaxis, l_angle));
+			}
+			return 1;
+		}
+		VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed(MVector:rotateBy) wrong axis.");
+	}
 	// rotate_by(MQuaternion) or rotate_by(MEuler_Rotation)
 	if (l_number_of_arguments == 2)
 	{
-		MVector* l_vec;
+		MVector			*l_vec;
+		MQuaternion		*l_quat;
+		MEulerRotation	*l_r;
 		if (get_param(L, -2, &l_vec) == false)
 		{
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed to get MVector.");
 		}
-		MQuaternion *l_quat;
-		if (vufLuaMQuaternion::get_param(L, -1, &l_quat) == false)
+		if (vufLuaMQuaternion::get_param(L, -1, &l_quat) == true)
 		{
-			// check is this MEuler rotation
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed to get parameter.HAs to be MQuaternion");
+			auto l_wrapper = create_user_data(L);
+			l_wrapper->set_data(l_vec->rotateBy(*l_quat));
+			return 1;
 		}
-		// rotate by quaternion
-		auto l_wrapper = create_user_data(L);
-		l_wrapper->set_data(l_vec->rotateBy(*l_quat));
-		return 1;
+		if (vufLuaMEulerRotation::get_param(L, -1, &l_r) == true)
+		{
+			auto l_wrapper = create_user_data(L);
+			l_wrapper->set_data(l_vec->rotateBy(*l_r));
+			return 1;
+		}
 	}
 	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed to rotateBy. Wrong arguments.");
 }
@@ -119,17 +171,17 @@ int vufLuaMVector::rotate_to(lua_State* L)
 		MVector* l_vec, * l_vec_to;
 		if (get_param(L, -1, &l_vec_to) == false)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed to get MVector.");
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed(MVector:rotateTo) to get MVector.");
 		}
 		if (get_param(L, -2, &l_vec) == false)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed. Expect first argument as MVector.");
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed(MVector:rotateTo). Expect first argument as MVector.");
 		}
 		auto l_quat_wrap = vufLuaMQuaternion::create_user_data(L);
 		l_quat_wrap->set_data(l_vec->rotateTo(*l_vec_to));
 		return 1;
 	}
-	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed to rotateTo. Wrong arguments.");
+	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed(MVector:rotateTo). Wrong arguments.");
 }
 int vufLuaMVector::normalize(lua_State* L)
 {
@@ -363,7 +415,7 @@ int vufLuaMVector::mul(lua_State* L)
 		l_wrapper->set_data( (*l_vec) * (*l_mat));
 		return 1;
 	}
-	// matrix * vecotor
+	// matrix * vector
 	if (vufLuaMMatrix::get_param(L, -2, &l_mat) == true)
 	{
 		MVector* l_vec;

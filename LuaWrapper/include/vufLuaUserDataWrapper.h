@@ -15,40 +15,32 @@ namespace vuf
 	class vufLuaDataWrapper
 	{
 	public:
-		vufLuaDataWrapper(const T& p_data, T* p_ref_ptr = nullptr) :			 
-			m_ref_ptr(p_ref_ptr)
-			, m_data(p_data)
+		vufLuaDataWrapper(const T& p_data, T* p_ref_ptr = nullptr)			 
 		{
-			m_ref_count = p_ref_ptr == nullptr ? 0 : 2;
+			if (p_ref_ptr == nullptr)
+			{
+				m_ref_ptr = nullptr;
+				m_data = p_data;
+				return;
+			}
+			m_ref_ptr = p_ref_ptr;
 		}
 		T& get_data() 					
 		{
-			if (m_ref_count == 0)
-			{
-				return m_data;
-			}
-			if (m_ref_ptr != nullptr)
-			{
-				m_ref_count--;
-				VF_LOG_WARN("Decrement ref couter");
-				if (m_ref_count == 0)
-				{
-					VF_LOG_WARN("MAKE UNIQUE");
-					m_data = *m_ref_ptr;
-					return m_data;
-				}
-				return *m_ref_ptr;
-			}
-			return m_data; 
+			return m_ref_ptr == nullptr ? m_data : *m_ref_ptr;
 		}
 		void set_data(const T& p_data)	
-		{ 			
-			m_data = p_data; 
+		{ 	
+			if (m_ref_ptr == nullptr)
+			{
+				m_data = p_data; 
+				return;
+			}
+			*m_ref_ptr = p_data;
 		}
-		uint16_t	get_ref_count() const	{ return m_ref_count; }
-		T* get_ref_ptr() const				{ return p_ref_ptr; }
+		bool is_ref()	 const	{ return m_ref_ptr == nullptr; }
+		T* get_ref_ptr() const	{ return p_ref_ptr; }
 	private:
-		uint16_t				m_ref_count		= 0;	// reference count
 		T*						m_ref_ptr	= nullptr;	// reference to data
 		T						m_data;					// lvalue
 	};

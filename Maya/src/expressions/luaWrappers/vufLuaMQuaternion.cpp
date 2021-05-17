@@ -89,6 +89,29 @@ int vufLuaMQuaternion::create(lua_State* L)
 		l_wrapper->set_data(MQuaternion(*l_vec_1, *l_vec_2));
 		return 1;
 	}
+	// MQuaternion (MMatrix)
+	if(l_number_of_arguments == 1)
+	{
+		MEulerRotation* l_r; 
+		MMatrix *l_m;
+		if (vufLuaMMatrix::get_param(L, -1, &l_m) == true)
+		{
+			MQuaternion l_q;
+			l_q = *l_m;
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data(l_q);			
+			return 1;
+		}
+		if (vufLuaMEulerRotation::get_param(L, -1, &l_r) == true)
+		{
+			MQuaternion l_q;
+			l_q = *l_r;
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data(l_q);
+			return 1;
+		}
+		VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mquat_tbl_name, "Failed (MQuaternion:new). Expect single argument as MMatrtix or MEulerRotate. ");
+	}
 	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mquat_tbl_name, " Failed to create MQuaternon:new. Wrong arguments.");
 }
 int vufLuaMQuaternion::slerp_l(lua_State* L)
@@ -427,11 +450,11 @@ int vufLuaMQuaternion::is_equivalent(lua_State* L)
 		MQuaternion* l_q, * l_q_to;
 		if (get_param(L, -2, &l_q_to) == false)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MQuaternion::isEquivalent). Expect first argument as MEulerRotation.");
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MQuaternion::isEquivalent). Expect first argument as MQuaternion.");
 		}
 		if (get_param(L, -3, &l_q) == false)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MQuaternion::isEquivalent) to get MEulerRotation.");
+			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MQuaternion::isEquivalent) to get MQuaternion.");
 		}
 		VF_LUA_READ_NUMBER(L, -1, l_tol, l_status);
 		VF_LUA_THROW_ERROR_BY_BOOL(L, l_status, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MQuaternion::isEquivalent). Expect  third argument as numbers");
@@ -439,8 +462,7 @@ int vufLuaMQuaternion::is_equivalent(lua_State* L)
 		lua_pushboolean(L, l_res);
 		return 1;
 	}
-	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation::isEquivalent). Unexpected count of arguments.");
-
+	VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MQuaternion::isEquivalent). Unexpected count of arguments.");
 }
 int vufLuaMQuaternion::mul(lua_State* L)
 {

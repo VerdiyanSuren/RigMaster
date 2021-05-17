@@ -71,7 +71,26 @@ int main()
 	vufLuaMathUT<double> l_lua_math_ut;
 	l_lua_math_ut.run();
 
+	{
+		vufMatrix4<double> l_matr = vufMatrix4<double>::numerate_matrix();
+		vufLuaWrapper l_w;
+		l_w.open_machine();
+		lua_State* L = l_w.get_lua_state();
+		vufLuaMatrix4<double>::registrator(L);
+		vufLuaMatrix4<double>::set_global_ref(L,"matr", &l_matr);
 
+		std::string l_str;
+		std::getline(std::cin, l_str);
+		while (l_str.empty() == false)
+		{
+			l_w.do_string(l_str);
+			l_w.dump_stack();
+			std::getline(std::cin, l_str);
+		}
+		std::cout << l_matr << std::endl;
+	}
+	system("pause");
+	return 0;
 
 	vufLuaSessionDataStore< std::vector < vufVector4<double>> > l_vec_arr_store;
 	constexpr char* l_lua_str_1 = R"(

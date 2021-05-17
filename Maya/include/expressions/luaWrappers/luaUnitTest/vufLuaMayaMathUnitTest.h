@@ -72,47 +72,28 @@ namespace vufRM
 			lua_State* L = m_w.get_lua_state();
 			// MVector constructor unit tests
 			{
-				l_bool = m_w.do_string("vec_1 = MVector.new()");
-				l_bool = l_bool && m_w.do_string("vec_2 = MVector.new(0.5,0.6,0.7)");
+				l_bool =			m_w.do_string("vec_1 = MVector.new()");
+				l_bool = l_bool &&	m_w.do_string("pnt_1 = MPoint.new(0.5,0.6,0.7,1)");
+				l_bool = l_bool &&	m_w.do_string("vec_2 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("vec_3 = MVector.new(pnt_1)");
+
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector constructor script")));
 					return false;
 				}
-				MVector* l_v1, * l_v2;
-				if (vufLuaMVector::get_global(L, "vec_1", &l_v1) == false)
+				MVector* l_v1, * l_v2, *l_v3;
+				MPoint* l_p;
+				l_bool = l_bool && vufLuaMVector::get_global(L, "vec_1", &l_v1);
+				l_bool = l_bool && vufLuaMVector::get_global(L, "vec_2", &l_v2);
+				l_bool = l_bool && vufLuaMVector::get_global(L, "vec_3", &l_v3);
+				l_bool = l_bool && vufLuaMPoint::get_global( L, "pnt_1", &l_p);
+				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed vufLuaMVector::get_global")));
 					return false;
 				}
-				if (vufLuaMVector::get_global(L, "vec_2", &l_v2) == false)
-				{
-					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed vufLuaMVector::get_global")));
-					return false;
-				}
-				if (*l_v1 != MVector() || *l_v2 != MVector(0.5, 0.6, 0.7))
-				{
-					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed constructor match MVector")));
-					return false;
-				}
-				l_bool = m_w.do_string("pnt_1 = MPoint.new(1,2,3,4)");
-				if (l_bool == false)
-				{
-					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector constructor MPoint(double[4]) script")));
-					return false;
-				}
-				l_bool = m_w.do_string("vec_3 = MVector.new(pnt_1)");
-				if (l_bool == false)
-				{
-					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector constructor MVector(MPoint) script")));
-					return false;
-				}
-				if (vufLuaMVector::get_global(L, "vec_3", &l_v1) == false)
-				{
-					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector constructor(MPoint) to get global.")));
-					return false;
-				}
-				if (*l_v1 != MVector(MPoint(1, 2, 3, 4)))
+				if (*l_v1 != MVector() || *l_v2 != MVector(0.5, 0.6, 0.7) || *l_v3 != MVector(*l_p) )
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector constructor(MPoint).")));
 					return false;
@@ -121,8 +102,8 @@ namespace vufRM
 			// MVector copy
 			{
 				l_bool = m_w.do_string("vec_1 = MVector.new(0.5,0.6,0.7)");
-				l_bool = l_bool & m_w.do_string("vec_2 = vec_1:copy()");
-				l_bool = l_bool & m_w.do_string("vec_1.x = 2");
+				l_bool = l_bool && m_w.do_string("vec_2 = vec_1:copy()");
+				l_bool = l_bool && m_w.do_string("vec_1.x = 2");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector copy constructor script")));
@@ -141,8 +122,8 @@ namespace vufRM
 			{
 				MVector* l_v1, * l_v2, * l_v3;
 				l_bool = m_w.do_string("vec_1 = MVector.new(0.5,0.6,0.7)");
-				l_bool = l_bool & m_w.do_string("vec_2 = MVector.new(0.1,0.8,-0.6)");
-				l_bool = l_bool & m_w.do_string("vec_3 = vec_1:cross(vec_2)");
+				l_bool = l_bool && m_w.do_string("vec_2 = MVector.new(0.1,0.8,-0.6)");
+				l_bool = l_bool && m_w.do_string("vec_3 = vec_1:cross(vec_2)");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string(" Failed MVector cross product script.")));
@@ -161,8 +142,8 @@ namespace vufRM
 			{
 				MVector* l_v1, * l_v2;
 				l_bool = m_w.do_string("vec_1 = MVector.new(0.5,0.6,0.7)");
-				l_bool = l_bool & m_w.do_string("vec_2 = MVector.new(0.1,0.8,-0.6)");
-				l_bool = l_bool & m_w.do_string("d = vec_1:dot(vec_2)");
+				l_bool = l_bool && m_w.do_string("vec_2 = MVector.new(0.1,0.8,-0.6)");
+				l_bool = l_bool && m_w.do_string("d = vec_1:dot(vec_2)");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string(" Failed MVector dot product script.")));
@@ -178,12 +159,294 @@ namespace vufRM
 					return false;
 				}
 			}
-			// MVector rotate by
+			// MVector rotateBy
 			{
-				l_bool = m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
-				l_bool = l_bool & m_w.do_string("q_1 = MQuaternion.new()");
-				//l_bool = l_bool & m_w.do_string("vec_2 = vec_1:rotateBy(0.1,0.1,-0.1,0.9)");
-				//l_bool = l_bool & m_w.do_string("vec_3 = vec_1:rotateBy(vec_2)");
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("q_1 = MQuaternion.new()");
+				l_bool = l_bool &&	m_w.do_string("r_1 = MEulerRotation.new(20,30,40)");
+				l_bool = l_bool &&	m_w.do_string("v_2 = vec_1:rotateBy(0.1,0.1,-0.1,0.9)");
+				l_bool = l_bool &&	m_w.do_string("v_3 = vec_1:rotateBy(\"x\",60)");
+				l_bool = l_bool &&	m_w.do_string("v_4 = vec_1:rotateBy(q_1)");
+				l_bool = l_bool &&	m_w.do_string("v_5 = vec_1:rotateBy(r_1)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:rotateBy script")));
+					return false;
+				}
+				MQuaternion		*l_q1;
+				MEulerRotation	*l_r1;
+				MVector			*l_v1, *l_v2,*l_v3,*l_v4,*l_v5;
+				l_bool =			vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_2", &l_v2);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_3", &l_v3);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_4", &l_v4);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_5", &l_v5);
+				l_bool = l_bool && vufLuaMEulerRotation::get_global(L, "r_1", &l_r1);
+				l_bool = l_bool && vufLuaMQuaternion::get_global(L, "q_1", &l_q1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:rotateBy get globals.")));
+					return false;
+				}
+				if (*l_v2 != l_v1->rotateBy(0.1, 0.1, -0.1, 0.9) ||
+					*l_v3 != l_v1->rotateBy(MVector::kXaxis, 60) ||
+					*l_v4 != l_v1->rotateBy(*l_q1) ||
+					*l_v5 != l_v1->rotateBy(*l_r1) )
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MEulerRotation:setValue failed")));
+					return false;
+				}
+			}
+			// MVector rotateTo
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("v_2 = MVector.new(-1,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("q_1 = v_1:rotateTo(v_2)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:rotateTo script")));
+					return false;
+				}
+				MQuaternion* l_q1;
+				MVector* l_v1, * l_v2;
+				l_bool =			vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_2", &l_v2);
+				l_bool = l_bool &&  vufLuaMQuaternion::get_global(L, "q_1", &l_q1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:rotateTo get globals.")));
+					return false;
+				}
+				if (*l_q1 != l_v1->rotateTo(*l_v2))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:rotateTo failed")));
+					return false;
+				}
+			}
+			// length
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("d = v_1:length()");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:length script")));
+					return false;
+				}
+				MVector* l_v1;
+				l_bool = vufLuaMVector::get_global(L, "v_1", &l_v1);
+				lua_getglobal(L, "d"); 
+				double l_lngth = lua_tonumber(L, -1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:length get globals.")));
+					return false;
+				}
+				if (l_lngth != l_v1->length())
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:length failed")));
+					return false;
+				}
+			}
+			// noraml
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("v_2 = v_1:normal()");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:normal script")));
+					return false;
+				}
+				MVector* l_v1, *l_v2;
+				l_bool =			vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_2", &l_v2);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:normal get globals.")));
+					return false;
+				}
+				if (*l_v2 != l_v1->normal())
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:normal failed")));
+					return false;
+				}
+			}
+			// normalize
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("b_1 = v_1:normalize()");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:normalize script")));
+					return false;
+				}
+				MVector* l_v1;
+				l_bool = vufLuaMVector::get_global(L, "v_1", &l_v1);
+				lua_getglobal(L, "b_1");
+				int l_b = (int)lua_toboolean(L, -1);
+				if (l_b != (int)(MVector(0.5, 0.6, 0.7).normalize() == MS::kSuccess) )
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:normalize failed")));
+					return false;
+				}
+			}
+			// isEquivalent
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("v_2 = MVector.new(0.2,0.4,0.8)");
+				l_bool = l_bool &&	m_w.do_string("b_1 = v_1:isEquivalent(v_2)");
+				l_bool = l_bool &&	m_w.do_string("b_2 = v_1:isEquivalent(v_2,5)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:isEquivalent script")));
+					return false;
+				}
+				MVector* l_v1, * l_v2;
+				int l_b1, l_b2;
+				l_bool =			vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_2", &l_v2);
+				lua_getglobal(L, "b_1");
+				l_b1 = lua_toboolean(L, -1);
+				lua_getglobal(L, "b_2");
+				l_b2 = lua_toboolean(L, -1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:isEquivalent get globals.")));
+					return false;
+				}
+				if (l_b1 != (int)l_v1->isEquivalent(*l_v2) ||
+					l_b2 != (int)l_v1->isEquivalent(*l_v2, 5))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:isEquivalent failed")));
+					return false;
+				}
+			}
+			// isParallel
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("v_2 = MVector.new(0.2,0.4,0.8)");
+				l_bool = l_bool &&	m_w.do_string("b_1 = v_1:isParallel(v_2)");
+				l_bool = l_bool &&	m_w.do_string("b_2 = v_1:isParallel(v_2,5)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:isParallel script")));
+					return false;
+				}
+				MVector* l_v1, * l_v2;
+				int l_b1, l_b2;
+				l_bool = vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool && vufLuaMVector::get_global(L, "v_2", &l_v2);
+				lua_getglobal(L, "b_1");
+				l_b1 = lua_toboolean(L, -1);
+				lua_getglobal(L, "b_2");
+				l_b2 = lua_toboolean(L, -1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:isParallel get globals.")));
+					return false;
+				}
+				if (l_b1 != (int)l_v1->isParallel(*l_v2) ||
+					l_b2 != (int)l_v1->isParallel(*l_v2, 5))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:isParallel failed")));
+					return false;
+				}
+			}
+			// transformAsNormal
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(0.5,0.6,0.7)");
+				l_bool = l_bool &&	m_w.do_string("m_1 = MMatrix.new()");
+				l_bool = l_bool &&	m_w.do_string("v_2 = v_1:transformAsNormal(m_1)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string(" Failed (MVector:transformAsNormal) script")));
+					return false;
+				}
+				MMatrix* l_m;
+				MVector* l_v1,*l_v2;
+				l_bool = l_bool && vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool && vufLuaMVector::get_global(L, "v_2", &l_v2);
+				l_bool = l_bool && vufLuaMMatrix::get_global(L, "m_1", &l_m);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string(" Failed (MVector:transformAsNormal) get_global")));
+					return false;
+				}
+				if (*l_v2 != l_v1->transformAsNormal(*l_m))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string(" Failed (MVector:transformAsNormal).")));
+					return false;
+				}
+			}
+			// mul
+			{
+				l_bool =			m_w.do_string("v_1 = MVector.new(60,20,30)");
+				l_bool = l_bool &&	m_w.do_string("v_2 = MVector.new(10,40,60)");
+				l_bool = l_bool &&	m_w.do_string("m_1 = MMatrix.new()");
+				l_bool = l_bool &&	m_w.do_string("v_3 = v_1 * 2");
+				l_bool = l_bool &&	m_w.do_string("v_4 =  2 * v_1");
+				l_bool = l_bool &&	m_w.do_string("v_5 = v_1 * m_1");
+				l_bool = l_bool &&	m_w.do_string("v_6 = m_1 * v_1");
+				l_bool = l_bool &&	m_w.do_string("d = v_1 * v_2");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:mul script")));
+					return false;
+				}
+				MMatrix* l_m1;
+				MVector *l_v1, *l_v2, *l_v3, *l_v4, *l_v5, *l_v6;
+				l_bool =			vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_2", &l_v2);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_3", &l_v3);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_4", &l_v4);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_5", &l_v5);
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_6", &l_v6);
+				l_bool = l_bool && vufLuaMMatrix::get_global(L, "m_1", &l_m1);
+				lua_getglobal(L, "d");
+				double l_d = (double)luaL_checknumber(L, -1);
+
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:mul get globals.")));
+					return false;
+				}
+				if (*l_v3 != (*l_v1) * 2 || *l_v4 != 2 * (*l_v1) || *l_v5 != (*l_v1) * (*l_m1) || *l_v6 != (*l_m1) * (*l_v1) ||l_d != (*l_v1)*(*l_v2))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:mul failed")));
+					return false;
+				}
+			}
+			// indecies
+			{
+				l_bool =			m_w.do_string("V_1 = MVector.new(0.1,0.2,0.3)");
+				l_bool = l_bool &&	m_w.do_string("V_2 = MVector.new(0.6,0.1,-0.3)");
+				l_bool = l_bool &&	m_w.do_string("x = v_1.x");
+				l_bool = l_bool &&	m_w.do_string("y = v_1.y");
+				l_bool = l_bool &&	m_w.do_string("z = v_1.z");
+				l_bool = l_bool &&	m_w.do_string("v_2.x = 0.9");
+				l_bool = l_bool &&	m_w.do_string("v_2.y = 0.8");
+				l_bool = l_bool &&	m_w.do_string("v_2.z = 0.1");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:indecies script")));
+					return false;
+				}
+				MVector* l_v1, * l_v2;
+				vufLuaMVector::get_global(L, "v_1", &l_v1);
+				vufLuaMVector::get_global(L, "v_2", &l_v2);
+				double l_x, l_y, l_z;
+				lua_getglobal(L, "x"); l_x = (double)lua_tonumber(L, -1);
+				lua_getglobal(L, "y"); l_y = (double)lua_tonumber(L, -1);
+				lua_getglobal(L, "z"); l_z = (double)lua_tonumber(L, -1);
+				const char* l_char = lua_tostring(L, -1);
+				std::string l_str(l_char);
+
+				if (l_x != l_v1->x || l_y != l_v1->y || l_z != l_v1->z ||
+					*l_v2 != MVector(0.9, 0.8, 0.1))
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVector:indecies failed")));
+					return false;
+				}
 			}
 
 			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR M_VECTOR PASSED.")));
@@ -198,17 +461,23 @@ namespace vufRM
 				l_bool =			m_w.do_string("q_1 = MQuaternion.new()");
 				l_bool = l_bool &&	m_w.do_string("q_2 = MQuaternion.new(0.2,0.1,0.6,0.9)");
 				l_bool = l_bool &&	m_w.do_string("v_1 = MVector.new(0.2,0.3,0.4)");
+				l_bool = l_bool &&	m_w.do_string("m_1 = MMatrix.new()");
+				l_bool = l_bool &&  m_w.do_string("r_1 = MEulerRotation.new(10,20,30)");
 				l_bool = l_bool &&	m_w.do_string("v_2 = MVector.new(0.4,0.1,-0.4)");
 				l_bool = l_bool &&	m_w.do_string("q_3 = MQuaternion.new(v_1,v_2)");
 				l_bool = l_bool &&	m_w.do_string("q_4 = MQuaternion.new(v_1,v_2,60)");
 				l_bool = l_bool &&	m_w.do_string("q_5 = MQuaternion.new(60,v_1)");
+				l_bool = l_bool &&	m_w.do_string("q_6 = MQuaternion.new(m_1)");
+				l_bool = l_bool &&	m_w.do_string("q_7 = MQuaternion.new(r_1)");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed (MQuaternion:new) script")));
 					return false;
 				}
 				MVector *l_v1, *l_v2;
-				MQuaternion *l_q1, *l_q2, *l_q3, *l_q4, *l_q5;
+				MQuaternion *l_q1, *l_q2, *l_q3, *l_q4, *l_q5, *l_q6, *l_q7;
+				MMatrix* l_m;
+				MEulerRotation *l_r;
 				l_bool =			vufLuaMVector::get_global(L, "v_1", &l_v1);
 				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_2", &l_v2);
 				l_bool = l_bool &&	vufLuaMQuaternion::get_global(L, "q_1", &l_q1);
@@ -216,14 +485,24 @@ namespace vufRM
 				l_bool = l_bool &&	vufLuaMQuaternion::get_global(L, "q_3", &l_q3);
 				l_bool = l_bool &&	vufLuaMQuaternion::get_global(L, "q_4", &l_q4);
 				l_bool = l_bool &&	vufLuaMQuaternion::get_global(L, "q_5", &l_q5);
+				l_bool = l_bool &&	vufLuaMQuaternion::get_global(L, "q_6", &l_q6);
+				l_bool = l_bool &&	vufLuaMQuaternion::get_global(L, "q_7", &l_q7);
+				l_bool = l_bool &&  vufLuaMMatrix::get_global(L, "m_1", &l_m);
+				l_bool = l_bool &&  vufLuaMEulerRotation::get_global(L, "r_1", &l_r);
+
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed (MQuaternion:new) get globals.")));
 					return false;
 				}
+				MQuaternion l_qm, l_qr;
+				l_qm = *l_m;
+				l_qr = *l_r;
+
 				if (*l_q1 != MQuaternion() || *l_q2 != MQuaternion(0.2, 0.1, 0.6, 0.9) ||
 					*l_q3 != MQuaternion(*l_v1, *l_v2) || *l_q4 != MQuaternion(*l_v1, *l_v2, 60) ||
-					*l_q5 != MQuaternion(60, *l_v1))
+					*l_q5 != MQuaternion(60, *l_v1) ||
+					l_qm != *l_q6 || l_qr != *l_q7 )
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed (MQuaternion:new) failed")));
 					return false;
@@ -929,26 +1208,41 @@ namespace vufRM
 			lua_State* L = m_w.get_lua_state();
 			// MEulerRotation constructor
 			{
-				l_bool = m_w.do_string("r_1 = MEulerRotation.new()");
-				l_bool = l_bool && m_w.do_string("r_2 = MEulerRotation.new(30,60,90)");
-				l_bool = l_bool && m_w.do_string("r_3 = MEulerRotation.new(10,11,12,\"xzy\")");
-				l_bool = l_bool && m_w.do_string("v_1 = MVector.new(90,30,60)");
-				l_bool = l_bool && m_w.do_string("r_4 = MEulerRotation.new(v_1)");
-				l_bool = l_bool && m_w.do_string("r_5 = MEulerRotation.new(v_1,\"zyx\")");
+				l_bool =			m_w.do_string("r_1 = MEulerRotation.new()");
+				l_bool = l_bool &&	m_w.do_string("r_2 = MEulerRotation.new(30,60,90)");
+				l_bool = l_bool &&	m_w.do_string("m_1 = MMatrix.new()");
+				l_bool = l_bool &&	m_w.do_string("q_1 = MQuaternion.new(0.1,0.2,0.3,0.9)");
+				l_bool = l_bool &&	m_w.do_string("r_3 = MEulerRotation.new(10,11,12,\"xzy\")");
+				l_bool = l_bool &&	m_w.do_string("v_1 = MVector.new(90,30,60)");
+				l_bool = l_bool &&	m_w.do_string("r_4 = MEulerRotation.new(v_1)");
+				l_bool = l_bool &&	m_w.do_string("r_5 = MEulerRotation.new(v_1,\"zyx\")");
+				l_bool = l_bool &&	m_w.do_string("r_6 = MEulerRotation.new(m_1)");
+				l_bool = l_bool &&	m_w.do_string("r_7 = MEulerRotation.new(q_1)");
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MEulerRotation constructor script")));
 					return false;
 				}
-				MEulerRotation* l_r1, * l_r2, * l_r3, * l_r4, * l_r5;
+				MEulerRotation* l_r1, * l_r2, * l_r3, * l_r4, * l_r5, *l_r6, *l_r7;
 				MVector* l_v1;
+				MMatrix* l_m;
+				MQuaternion* l_q;
+				l_bool =			vufLuaMEulerRotation::get_global(L, "r_1", &l_r1);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_2", &l_r2);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_3", &l_r3);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_4", &l_r4);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_5", &l_r5);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_6", &l_r6);
+				l_bool = l_bool &&	vufLuaMEulerRotation::get_global(L, "r_7", &l_r7);
 
-				l_bool = vufLuaMEulerRotation::get_global(L, "r_1", &l_r1);
-				l_bool = l_bool && vufLuaMEulerRotation::get_global(L, "r_2", &l_r2);
-				l_bool = l_bool && vufLuaMEulerRotation::get_global(L, "r_3", &l_r3);
-				l_bool = l_bool && vufLuaMEulerRotation::get_global(L, "r_4", &l_r4);
-				l_bool = l_bool && vufLuaMEulerRotation::get_global(L, "r_5", &l_r5);
-				l_bool = l_bool && vufLuaMVector::get_global(L, "v_1", &l_v1);
+				l_bool = l_bool && vufLuaMMatrix::get_global(L, "m_1", &l_m);
+				l_bool = l_bool && vufLuaMQuaternion::get_global(L, "q_1", &l_q);
+
+				MEulerRotation l_rm, l_rq;
+				l_rm = *l_m;
+				l_rq = *l_q;
+
+				l_bool = l_bool &&	vufLuaMVector::get_global(L, "v_1", &l_v1);
 				if (l_bool == false)
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MEulerRotation constructor get globals.")));
@@ -958,7 +1252,8 @@ namespace vufRM
 					*l_r2 != MEulerRotation(30, 60, 90) ||
 					*l_r3 != MEulerRotation(10, 11, 12, MEulerRotation::kXZY) ||
 					*l_r4 != MEulerRotation(*l_v1) ||
-					*l_r5 != MEulerRotation(*l_v1, MEulerRotation::kZYX))
+					*l_r5 != MEulerRotation(*l_v1, MEulerRotation::kZYX) ||
+					*l_r6 != l_rm || *l_r7 != l_rq )
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MEulerRotation constructor failed")));
 					return false;

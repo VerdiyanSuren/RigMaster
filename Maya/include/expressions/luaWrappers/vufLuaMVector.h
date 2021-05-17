@@ -32,16 +32,17 @@ namespace vufRM
 			VF_LUA_ADD_TABLE_FIELD(L, "length",			length);
 			VF_LUA_ADD_TABLE_FIELD(L, "normal",			normal);
 			VF_LUA_ADD_TABLE_FIELD(L, "normalize",		normalize);
+			VF_LUA_ADD_TABLE_FIELD(L, "angle",			angle);
 			VF_LUA_ADD_TABLE_FIELD(L, "isEquivalent",	is_equivalent);
 			VF_LUA_ADD_TABLE_FIELD(L, "isParallel",		is_parallel);
+			VF_LUA_ADD_TABLE_FIELD(L, "transformAsNormal", transform_as_normal);
 			VF_LUA_ADD_TABLE_FIELD(L, "orthoTo",		ortho_to);
 			VF_LUA_ADD_TABLE_FIELD(L, "parallelTo",		parallel_to);
 			VF_LUA_ADD_TABLE_FIELD(L, "distanceTo",		distance_to);
-			VF_LUA_ADD_TABLE_FIELD(L, "transformAsNormal", transform_as_normal);
 			
-			VF_LUA_ADD_TABLE_FIELD(L, "angle", angle);
-			VF_LUA_ADD_TABLE_FIELD(L, "to_string", to_string);
-			VF_LUA_ADD_TABLE_FIELD(L, "to_type", to_type);
+
+			VF_LUA_ADD_TABLE_FIELD(L, "to_string",		to_string);
+			VF_LUA_ADD_TABLE_FIELD(L, "to_type",		to_type);
 
 			VF_LUA_NEW_META_TABLE(L, vufLuaMayaStatic::g_mvec_meta_name);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__gc", destroy);
@@ -54,18 +55,12 @@ namespace vufRM
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__index", index);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex", new_index);
 		}
-		/** bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)	*/
-		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper);
-		/** bool	get_global(lua_State * L, const std::string & p_var_name, vufVector4<T>& p_res)	*/
-		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper);
-		/** bool	static bool	get_param(lua_State * L, int p_lua_index, vufVector4<T>** p_res_ptr)*/
-		VF_LUA_GET_USER_DATA_PARAM(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper);
-		/** create as reference of new user data and push to stack
-		* vufLuaVector4Wrapper<T>*	create_new_ref(lua_State* L, vufVector4<T>* l_ref_vector)	*/
-		VF_LUA_CREATE_USER_NEW_REF(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper);
-		/** create mew user data and push to stack
-		*  vufLuaVector4Wrapper<T>* create_user_data(lua_State* L)*/
-		VF_LUA_CREATE_USER_DATA(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper);
+		VF_LUA_SET_USER_DATA_GLOBAL(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper);
+		VF_LUA_SET_USER_DATA_GLOBAL_REF(vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper);
+		VF_LUA_GET_USER_DATA_GLOBAL(	vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper);
+		VF_LUA_GET_USER_DATA_PARAM(		vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper);
+		VF_LUA_CREATE_USER_NEW_REF(		vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper);
+		VF_LUA_CREATE_USER_DATA(		vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper);
 	private:
 		static int create(	lua_State* L);		
 		VF_LUA_IMPLEMENT_COPY(vufLuaMayaStatic::g_mvec_meta_name, MVector, vufLuaMVectorWrapper);
@@ -74,6 +69,7 @@ namespace vufRM
 		static int rotate_by(lua_State* L);
 		static int rotate_to(lua_State* L);
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER(vufLuaMayaStatic::g_mvec_meta_name, vufLuaMVectorWrapper, length, length);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper, normal, normal);
 		static int normalize(		lua_State* L);
 		static int is_equivalent(	lua_State* L);
 		static int is_parallel(		lua_State* L);
@@ -81,7 +77,6 @@ namespace vufRM
 		static int parallel_to(		lua_State* L);
 		static int distance_to(		lua_State* L);
 		static int transform_as_normal(lua_State* L);
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaMayaStatic::g_mvec_meta_name,	MVector, vufLuaMVectorWrapper, normal, normal);
 		VF_LUA_IMPLEMENT_TYPE_OF_TYPE_TO_NUMBER(vufLuaMayaStatic::g_mvec_meta_name, vufLuaMVectorWrapper, angle, angle);
 
 		static int to_string(lua_State* L)

@@ -157,18 +157,40 @@ int vufLuaMEulerRotation::create(lua_State* L)
 		return 1;
 	}
 	// MEulerRotation (MVector)
+	// MEulerRotation(MMatrix)
+	// MEulerRotation(MQuaternion)
 	if (l_number_of_arguments == 1)
 	{
 		MVector* l_vec;
-		if (vufLuaMVector::get_param(L, -1, &l_vec) == false)
+		MMatrix* l_m;
+		MQuaternion* l_q;
+		if (vufLuaMVector::get_param(		L, -1, &l_vec) == true)
 		{
-			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, " Failed (MEulerRotation:new). Expect MVector as first argument.");
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data(MEulerRotation(*l_vec));
+			return 1;
 		}
-		auto l_wrap = create_user_data(L);
-		l_wrap->set_data(MEulerRotation(*l_vec));
-		return 1;
+		if (vufLuaMMatrix::get_param(		L, -1, &l_m) == true)
+		{
+			MEulerRotation l_r;
+			l_r = *l_m;
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data(MEulerRotation(l_r));
+			return 1;
+
+		}
+		if (vufLuaMQuaternion::get_param(	L, -1, &l_q) == true)
+		{
+			MEulerRotation l_r;
+			l_r = *l_q;
+			auto l_wrap = create_user_data(L);
+			l_wrap->set_data(MEulerRotation(l_r));
+			return 1;
+		}
+		VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_meuler_tbl_name, "  Failed (MEulerRotation:new(1 arg) to create MEulerRotation. Wrong arguments.Should be MVector,MMatrix or Mquaternion");
 	}
 	// MEulerRotation (const MVector &v, RotationOrder ord=kXYZ)
+	// 
 	if (l_number_of_arguments == 2)
 	{
 		MVector* l_vec;

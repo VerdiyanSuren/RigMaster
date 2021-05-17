@@ -52,6 +52,7 @@ namespace vuf
 		}
 		/** bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)	*/
 		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
+		VF_LUA_SET_USER_DATA_GLOBAL_REF(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
 		/** bool	get_global(lua_State * L, const std::string & p_var_name, vufVector4<T>& p_res)	*/
 		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
 		/** bool	static bool	get_param(lua_State * L, int p_lua_index, vufVector4<T>& p_res_ptr)*/
