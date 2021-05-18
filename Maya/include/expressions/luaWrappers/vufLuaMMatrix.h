@@ -38,7 +38,7 @@ namespace vufRM
 			VF_LUA_ADD_TABLE_FIELD(L, "isEquivalent",	is_equivalent);
 			VF_LUA_ADD_TABLE_FIELD(L, "isSingular",		is_singular);
 			
-			VF_LUA_ADD_TABLE_FIELD(L, "to_string", to_string);
+			VF_LUA_ADD_TABLE_FIELD(L, "to_string",	to_string);
 			VF_LUA_ADD_TABLE_FIELD(L, "to_type",	to_type);
 
 			VF_LUA_NEW_META_TABLE(L, vufLuaMayaStatic::g_mmatrix_meta_name);

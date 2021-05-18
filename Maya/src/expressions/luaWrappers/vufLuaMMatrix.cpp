@@ -17,11 +17,9 @@ int vufLuaMMatrix::set(lua_State* L)
 	int l_i, l_j;
 	double  l_val;
 	// read and check value
-	l_val = (double)luaL_checknumber(L, -3);
-	// read and check row
-	l_i = (int)luaL_checkinteger(L, -2);
-	// read and check column
-	l_j = (int)luaL_checkinteger(L, -1 );
+	l_val	= (double)luaL_checknumber(	L, -1);
+	l_j		= (int)luaL_checkinteger(	L, -2 );
+	l_i		= (int)luaL_checkinteger(	L, -3);
 	if (l_i < 0 || l_i >3)
 	{
 		VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mmatrix_tbl_name, " index of column is out of range");
@@ -77,7 +75,7 @@ int vufLuaMMatrix::set_to_product(lua_State* L)
 	if (l_number_of_arguments == 3)
 	{
 		MMatrix* l_m1, * l_m2, * l_m;
-		if (get_param(L, -3, &l_m2) == false)
+		if (get_param(L, -1, &l_m2) == false)
 		{
 			VF_LUA_THROW_ERROR(L,vufLuaMayaStatic::g_mmatrix_tbl_name, "Failed(MMatrix:setToProduct) to get MMatrix as second arg.");
 		}
@@ -85,7 +83,7 @@ int vufLuaMMatrix::set_to_product(lua_State* L)
 		{
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mmatrix_tbl_name, "Failed(MMatrix:setToProduct) to get MMatrix as first arg.");
 		}
-		if (get_param(L, -2, &l_m) == false)
+		if (get_param(L, -3, &l_m) == false)
 		{
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mmatrix_tbl_name, "Failed(MMatrix:setToProduct) to get MMatrix object.");
 		}

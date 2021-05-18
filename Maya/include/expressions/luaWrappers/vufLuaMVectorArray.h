@@ -58,34 +58,34 @@ namespace vufRM
 			int l_number_of_arguments = lua_gettop(L);
 			if (l_number_of_arguments != 3)
 			{
-				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " wrong number of arguments. Expect 2");
+				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed:set wrong number of arguments. Expect 2");
 			}
 			bool l_status;
 			//read i
 			int l_i;
 			MVector*  l_vec;
 			// read and check value
-			if (vufLuaMVector::get_param(L, -2, &l_vec) == false)
+			if (vufLuaMVector::get_param(L, -1, &l_vec) == false)
 			{
-				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " expect MVectoras argument.");
+				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed:set expect MVector as argument.");
 			}
 			// read and check row
-			VF_LUA_READ_INTEGER(L, -1, l_i, l_status);
+			VF_LUA_READ_INTEGER(L, -2, l_i, l_status);
 			if (l_status == false)
 			{
-				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " index has to be integer");
+				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed:set index has to be integer");
 			}
 			// matrix
 			MVectorArray* l_vec_ptr;
 			if (get_param(L, -3, &l_vec_ptr) == false)
 			{
-				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed tp get array object");
+				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed:set to get array object");
 			}
 
 			// check indecies
 			if (l_i < 0 || l_i >= (int)l_vec_ptr->length())
 			{
-				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " index is out of range");
+				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " Failed:set index is out of range");
 			}
 			(*l_vec_ptr)[l_i] = *l_vec;
 			return 0;
@@ -150,7 +150,7 @@ namespace vufRM
 		static int remove(lua_State* L)
 		{
 			int l_number_of_arguments = lua_gettop(L);
-			if (l_number_of_arguments != 1)
+			if (l_number_of_arguments != 2)
 			{
 				return luaL_error(L, "expect exactly  1 numerical  arguments");
 			}
@@ -159,12 +159,12 @@ namespace vufRM
 			VF_LUA_READ_INTEGER(L, -1, l_index, l_status);
 			if (l_status == false)
 			{
-				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_meta_name, " expect integer as new length argument.");
+				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_meta_name, " Failed(MVectorArray:remove) expect integer as index argument.");
 			}
 			MVectorArray* l_res_ptr;
 			if (get_param(L, -2, &l_res_ptr) == false)
 			{
-				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_meta_name, "failed to get MVectorArray object.");
+				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_meta_name, "failed(MVectorArray:remove) to get MVectorArray object.");
 			}
 			l_res_ptr->remove(l_index);
 			return 0;
@@ -181,12 +181,12 @@ namespace vufRM
 			int l_i;
 			MVector* l_vec;
 			// read and check value
-			if (vufLuaMVector::get_param(L, -2, &l_vec) == false)
+			if (vufLuaMVector::get_param(L, -1, &l_vec) == false)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " expect MVector as argument.");
 			}
 			// read and check row
-			VF_LUA_READ_INTEGER(L, -1, l_i, l_status);
+			VF_LUA_READ_INTEGER(L, -2, l_i, l_status);
 			if (l_status == false)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " index has to be integer");
@@ -215,11 +215,10 @@ namespace vufRM
 			}			
 			MVector* l_vec;
 			// read and check value
-			if (vufLuaMVector::get_param(L, -2, &l_vec) == false)
+			if (vufLuaMVector::get_param(L, -1, &l_vec) == false)
 			{
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_arr_tbl_name, " expect MVector as argument.");
 			}
-
 			MVectorArray* l_vec_arr_ptr;
 			if (get_param(L, -2, &l_vec_arr_ptr) == false)
 			{
@@ -236,13 +235,7 @@ namespace vufRM
 				VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed tp get vector4.");
 			}
 			std::stringstream l_ss;
-			l_ss << "length: " << l_vec_ptr->length() << "[";
-			for (uint32_t i = 0; i < l_vec_ptr->length(); i++)
-			{
-				auto& l_vec = l_vec_ptr->operator[](i);
-				l_ss << "<" << l_vec.x << "," << l_vec.y << "," << l_vec.z << ">";
-			}
-			l_ss << "length: " << l_vec_ptr->length() << "]";
+			l_ss << *l_vec_ptr;
 			lua_pushstring(L, l_ss.str().c_str());
 			return 1;
 		}
