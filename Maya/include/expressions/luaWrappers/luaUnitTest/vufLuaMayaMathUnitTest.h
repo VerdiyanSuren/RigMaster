@@ -8,6 +8,8 @@
 #include <expressions/luaWrappers/vufLuaMEulerRotation.h>
 #include <expressions/luaWrappers/vufLuaMVectorArray.h>
 #include <expressions/luaWrappers/vufLuaMPointArray.h>
+#include <expressions/luaWrappers/vufLuaMIntArray.h>
+#include <expressions/luaWrappers/vufLuaMDoubleArray.h>
 #include <coreUtils/vufStringUtils.h>
 
 #include <sstream>
@@ -61,6 +63,16 @@ namespace vufRM
 				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA M_POINT_ARRAY")));
 				return false;
 			}
+			if (MIntArray_ut() == false)
+			{
+				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA M_INT_ARRAY")));
+				return false;
+			}
+			if (MDoubleArray_ut() == false)
+			{
+				VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("....FAILED TESTS FOR LUA M_DOUBLE_ARRAY")));
+				return false;
+			}
 			VF_LOG_INFO(vuf::vufStringUtils::string_padding("..................................................."));
 			release();
 			return true;
@@ -81,6 +93,8 @@ namespace vufRM
 			vufLuaMEulerRotation::registrator(L);
 			vufLuaMVectorArray::registrator(L);
 			vufLuaMPointArray::registrator(L);
+			vufLuaMIntArray::registrator(L);
+			vufLuaMDoubleArray::registrator(L);
 
 			return true;
 		}
@@ -2714,12 +2728,12 @@ namespace vufRM
 				l_bool = l_bool &&	vufLuaMPoint::get_global(L, "v_2", &l_v2);
 				if (l_bool == false)
 				{
-					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVectorArray:get/set get globals.")));
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPointArray:get/set get globals.")));
 					return false;
 				}
 				if ((*l_a1)[0] != *l_v1 || *l_v1 != *l_v2 || l_arr[0] != (*l_v1) + (*l_v1))
 				{
-					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MVectorArray:get/set failed")));
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPointArray:get/set failed")));
 					return false;
 				}
 			}
@@ -2764,7 +2778,7 @@ namespace vufRM
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPointArray:insert get global")));
 					return false;
 				}
-				if (l_a1->length() != 11 || (*l_a1)[3] != MVector(10, 20, 30))
+				if (l_a1->length() != 11 || (*l_a1)[3] != MPoint(10, 20, 30,1))
 				{
 					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MPointArray insert")));
 					return false;
@@ -2794,6 +2808,274 @@ namespace vufRM
 				}
 			}
 			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR M_MPOINT_ARRAY PASSED.")));
+			return true;
+		}
+		bool MIntArray_ut()
+		{
+			bool l_bool = false;
+			lua_State* L = m_w.get_lua_state();
+			// constructor
+			{
+				MIntArray l_arr;
+				vufLuaMIntArray::set_global_ref(L, "a_ref", &l_arr);
+				l_bool =			m_w.do_string("a_1 = MIntArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray constructor script")));
+					return false;
+				}
+				MIntArray* l_a1, * l_a2;
+				l_bool =			vufLuaMIntArray::get_global(L, "a_ref", &l_a1);
+				l_bool = l_bool &&	vufLuaMIntArray::get_global(L, "a_1", &l_a2);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:new get globals.")));
+					return false;
+				}
+				if (&l_arr != l_a1 || l_a2->length() != 10)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:new failed")));
+					return false;
+				}
+			}
+			// set get
+			{
+				MIntArray l_arr;
+				vufLuaMIntArray::set_global_ref(L, "a_ref", &l_arr);
+				l_bool =			m_w.do_string("a_1 = MIntArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_ref:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_1:set(0,10)");
+				l_bool = l_bool &&	m_w.do_string("d = a_1:get(0)");
+				l_bool = l_bool &&	m_w.do_string("a_ref:set(0,20)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:get/set script")));
+					return false;
+				}
+				MIntArray* l_a1, * l_ar;
+				int l_d;
+				l_bool =			vufLuaMIntArray::get_global(L, "a_ref", &l_ar);
+				l_bool = l_bool &&	vufLuaMIntArray::get_global(L, "a_1", &l_a1);
+				lua_getglobal(L, "d");
+				l_d = (int)luaL_checkinteger(L, -1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:get/set get globals.")));
+					return false;
+				}
+				if ((*l_a1)[0] != 10 || l_d != 10 || l_arr[0] != 20)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:get/set failed")));
+					return false;
+				}
+			}
+			// remove
+			{
+				l_bool =			m_w.do_string("a_1 = MIntArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_1:set(3,15)");
+				l_bool = l_bool &&	m_w.do_string("a_1:remove(3)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:remove script")));
+					return false;
+				}
+				MIntArray* l_a1;
+				l_bool = vufLuaMIntArray::get_global(L, "a_1", &l_a1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:remove get global")));
+					return false;
+				}
+				if (l_a1->length() != 9 || (*l_a1)[3] == 15)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:remove")));
+					return false;
+				}
+			}
+			// insert
+			{
+				l_bool =			m_w.do_string("a_1 = MIntArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_1:insert(3,15)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:insert script")));
+					return false;
+				}
+				MIntArray* l_a1;
+				l_bool = vufLuaMIntArray::get_global(L, "a_1", &l_a1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:insert get global")));
+					return false;
+				}
+				if (l_a1->length() != 11 || (*l_a1)[3] != 15)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray insert")));
+					return false;
+				}
+			}
+			// append
+			{
+				l_bool =			m_w.do_string("a_1 = MIntArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_1:append(30)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:append script")));
+					return false;
+				}
+				MIntArray* l_a1;
+				l_bool = vufLuaMIntArray::get_global(L, "a_1", &l_a1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray:append get global")));
+					return false;
+				}
+				if (l_a1->length() != 11 || (*l_a1)[10] != 30)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MIntArray append")));
+					return false;
+				}
+			}
+			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR M_MINT_ARRAY PASSED.")));
+			return true;
+		}
+		bool MDoubleArray_ut()
+		{
+			bool l_bool = false;
+			lua_State* L = m_w.get_lua_state();
+			// constructor
+			{
+				MDoubleArray l_arr;
+				vufLuaMDoubleArray::set_global_ref(L, "a_ref", &l_arr);
+				l_bool =			m_w.do_string("a_1 = MDoubleArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray constructor script")));
+					return false;
+				}
+				MDoubleArray* l_a1, * l_a2;
+				l_bool =			vufLuaMDoubleArray::get_global(L, "a_ref", &l_a1);
+				l_bool = l_bool &&	vufLuaMDoubleArray::get_global(L, "a_1", &l_a2);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:new get globals.")));
+					return false;
+				}
+				if (&l_arr != l_a1 || l_a2->length() != 10)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:new failed")));
+					return false;
+				}
+			}
+			// set get
+			{
+				MDoubleArray l_arr;
+				vufLuaMDoubleArray::set_global_ref(L, "a_ref", &l_arr);
+				l_bool =			m_w.do_string("a_1 = MDoubleArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_ref:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_1:set(0,10.5)");
+				l_bool = l_bool &&	m_w.do_string("d = a_1:get(0)");
+				l_bool = l_bool &&	m_w.do_string("a_ref:set(0,20.5)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:get/set script")));
+					return false;
+				}
+				MDoubleArray* l_a1, * l_ar;
+				double l_d;
+				l_bool =			vufLuaMDoubleArray::get_global(L, "a_ref", &l_ar);
+				l_bool = l_bool &&	vufLuaMDoubleArray::get_global(L, "a_1", &l_a1);
+				lua_getglobal(L, "d");
+				l_d = (double)luaL_checknumber(L, -1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:get/set get globals.")));
+					return false;
+				}
+				if ((*l_a1)[0] != 10.5 || l_d != 10.5 || l_arr[0] != 20.5)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:get/set failed")));
+					return false;
+				}
+			}
+			// remove
+			{
+				l_bool =			m_w.do_string("a_1 = MDoubleArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_1:set(3,15.5)");
+				l_bool = l_bool &&	m_w.do_string("a_1:remove(3)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:remove script")));
+					return false;
+				}
+				MDoubleArray* l_a1;
+				l_bool = vufLuaMDoubleArray::get_global(L, "a_1", &l_a1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:remove get global")));
+					return false;
+				}
+				if (l_a1->length() != 9 || (*l_a1)[3] == 15.5)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:remove")));
+					return false;
+				}
+			}
+			// insert
+			{
+				l_bool =			m_w.do_string("a_1 = MDoubleArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_1:insert(3,15.5)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:insert script")));
+					return false;
+				}
+				MDoubleArray* l_a1;
+				l_bool = vufLuaMDoubleArray::get_global(L, "a_1", &l_a1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:insert get global")));
+					return false;
+				}
+				if (l_a1->length() != 11 || (*l_a1)[3] != 15.5)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray insert")));
+					return false;
+				}
+			}
+			// append
+			{
+				l_bool =			m_w.do_string("a_1 = MDoubleArray.new()");
+				l_bool = l_bool &&	m_w.do_string("a_1:setLength(10)");
+				l_bool = l_bool &&	m_w.do_string("a_1:append(30)");
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:append script")));
+					return false;
+				}
+				MDoubleArray* l_a1;
+				l_bool = vufLuaMDoubleArray::get_global(L, "a_1", &l_a1);
+				if (l_bool == false)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray:append get global")));
+					return false;
+				}
+				if (l_a1->length() != 11 || (*l_a1)[10] != 30)
+				{
+					VF_LOG_ERR(vuf::vufStringUtils::string_padding(std::string("Failed MDoubleArray append")));
+					return false;
+				}
+			}
+			VF_LOG_INFO(vuf::vufStringUtils::string_padding(std::string("....UNIT TEST FOR M_MDOUBLE_ARRAY PASSED.")));
 			return true;
 		}
 	private:
