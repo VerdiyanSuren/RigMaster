@@ -29,7 +29,7 @@ using namespace vufRM;
 		VF_LOG_ERR((std::string("Failed to execute command: ") + l_cmd));		\
 		return luaL_error(L, "Cant evaluate connection command");				\
 	}																			\
-	vufLuaExpressionPort<TYPE> l_port;											\
+	vufLuaExpressionPort l_port;												\
 	l_port.m_index = l_index;													\
 	l_port.m_lua_var_name = l_var_name_ptr;										\
 	DATA_PORT.push_back(l_port);												\
@@ -63,9 +63,6 @@ int vufMayaLuaPorts::node_in(lua_State* L)// syntax rule    maya_node.attribute,
 	// read parameters
 	const char* l_obj_name_ptr	= luaL_checkstring(L, -2);
 	const char* l_var_name_ptr	= luaL_checkstring(L, -1);
-	
-	
-
 
 	if (l_obj_name_ptr != nullptr && l_var_name_ptr != nullptr)
 	{
@@ -212,7 +209,7 @@ int vufMayaLuaPorts::node_out(lua_State* L)// syntax rule    var_name, maya_node
 				VF_LOG_ERR((std::string("Failed to execute command: ") + l_cmd));
 				return luaL_error(L, "Cant execute connection command");
 			}
-			vufLuaExpressionPort<double> l_port;
+			vufLuaExpressionPort l_port;
 			l_port.m_index = l_index;
 			l_port.m_lua_var_name = l_var_name_ptr;
 			l_data->m_out_double_port.push_back(l_port);

@@ -21,8 +21,14 @@
 #include <expressions/luaWrappers/vufLuaMVector.h>
 #include <expressions/luaWrappers/vufLuaMMatrix.h>
 #include <expressions/luaWrappers/vufLuaMQuaternion.h>
+#include <expressions/luaWrappers/vufLuaMEulerRotation.h>
 #include <expressions/luaWrappers/vufLuaMVectorArray.h>
 #include <expressions/luaWrappers/vufLuaMPointArray.h>
+#include <expressions/luaWrappers/vufLuaMIntArray.h>
+#include <expressions/luaWrappers/vufLuaMDoubleArray.h>
+#include <expressions/luaWrappers/vufLuaMCurve.h>
+#include <expressions/luaWrappers/vufLuaMSurface.h>
+#include <expressions/luaWrappers/vufLuaMMesh.h>
 
 using namespace vuf;
 using namespace vufRM;
@@ -216,15 +222,22 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			VF_LOG_INFO("RESTART LUA_MACHINE");
 			m_lua_machine.close_machine();
 			m_lua_machine.open_machine();
-			vufLuaVector4<double>::		registrator( m_lua_machine.get_lua_state());
-			vufLuaMatrix4<double>::		registrator( m_lua_machine.get_lua_state());
-			vufLuaQuaternion<double>::	registrator( m_lua_machine.get_lua_state());
+			//vufLuaVector4<double>::		registrator( m_lua_machine.get_lua_state());
+			//vufLuaMatrix4<double>::		registrator( m_lua_machine.get_lua_state());
+			//vufLuaQuaternion<double>::	registrator( m_lua_machine.get_lua_state());
 			vufLuaMVector::				registrator(m_lua_machine.get_lua_state());
 			vufLuaMPoint::				registrator(m_lua_machine.get_lua_state());
 			vufLuaMMatrix::				registrator(m_lua_machine.get_lua_state());
 			vufLuaMQuaternion::			registrator(m_lua_machine.get_lua_state());
+			vufLuaMEulerRotation::		registrator(m_lua_machine.get_lua_state());
+
 			vufLuaMVectorArray::		registrator(m_lua_machine.get_lua_state());
 			vufLuaMPointArray::			registrator(m_lua_machine.get_lua_state());
+			vufLuaMIntArray::			registrator(m_lua_machine.get_lua_state());
+			vufLuaMDoubleArray::		registrator(m_lua_machine.get_lua_state());
+
+			vufLuaMCurve::				registrator(m_lua_machine.get_lua_state());
+
 			m_script_hash = l_in_script_data->get_hash();
 			l_in_port_data->m_need_lua_reset = false;
 		}		
@@ -272,11 +285,11 @@ MStatus	vufMayaLuaExpressionNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 	return MS::kUnknownParameter;
 }
 
-bool vufMayaLuaExpressionNode::set_lua_globals( MDataBlock& p_data, std::shared_ptr<vufMayaLuaPortInternalData> p_port_data)
+bool vufMayaLuaExpressionNode::set_lua_globals(MDataBlock& p_data, std::shared_ptr<vufMayaLuaPortInternalData> p_port_data)
 {
 	MStatus		l_status;
 	lua_State* L = m_lua_machine.get_lua_state();
-	
+
 	// read ports
 	//---------------------------------------------------------------------------------------------------------
 	// Input ports
@@ -340,9 +353,8 @@ bool vufMayaLuaExpressionNode::set_lua_globals( MDataBlock& p_data, std::shared_
 				VF_LOG_ERR(vufMayaUtils::mstr_2_str(this->name() + " Cant handle in vector port "));
 				return false;
 			}
-			MVector l_mvec = l_in_vector_array_h.inputValue().asVector();
-			vufVector4<double>* l_vec = (vufVector4<double>*) & l_mvec;
-			vufLuaVector4<double>::set_global(L, p_port_data->m_in_vector_port[i].m_lua_var_name, *l_vec);
+			MVector l_mvec = l_in_vector_array_h.inputValue().asVector();			
+			vufLuaMVector::set_global(L, p_port_data->m_in_vector_port[i].m_lua_var_name, l_mvec);
 		}
 	}
 	// read in matrix
@@ -357,12 +369,25 @@ bool vufMayaLuaExpressionNode::set_lua_globals( MDataBlock& p_data, std::shared_
 				return false;
 			}
 			MMatrix l_mmatr = l_in_matrix_array_h.inputValue().asMatrix();
-			vufMatrix4<double>* l_mat = (vufMatrix4<double>*) & l_mmatr;
-			vufLuaMatrix4<double>::set_global(L, p_port_data->m_in_matrix_port[i].m_lua_var_name, *l_mat);
+			vufLuaMMatrix::set_global(L, p_port_data->m_in_matrix_port[i].m_lua_var_name, l_mmatr);
 		}
 	}
 	// read in mesh
 	// read in curve
+	{
+		MArrayDataHandle l_in_curve_array_h = p_data.inputValue(g_input_curve_attr);
+		for (uint64_t i = 0; i < p_port_data->m_in_curve_port.size(); ++i)
+		{
+			l_status = l_in_curve_array_h.jumpToElement(p_port_data->m_in_curve_port[i].m_index);
+			if (l_status != MS::kSuccess)
+			{
+				VF_LOG_ERR(vufMayaUtils::mstr_2_str(this->name() + " Can't handle in curve port "));
+				return false;
+			}
+			MObject l_obj = l_in_curve_array_h.inputValue().asNurbsCurve();			
+			vufLuaMCurve::set_global(L, p_port_data->m_in_curve_port[i].m_lua_var_name, l_obj);
+		}
+	}
 	// read in surface
 	//---------------------------------------------------------------------------------------------------------
 	// Output ports
@@ -387,10 +412,10 @@ bool vufMayaLuaExpressionNode::set_maya_outputs(MDataBlock& p_data, std::shared_
 	MArrayDataBuilder	l_out_double_array_builder = l_out_double_array_h.builder(&l_status);
 	for (uint64_t i = 0; i < p_port_data->m_out_double_port.size(); ++i)
 	{
-		MDataHandle l_out_handle = l_out_double_array_builder.addElement(p_port_data->m_in_double_port[i].m_index, &l_status);
+		MDataHandle l_out_handle = l_out_double_array_builder.addElement(p_port_data->m_out_double_port[i].m_index, &l_status);
 		if (l_status != MS::kSuccess)
 		{
-			MGlobal::displayError(this->name() + " Cant buld handle in out double port ");
+			MGlobal::displayError(this->name() + " Cant buld handle out double port ");
 			return MS::kSuccess;
 		}
 		double l_double = 0.0;

@@ -135,6 +135,15 @@
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMIntArray.h">
       <Filter>include\expressions\luaWrappers</Filter>
     </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMCurve.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMSurface.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMMesh.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\vufLogMaya.cpp">
@@ -198,6 +207,9 @@
       <Filter>src\expressions\luaWrappers</Filter>
     </ClCompile>
     <ClCompile Include="src\expressions\luaWrappers\vufLuaMMatrix.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMCurve.cpp">
       <Filter>src\expressions\luaWrappers</Filter>
     </ClCompile>
   </ItemGroup>

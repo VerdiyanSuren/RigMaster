@@ -13,12 +13,10 @@
 
 namespace vufRM
 {
-	template<typename T>
 	struct vufLuaExpressionPort
 	{
 		std::string		m_lua_var_name	= "";
 		uint16_t		m_index			= 0;;
-		T*				m_data			= nullptr;
 	};
 	class vufMayaLuaPortInternalData
 	{
@@ -42,18 +40,19 @@ namespace vufRM
 			m_var_names.clear();
 		}
 		//input ports
-		std::vector< vufLuaExpressionPort<double>>			m_in_time_port;
-		std::vector< vufLuaExpressionPort<double>>			m_in_double_port;
-		std::vector< vufLuaExpressionPort<MVector>>			m_in_vector_port;
-		std::vector< vufLuaExpressionPort<double>>			m_in_angle_port;
-		std::vector< vufLuaExpressionPort<MMatrix>>			m_in_matrix_port;
-		std::vector< vufLuaExpressionPort<MFnMesh>>			m_in_mesh_port;
-		std::vector< vufLuaExpressionPort<MFnNurbsCurve>>	m_in_curve_port;
-		std::vector< vufLuaExpressionPort<MFnNurbsSurface>>	m_in_surf_port;
+		std::vector< vufLuaExpressionPort>	m_in_time_port;
+		std::vector< vufLuaExpressionPort>	m_in_double_port;
+		std::vector< vufLuaExpressionPort>	m_in_angle_port;
+		std::vector< vufLuaExpressionPort>	m_in_vector_port;
+		std::vector< vufLuaExpressionPort>	m_in_matrix_port;
+		std::vector< vufLuaExpressionPort>	m_in_mesh_port;
+		std::vector< vufLuaExpressionPort>	m_in_curve_port;
+		std::vector< vufLuaExpressionPort>	m_in_surf_port;
 
 		//output_ports
-		std::vector< vufLuaExpressionPort<double>>	m_out_double_port;
-		//std::vector< vufLuaExpressionPort<MVector>> m_out_vector_port;
+		std::vector<vufLuaExpressionPort>	m_out_double_port;
+		std::vector<vufLuaExpressionPort>	m_out_vector_port;
+		std::vector<vufLuaExpressionPort>	m_out_matrix_port;
 		//std::vector< vufLuaExpressionPort<double>	m_out_angle_port;
 
 		std::set<std::string> m_var_names;

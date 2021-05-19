@@ -12,6 +12,7 @@
 #include <maya/MPointArray.h>
 #include <maya/MIntArray.h>
 #include <maya/MDoubleArray.h>
+#include <maya/MObject.h>
 
 namespace vufRM
 {
@@ -25,6 +26,8 @@ namespace vufRM
 	using vufLuaMPointArrayWrapper		= vuf::vufLuaDataWrapper<MPointArray>;
 	using vufLuaMIntArrayWrapper		= vuf::vufLuaDataWrapper<MIntArray>;
 	using vufLuaMDoubleArrayWrapper		= vuf::vufLuaDataWrapper<MDoubleArray>;
+
+	using vufLuaMObjectWrapper			= vuf::vufLuaDataWrapper<MObject>;
 
 }
 #endif // !VF_LUA_MAYA_DATA_WRAWPPER_H

@@ -30,6 +30,16 @@ namespace vufRM
 		static constexpr char* g_mint_arr_meta_name		= "MIntArrayM";
 		static constexpr char* g_mdouble_arr_tbl_name	= "MDoubleArray";
 		static constexpr char* g_mdouble_arr_meta_name	= "MDoubleArrayM";
+
+		static constexpr char* g_mcurve_tbl_name	= "MCurve";
+		static constexpr char* g_mcurve_meta_name	= "MCurveM";
+
+		static constexpr char* g_msurface_tbl_name	= "MSurface";
+		static constexpr char* g_msurface_meta_name = "MSurfaceM";
+
+		static constexpr char* g_mmesh_tbl_name		= "MMesh";
+		static constexpr char* g_mmesh_meta_name	= "MMeshM";
+
 	};
 }
 #endif // !VF_LUA_MAYA_STATIC_H
