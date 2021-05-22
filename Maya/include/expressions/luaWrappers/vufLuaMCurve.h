@@ -30,17 +30,17 @@ namespace vufRM
 			VF_LUA_ADD_TABLE_FIELD(L, "isPointOnCurve",			is_point_on_curve);
 			VF_LUA_ADD_TABLE_FIELD(L, "getPointAtParam",		get_point_at_param);
 			VF_LUA_ADD_TABLE_FIELD(L, "getParamAtPoint",		get_param_at_point);
-			VF_LUA_ADD_TABLE_FIELD(L, "isParamOnCurve ",		is_param_on_curve);
-			VF_LUA_ADD_TABLE_FIELD(L, "normal ",				normal);
-			VF_LUA_ADD_TABLE_FIELD(L, "tangent ",				tangent);
-			VF_LUA_ADD_TABLE_FIELD(L, "getDerivativesAtParm ",	get_derivatives_at_parm);
-			VF_LUA_ADD_TABLE_FIELD(L, "isPlanar ",				is_planar);
-			VF_LUA_ADD_TABLE_FIELD(L, "closestPoint ",			closest_point);
-			VF_LUA_ADD_TABLE_FIELD(L, "distanceToPoint ",		distance_to_point);
-			VF_LUA_ADD_TABLE_FIELD(L, "area ",					area);
-			VF_LUA_ADD_TABLE_FIELD(L, "length ",				length);
-			VF_LUA_ADD_TABLE_FIELD(L, "findParamFromLength ",	find_param_from_length);
-			VF_LUA_ADD_TABLE_FIELD(L, "findLengthFromParam ",	find_length_from_param);
+			VF_LUA_ADD_TABLE_FIELD(L, "isParamOnCurve",			is_param_on_curve);
+			VF_LUA_ADD_TABLE_FIELD(L, "normal",					normal);
+			VF_LUA_ADD_TABLE_FIELD(L, "tangent",				tangent);
+			VF_LUA_ADD_TABLE_FIELD(L, "getDerivativesAtParm",	get_derivatives_at_parm);
+			VF_LUA_ADD_TABLE_FIELD(L, "isPlanar",				is_planar);
+			VF_LUA_ADD_TABLE_FIELD(L, "closestPoint",			closest_point);
+			VF_LUA_ADD_TABLE_FIELD(L, "distanceToPoint",		distance_to_point);
+			VF_LUA_ADD_TABLE_FIELD(L, "area",					area);
+			VF_LUA_ADD_TABLE_FIELD(L, "length",					length);
+			VF_LUA_ADD_TABLE_FIELD(L, "findParamFromLength",	find_param_from_length);
+			VF_LUA_ADD_TABLE_FIELD(L, "findLengthFromParam",	find_length_from_param);
 			
 			VF_LUA_NEW_META_TABLE(L, vufLuaMayaStatic::g_mcurve_meta_name);
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__gc", destroy);
