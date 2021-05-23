@@ -49,8 +49,8 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_COMMAND(vufExpressionWindowCmd);
 	std::cout << "---------------------vufRigMaster  Loaded----------------" << std::endl;
 
-	vufLuaMayaMathUT l_ut;
-	l_ut.run();
+	//vufLuaMayaMathUT l_ut;
+	//l_ut.run();
 
 	return MS::kSuccess;
 }

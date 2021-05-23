@@ -330,6 +330,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\vufCurve.h" />
+    <ClInclude Include="include\curves\vufCurveContatiner.h" />
+    <ClInclude Include="include\curves\vufOpenBSpline.h" />
+    <ClInclude Include="include\curves\vufOpenCubicCurve.h" />
+    <ClInclude Include="include\curves\vufQuaternionCurveFn.h" />
+    <ClInclude Include="include\curves\vufRebuildCurveFn.h" />
     <ClInclude Include="include\uinitTest\vufMatrix4Test.h" />
     <ClInclude Include="include\uinitTest\vufVector4Test.h" />
     <ClInclude Include="include\vufMathInclude.h" />

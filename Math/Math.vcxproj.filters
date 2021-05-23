@@ -4,11 +4,32 @@
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\curves">
+      <UniqueIdentifier>{B0529C46-9C20-904C-85B4-007371216CB1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\uinitTest">
       <UniqueIdentifier>{C1B5E10A-2DCC-DFA0-7643-6BC2E298B028}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\vufCurve.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveContatiner.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufOpenBSpline.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufOpenCubicCurve.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufQuaternionCurveFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufRebuildCurveFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
     <ClInclude Include="include\uinitTest\vufMatrix4Test.h">
       <Filter>include\uinitTest</Filter>
     </ClInclude>

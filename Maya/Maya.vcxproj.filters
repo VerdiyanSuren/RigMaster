@@ -69,7 +69,22 @@
     <ClInclude Include="include\expressions\luaWrappers\luaUnitTest\vufLuaMayaMathUnitTest.h">
       <Filter>include\expressions\luaWrappers\luaUnitTest</Filter>
     </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMCurve.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMDoubleArray.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMEulerRotation.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMIntArray.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMMatrix.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMMesh.h">
       <Filter>include\expressions\luaWrappers</Filter>
     </ClInclude>
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMPoint.h">
@@ -79,6 +94,9 @@
       <Filter>include\expressions\luaWrappers</Filter>
     </ClInclude>
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMQuaternion.h">
+      <Filter>include\expressions\luaWrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\expressions\luaWrappers\vufLuaMSurface.h">
       <Filter>include\expressions\luaWrappers</Filter>
     </ClInclude>
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMVector.h">
@@ -126,24 +144,6 @@
     <ClInclude Include="include\vufMayaGlobalIncludes.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMEulerRotation.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMDoubleArray.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMIntArray.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMCurve.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMSurface.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\expressions\luaWrappers\vufLuaMMesh.h">
-      <Filter>include\expressions\luaWrappers</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\vufLogMaya.cpp">
@@ -157,6 +157,24 @@
     </ClCompile>
     <ClCompile Include="src\expressions\data\vufMayaLuaTxtData.cpp">
       <Filter>src\expressions\data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMCurve.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMEulerRotation.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMMatrix.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMPoint.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMQuaternion.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\expressions\luaWrappers\vufLuaMVector.cpp">
+      <Filter>src\expressions\luaWrappers</Filter>
     </ClCompile>
     <ClCompile Include="src\expressions\luaWrappers\vufMayaLuaPorts.cpp">
       <Filter>src\expressions\luaWrappers</Filter>
@@ -193,24 +211,6 @@
     </ClCompile>
     <ClCompile Include="src\vufMayaGlobalIncludes.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\expressions\luaWrappers\vufLuaMVector.cpp">
-      <Filter>src\expressions\luaWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\expressions\luaWrappers\vufLuaMPoint.cpp">
-      <Filter>src\expressions\luaWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\expressions\luaWrappers\vufLuaMQuaternion.cpp">
-      <Filter>src\expressions\luaWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\expressions\luaWrappers\vufLuaMEulerRotation.cpp">
-      <Filter>src\expressions\luaWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\expressions\luaWrappers\vufLuaMMatrix.cpp">
-      <Filter>src\expressions\luaWrappers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\expressions\luaWrappers\vufLuaMCurve.cpp">
-      <Filter>src\expressions\luaWrappers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
