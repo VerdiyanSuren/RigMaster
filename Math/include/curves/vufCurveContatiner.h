@@ -1,11 +1,11 @@
 #ifndef VF_MATH_CRV_CONTAINER_H
 #define VF_MATH_CRV_CONTAINER_H
 
-#include "math/curves/vufCurve.h"
-#include "math/curves/vufRebuildCurveFn.h"
-#include "math/curves/vufQuaternionCurveFn.h"
-#include "math/vufQuaternion.h"
-#include "math/vufConsoleInclude.h"
+#include <curves/vufCurve.h>
+#include <curves/vufRebuildCurveFn.h>
+#include <curves/vufQuaternionCurveFn.h>
+#include <vufQuaternion.h>
+//#include <vufConsoleInclude.h>
 #include <memory>
 #include <iostream>
 #include <sstream>

@@ -4,14 +4,14 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include "math/vufVector.h"
-#include "math/vufQuaternion.h"
-#include "math/vufNumericArrayObject.h"
+#include <vufVector.h>
+#include <vufQuaternion.h>
+//#include <vufNumericArrayObject.h>
 
 #define VF_MATH_CURVE_CREATOR_BODY(SHARED_CRV) \
 		SHARED_CRV->m_this = std::static_pointer_cast<vufCurve<T, V>>(SHARED_CRV);
 
-namespace vufMath
+namespace vuf
 {
 #pragma region VF_POLINOM
 	template<class T, uint32_t  MAX_POLYNOM_DEGREE >

@@ -336,10 +336,20 @@
     <ClInclude Include="include\curves\vufOpenCubicCurve.h" />
     <ClInclude Include="include\curves\vufQuaternionCurveFn.h" />
     <ClInclude Include="include\curves\vufRebuildCurveFn.h" />
-    <ClInclude Include="include\uinitTest\vufMatrix4Test.h" />
-    <ClInclude Include="include\uinitTest\vufVector4Test.h" />
+    <ClInclude Include="include\unitTests\vufMatrix4Test.h" />
+    <ClInclude Include="include\unitTests\vufMatrixObjectArrayTest.h" />
+    <ClInclude Include="include\unitTests\vufMatrixTest.h" />
+    <ClInclude Include="include\unitTests\vufNumericArrayObjectTest.h" />
+    <ClInclude Include="include\unitTests\vufQuaternionObjectArrayTest.h" />
+    <ClInclude Include="include\unitTests\vufQuaternionTest.h" />
+    <ClInclude Include="include\unitTests\vufTestAll.h" />
+    <ClInclude Include="include\unitTests\vufVectorObjectArrayTest.h" />
+    <ClInclude Include="include\unitTests\vufVectorTest.h" />
     <ClInclude Include="include\vufMathInclude.h" />
     <ClInclude Include="include\vufMatrix.h" />
+    <ClInclude Include="include\vufNumericArrayObject.h" />
+    <ClInclude Include="include\vufObject.h" />
+    <ClInclude Include="include\vufObjectArrayFn.h" />
     <ClInclude Include="include\vufQuaternion.h" />
     <ClInclude Include="include\vufVector.h" />
   </ItemGroup>

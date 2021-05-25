@@ -7,16 +7,20 @@
 #include <exception>
 #include <vector>
 
-//#include "math/vufObject.h"
-//#include "math/vufObjectArrayFn.h"
+#include <vufObject.h>
+#include <vufObjectArrayFn.h>
 
 /**
 vufVector4<T>
 vufVectorObject4<T>
 vufVectorArrayObject4<T>
-
 */
-namespace vuf
+#ifndef vufVector4_kTol
+	#define vufVector4_kTol 1.0e-10
+#endif
+
+#define vufVector4_kTol 1.0e-10
+namespace vufMath
 {
 	template<typename T>	class vufMatrix4;
 //------------------------------------------------------------------------------------------------------------------
@@ -921,10 +925,20 @@ namespace vuf
 		}
 		//static vufVector4<T> LinearInterpolation(const vufVector4<T>& v1, const vufVector4<T>& v2);
 		// serialization
-		std::string		to_string() const
+		std::string		to_string(int p_precision = -1) const
 		{
 			std::stringstream l_ss;
-			l_ss.precision(64);
+			if (p_precision > 0)
+			{
+				if (p_precision > 64)
+				{
+					l_ss.precision(64);
+				}
+				else
+				{
+					l_ss.precision(p_precision);
+				}
+			}
 			l_ss << "[" << x << "," << y << "," << z << ","<< w << "]";
 			return l_ss.str();
 		}
@@ -1003,6 +1017,14 @@ namespace vuf
 			return p_offset + l_read_size;
 		}
 		//----------------------------------
+		inline bool		is_equivalent(const vufVector4& p_other, T p_tolerance = vufVector4_kTol)
+		{
+			return	abs(x - p_other.x) < p_tolerance &&
+					abs(y - p_other.y) < p_tolerance &&
+					abs(z - p_other.z) < p_tolerance &&
+					abs(w - p_other.w) < p_tolerance;
+		}
+
 		//operators
 		inline vufVector4<T> operator+(const vufVector4<T>& a) const
 		{
@@ -1078,7 +1100,6 @@ namespace vuf
 			return vufVector4<T>(v.x * d, v.y * d, v.z * d);
 		}
 	};
-	/*
 #pragma endregion VUF_VECTOR_4
 	//------------------------------------------------------------------------------------------------------------------
 	// vufVector Object
@@ -1471,6 +1492,6 @@ namespace vuf
 	using vufVectorArrayFn_4f = vufObjectArrayFn<float,  vufVector4>;
 
 #pragma endregion USING_NAMES 
-*/
+
 }
 #endif // !VF_MATH_VECTR_H

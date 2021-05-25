@@ -7,6 +7,9 @@
     <Filter Include="include\data">
       <UniqueIdentifier>{B2CED969-9E31-690E-47B7-A1C433F93491}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\dataCollectors">
+      <UniqueIdentifier>{4CC5534A-38BF-7C9C-212C-13AD0DC5E208}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\expressions">
       <UniqueIdentifier>{9BE5E02E-0747-BE3C-90B4-04EFFC14F5FB}</UniqueIdentifier>
     </Filter>
@@ -62,6 +65,12 @@
     </ClInclude>
     <ClInclude Include="include\data\vufMayaDataList.h">
       <Filter>include\data</Filter>
+    </ClInclude>
+    <ClInclude Include="include\dataCollectors\vufTransformListData.h">
+      <Filter>include\dataCollectors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\dataCollectors\vufTransformListNode.h">
+      <Filter>include\dataCollectors</Filter>
     </ClInclude>
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h">
       <Filter>include\expressions\data</Filter>

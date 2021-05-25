@@ -6,8 +6,10 @@
 //#include "vufObject.h"
 //#include "vufObjectArrayFn.h"
 
-
-namespace vuf
+#ifndef vufQuaternion_kTol
+	#define vufQuaternion_kTol 1.0e-10
+#endif
+namespace vufMath
 {
 	//------------------------------------------------------------------------------------------------------------------
 	// vufQuaternion
@@ -106,12 +108,12 @@ namespace vuf
 
 		inline T length2() const { return (x * x + y * y + z * z + w * w); }
 		inline T length()  const { return sqrt(x * x + y * y + z * z + w * w); }
-		inline vufQuaternion get_normalized() const
+		inline vufQuaternion	get_normalized() const
 		{
 			T d = this->length();
 			return  (d > VF_MATH_EPSILON ? vufQuaternion(x / d, y / d, z / d, w / d) : *this);
 		};
-		inline vufQuaternion& normalize_in_place()
+		inline vufQuaternion&	normalize_in_place()
 		{
 			T d = this->length();
 			if (d > VF_MATH_EPSILON)
@@ -123,21 +125,21 @@ namespace vuf
 			}
 			return *this;
 		}
-		inline vufQuaternion get_conjugated() const { return vufQuaternion(-x, -y, -z, w); }
-		inline vufQuaternion& conjugate_in_place()
+		inline vufQuaternion	get_conjugated() const { return vufQuaternion(-x, -y, -z, w); }
+		inline vufQuaternion&	conjugate_in_place()
 		{
 			x = -x;
 			y = -y;
 			z = -z;
 			return *this;
 		}
-		inline vufQuaternion get_inverted() const
+		inline vufQuaternion	get_inverted() const
 		{
 			T d = w * w + x * x + y * y + z * z;
 			return  (d > VF_MATH_EPSILON ? vufQuaternion(-x / d, -y / d, -z / d, w / d) : *this);
 
 		}
-		inline vufQuaternion& invert_in_place()
+		inline vufQuaternion&	invert_in_place()
 		{
 			T d = w * w + x * x + y * y + z * z;
 			if (d > VF_MATH_EPSILON)
@@ -149,25 +151,32 @@ namespace vuf
 			}
 			return *this;
 		}
-		inline T dot(const vufQuaternion& q) const
+		inline T				dot(const vufQuaternion& q) const
 		{
 			return x * q.x + y * q.y + z * q.z + w * q.w;
 		}
-		inline T get_angle() const
+		inline T				get_angle() const
 		{
 			return acos(VF_CLAMP(-1., 1, w)) * 2.;
 		}
-		inline vufVector3<T> get_axis_as_v3() const
+		inline vufVector3<T>	get_axis_as_v3() const
 		{
 			vufVector3<T> l_v(x, y, z);
 			l_v.normalize_in_place();
 			return l_v;
 		}
-		inline vufVector4<T> get_axis_as_v4() const
+		inline vufVector4<T>	get_axis_as_v4() const
 		{
 			vufVector4<T> l_v(x, y, z);
 			l_v.normalize_in_place();
 			return l_v;
+		}
+		inline bool				is_equivalent(const vufQuaternion& p_other, T p_tolerance = vufQuaternion_kTol)
+		{
+			return	abs(x - p_other.x) < p_tolerance &&
+					abs(y - p_other.y) < p_tolerance &&
+					abs(z - p_other.z) < p_tolerance &&
+					abs(w - p_other.w) < p_tolerance;
 		}
 		//----------------------------------
 		//operators
@@ -270,14 +279,24 @@ namespace vuf
 			return q;
 		}
 		
-		std::string		to_string() const
+		std::string		to_string(int p_precision = -1) const
 		{
 			std::stringstream l_ss;
-			l_ss.precision(64);
+			if (p_precision > 0)
+			{
+				if (p_precision > 64)
+				{
+					l_ss.precision(64);
+				}
+				else
+				{
+					l_ss.precision(p_precision);
+				}
+			}
 			l_ss << "[" << x << "," << y << "," << z << "," << w << "]";
 			return l_ss.str();
 		}
-		/** patse string for offest return new offset in string*/
+		/** parse string for offset and  return new offset in string*/
 		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
 		{
 			try
@@ -529,7 +548,6 @@ namespace vuf
 		*/
 	};
 #pragma endregion VUF_QUATERNION
-	/*
 	//------------------------------------------------------------------------------------------------------------------
 	// vufQuaternion Object
 	//------------------------------------------------------------------------------------------------------------------
@@ -728,6 +746,5 @@ namespace vuf
 	using vufQuaternionArrayFn_f = vufObjectArrayFn<float,  vufQuaternion>;
 	using vufQuaternionArrayFn_d = vufObjectArrayFn<double, vufQuaternion>;
 #pragma endregion
-	*/
 }
 #endif // !VF_MATH_QTRN_H

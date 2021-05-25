@@ -3,8 +3,8 @@
 
 #include <typeinfo>
 #include <iostream>
-#include "math/curves/vufCurve.h"
-#include "math/vufConsoleInclude.h"
+#include <curves/vufCurve.h>
+//#include <vufConsoleInclude.h>
 
 //#define VF_MATH_DEBUG_BSPLINE
 namespace vufMath

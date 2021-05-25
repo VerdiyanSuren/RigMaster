@@ -7,8 +7,8 @@
     <Filter Include="include\curves">
       <UniqueIdentifier>{B0529C46-9C20-904C-85B4-007371216CB1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\uinitTest">
-      <UniqueIdentifier>{C1B5E10A-2DCC-DFA0-7643-6BC2E298B028}</UniqueIdentifier>
+    <Filter Include="include\unitTests">
+      <UniqueIdentifier>{4BEBB63E-B701-B5D4-0079-40F66CCE855C}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,11 +30,29 @@
     <ClInclude Include="include\curves\vufRebuildCurveFn.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\uinitTest\vufMatrix4Test.h">
-      <Filter>include\uinitTest</Filter>
+    <ClInclude Include="include\unitTests\vufMatrix4Test.h">
+      <Filter>include\unitTests</Filter>
     </ClInclude>
-    <ClInclude Include="include\uinitTest\vufVector4Test.h">
-      <Filter>include\uinitTest</Filter>
+    <ClInclude Include="include\unitTests\vufMatrixObjectArrayTest.h">
+      <Filter>include\unitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\vufMatrixTest.h">
+      <Filter>include\unitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\vufNumericArrayObjectTest.h">
+      <Filter>include\unitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\vufQuaternionObjectArrayTest.h">
+      <Filter>include\unitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\vufTestAll.h">
+      <Filter>include\unitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\vufVectorObjectArrayTest.h">
+      <Filter>include\unitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\vufVectorTest.h">
+      <Filter>include\unitTests</Filter>
     </ClInclude>
     <ClInclude Include="include\vufMathInclude.h">
       <Filter>include</Filter>
@@ -42,11 +60,23 @@
     <ClInclude Include="include\vufMatrix.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\vufNumericArrayObject.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufObject.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufObjectArrayFn.h">
+      <Filter>include</Filter>
+    </ClInclude>
     <ClInclude Include="include\vufQuaternion.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufVector.h">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\vufQuaternionTest.h">
+      <Filter>include\unitTests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

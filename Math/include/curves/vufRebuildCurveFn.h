@@ -1,8 +1,8 @@
 #ifndef VF_MATH_CRV_RBLD_FN_H
 #define VF_MATH_CRV_RBLD_FN_H
 
-#include "math/curves/vufCurve.h"
-#include "math/vufConsoleInclude.h"
+#include <curves/vufCurve.h>
+//#include <math/vufConsoleInclude.h>
 #include <memory>
 #include <vector>
 #include <cmath>

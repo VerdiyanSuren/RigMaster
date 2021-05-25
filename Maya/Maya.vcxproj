@@ -367,6 +367,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <ClInclude Include="include\data\vufData.h" />
     <ClInclude Include="include\data\vufDataTemplate.h" />
     <ClInclude Include="include\data\vufMayaDataList.h" />
+    <ClInclude Include="include\dataCollectors\vufTransformListData.h" />
+    <ClInclude Include="include\dataCollectors\vufTransformListNode.h" />
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h" />
     <ClInclude Include="include\expressions\luaWrappers\luaUnitTest\vufLuaMayaMathUnitTest.h" />
     <ClInclude Include="include\expressions\luaWrappers\vufLuaMCurve.h" />
@@ -422,4 +424,4 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

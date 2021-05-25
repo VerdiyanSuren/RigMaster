@@ -4,13 +4,18 @@
 #include <random>
 #include <iostream>
 #include <new>
+#include <vufVector.h>
+#include <vufQuaternion.h>
+#include <vufObject.h>
+#include <vufMathInclude.h>
+#include <vufObjectArrayFn.h>
 
-#include "vufVector.h"
-#include "vufQuaternion.h"
-//#include "vufObject.h"
-#include "vufMathInclude.h"
-//#include "vufObjectArrayFn.h"
-namespace vuf
+#ifndef vufMatrix4_kTol
+	#define vufMatrix4_kTol 1.0e-10
+#endif
+
+
+namespace vufMath
 {
 	template<typename T>	class vufVector3;
 	template<typename T>	class vufVector4;
@@ -1397,6 +1402,30 @@ namespace vuf
 			m_ptr[2][0] = l_rx[2][0];	m_ptr[2][1] = l_rx[2][1];	m_ptr[2][2] = l_rx[2][2];
 
 		}
+
+		inline bool		is_equivalent(const vufMatrix4& p_other, T p_tolerance = vufMatrix4_kTol)
+		{
+			return	abs(m_ptr[0][0] - p_other.m_ptr[0][0]) < p_tolerance &&
+					abs(m_ptr[0][1] - p_other.m_ptr[0][1]) < p_tolerance &&
+					abs(m_ptr[0][2] - p_other.m_ptr[0][2]) < p_tolerance &&
+					abs(m_ptr[0][3] - p_other.m_ptr[0][3]) < p_tolerance &&
+
+					abs(m_ptr[1][0] - p_other.m_ptr[1][0]) < p_tolerance &&
+					abs(m_ptr[1][1] - p_other.m_ptr[1][1]) < p_tolerance &&
+					abs(m_ptr[1][2] - p_other.m_ptr[1][2]) < p_tolerance &&
+					abs(m_ptr[1][3] - p_other.m_ptr[1][3]) < p_tolerance &&
+
+					abs(m_ptr[2][0] - p_other.m_ptr[2][0]) < p_tolerance&&
+					abs(m_ptr[2][1] - p_other.m_ptr[2][1]) < p_tolerance&&
+					abs(m_ptr[2][2] - p_other.m_ptr[2][2]) < p_tolerance&&
+					abs(m_ptr[2][3] - p_other.m_ptr[2][3]) < p_tolerance;
+
+					abs(m_ptr[3][0] - p_other.m_ptr[3][0]) < p_tolerance&&
+					abs(m_ptr[3][1] - p_other.m_ptr[3][1]) < p_tolerance&&
+					abs(m_ptr[3][2] - p_other.m_ptr[3][2]) < p_tolerance&&
+					abs(m_ptr[3][3] - p_other.m_ptr[3][3]) < p_tolerance;
+		}
+
 		vufMatrix4& operator+=(const vufMatrix4& p_right)
 		{
 			for (int i = 0; i < 4; ++i)
@@ -2035,8 +2064,6 @@ namespace vuf
 	//-------------------------------------------------------------------------------------------------------------------------
 	//  M A T R I X   O B J E C T
 	//-------------------------------------------------------------------------------------------------------------------------
-/*
-	
 #pragma region VUF_MATRIX_OBJECT
 	template<typename T, template <typename> class MATRIX >
 	class vufMatrixObject :public vufObject
@@ -2360,6 +2387,6 @@ namespace vuf
 	using vufMatrixArrayFn_4d = vufObjectArrayFn<double, vufMatrix4>;
 
 #pragma endregion USING_MANES_MATRICES
-*/
+
 }
 #endif // !VF_MATH_MATRIX_H

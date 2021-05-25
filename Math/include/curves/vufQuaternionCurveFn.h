@@ -1,8 +1,8 @@
 #ifndef VF_MATH_CRV_QTRN_RBLD_FN_H
 #define VF_MATH_CRV_QTRN_RBLD_FN_H
 
-#include "math/curves/vufCurve.h"
-#include "math/vufQuaternion.h"
+#include <curves/vufCurve.h>
+#include <vufQuaternion.h>
 
 namespace vufMath
 {
