@@ -9,6 +9,7 @@
 #include <expressions/nodes/vufMayaLuaPortNode.h>
 #include <expressions/nodes/vufMayaLuaTxtNode.h>
 #include <expressions/nodes/vufMayaLuaExpressionNode.h>
+#include <dataCollectors/vufMatrixListNode.h>
 #include <expressions/ui/vufExpressionWindowCmd.h>
 
 #include <vufMayaGlobalIncludes.h>
@@ -18,12 +19,16 @@
 
 using namespace vufRM;
 // Lua Data
-const MTypeId	mpxMayaLuaPortWrapper::		g_id(0x197130);	const MString	mpxMayaLuaPortWrapper::g_type_name("LuaPortData");
-const MTypeId	mpxMayaLuaTxtWrapper::		g_id(0x197230);	const MString	mpxMayaLuaTxtWrapper::g_type_name("LuaTxtData");
+const MTypeId	mpxMayaLuaPortWrapper::		g_id(0x297130);	const MString	mpxMayaLuaPortWrapper::		g_type_name("LuaPortData");
+const MTypeId	mpxMayaLuaTxtWrapper::		g_id(0x297230);	const MString	mpxMayaLuaTxtWrapper::		g_type_name("LuaTxtData");
 // Lua Nodes
-const MTypeId	vufMayaLuaPortNode::		g_id(0x197330);	const MString	vufMayaLuaPortNode::g_type_name("vufLuaPort");
-const MTypeId	vufMayaLuaTxtNode::			g_id(0x197430);	const MString	vufMayaLuaTxtNode::g_type_name("vufLuaTxt");
-const MTypeId	vufMayaLuaExpressionNode::	g_id(0x197530);	const MString	vufMayaLuaExpressionNode::g_type_name("vufLuaExpression");
+const MTypeId	vufMayaLuaPortNode::		g_id(0x297330);	const MString	vufMayaLuaPortNode::		g_type_name("vufLuaPort");
+const MTypeId	vufMayaLuaTxtNode::			g_id(0x197430);	const MString	vufMayaLuaTxtNode::			g_type_name("vufLuaTxt");
+const MTypeId	vufMayaLuaExpressionNode::	g_id(0x197530);	const MString	vufMayaLuaExpressionNode::	g_type_name("vufLuaExpression");
+//  Transform List
+//const MTypeId	mpxTransformListWrapper::	g_id(0x297630);	const MString	mpxTransformListWrapper::	g_type_name("TransformListData");
+const MTypeId	vufMatrixListNode::			g_id(0x297630);	const MString	vufMatrixListNode::			g_type_name("vufMatrixList");
+
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
 VF_DEFINE_CUSTOM_LOGGER(vufLogMaya);
@@ -44,6 +49,7 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufMayaLuaPortNode);
 	VF_REGISTER_NODE(vufMayaLuaTxtNode);
 	VF_REGISTER_NODE(vufMayaLuaExpressionNode);
+	VF_REGISTER_NODE(vufMatrixListNode);
 
 	// register commands
 	VF_REGISTER_COMMAND(vufExpressionWindowCmd);
@@ -64,6 +70,7 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufMayaLuaPortNode);
 	VF_DEREGISTER_NODE(vufMayaLuaTxtNode);
 	VF_DEREGISTER_NODE(vufMayaLuaExpressionNode);
+	VF_DEREGISTER_NODE(vufMatrixListNode);
 
 
 	VF_DEREGISTER_DATA(mpxMayaLuaPortWrapper);

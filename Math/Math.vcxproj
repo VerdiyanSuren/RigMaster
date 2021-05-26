@@ -330,12 +330,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\vufCloseBSpline.h" />
     <ClInclude Include="include\curves\vufCurve.h" />
+    <ClInclude Include="include\curves\vufCurveBlend.h" />
     <ClInclude Include="include\curves\vufCurveContatiner.h" />
+    <ClInclude Include="include\curves\vufCurveExplicit.h" />
+    <ClInclude Include="include\curves\vufCurveQuaternionBlendFn.h" />
+    <ClInclude Include="include\curves\vufCurveQuaternionCloseFn.h" />
+    <ClInclude Include="include\curves\vufCurveQuaternionFn.h" />
+    <ClInclude Include="include\curves\vufCurveRebuildFn.h" />
+    <ClInclude Include="include\curves\vufCurveRemapFn.h" />
+    <ClInclude Include="include\curves\vufCurveScale2EndsFn.h" />
+    <ClInclude Include="include\curves\vufCurveScaleCloseFn.h" />
+    <ClInclude Include="include\curves\vufCurveScaleFn.h" />
+    <ClInclude Include="include\curves\vufCurveSlide.h" />
+    <ClInclude Include="include\curves\vufMathCurvesInclude.h" />
     <ClInclude Include="include\curves\vufOpenBSpline.h" />
-    <ClInclude Include="include\curves\vufOpenCubicCurve.h" />
-    <ClInclude Include="include\curves\vufQuaternionCurveFn.h" />
-    <ClInclude Include="include\curves\vufRebuildCurveFn.h" />
     <ClInclude Include="include\unitTests\vufMatrix4Test.h" />
     <ClInclude Include="include\unitTests\vufMatrixObjectArrayTest.h" />
     <ClInclude Include="include\unitTests\vufMatrixTest.h" />

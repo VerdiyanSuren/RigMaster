@@ -26,7 +26,7 @@ namespace vufMath
 
 			//vufVectorObjectArrayTest<double, vufVector2> test_vector_object_array_2d;
 			//vufVectorObjectArrayTest<double, vufVector3> test_vector_object_array_3d;
-			vufVectorObjectArrayTest<double, vufVector4> l_test_vector_object_array_4d;
+			//vufVectorObjectArrayTest<double, vufVector4> l_test_vector_object_array_4d;
 
 			//vufQuaternionObjectArrayTest<double> test_quaternion_object_array_d;
 
@@ -35,7 +35,7 @@ namespace vufMath
 
 			//vufMatrixObjectArrayTest<double, vufMatrix2> test_matrix_object_array_2d;
 			//vufMatrixObjectArrayTest<double, vufMatrix3> test_matrix_object_array_3d;
-			vufMatrixObjectArrayTest<double, vufMatrix4> l_test_matrix_object_array_4d;
+			//vufMatrixObjectArrayTest<double, vufMatrix4> l_test_matrix_object_array_4d;
 
 			//vufNumericArrayObjectTest<double>	test_double_array;
 			//vufNumericArrayObjectTest<float>	test_float_array;
@@ -50,7 +50,7 @@ namespace vufMath
 
 			//if (!test_vector_object_array_2d.run()) { std::cin.get();		return false; }
 			//if (!test_vector_object_array_3d.run()) { std::cin.get();		return false; }
-			if (l_test_vector_object_array_4d.run() == false) { std::cin.get();		return false; }
+			//if (l_test_vector_object_array_4d.run() == false) { std::cin.get();		return false; }
 
 			//if (!test_matrix_2d.run()) { std::cin.get();		return false; }
 			//if (!test_matrix_3d.run()) { std::cin.get();		return false; }
@@ -58,7 +58,7 @@ namespace vufMath
 			//if (!test_matrix_object_array_2d.run())		return -1;
 			//if (!test_matrix_object_array_2d.run()) { std::cin.get();		return false; }
 			//if (!test_matrix_object_array_3d.run()) { std::cin.get();		return false; }
-			if ( l_test_matrix_object_array_4d.run() == false) { std::cin.get();	return false; }
+			//if ( l_test_matrix_object_array_4d.run() == false) { std::cin.get();	return false; }
 
 			//if (!test_quaternion_object_array_d.run()) { std::cin.get();		return false; }
 

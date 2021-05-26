@@ -297,7 +297,7 @@ int vufLuaMVector::ortho_to(lua_State* L)
 		{
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed (MVector::orthoTo) to get MVector.");
 		}
-		vuf::vufVector4<double> l_v1(l_vec->x, l_vec->y, l_vec->z), l_v2(l_vec_to->x, l_vec_to->y, l_vec_to->z);
+		vufMath::vufVector4<double> l_v1(l_vec->x, l_vec->y, l_vec->z), l_v2(l_vec_to->x, l_vec_to->y, l_vec_to->z);
 		l_v1.make_ortho_to_in_place(l_v2);
 		MVector l_res(l_v1.x, l_v1.y, l_v1.z);
 		auto l_wrapper = create_user_data(L);
@@ -320,7 +320,7 @@ int vufLuaMVector::parallel_to(lua_State* L)
 		{
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed (MVector::parallelTo) to get MVector.");
 		}
-		vuf::vufVector4<double> l_v1(l_vec->x, l_vec->y, l_vec->z), l_v2(l_vec_to->x, l_vec_to->y, l_vec_to->z);
+		vufMath::vufVector4<double> l_v1(l_vec->x, l_vec->y, l_vec->z), l_v2(l_vec_to->x, l_vec_to->y, l_vec_to->z);
 		l_v1.make_parallel_to_in_place(l_v2);
 		MVector l_res(l_v1.x, l_v1.y, l_v1.z);
 		auto l_wrapper = create_user_data(L);
@@ -344,7 +344,7 @@ int vufLuaMVector::distance_to(lua_State* L)
 		{
 			VF_LUA_THROW_ERROR(L, vufLuaMayaStatic::g_mvec_tbl_name, " Failed (MVector::distanceTo) to get MVector.");
 		}
-		vuf::vufVector4<double> l_v1(l_vec->x, l_vec->y, l_vec->z), l_v2(l_vec_to->x, l_vec_to->y, l_vec_to->z);
+		vufMath::vufVector4<double> l_v1(l_vec->x, l_vec->y, l_vec->z), l_v2(l_vec_to->x, l_vec_to->y, l_vec_to->z);
 		double l_res = l_v1.distance_to(l_v2);
 		lua_pushnumber(L, l_res);
 		return 1;

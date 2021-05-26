@@ -1,101 +1,52 @@
-#ifndef VF_MATH_OPEN_BSPLINE_CRV_H
-#define VF_MATH_OPEN_BSPLINE_CRV_H
+#ifndef VF_MATH_CLOSE_BSPLINE_CRV_H
+#define VF_MATH_CLOSE_BSPLINE_CRV_H
 
-#include <typeinfo>
-#include <iostream>
 #include <curves/vufCurveExplicit.h>
 #include <vufMathConsoleInclude.h>
-#include <curves/vufMathCurvesInclude.h>
+#include <cmath>
 
-//#define VF_MATH_DEBUG_BSPLINE
 namespace vufMath
 {
 	template <class T, template<typename> class V, uint32_t CURVE_DEGREE = 2>
-	class vufOpenBSpline : public vufCurveExplicit<T, V>
+	class vufCloseBSpline : public vufCurveExplicit<T, V>
 	{
 	private:
 	public:
-		vufOpenBSpline() :vufCurveExplicit<T, V>()
+		vufCloseBSpline() :vufCurveExplicit<T, V>()
 		{
-			//std::cout << "OpenBSpline constructor" << std::endl;
 			vufCurve<T, V>::m_degree = CURVE_DEGREE;
-			vufCurve<T, V>::m_close = false;
+			vufCurve<T, V>::m_close = true;
 		}
-		virtual ~vufOpenBSpline() {}
-		static  std::shared_ptr< vufOpenBSpline >	create()
+		virtual ~vufCloseBSpline() {}
+		static	std::shared_ptr<vufCloseBSpline> create()
 		{
-			std::shared_ptr< vufOpenBSpline >  l_ptr = std::shared_ptr<vufOpenBSpline>(new vufOpenBSpline());
+			std::shared_ptr< vufCloseBSpline >  l_ptr = std::shared_ptr<vufCloseBSpline>(new vufCloseBSpline());
 			VF_MATH_CURVE_CREATOR_BODY(l_ptr);
 			return l_ptr;
 		}
-		/// Get copy of this curve.	Original curve is unchenged
-		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
+		virtual std::shared_ptr<vufCurve<T, V>>  get_copy() const override
 		{
-			std::shared_ptr< vufOpenBSpline > l_ptr = vufOpenBSpline::create();
+			std::shared_ptr< vufCloseBSpline > l_ptr = vufCloseBSpline::create();
 
 			l_ptr->m_degree = vufCurve<T, V>::m_degree;
-			l_ptr->m_close	= vufCurve<T, V>::m_close;
-			l_ptr->m_valid	= vufCurve<T, V>::m_valid;
+			l_ptr->m_close = vufCurve<T, V>::m_close;
+			l_ptr->m_valid = vufCurve<T, V>::m_valid;
 
-			l_ptr->m_nodes_pos_v	= vufCurveExplicit<T,V>::m_nodes_pos_v;
+			l_ptr->m_nodes_pos_v = vufCurveExplicit<T, V>::m_nodes_pos_v;
 			//l_ptr->m_nodes_max_influence_t_v = m_nodes_max_influence_t_v;
 
 			l_ptr->m_knot_v = m_knot_v;
-			l_ptr->m_n_v	= m_n_v;
-			l_ptr->m_dn_v	= m_dn_v;
-
+			l_ptr->m_n_v = m_n_v;
+			l_ptr->m_dn_v = m_dn_v;
 			return l_ptr;
 		}
 	private:
 		//non virtual methods
 		/** If we get knot custom vector. From external application, for example*/
-		// Knots
 		bool				set_knots_vector_by_other(const T* p_arr, uint64_t p_count)
 		{
-			uint32_t l_sz = (uint32_t)vufCurve<T, V>::m_nodes_pos_v.size();
-			if (p_count != l_sz + CURVE_DEGREE + 1)
-			{
-				return false;
-			}
-			// Check is knot vector valid
-			// The sigle reqirement is x[i] <= x[i+1]
-			for (int i = 0; i < p_count - 1; ++i)
-			{
-				// knot vector elements has to be arranged
-				if (p_arr[i] > p_arr[i + 1])
-				{
-					return false;
-				}
-			}
-
-			vufCurve<T, V>::m_t_min = p_arr[0];
-			vufCurve<T, V>::m_t_max = p_arr[p_count - 1];
-
-			// We are going to match knot array into [0,1]
-			T l_normalize_factor = vufCurve<T, V>::m_t_max - vufCurve<T, V>::m_t_min;
-			if (l_normalize_factor == 0)
-			{
-				return false;
-			}
-
-			l_normalize_factor = 1. / l_normalize_factor;
-			m_knot_v.resize(p_count);
-			for (int i = 0; i < p_count; ++i)
-			{
-				m_knot_v[i] = (p_arr[i] - vufCurve<T, V>::m_t_min) * l_normalize_factor;
-			}
-			vufCurve<T, V>::m_t_max = 1.0;
-
-#ifdef  VF_MATH_DEBUG_BSPLINE
-			std::cout << "Set Knot Vector by other: [";
-			for (int i = 0; i < (int)m_knot_v.size(); ++i)
-			{
-				std::cout << m_knot_v[i] << " ";
-			}
-			std::cout << "]" << std::endl;
-#endif
-
-			return true;
+			// To Do 
+			// Add implementation here
 		}
 		bool				set_knots_vector_by_other(const std::vector<T> p_other)
 		{
@@ -103,41 +54,26 @@ namespace vufMath
 		}
 		bool				generate_knot_vector(std::vector<T>& p_knots)
 		{
-			int l_sz = (int)vufCurveExplicit<T,V>::m_nodes_pos_v.size();
+			int l_sz = (int)vufCurveExplicit<T, V>::m_nodes_pos_v.size();
 			if (l_sz < (int)CURVE_DEGREE + 1)
 			{
 				return false;
 			}
-
-			T l_t_min = 0.0;
-			T l_t_max = (T)(l_sz - CURVE_DEGREE);
-			T l_normalize_factor = 1. / (l_t_max - l_t_min);
-			l_t_max *= l_normalize_factor;
 			p_knots.resize(l_sz + CURVE_DEGREE + 1);
-			//fill starts of knot vector
-			for (int i = 0; i < CURVE_DEGREE + 1; ++i)
+			T l_normalize_factor = 1. / (T)(l_sz - CURVE_DEGREE );
+			T l_t_min = -(T)CURVE_DEGREE * l_normalize_factor;
+			for (uint32_t i = 0; i < l_sz + CURVE_DEGREE + 1; ++i)
 			{
-				p_knots[i] = l_t_min;
+				p_knots[i] = l_t_min + ((T)(i)) * l_normalize_factor;
 			}
-			//file ends of knot vector
-			for (uint32_t i = l_sz; i < l_sz + CURVE_DEGREE + 1; ++i)
-			{
-				p_knots[i] = l_t_max;
-			}
-			//fill knot vector
-			for (int i = CURVE_DEGREE + 1; i < p_knots.size() - CURVE_DEGREE; ++i)
-			{
-				p_knots[i] = ((T)(i - CURVE_DEGREE)) * l_normalize_factor;
-			}
-			l_t_max = 1;
-#ifdef  VF_MATH_DEBUG_BSPLINE
-			std::cout << "Generated Knot Vector: [";
+			/*
+			std::cout << "Generated Knot Vector for Periodic BSpline : [";
 			for (int i = 0; i < (int)p_knots.size(); ++i)
 			{
 				std::cout << p_knots[i] << " ";
 			}
 			std::cout << "]" << std::endl;
-#endif
+			*/
 			return true;
 		}
 		inline T			get_interval_t_min_i(int p_interval_index) const
@@ -186,7 +122,7 @@ namespace vufMath
 		}
 		bool				update_basises_i()
 		{
-			int l_nodes_sz = (int)vufCurveExplicit<T,V>::m_nodes_pos_v.size();
+			int l_nodes_sz = (int)vufCurveExplicit<T, V>::m_nodes_pos_v.size();
 			int l_knot_sz = (int)m_knot_v.size();
 			int l_interval_cnt = l_knot_sz - 2 * (int)CURVE_DEGREE - 1;
 			// Check do we have enougth control points
@@ -295,19 +231,19 @@ namespace vufMath
 			delete[] l_n_curn;
 			return true;
 		}
-		
+
 		V<T>				get_pos_at_i(T p_t)		const
 		{
 			if (p_t < 0.0)
 			{
-				return vufCurveExplicit<T,V>::m_nodes_pos_v[0] - get_tangent_at_i(0) * (-p_t);
+				return vufCurveExplicit<T, V>::m_nodes_pos_v[0] - get_tangent_at_i(0) * (-p_t);
 				//return	vufCurve<T, V>::m_nodes_pos_v[0] +
 				//		vufCurve<T, V>::m_nodes_pos_v[0] * m_dn_v[0][0].eval(0.0) * (-p_t);
 			}
 			if (p_t > 1.0)
 			{
 				int l_last_node_id = (int)vufCurveExplicit<T, V>::m_nodes_pos_v.size() - 1;
-				return vufCurveExplicit<T, V>::m_nodes_pos_v[l_last_node_id]  + get_tangent_at_i(1) * (p_t - 1);
+				return vufCurveExplicit<T, V>::m_nodes_pos_v[l_last_node_id] + get_tangent_at_i(1) * (p_t - 1);
 			}
 			V<T>	l_res;
 			int		l_node_id = 0;
@@ -357,6 +293,7 @@ namespace vufMath
 			T l_interval_step = 1. / (T)p_divisions;
 			for (uint32_t i = 1; i <= p_divisions; ++i)
 			{
+				//l_next_t = get_interval_t_max(i);
 				l_next_t = (T)i * l_interval_step;
 				if (gather_info_i(p_point, l_next_t, l_dist_next, l_dot_next) == true)
 				{
@@ -388,32 +325,33 @@ namespace vufMath
 
 		// inherited virtual methods
 		virtual T			get_interval_t_min(int p_interval_index) const override { return get_interval_t_min_i(p_interval_index); }
-		virtual T			get_interval_t_max(int p_interval_index) const override	{ return get_interval_t_max_i(p_interval_index); }
-		virtual int			get_interval_index(T p_t) const							{ return get_interval_index_i(p_t); }
-		virtual uint32_t	get_interval_count() const override						{ return get_interval_count_i(); }
+		virtual T			get_interval_t_max(int p_interval_index) const override { return get_interval_t_max_i(p_interval_index); }
+		virtual int			get_interval_index(T p_t) const { return get_interval_index_i(p_t); }
+		virtual uint32_t	get_interval_count() const override { return get_interval_count_i(); }
 
 		virtual void		set_nodes_count(uint32_t p_count) override
 		{
+			if (p_count < CURVE_DEGREE + 1)
+			{
+				vufCurve<T, V>::m_valid = false;
+				return;
+			}
 			// reserve elements from start and end
+			m_node_count = p_count;
+			p_count += CURVE_DEGREE;
 			if (vufCurveExplicit<T, V>::m_nodes_pos_v.size() != p_count)
 			{
 				vufCurveExplicit<T, V>::m_nodes_pos_v.resize(p_count);
 				init_knot_vector();
 				update_basises_i();
 				//update_max_infuences_i();
-				vufCurve<T, V>::m_valid = true;
-			}
-			if (p_count < CURVE_DEGREE + 1)
-			{
-				vufCurve<T, V>::m_valid = false;
-				return;
 			}
 			vufCurve<T, V>::m_valid = true;
 			return;
 		}
 		virtual uint32_t	get_nodes_count() const override
 		{
-			return (uint32_t)vufCurveExplicit<T, V>::m_nodes_pos_v.size();
+			return m_node_count;
 		}
 		/*
 		virtual uint32_t	get_span_count()	const override
@@ -424,38 +362,45 @@ namespace vufMath
 		virtual void		set_node_at(uint32_t p_index, const V<T>& p_vector) override
 		{
 			vufCurveExplicit<T, V>::m_nodes_pos_v[p_index] = p_vector;
+			if (p_index < CURVE_DEGREE)
+			{
+				vufCurveExplicit<T, V>::m_nodes_pos_v[p_index + m_node_count] = p_vector;
+			}
 		}
 		virtual V<T>		get_node_at(uint32_t p_index) const
 		{
 			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index];
 		}
-		
+
 		virtual T			get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001)  const override
 		{
 			return get_closest_point_param_i(p_point, p_divisions, p_percition);
 		}
-		virtual T			get_closest_point_param_on_interval(	const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const override
+		virtual T			get_closest_point_param_on_interval(const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const override
 		{
 			T l_dist_1 = get_pos_at(p_t_1).distance_to(p_point);
 			T l_dist_2 = get_pos_at(p_t_2).distance_to(p_point);
 			T l_res_t, l_res_dist;
-			return get_closest_point_param_on_interval_i(	p_point, 
-															p_t_1, p_t_2, 
-															l_dist_1, l_dist_2, 
+			return get_closest_point_param_on_interval_i(	p_point,
+															p_t_1, p_t_2,
+															l_dist_1, l_dist_2,
 															l_res_t, l_res_dist, p_percition);
 		}
 
+
 		virtual vufCurveType	get_type()											const override
 		{
-			return vufCurveType::k_open_bspline;
+			return vufCurveType::k_close_bspline;
 		}
-		
+
 		virtual V<T>		get_pos_at(T p_t)										const override
 		{
+			p_t -= std::floor(p_t);
 			return get_pos_at_i(p_t);
 		}
 		virtual V<T>		get_tangent_at(T p_t)									const override
-		{
+		{ 
+			p_t -= std::floor(p_t);
 			return get_tangent_at_i(p_t);
 		}
 		virtual void		log_me(int p_tab_count = 0) const override
@@ -464,17 +409,17 @@ namespace vufMath
 
 			std::string l_str_offset(p_tab_count * 4, '.');
 			//std::cout << l_str_offset <<"-------------------------------------------------------------" << std::endl;
-			std::cout << l_str_offset <<"[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
-			std::cout << l_str_offset <<"Control Points Count: " << vufCurveExplicit<T, V>::m_nodes_pos_v.size() << std::endl;
+			std::cout << l_str_offset << "[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
+			std::cout << l_str_offset << "Control Points Count: " << vufCurveExplicit<T, V>::m_nodes_pos_v.size() << std::endl;
 			//To Do
 			// Add Control Points Value Info
-			std::cout << l_str_offset <<"....Knot Vector [";
+			std::cout << l_str_offset << "....Knot Vector [";
 			for (auto i : m_knot_v)
 			{
 				std::cout << " " << i;
 			}
 			std::cout << " ]" << std::endl;
-			std::cout << l_str_offset << "....Segments: " << get_interval_count()<< " [";
+			std::cout << l_str_offset << "....Segments: " << get_interval_count() << " [";
 			for (uint32_t i = 0; i < get_interval_count(); ++i)
 			{
 				std::cout << "(" << get_interval_t_min(i) << "," << get_interval_t_max(i) << ")";
@@ -487,55 +432,43 @@ namespace vufMath
 			*/
 		}
 
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const override { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 2>>		as_open_bspline_di()	const override { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 3>>		as_open_bspline_tri()	const override { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 4>>		as_open_bspline_tetra()	const override { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const override { return nullptr; }
-
+		// convert to close bspline
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 1>>	as_close_bspline_mono()		const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 2>>	as_close_bspline_di()		const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 3>>	as_close_bspline_tri()		const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 4>>	as_close_bspline_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 5>>	as_close_bspline_penta()	const { return nullptr; }
 	private:
 		std::vector<T>												m_knot_v;
 		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_n_v;	// [time interval, node index] = basis function
 		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_dn_v;	// [time interval, node index] = basis derivative
-		//std::vector<T>		m_nodes_max_influence_t_v;
-		
+		uint32_t m_node_count = 0;
 	};
-
 	//specializations
 	template<>
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 1>>		vufOpenBSpline <double, vufVector4, 1>::as_open_bspline_mono()	const
+	std::shared_ptr<vufCloseBSpline <double, vufVector4, 1>>		vufCloseBSpline <double, vufVector4, 1>::as_close_bspline_mono()	const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4,1>>(vufCurve<double,vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 1>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 2>>		vufOpenBSpline <double, vufVector4, 2>::as_open_bspline_di()		const
+	std::shared_ptr<vufCloseBSpline <double, vufVector4, 2>>		vufCloseBSpline <double, vufVector4, 2>::as_close_bspline_di()		const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 3>>		vufOpenBSpline <double, vufVector4, 3>::as_open_bspline_tri()	const
+	std::shared_ptr<vufCloseBSpline <double, vufVector4, 3>>		vufCloseBSpline <double, vufVector4, 3>::as_close_bspline_tri()	const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
-	}
-	template<>	
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 4>>		vufOpenBSpline <double, vufVector4, 4>::as_open_bspline_tetra()	const
-	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4, 4>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 5>>		vufOpenBSpline <double, vufVector4, 5>::as_open_bspline_penta()	const
+	std::shared_ptr<vufCloseBSpline <double, vufVector4, 4>>		vufCloseBSpline <double, vufVector4, 4>::as_close_bspline_tetra()	const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4, 5>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 4>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
-
-
-#pragma region USING
-	using vufOpenBSpline_2f = vufOpenBSpline<float,  vufVector2>;
-	using vufOpenBSpline_2d = vufOpenBSpline<double, vufVector2>;
-	using vufOpenBSpline_3f = vufOpenBSpline<float,  vufVector3>;
-	using vufOpenBSpline_3d = vufOpenBSpline<double, vufVector3>;
-	using vufOpenBSpline_4f = vufOpenBSpline<float,  vufVector4>;
-	using vufOpenBSpline_4d = vufOpenBSpline<double, vufVector4>;
-#pragma endregion
+	template<>
+	std::shared_ptr<vufCloseBSpline <double, vufVector4, 5>>		vufCloseBSpline <double, vufVector4, 5>::as_close_bspline_penta()	const
+	{
+		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 5>>(vufCurve<double, vufVector4>::m_this.lock());
+	}
 }
-#endif // !VF_MATH_OPEN_BSPLINE_CRV_H
+#endif !VF_MATH_CLOSE_BSPLINE_CRV_H

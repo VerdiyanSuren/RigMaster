@@ -2,14 +2,15 @@
 #define VF_TP_TRNSFRM_LST_NODE_H
 
 #include <maya/MPxNode.h>
+#include <maya/MMatrixArray.h>
 
-namespace vufTP
+namespace vufRM
 {
-	class vufTransformListNode : public MPxNode
+	class vufMatrixListNode : public MPxNode
 	{
 	public:
-		vufTransformListNode();
-		virtual ~vufTransformListNode() {}
+		vufMatrixListNode();
+		virtual ~vufMatrixListNode() {}
 
 		static  void*	creator();
 		static  MStatus	initialize();
@@ -21,9 +22,12 @@ namespace vufTP
 		static MObject	g_lock_attr;
 		static MObject	g_transform_in_attr;
 		static MObject	g_data_out_attr;
+		static MObject	g_data_store_attr;
 
 		static const MString	g_type_name;;
 		uint64_t				m_gen_id;
+	private:
+		MMatrixArray m_array;
 	};
 
 }

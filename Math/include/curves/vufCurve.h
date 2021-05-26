@@ -6,12 +6,12 @@
 #include <sstream>
 #include <vufVector.h>
 #include <vufQuaternion.h>
-//#include <vufNumericArrayObject.h>
+#include <vufNumericArrayObject.h>
 
 #define VF_MATH_CURVE_CREATOR_BODY(SHARED_CRV) \
 		SHARED_CRV->m_this = std::static_pointer_cast<vufCurve<T, V>>(SHARED_CRV);
 
-namespace vuf
+namespace vufMath
 {
 #pragma region VF_POLINOM
 	template<class T, uint32_t  MAX_POLYNOM_DEGREE >
@@ -122,7 +122,7 @@ namespace vuf
 			T l_t_b = p_max;
 			T l_t_c;
 
-			std::cout << "A: " << l_A_sign << " B: " << l_B_sign << std::endl;
+			//std::cout << "A: " << l_A_sign << " B: " << l_B_sign << std::endl;
 
 			// both derivatives has the same sign
 			//(-,-)(+,+)
@@ -331,8 +331,8 @@ namespace vuf
 		if (l_d >= 0.0)
 		{
 			l_d = sqrt(l_d);
-			double l_t_1 = (l_d - l_dp.a[1]) / (l_dp.a[2] * 2.0);
-			double l_t_2 = (l_d + l_dp.a[1]) / (l_dp.a[2] * 2.0);
+			double l_t_1 = ( - l_dp.a[1] + l_d) / (l_dp.a[2] * 2.0);
+			double l_t_2 = ( - l_dp.a[1] - l_d) / (l_dp.a[2] * 2.0);
 			if (l_t_1 > p_min && l_t_1 < p_max)
 			{
 				double l_val = eval(l_t_1);
@@ -358,24 +358,39 @@ namespace vuf
 
 #pragma endregion VF_POLINOM
 #pragma region VF_CURVE
+	
+	template <class T, template<typename> class V>				class vufCurveExplicit;
+
+	template <class T, template<typename> class V, uint32_t>	class vufOpenBSpline;
+	template <class T, template<typename> class V, uint32_t>	class vufCloseBSpline;
+	template <class T, template<typename> class V, uint32_t>	class vufOpenBezier;
+	template <class T, template<typename> class V, uint32_t>	class vufCloseBezier; 
+
+	template <class T, template<typename> class V>				class vufOpenXSpline;
+	template <class T, template<typename> class V>				class vufCloseXSpline;
+
+	template <class T, template<typename> class V >				class vufCurveBlend;
+	template <class T, template<typename> class V >				class vufCurveSlide;
+
 	/**
 	*  This is a base interface class  for all curves
 	*  bezier, b-saplines and 
 	*/
-	enum class curveType:uint8_t
+	enum class vufCurveType :uint8_t
 	{
+		k_unknown					= 0,
 		//open curves
-		k_open_bezier_piecewise				= 0,
-		k_open_bspline						= 1,
-		k_open_general_bspline				= 2,
-		k_open_xspline						= 3,
-		//close curves
-		k_close_bezier_piecewise_quadratic	= 6,
-		k_open_bezier_piecewise_quadratic	= 7,
-		k_close_polyline					= 8,
-		k_close_quadratic					= 9,
-		k_close_cubic						= 10,
-		k_close_xspline						= 11
+		k_open_bezier_piecewise		= 1,
+		k_close_bezier_piecewise	= 2,
+
+		k_open_bspline				= 3,
+		k_close_bspline				= 4,
+
+		k_open_xspline				= 5,
+		k_close_xspline				= 6,
+
+		k_blend_curve				= 7,
+		k_slide_curve				= 8,
 	};
 
 	// we supopose that V<T> is vactor 2D or 3D of float or double 
@@ -388,76 +403,82 @@ namespace vuf
 		vufCurve()			{}
 	public:
 		virtual ~vufCurve()	{}
-		virtual std::shared_ptr<vufCurve> make_copy() const = 0;
-		/** control points count could be less than neccesary and then curve is invalid */
+		
 		bool	 is_valid()		const	{ return m_valid; }
 		/** some curves could be  degree 1, 2 or 3 come only degree 2 or 3*/
 		uint32_t get_degree()	const	{ return m_degree; }
+		bool	 is_explicit()	const	{ return m_explicit; }
 		/** suportes open and close */
-		bool	 is_open()		const	{ return  m_close ==false; }
-		bool	 is_close()		const	{ return m_close; }
-		T		 get_node_max_influence_t(int p_node_index) const { return m_nodes_max_influence_t_v[p_node_index]; }
+		bool	 is_open()		const	{ return  m_close == false; }
+		bool	 is_close()		const	{ return  m_close; }
+		//T		 get_node_max_influence_t(int p_node_index) const { return m_nodes_max_influence_t_v[p_node_index]; }
+
+		//virtual int			get_interval_count() const = 0;
+		virtual vufCurveType	get_type()					const = 0;
+		virtual V<T>			get_pos_at(T p_t)			const = 0;
+		virtual V<T>			get_tangent_at(T p_t)		const = 0;
+
+		virtual T	get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001) const= 0;
+		virtual T	get_closest_point_param_on_interval( const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const = 0;
 		
-		/** set and retrieve nodes count for control points of curves */
-		virtual void		set_nodes_count(uint32_t p_count) = 0
-		{
-			if (m_nodes_pos_v.size() != p_count)
-			{
-				m_nodes_pos_v.resize(p_count);
-				update_topology();
-			}
-		}
-		virtual uint32_t	get_nodes_count()	const = 0
-		{
-			return (uint32_t)m_nodes_pos_v.size();
-		}
-		virtual uint32_t	get_span_count()	const = 0;
-		/** set and get control point position*/
-		virtual void		set_node_at(uint32_t p_index, const V<T>& p_vector) = 0
-		{
-			m_nodes_pos_v[p_index] = p_vector;
-		}
-		virtual V<T>		get_node_at(uint32_t p_index) const = 0
-		{
-			return m_nodes_pos_v[p_index];
-		}
-		virtual T			get_closest_point_param(const V<T>& p_point, T p_start_param) = 0;
-		virtual int			get_interval_count() const = 0;
+		/// Get copy of this curve.	Original curve is unchenged
+		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
+		virtual void			log_me(int p_tab_count = 0)		const = 0;
+		
+		// convert to explicit
+		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()	const { return nullptr; }		
+		// convert to open bspline
+		virtual std::shared_ptr<vufOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const {	return nullptr;	}
+		virtual std::shared_ptr<vufOpenBSpline <T, V, 2>>		as_open_bspline_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufOpenBSpline <T, V, 3>>		as_open_bspline_tri()	const { return nullptr; }
+		virtual std::shared_ptr<vufOpenBSpline <T, V, 4>>		as_open_bspline_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const { return nullptr; }
 
-		virtual void		make_samples( int p_per_interval_count) = 0;
-		virtual void		update_samples() = 0;
+		// convert to close bspline
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 1>>	as_close_bspline_mono()		const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 2>>	as_close_bspline_di()		const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 3>>	as_close_bspline_tri()		const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 4>>	as_close_bspline_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 5>>	as_close_bspline_penta()	const { return nullptr; }
 
-		virtual curveType	get_type()					const = 0;
-		virtual T			get_length()				const = 0;
-		virtual V<T>		get_pos_at(T p_t)			const = 0;
-		virtual V<T>		get_tangent_at(T p_t)		const = 0;
-		virtual T			get_basis_at(uint32_t p_node_id, T p_t)				const = 0;
-		virtual T			get_basis_derivative_at(uint32_t p_node_id, T p_t)	const = 0;
+		// convert to open bezier
+		virtual std::shared_ptr<vufOpenBezier <T, V, 1>>		as_open_bezier_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufOpenBezier <T, V, 2>>		as_open_bezier_di()		const { return nullptr; }
+		virtual std::shared_ptr<vufOpenBezier <T, V, 3>>		as_open_bezier_tri()	const { return nullptr; }
+		virtual std::shared_ptr<vufOpenBezier <T, V, 4>>		as_open_bezier_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufOpenBezier <T, V, 5>>		as_open_bezier_penta()	const { return nullptr; }
 
-		virtual bool		update_topology()	= 0;
-		virtual void		log_me(int p_tab_count = 0) const		= 0;
+		// convert to close bezier
+		virtual std::shared_ptr<vufCloseBezier <T, V, 1>>		as_close_bezier_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBezier <T, V, 2>>		as_close_bezier_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBezier <T, V, 3>>		as_close_bezier_tri()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBezier <T, V, 4>>		as_close_bezier_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBezier <T, V, 5>>		as_close_bezier_penta()	const { return nullptr; }
+
+		// convert to open xspline
+		virtual std::shared_ptr<vufOpenXSpline  <T, V>>	as_open_xspline_4d()		const { return nullptr; }
+		virtual std::shared_ptr<vufCloseXSpline <T, V>>	as_close_xspline_4d()		const { return nullptr; }
+
+
+		virtual std::shared_ptr<vufCurveBlend <T, V >>		as_curve_blend()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveSlide <T, V >>		as_curve_slide()	const { return nullptr; }
 
 	protected:
-		uint32_t	m_degree	= 0;
-		bool		m_close		= false;
-		bool		m_valid		= false;
-		
-		std::vector<V<T>>	m_nodes_pos_v;
-		std::vector<T>		m_nodes_max_influence_t_v;
-		uint32_t			m_samples_per_segment;
-		std::vector<V<T>>	m_pos_samples_v;
-		std::vector<V<T>>	m_div_samples_v;
-		std::vector<T>		m_param_samples_v;
-		
-		//std::vector<vufQuaternion<T>> m_source_quaternion_v;
-		//std::vector<std::vector<vufPolinomCoeff>>	m_n_v;	// [time interval, node index] = basis function
-		//std::vector<std::vector<vufPolinomCoeff>>	m_dn_v;	// [time interval, node index] = basis derivative
+		bool		m_valid		= false;	// if inherited curve is valid 
+		uint32_t	m_degree	= 0;		// degree of curve. 0 if therre is n't degree
+		bool		m_explicit	= true;		// has control pointas or not
+		bool		m_close		= false;	//
 
 		std::weak_ptr<vufCurve> m_this = std::weak_ptr<vufCurve>();
 	};
 #pragma endregion VF_CURVE
 #pragma region USING_NAMES
-	using vufCurve4d = vufCurve<double, vufVector4>;
+	using vufCurve_2f = vufCurve<float, vufVector2>;
+	using vufCurve_2d = vufCurve<double, vufVector2>;
+	using vufCurve_3f = vufCurve<float, vufVector3>;
+	using vufCurve_3d = vufCurve<double, vufVector3>;
+	using vufCurve_4f = vufCurve<float, vufVector4>;
+	using vufCurve_4d = vufCurve<double, vufVector4>;
 #pragma endregion
 }
 #endif // !VF_MATH_CRVS_INTERFACE_H

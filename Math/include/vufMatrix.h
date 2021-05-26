@@ -1415,14 +1415,14 @@ namespace vufMath
 					abs(m_ptr[1][2] - p_other.m_ptr[1][2]) < p_tolerance &&
 					abs(m_ptr[1][3] - p_other.m_ptr[1][3]) < p_tolerance &&
 
-					abs(m_ptr[2][0] - p_other.m_ptr[2][0]) < p_tolerance&&
-					abs(m_ptr[2][1] - p_other.m_ptr[2][1]) < p_tolerance&&
-					abs(m_ptr[2][2] - p_other.m_ptr[2][2]) < p_tolerance&&
-					abs(m_ptr[2][3] - p_other.m_ptr[2][3]) < p_tolerance;
+					abs(m_ptr[2][0] - p_other.m_ptr[2][0]) < p_tolerance &&
+					abs(m_ptr[2][1] - p_other.m_ptr[2][1]) < p_tolerance &&
+					abs(m_ptr[2][2] - p_other.m_ptr[2][2]) < p_tolerance &&
+					abs(m_ptr[2][3] - p_other.m_ptr[2][3]) < p_tolerance &&
 
-					abs(m_ptr[3][0] - p_other.m_ptr[3][0]) < p_tolerance&&
-					abs(m_ptr[3][1] - p_other.m_ptr[3][1]) < p_tolerance&&
-					abs(m_ptr[3][2] - p_other.m_ptr[3][2]) < p_tolerance&&
+					abs(m_ptr[3][0] - p_other.m_ptr[3][0]) < p_tolerance &&
+					abs(m_ptr[3][1] - p_other.m_ptr[3][1]) < p_tolerance &&
+					abs(m_ptr[3][2] - p_other.m_ptr[3][2]) < p_tolerance &&
 					abs(m_ptr[3][3] - p_other.m_ptr[3][3]) < p_tolerance;
 		}
 
@@ -1928,10 +1928,20 @@ namespace vufMath
 		}
 		
 		// serialization
-		std::string		to_string() const
+		std::string		to_string(int p_precision = -1) const
 		{
 			std::stringstream l_ss;
-			l_ss.precision(64);
+			if (p_precision > 0)
+			{
+				if (p_precision > 64)
+				{
+					l_ss.precision(64);
+				}
+				else
+				{
+					l_ss.precision(p_precision);
+				}
+			}
 			l_ss << "[";
 			for (int i = 0; i < 4; ++i)
 			{
@@ -2226,7 +2236,7 @@ namespace vufMath
 			l_ptr->m_this = l_ptr;
 			return l_ptr;
 		}
-		virtual std::shared_ptr<vufObject>					make_copy() const override
+		virtual std::shared_ptr<vufObject>							make_copy() const override
 		{
 			std::shared_ptr<vufMatrixArrayObject<T, MATRIX>> l_ptr = std::shared_ptr< vufMatrixArrayObject<T, MATRIX>>(new vufMatrixArrayObject<T, MATRIX>(*this));
 			l_ptr->m_this = l_ptr;

@@ -36,13 +36,14 @@ namespace vufMath
 		bool test_serialization(bool p_verbose = false)
 		{
 			std::cout << "....Serialization Test" << std::endl;
+			// start matricies are random 
 			vufMatrix4<T> l_m_1 = vufMatrix4<T>::random_matrix();
 			vufMatrix4<T> l_m_2 = vufMatrix4<T>::random_matrix();
 			vufMatrix4<T> l_m_3 = vufMatrix4<T>::random_matrix();
 			vufMatrix4<T> l_src_1(l_m_1);
 			vufMatrix4<T> l_src_2(l_m_2);
 			vufMatrix4<T> l_src_3(l_m_3);
-
+			// convert them to string with default precision
 			std::string str_1 = l_src_1.to_string();
 			std::string str_2 = l_src_2.to_string();
 			std::string str_3 = l_src_3.to_string();
@@ -52,13 +53,31 @@ namespace vufMath
 			vufMatrix4<T> l_res_2;
 			vufMatrix4<T> l_res_3;
 			uint64_t l_offset = 0;
+			// get matricies back from strings
 			l_offset = l_res_1.from_string(str_4);
 			l_offset = l_res_2.from_string(str_4, l_offset);
 			l_offset = l_res_3.from_string(str_4, l_offset);
-			
+			if (l_res_1.is_equivalent( l_src_1, 0.00001) == false ||
+				l_res_2.is_equivalent( l_src_2, 0.00001) == false ||
+				l_res_3.is_equivalent( l_src_3, 0.00001)  == false )
+			{
+				std::cout << "........Failed Serialization to/from string 1" << std::endl;
+				return false;
+			}
+			// convert them to string with maximum precision
+			str_1 = l_src_1.to_string(64);
+			str_2 = l_src_2.to_string(64);
+			str_3 = l_src_3.to_string(64);
+			str_4 = str_1 + str_2 + str_3;
+			// get matricies back from strings
+			l_offset = l_res_1.from_string(str_4);
+			l_offset = l_res_2.from_string(str_4, l_offset);
+			l_offset = l_res_3.from_string(str_4, l_offset);
+			l_offset = l_res_1.from_string(str_4);	
+
 			if (l_res_1 != l_src_1 || l_res_2 != l_src_2 || l_res_3 != l_src_3 )
 			{
-				std::cout << "........Failed Serialization to/from string" << std::endl;
+				std::cout << "........Failed Serialization to/from string 2" << std::endl;
 				return false;
 			}
 			std::cout << "........Serialization  to/from string Successfully" << std::endl;

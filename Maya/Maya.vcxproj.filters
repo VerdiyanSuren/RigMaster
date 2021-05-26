@@ -37,6 +37,9 @@
     <Filter Include="src\data">
       <UniqueIdentifier>{D6B02ECF-C27D-89DA-EB96-7782D7C2BE68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\dataCollectors">
+      <UniqueIdentifier>{70A4B401-5C88-7557-C5E8-6FAAB1EB5FD9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\expressions">
       <UniqueIdentifier>{3F77E524-AB02-53E9-B413-D6DD201EAFE9}</UniqueIdentifier>
     </Filter>
@@ -66,10 +69,7 @@
     <ClInclude Include="include\data\vufMayaDataList.h">
       <Filter>include\data</Filter>
     </ClInclude>
-    <ClInclude Include="include\dataCollectors\vufTransformListData.h">
-      <Filter>include\dataCollectors</Filter>
-    </ClInclude>
-    <ClInclude Include="include\dataCollectors\vufTransformListNode.h">
+    <ClInclude Include="include\dataCollectors\vufMatrixListNode.h">
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h">
@@ -160,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="src\data\vufData.cpp">
       <Filter>src\data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dataCollectors\vufMatrixListNode.cpp">
+      <Filter>src\dataCollectors</Filter>
     </ClCompile>
     <ClCompile Include="src\expressions\data\vufMayaLuaPortData.cpp">
       <Filter>src\expressions\data</Filter>

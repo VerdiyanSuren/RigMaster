@@ -12,22 +12,52 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\vufCloseBSpline.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\vufCurve.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveBlend.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveContatiner.h">
       <Filter>include\curves</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\vufCurveExplicit.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveQuaternionBlendFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveQuaternionCloseFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveQuaternionFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveRebuildFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveRemapFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveScale2EndsFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveScaleCloseFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveScaleFn.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveSlide.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufMathCurvesInclude.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\vufOpenBSpline.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufOpenCubicCurve.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufQuaternionCurveFn.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufRebuildCurveFn.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\unitTests\vufMatrix4Test.h">
@@ -43,6 +73,9 @@
       <Filter>include\unitTests</Filter>
     </ClInclude>
     <ClInclude Include="include\unitTests\vufQuaternionObjectArrayTest.h">
+      <Filter>include\unitTests</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\vufQuaternionTest.h">
       <Filter>include\unitTests</Filter>
     </ClInclude>
     <ClInclude Include="include\unitTests\vufTestAll.h">
@@ -74,9 +107,6 @@
     </ClInclude>
     <ClInclude Include="include\vufVector.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\unitTests\vufQuaternionTest.h">
-      <Filter>include\unitTests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
