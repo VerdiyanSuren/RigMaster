@@ -1,8 +1,8 @@
 #ifndef VF_MATH_QTRN_H
 #define VF_MATH_QTRN_H
 
-#include "vufMathInclude.h"
-#include "vufVector.h"
+#include <vufMathInclude.h>
+#include <math/vufVector.h>
 //#include "vufObject.h"
 //#include "vufObjectArrayFn.h"
 

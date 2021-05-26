@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../vufMatrix.h"
+#include <math/vufMatrix.h>
 
 namespace vufMath
 {

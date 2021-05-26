@@ -1,5 +1,5 @@
 #pragma once
-#include <vufVector.h>
+#include <math/vufVector.h>
 
 #include <vufLog.h>
 #include <coreUtils/vufStringUtils.h>

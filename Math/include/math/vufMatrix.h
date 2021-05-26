@@ -4,8 +4,8 @@
 #include <random>
 #include <iostream>
 #include <new>
-#include <vufVector.h>
-#include <vufQuaternion.h>
+#include <math/vufVector.h>
+#include <math/vufQuaternion.h>
 #include <vufObject.h>
 #include <vufMathInclude.h>
 #include <vufObjectArrayFn.h>

@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include <vufVector.h>
-#include <vufMatrix.h>
-#include <vufQuaternion.h>
+#include <math/vufVector.h>
+#include <math/vufMatrix.h>
+#include <math/vufQuaternion.h>
 
 #include <vufLog.h>
 #include <coreUtils/vufStringUtils.h>

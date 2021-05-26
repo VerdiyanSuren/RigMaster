@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../vufNumericArrayObject.h"
+#include <vufNumericArrayObject.h>
 
 namespace vufMath
 {

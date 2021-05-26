@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vufVector.h>
 
 #include <unitTests/vufTestAll.h>
 #include <vufLog.h>

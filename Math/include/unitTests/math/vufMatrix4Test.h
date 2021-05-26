@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vufVector.h>
-#include <vufMatrix.h>
+#include <math/vufVector.h>
+#include <math/vufMatrix.h>
 
 #include <vufLog.h>
 #include <coreUtils/vufStringUtils.h>
@@ -48,7 +48,7 @@ namespace vufMath
 			std::string str_2 = l_src_2.to_string();
 			std::string str_3 = l_src_3.to_string();
 			std::string str_4 = str_1 + str_2 + str_3;
-			
+
 			vufMatrix4<T> l_res_1;
 			vufMatrix4<T> l_res_2;
 			vufMatrix4<T> l_res_3;
@@ -57,9 +57,9 @@ namespace vufMath
 			l_offset = l_res_1.from_string(str_4);
 			l_offset = l_res_2.from_string(str_4, l_offset);
 			l_offset = l_res_3.from_string(str_4, l_offset);
-			if (l_res_1.is_equivalent( l_src_1, 0.00001) == false ||
-				l_res_2.is_equivalent( l_src_2, 0.00001) == false ||
-				l_res_3.is_equivalent( l_src_3, 0.00001)  == false )
+			if (l_res_1.is_equivalent(l_src_1, 0.00001) == false ||
+				l_res_2.is_equivalent(l_src_2, 0.00001) == false ||
+				l_res_3.is_equivalent(l_src_3, 0.00001) == false)
 			{
 				std::cout << "........Failed Serialization to/from string 1" << std::endl;
 				return false;
@@ -73,38 +73,38 @@ namespace vufMath
 			l_offset = l_res_1.from_string(str_4);
 			l_offset = l_res_2.from_string(str_4, l_offset);
 			l_offset = l_res_3.from_string(str_4, l_offset);
-			l_offset = l_res_1.from_string(str_4);	
+			l_offset = l_res_1.from_string(str_4);
 
-			if (l_res_1 != l_src_1 || l_res_2 != l_src_2 || l_res_3 != l_src_3 )
+			if (l_res_1 != l_src_1 || l_res_2 != l_src_2 || l_res_3 != l_src_3)
 			{
 				std::cout << "........Failed Serialization to/from string 2" << std::endl;
 				return false;
 			}
 			std::cout << "........Serialization  to/from string Successfully" << std::endl;
-			if ( l_src_1 != l_m_1 || l_src_2 != l_m_2 || l_src_3 != l_m_3)
+			if (l_src_1 != l_m_1 || l_src_2 != l_m_2 || l_src_3 != l_m_3)
 			{
 				std::cout << "........Failed Serialization 2 to/from string" << std::endl;
 				return false;
 			}
 			std::cout << "........Serialization 2 to/from string Successfully" << std::endl;
 
-			std::vector<unsigned char> buff;			
+			std::vector<unsigned char> buff;
 			l_src_1.to_binary(buff);
 			l_src_2.to_binary(buff);
 			l_src_3.to_binary(buff);
 			vufMatrix4<T> l_res_11, l_res_22, l_res_33;
-			
+
 			l_offset = l_res_11.from_binary(buff);
 			l_offset = l_res_22.from_binary(buff, l_offset);
 			l_offset = l_res_33.from_binary(buff, l_offset);
-			
-			if ( l_res_11 != l_src_1  || l_res_22 != l_src_2 || l_res_33 != l_src_3 )
+
+			if (l_res_11 != l_src_1 || l_res_22 != l_src_2 || l_res_33 != l_src_3)
 			{
 				std::cout << "........Failed Serialization to/from binary" << std::endl;
 				return false;
 			}
 			std::cout << "........Serialization  to/from binary Successfully" << std::endl;
-			if ( l_src_1 != l_m_1 || l_src_2 != l_m_2 || l_src_3 != l_m_3 )
+			if (l_src_1 != l_m_1 || l_src_2 != l_m_2 || l_src_3 != l_m_3)
 			{
 				std::cout << "........Failed Serialization 2 to/from binary" << std::endl;
 				return false;

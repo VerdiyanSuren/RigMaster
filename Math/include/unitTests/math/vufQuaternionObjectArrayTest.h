@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../vufQuaternion.h"
+#include <math/vufQuaternion.h>
 
 namespace vufMath
 {

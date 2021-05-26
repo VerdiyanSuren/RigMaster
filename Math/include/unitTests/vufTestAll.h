@@ -1,13 +1,13 @@
 #pragma once
 
-#include <unitTests/vufMatrixTest.h>
-#include <unitTests/vufVectorTest.h>
-#include <unitTests/vufQuaternionTest.h>
+#include <unitTests/math/vufMatrix4Test.h>
+#include <unitTests/math/vufVector4Test.h>
+#include <unitTests/math/vufQuaternionTest.h>
 
-#include <unitTests/vufVectorObjectArrayTest.h>
-#include <unitTests/vufMatrixObjectArrayTest.h>
-#include <unitTests/vufQuaternionObjectArrayTest.h>
-#include <unitTests/vufNumericArrayObjectTest.h>
+//#include <unitTests/maht/vufVectorObjectArrayTest.h>
+//#include <unitTests/maht/vufMatrixObjectArrayTest.h>
+//#include <unitTests/maht/vufQuaternionObjectArrayTest.h>
+//#include <unitTests/maht/vufNumericArrayObjectTest.h>
 
 namespace vufMath
 {
