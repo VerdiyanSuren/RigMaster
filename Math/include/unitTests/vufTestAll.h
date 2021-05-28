@@ -9,6 +9,8 @@
 //#include <unitTests/maht/vufQuaternionObjectArrayTest.h>
 //#include <unitTests/maht/vufNumericArrayObjectTest.h>
 
+#include <unitTests/curve/polinomTest.h>
+
 namespace vufMath
 {
 	class vufTestAll
@@ -22,8 +24,8 @@ namespace vufMath
 			//vufVectorTest<double, vufVector3> test_vector_3d;
 			vufVector4Test<double>		l_test_vector_4d;
 			vufMatrix4Test<double>		l_test_matrix_4d;
-			vufQuaternionTest<double>	l_test_quaternion;
-
+			vufQuaternionTest<double>	l_test_quaternion_d;
+			vufPolinomCoeffTest<double> l_polinom_d;
 			//vufVectorObjectArrayTest<double, vufVector2> test_vector_object_array_2d;
 			//vufVectorObjectArrayTest<double, vufVector3> test_vector_object_array_3d;
 			//vufVectorObjectArrayTest<double, vufVector4> l_test_vector_object_array_4d;
@@ -44,7 +46,7 @@ namespace vufMath
 
 			//if (!test_vector_2d.run()) { std::cin.get();		return false; }
 			//if (!test_vector_3d.run()) { std::cin.get();		return false; }
-			if (l_test_quaternion.run(p_verbose)== false) { std::cin.get();		return false; }
+			if (l_test_quaternion_d.run(p_verbose)== false) { std::cin.get();	return false; }
 			if (l_test_vector_4d.run(p_verbose) == false) { std::cin.get();		return false; }
 			if (l_test_matrix_4d.run(p_verbose) == false) { std::cin.get();		return false; }
 
@@ -66,6 +68,9 @@ namespace vufMath
 			//if (!test_float_array.run()) { std::cin.get();		return false; }
 			//if (!test_int_array.run()) { std::cin.get();		return false; }
 			//if (!test_bool_array.run()) { std::cin.get();		return false; }
+
+
+			if (l_polinom_d.run(p_verbose) == false) { std::cin.get();		return false; }
 
 			return true;
 		}

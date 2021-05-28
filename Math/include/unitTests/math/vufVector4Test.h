@@ -34,7 +34,7 @@ namespace vufMath
 			// start vectors are random 
 			vufVector4<T> l_v_1 = vufVector4<T>::random_vector(true);
 			vufVector4<T> l_v_2 = vufVector4<T>::random_vector(true);
-			vufVector4<T> l_v_3 =-vufVector4<T>::random_vector(true);
+			vufVector4<T> l_v_3 = vufVector4<T>::random_vector(true);
 			// convert them to string with default precision
 			std::string str_1 = l_v_1.to_string();
 			std::string str_2 = l_v_2.to_string();

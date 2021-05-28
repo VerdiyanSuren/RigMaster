@@ -13,8 +13,8 @@ extern "C"
 #include <cassert>
 #include <vufLuaWrapUtil.h>
 #include <vufLuaStatic.h>
-#include <vufVector.h>
-#include <vufMatrix.h>
+#include <math/vufVector.h>
+#include <math/vufMatrix.h>
 
 namespace vuf
 {
@@ -51,25 +51,25 @@ namespace vuf
 			//VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex",new_index);
 		}
 		/** bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)	*/
-		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
-		VF_LUA_SET_USER_DATA_GLOBAL_REF(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
+		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
+		VF_LUA_SET_USER_DATA_GLOBAL_REF(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
 		/** bool	get_global(lua_State * L, const std::string & p_var_name, vufVector4<T>& p_res)	*/
-		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
+		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
 		/** bool	static bool	get_param(lua_State * L, int p_lua_index, vufVector4<T>& p_res_ptr)*/
-		VF_LUA_GET_USER_DATA_PARAM(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
+		VF_LUA_GET_USER_DATA_PARAM(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
 		/** create as reference of new user data and push to stack
 		* vufLuaVector4Wrapper<T>*	create_new_ref(lua_State* L, vufVector4<T>* l_ref_vector)	*/
-		VF_LUA_CREATE_USER_NEW_REF(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
+		VF_LUA_CREATE_USER_NEW_REF(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
 		/** create mew user data and push to stack
 		*  vufLuaVector4Wrapper<T>* create_user_data(lua_State* L)*/
-		VF_LUA_CREATE_USER_DATA(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
+		VF_LUA_CREATE_USER_DATA(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>);
 	private:
 		static int create(lua_State* L)
 		{
 			create_user_data(L);
 			return 1;
 		}
-		VF_LUA_IMPLEMENT_COPY(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>,vufLuaMattrix4Wrapper<T>);
+		VF_LUA_IMPLEMENT_COPY(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>,vufLuaMattrix4Wrapper<T>);
  		static int set(lua_State* L)
 		{
 			int l_number_of_arguments = lua_gettop(L);
@@ -227,9 +227,9 @@ namespace vuf
 			l_matr_wrap_ptr->set_data(vufMatrix4<T>::numerate_matrix());
 			return 1;
 		}
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>,	get_transposed_4,	transpose);
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>,	get_transposed_3,	transpose3);
-		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>,	inverse,			inverse);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>,	get_transposed_4,	transpose);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>,	get_transposed_3,	transpose3);
+		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_TYPE(	vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>,	inverse,			inverse);
 
 		VF_LUA_IMPLEMENT_TYPE_OF_VOID_TO_NUMBER(vufLuaStatic::g_mat4_meta_name, vufLuaMattrix4Wrapper<T>,	determinant,	determinant);
 
@@ -256,10 +256,10 @@ namespace vuf
 			l_ptr->~vufLuaMattrix4Wrapper<T>();
 			return 0;
 		}
-		VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>, add);
-		VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>, sub);
-		VF_LUA_IMPLEMENT_TYPE_UNM_TYPE(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>, unm);
-		VF_LUA_IMPLEMENT_TYPE_MUL_TYPE(vufLuaStatic::g_mat4_meta_name, vufMatrix4<T>, vufLuaMattrix4Wrapper<T>,  mul);
+		VF_LUA_IMPLEMENT_TYPE_ADD_TYPE(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>, add);
+		VF_LUA_IMPLEMENT_TYPE_SUB_TYPE(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>, sub);
+		VF_LUA_IMPLEMENT_TYPE_UNM_TYPE(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>, unm);
+		VF_LUA_IMPLEMENT_TYPE_MUL_TYPE(vufLuaStatic::g_mat4_meta_name, vufMath::vufMatrix4<T>, vufLuaMattrix4Wrapper<T>,  mul);
 
 		static int index(lua_State* L)
 		{

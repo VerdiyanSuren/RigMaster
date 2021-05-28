@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <vufVector.h>
-#include <vufQuaternion.h>
+#include <math/vufVector.h>
+#include <math/vufQuaternion.h>
 #include <vufNumericArrayObject.h>
 
 #define VF_MATH_CURVE_CREATOR_BODY(SHARED_CRV) \
@@ -31,6 +31,15 @@ namespace vufMath
 			{
 				a[i] = p_other.a[i];
 			}
+		}
+		static vufPolinomCoeff<T, MAX_POLYNOM_DEGREE> random_polinom()
+		{
+			vufPolinomCoeff<T, MAX_POLYNOM_DEGREE> l_polinom;
+			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				l_polinom.a[i] = (T)(rand()) / (T)(RAND_MAX);
+			}
+			return l_polinom;
 		}
 		vufPolinomCoeff operator*(const vufPolinomCoeff& p_other)
 		{
@@ -170,51 +179,27 @@ namespace vufMath
 			}
 			return l_t_a;
 		}
-		std::string		to_string() const
-		{
-			std::vector<T> l_vec(MAX_POLYNOM_DEGREE +1);
-			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
-			{
-				l_vec[i] = a[i];
-			}
-			vufNumericArrayFn<T> l_fn(l_vec);
-			return l_fn.to_string();
-		}
-		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
-		{			
-			std::vector<T> l_vec;
-			vufNumericArrayFn<T> l_fn(l_vec);
-			uint64_t l_offset = l_fn.from_string(p_str, p_offset);
-			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
-			{
-				a[i] = l_vec[i];
-			}
-			return l_offset;
-		}
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
-		{
-			std::vector<T> l_vec(MAX_POLYNOM_DEGREE + 1);
-			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
-			{
-				l_vec[i] = a[i];
-			}
-			vufNumericArrayFn<T> l_fn(l_vec);
-			return l_fn.to_binary(p_buff);
-		}
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
-		{
-			std::vector<T> l_vec;
-			vufNumericArrayFn<T> l_fn(l_vec);
-			uint64_t l_offset = l_fn.from_binary(p_buff, p_offset);
-			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
-			{
-				a[i] = l_vec[i];
-			}
-			return l_offset;
-		}
-		std::string		to_canonic_string() const
+		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0) const
 		{
 			std::stringstream l_ss;
+			if (p_precision > 0)
+			{
+				if (p_precision > 64)
+				{
+					l_ss.precision(64);
+				}
+				else
+				{
+					l_ss.precision(p_precision);
+				}
+			}
+			if (p_tab_count > 0)
+			{
+				for (uint32_t i = 0; i < p_tab_count; ++i)
+				{
+					l_ss << "____";
+				}
+			}
 			bool l_record_exist = false;
 			for (int i = MAX_POLYNOM_DEGREE; i >= 0; --i)
 			{
@@ -269,6 +254,57 @@ namespace vufMath
 			}
 			return l_ss.str();
 		}
+		/*
+		std::string		to_string() const
+		{
+			std::vector<T> l_vec(MAX_POLYNOM_DEGREE +1);
+			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				l_vec[i] = a[i];
+			}
+			vufNumericArrayFn<T> l_fn(l_vec);
+			return l_fn.to_string();
+		}
+		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
+		{			
+			std::vector<T> l_vec;
+			vufNumericArrayFn<T> l_fn(l_vec);
+			uint64_t l_offset = l_fn.from_string(p_str, p_offset);
+			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				a[i] = l_vec[i];
+			}
+			return l_offset;
+		}
+		*/
+		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+		{
+			std::vector<T> l_vec(MAX_POLYNOM_DEGREE + 1);
+			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				l_vec[i] = a[i];
+			}
+			vufNumericArrayFn<T> l_fn(l_vec);
+			return l_fn.to_binary(p_buff);
+		}
+		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		{
+			std::vector<T> l_vec;
+			vufNumericArrayFn<T> l_fn(l_vec);
+			uint64_t l_offset = l_fn.from_binary(p_buff, p_offset);
+			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				a[i] = l_vec[i];
+			}
+			return l_offset;
+		}
+		
+		friend std::ostream& operator<<(std::ostream& p_out, const vufPolinomCoeff<T, MAX_POLYNOM_DEGREE>& p_polinom)
+		{
+			p_out << "[ " << p_polinom.to_string() << " ]";
+			return p_out;
+		}
+
 		T a[MAX_POLYNOM_DEGREE +1];
 	};
 	//specialization for linear
@@ -404,13 +440,14 @@ namespace vufMath
 	public:
 		virtual ~vufCurve()	{}
 		
-		bool	 is_valid()		const	{ return m_valid; }
+		bool		is_valid()		const	{ return m_valid; }
 		/** some curves could be  degree 1, 2 or 3 come only degree 2 or 3*/
-		uint32_t get_degree()	const	{ return m_degree; }
-		bool	 is_explicit()	const	{ return m_explicit; }
+		bool		has_degree()	const	{ return m_has_degree; }
+		uint32_t	get_degree()	const	{ return m_degree; }
+		bool		is_explicit()	const	{ return m_explicit; }
 		/** suportes open and close */
-		bool	 is_open()		const	{ return  m_close == false; }
-		bool	 is_close()		const	{ return  m_close; }
+		bool		is_open()		const	{ return  m_close == false; }
+		bool		is_close()		const	{ return  m_close; }
 		//T		 get_node_max_influence_t(int p_node_index) const { return m_nodes_max_influence_t_v[p_node_index]; }
 
 		//virtual int			get_interval_count() const = 0;
@@ -423,10 +460,14 @@ namespace vufMath
 		
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
-		virtual void			log_me(int p_tab_count = 0)		const = 0;
+		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;
+		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)					= 0;
+		virtual uint64_t		to_binary(std::vector<unsigned char>& p_buff)							const	= 0;
+		virtual uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)	= 0;
 		
 		// convert to explicit
-		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()	const { return nullptr; }		
+		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()		const { return nullptr; }
+		virtual	std::shared_ptr< vufCurveExplicit<T, V>>		as_implicit_curve()		const { return nullptr; }
 		// convert to open bspline
 		virtual std::shared_ptr<vufOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const {	return nullptr;	}
 		virtual std::shared_ptr<vufOpenBSpline <T, V, 2>>		as_open_bspline_di()	const { return nullptr; }
@@ -435,11 +476,11 @@ namespace vufMath
 		virtual std::shared_ptr<vufOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const { return nullptr; }
 
 		// convert to close bspline
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 1>>	as_close_bspline_mono()		const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 2>>	as_close_bspline_di()		const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 3>>	as_close_bspline_tri()		const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 4>>	as_close_bspline_tetra()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 5>>	as_close_bspline_penta()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 1>>		as_close_bspline_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 2>>		as_close_bspline_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 3>>		as_close_bspline_tri()	const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 4>>		as_close_bspline_tetra()const { return nullptr; }
+		virtual std::shared_ptr<vufCloseBSpline <T, V, 5>>		as_close_bspline_penta()const { return nullptr; }
 
 		// convert to open bezier
 		virtual std::shared_ptr<vufOpenBezier <T, V, 1>>		as_open_bezier_mono()	const { return nullptr; }
@@ -464,10 +505,11 @@ namespace vufMath
 		virtual std::shared_ptr<vufCurveSlide <T, V >>		as_curve_slide()	const { return nullptr; }
 
 	protected:
-		bool		m_valid		= false;	// if inherited curve is valid 
-		uint32_t	m_degree	= 0;		// degree of curve. 0 if therre is n't degree
-		bool		m_explicit	= true;		// has control pointas or not
-		bool		m_close		= false;	//
+		bool		m_valid			= false;	// if inherited curve is valid 
+		bool		m_has_degree	= false;
+		uint32_t	m_degree		= 0;		// degree of curve. 0 if therre is n't degree
+		bool		m_explicit		= true;		// has control pointas or not
+		bool		m_close			= false;	//
 
 		std::weak_ptr<vufCurve> m_this = std::weak_ptr<vufCurve>();
 	};

@@ -2,8 +2,8 @@
 #define VF_MATH_CRVE_BLEND_H
 
 #include <curves/vufCurve.h>
-#include <vufCurveContatiner.h>
-#include <vufVector.h>
+#include <curves/vufCurveContatiner.h>
+#include <math/vufVector.h>
 #include <memory>
 
 namespace vufMath

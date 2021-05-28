@@ -1,6 +1,7 @@
 //#include <vufLog.h>
 //#include <Utils/vufFileUtils.h>
 /*
+
 VF_LOG_DEFINE_STD_LOGGER();
 int main()
 {
@@ -10,3 +11,9 @@ int main()
 	return 0;
 }
 */
+#include <serializer/vufStdVectorNumberSerializerFn.h>
+
+int main()
+{
+
+}

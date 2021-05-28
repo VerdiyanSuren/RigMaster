@@ -10,6 +10,15 @@
     <Filter Include="include\coreUtils">
       <UniqueIdentifier>{12B6218C-7ECC-1F22-C743-AB433399F0A9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\serializer">
+      <UniqueIdentifier>{12717B13-FE54-3C69-67B5-36BC53B826EB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\unitTestCore">
+      <UniqueIdentifier>{81C0E3CB-6D4F-6D95-166E-819002DC7D3B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\unitTestCore\serializer">
+      <UniqueIdentifier>{0AF7A0DC-76DA-AF1C-7FDD-DD58EB3F766D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -30,14 +39,23 @@
     <ClInclude Include="include\coreUtils\vufStringUtils.h">
       <Filter>include\coreUtils</Filter>
     </ClInclude>
+    <ClInclude Include="include\serializer\vufStdVectorNumberSerializerFn.h">
+      <Filter>include\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\serializer\vufTxtSerializer.h">
+      <Filter>include\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTestCore\serializer\vufTxtSeriaslizerUT.h">
+      <Filter>include\unitTestCore\serializer</Filter>
+    </ClInclude>
     <ClInclude Include="include\vufCoreInclude.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\vufLog.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\vufTxtSerializer.h">
-      <Filter>include</Filter>
+    <ClInclude Include="include\unitTestCore\serializer\stdVectorNumberSerializerFn.h">
+      <Filter>include\unitTestCore\serializer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

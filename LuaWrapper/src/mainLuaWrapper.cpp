@@ -16,6 +16,7 @@
 
 VF_LOG_DEFINE_STD_LOGGER();
 using namespace vuf;
+using namespace vufMath;
 
 
 //constexpr uint64_t			vufLuaChunk <std::vector<double>>::m_chunk_size = 2048;

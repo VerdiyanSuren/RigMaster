@@ -12,7 +12,7 @@ extern "C"
 #include <vufLuaWrapUtil.h>
 #include <vufLuaUserDataWrapper.h>
 #include <vufLuaStatic.h>
-#include <vufVector.h>
+#include <math/vufVector.h>
 
 #include <iostream>
 
@@ -50,7 +50,7 @@ namespace vuf
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex",	new_index);
 		}
 		/** bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)	*/
-		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>);
+		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_vec4_meta_name, vufMath::vufVector4<T>, vufLuaVector4Wrapper<T>);
 		/*
 		static bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)
 		{
@@ -63,15 +63,15 @@ namespace vuf
 		}
 		*/
 		/** bool	get_global(lua_State * L, const std::string & p_var_name, vufVector4<T>& p_res)	*/
-		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_vec4_meta_name, vufVector4<T>,vufLuaVector4Wrapper<T>);
+		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_vec4_meta_name, vufMath::vufVector4<T>,vufLuaVector4Wrapper<T>);
 		/** bool	static bool	get_param(lua_State * L, int p_lua_index, vufVector4<T>& p_res_ptr)*/
-		VF_LUA_GET_USER_DATA_PARAM(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>);
+		VF_LUA_GET_USER_DATA_PARAM(vufLuaStatic::g_vec4_meta_name, vufMath::vufVector4<T>, vufLuaVector4Wrapper<T>);
 		/** create as reference of new user data and push to stack
 		* vufLuaVector4Wrapper<T>*	create_new_ref(lua_State* L, vufVector4<T>* l_ref_vector)	*/
-		VF_LUA_CREATE_USER_NEW_REF(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>);
+		VF_LUA_CREATE_USER_NEW_REF(vufLuaStatic::g_vec4_meta_name, vufMath::vufVector4<T>, vufLuaVector4Wrapper<T>);
 		/** create mew user data and push to stack 
 		*  vufLuaVector4Wrapper<T>* create_user_data(lua_State* L)*/
-		VF_LUA_CREATE_USER_DATA(vufLuaStatic::g_vec4_meta_name, vufVector4<T>, vufLuaVector4Wrapper<T>);
+		VF_LUA_CREATE_USER_DATA(vufLuaStatic::g_vec4_meta_name, vufMath::vufVector4<T>, vufLuaVector4Wrapper<T>);
 	private:		
 		static int create(lua_State* L)
 		{

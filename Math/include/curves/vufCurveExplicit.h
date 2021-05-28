@@ -2,7 +2,7 @@
 #define VF_MATH_CRV_EXPLCT_H
 
 #include <curves/vufCurve.h>
-#include <vufVector.h>
+#include <math/vufVector.h>
 namespace vufMath
 {
 	template <	class T, template<typename> class V>
@@ -25,15 +25,13 @@ namespace vufMath
 		virtual int			get_interval_index(T p_t) const = 0;
 		virtual uint32_t	get_interval_count() const = 0;
 
-		virtual		std::shared_ptr< vufCurveExplicit<T, V> >				as_explicit_curve()	 const override
+		virtual		std::shared_ptr< vufCurveExplicit<T, V> >	as_explicit_curve()	 const override
 		{ 
 			return std::static_pointer_cast<vufCurveExplicit<T, V>>(vufCurve<T,V>::m_this.lock());
 		}
-
 	protected:
 		bool				m_knot_weighted = false;
 		std::vector<V<T>>	m_nodes_pos_v;
-
 	};
 }
 #endif // !VF_MATH_CRV_EXPLCT_H

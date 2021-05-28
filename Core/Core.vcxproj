@@ -331,9 +331,12 @@ IF EXIST ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /
     <ClInclude Include="include\coreItems\vufTreeJsonObject.h" />
     <ClInclude Include="include\coreUtils\vufFileUtils.h" />
     <ClInclude Include="include\coreUtils\vufStringUtils.h" />
+    <ClInclude Include="include\serializer\vufStdVectorNumberSerializerFn.h" />
+    <ClInclude Include="include\serializer\vufTxtSerializer.h" />
+    <ClInclude Include="include\unitTestCore\serializer\stdVectorNumberSerializerFn.h" />
+    <ClInclude Include="include\unitTestCore\serializer\vufTxtSeriaslizerUT.h" />
     <ClInclude Include="include\vufCoreInclude.h" />
     <ClInclude Include="include\vufLog.h" />
-    <ClInclude Include="include\vufTxtSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\coreItems\vufTreeJsonObject.cpp" />

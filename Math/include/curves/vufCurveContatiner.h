@@ -2,23 +2,22 @@
 #define VF_MATH_CRV_CONTAINER_H
 
 #include <curves/vufCurve.h>
-#include <vufQuaternion.h>
+#include <math/vufQuaternion.h>
 #include <curves/vufOpenBSpline.h>
 #include <curves/vufCloseBSpline.h>
 #include <curves/vufCurveBlend.h>
-#include <curves/vufCurveRebuildFn.h>
+#include <curves/rebuildFn/vufCurveRebuildFn.h>
 
-#include <curves/vufCurveQuaternionFn.h>
-#include <curves/vufCurveQuaternionCloseFn.h>
-#include <curves/vufCurveQuaternionBlendFn.h>
+#include <curves/quaternionFn/vufCurveQuaternionFn.h>
+#include <curves/quaternionFn/vufCurveQuaternionCloseFn.h>
+#include <curves/quaternionFn/vufCurveQuaternionBlendFn.h>
 
-#include <curves/vufCurveScaleFn.h>
-#include <curves/vufCurveScaleCloseFn.h>
+#include <curves/scaleFn/vufCurveScaleFn.h>
+#include <curves/scaleFn/vufCurveScaleCloseFn.h>
 
-
-#include <curves/vufCurveRemapFn.h>
-#include <vufQuaternion.h>
-#include <vufMathConsoleInclude.h>
+#include <curves/remapFn/vufCurveRemapFn.h>
+#include <math/vufQuaternion.h>
+#include <vufLog.h>
 #include <memory>
 #include <iostream>
 #include <sstream>
@@ -430,7 +429,7 @@ namespace vufMath
 		}
 		friend std::ostream& operator<<(std::ostream& out, const vufCurveContainer<T,V>& v)
 		{
-			out << "[ Curve Container ]: ";			
+			out << "[ Curve Container ]: " << std::endl;
 			return out;
 		}
 

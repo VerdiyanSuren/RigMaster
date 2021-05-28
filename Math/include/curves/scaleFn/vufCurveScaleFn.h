@@ -2,7 +2,7 @@
 #define VF_MATH_CRV_SCL_FN_H
 
 #include <curves/vufCurve.h>
-#include <vufVector.h>
+#include <math/vufVector.h>
 
 namespace vufMath
 {

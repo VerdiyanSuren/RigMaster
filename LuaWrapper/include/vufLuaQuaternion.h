@@ -11,8 +11,8 @@ extern "C"
 #include <cassert>
 #include <vufLuaWrapUtil.h>
 #include <vufLuaUserDataWrapper.h>
-#include <vufQuaternion.h>
-#include <vufVector.h>
+#include <math/vufQuaternion.h>
+#include <math/vufVector.h>
 #include <vufLuaStatic.h>
 /**
 * Lua Examples
@@ -68,17 +68,17 @@ namespace vuf
 			VF_LUA_ADD_META_TABLE_FIELD(L, "__newindex",new_index);
 		}
 		/** bool	set_global(lua_State* L, const std::string& p_var_name, vufVector4<T>& p_res)	*/
-		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_quat_meta_name, vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
+		VF_LUA_SET_USER_DATA_GLOBAL(vufLuaStatic::g_quat_meta_name, vufMath::vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
 		/** bool	get_global(lua_State * L, const std::string & p_var_name, vufVector4<T>& p_res)	*/
-		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_quat_meta_name, vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
+		VF_LUA_GET_USER_DATA_GLOBAL(vufLuaStatic::g_quat_meta_name, vufMath::vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
 		/** bool	static bool	get_param(lua_State * L, int p_lua_index, vufVector4<T>& p_res_ptr)*/
-		VF_LUA_GET_USER_DATA_PARAM(vufLuaStatic::g_quat_meta_name, vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
+		VF_LUA_GET_USER_DATA_PARAM(vufLuaStatic::g_quat_meta_name, vufMath::vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
 		/** create as reference of new user data and push to stack
 		* vufLuaVector4Wrapper<T>*	create_new_ref(lua_State* L, vufVector4<T>* l_ref_vector)	*/
-		VF_LUA_CREATE_USER_NEW_REF(vufLuaStatic::g_quat_meta_name, vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
+		VF_LUA_CREATE_USER_NEW_REF(vufLuaStatic::g_quat_meta_name, vufMath::vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
 		/** create mew user data and push to stack
 		*  vufLuaVector4Wrapper<T>* create_user_data(lua_State* L)*/
-		VF_LUA_CREATE_USER_DATA(vufLuaStatic::g_quat_meta_name, vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
+		VF_LUA_CREATE_USER_DATA(vufLuaStatic::g_quat_meta_name, vufMath::vufQuaternion<T>, vufLuaQuaternionWrapper<T>);
 	private:
 		static int create(lua_State* L)
 		{

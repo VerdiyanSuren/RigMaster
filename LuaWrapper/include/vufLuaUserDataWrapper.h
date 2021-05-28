@@ -3,11 +3,14 @@
 
 #include <vector>
 
-namespace vuf
+namespace vufMath
 {
 	template<typename T> class vufQuaternion;
 	template<typename T> class vufVector4;
 	template<typename T> class vufMatrix4;
+}
+namespace vuf
+{
 	// wrapper class for types like vector,quaternions
 	// support data created in lua and references to data created outside of lua
 	// can hold data or pointer to outside data
@@ -86,9 +89,9 @@ namespace vuf
 		size_t			m_last_ndx = 0;
 	};
 
-	template<typename T>	using vufLuaQuaternionWrapper	= vufLuaDataWrapper< vufQuaternion<T>>;
-	template<typename T>	using vufLuaVector4Wrapper		= vufLuaDataWrapper< vufVector4<T>>;
-	template<typename T>	using vufLuaMattrix4Wrapper		= vufLuaDataWrapper< vufMatrix4<T>>;
+	template<typename T>	using vufLuaQuaternionWrapper	= vufLuaDataWrapper< vufMath::vufQuaternion<T>>;
+	template<typename T>	using vufLuaVector4Wrapper		= vufLuaDataWrapper< vufMath::vufVector4<T>>;
+	template<typename T>	using vufLuaMattrix4Wrapper		= vufLuaDataWrapper< vufMath::vufMatrix4<T>>;
 	template<typename T>	using vufLuaSTDVectorWrapper	= vufLuaDataWrapper< std::vector<T>>;
 }
 

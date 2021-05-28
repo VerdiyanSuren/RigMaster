@@ -2,8 +2,8 @@
 #define VF_MATH_CRV_QTRN_FN_H
 
 #include <curves/vufCurve.h>
-#include <vufQuaternion.h>
-#include <vufMatrix.h>
+#include <math/vufQuaternion.h>
+#include <math/vufMatrix.h>
 #include <cmath>
 
 namespace vufMath

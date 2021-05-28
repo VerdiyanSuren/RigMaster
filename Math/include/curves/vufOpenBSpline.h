@@ -4,7 +4,7 @@
 #include <typeinfo>
 #include <iostream>
 #include <curves/vufCurveExplicit.h>
-#include <vufMathConsoleInclude.h>
+#include <vufLog.h>
 #include <curves/vufMathCurvesInclude.h>
 
 //#define VF_MATH_DEBUG_BSPLINE
@@ -458,6 +458,41 @@ namespace vufMath
 		{
 			return get_tangent_at_i(p_t);
 		}
+		
+		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)	const override
+		{
+			std::stringstream l_ss;
+			std::string l_str_offset;
+			if (p_precision > 0)
+			{
+				if (p_precision > 64)
+				{
+					l_ss.precision(64);
+				}
+				else
+				{
+					l_ss.precision(p_precision);
+				}
+			}
+			if (p_tab_count > 0)
+			{
+				for (uint32_t i = 0; i < p_tab_count; ++i)
+				{
+					l_str_offset = l_str_offset +  "____";
+				}
+			}
+			l_ss << l_str_offset << "[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
+		}
+		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0) override;
+		virtual uint64_t		to_binary(std::vector<unsigned char>& p_buff)							const override
+		{
+			return 0;
+		}
+		virtual uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0) override
+		{
+			return 0;
+		}
+		/*
 		virtual void		log_me(int p_tab_count = 0) const override
 		{
 			VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_AQUAA, VF_CONSOLE_COLOR_BLACK);
@@ -481,11 +516,8 @@ namespace vufMath
 			}
 			std::cout << " ]" << std::endl;
 			VF_CONSOLE_RESET_COLOR();
-
-			/*
-			std::cout << l_str_offset << "-------------------------------------------------------------" << std::endl;
-			*/
 		}
+		*/
 
 		virtual std::shared_ptr<vufOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const override { return nullptr; }
 		virtual std::shared_ptr<vufOpenBSpline <T, V, 2>>		as_open_bspline_di()	const override { return nullptr; }

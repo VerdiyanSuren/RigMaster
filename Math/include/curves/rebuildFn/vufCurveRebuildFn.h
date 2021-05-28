@@ -2,7 +2,7 @@
 #define VF_MATH_CRV_RBLD_FN_H
 
 #include <curves/vufCurve.h>
-#include <vufMathConsoleInclude.h>
+#include <vufLog.h>
 #include <memory>
 #include <vector>
 #include <cmath>

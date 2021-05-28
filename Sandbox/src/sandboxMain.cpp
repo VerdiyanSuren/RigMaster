@@ -5,7 +5,9 @@
 #include <vufLog.h>
 #include <coreUtils/vufStringUtils.h>
 #include <coreUtils/vufFileUtils.h>
-#include <vufTxtSerializer.h>
+#include <serializer/vufTxtSerializer.h>
+#include <serializer/vufStdVectorNumberSerializerFn.h>
+#include <unitTestCore/serializer/vufTxtSeriaslizerUT.h>
 #include <iostream>
 
 extern "C"
@@ -20,15 +22,36 @@ using namespace vuf;
 
 int main()
 {
+	vuf::TxtSeriaslizerUT().run(true);
+	system("pause");
+	return 0;
+
 	vuf::txtSerializer::init();
 	double l_dbl = 0.122132;
-	auto l_txt_vector = txtSerializer::to_chars(&l_dbl, sizeof(l_dbl));
-	auto l_string_txt = txtSerializer::to_chars_string(&l_dbl, sizeof(l_dbl));
+	auto l_txt_vector = txtSerializer::encode_to_chars(&l_dbl, sizeof(l_dbl));
+	auto l_string_txt = txtSerializer::encode_to_chars_string(&l_dbl, sizeof(l_dbl));
 
-	auto l_str_decode = txtSerializer::to_chars_string("Протестим вывод информации");
-	auto l_str_encode = txtSerializer::to_chars_string("Протестим вывод информации");
+	auto l_str_decode = txtSerializer::encode_to_chars_string("Протестим вывод информации");
+	auto l_str_encode = txtSerializer::encode_to_chars_string("Протестим вывод информации");
 
-	vufLog::g_log->info(txtSerializer::to_chars_string(l_str_decode), __FILE__, __LINE__);
+	//vufLog::g_log->info(txtSerializer::decode_to_chars_string(l_str_decode), __FILE__, __LINE__);
+	std::vector<double> l_test_arr(10);
+	for (int i = 0; i < (int)l_test_arr.size(); ++i)
+	{
+		l_test_arr[i]= (double)(rand()) / (double)(RAND_MAX);;
+	}
+	stdVectorNumberSerializerFn<double> l_fn(l_test_arr);
+	std::string l_arr_str = l_fn.to_string(4, 1, '.');
+	std::cout << l_arr_str << std::endl;
+	std::vector<unsigned char> l_buff;
+	uint64_t l_offset = l_fn.to_binary(l_buff);
+	auto l_str_arr_encode = txtSerializer::encode_to_chars_string(l_buff);
+	std::cout << l_str_arr_encode << std::endl;
+	std::vector<double> l_test_arr2;
+	stdVectorNumberSerializerFn<double> l_fn2(l_test_arr2);
+	l_fn2.from_binary(l_buff);
+	std::string l_arr_str2 = l_fn2.to_string(4, 1, '.');
+	std::cout << l_arr_str2 << std::endl;
 
 	setlocale(LC_ALL, "");
 	vufLog::g_log->info("Протестим вывод информации", __FILE__, __LINE__);
