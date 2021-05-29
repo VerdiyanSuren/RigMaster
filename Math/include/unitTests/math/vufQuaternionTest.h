@@ -78,7 +78,7 @@ namespace vufMath
 				std::cout << l_q_1 << " " << l_res_1 << std::endl;
 				std::cout << l_q_2 << " " << l_res_2 << std::endl;
 				std::cout << l_q_3 << " " << l_res_3 << std::endl;
-				std::cout << "........Failed Serialization to/from string with default precision" << std::endl;
+				std::cout << "........Failed  to/from string test with default precision" << std::endl;
 				return false;
 			}
 			// convert them to string with maximum precision
@@ -97,25 +97,41 @@ namespace vufMath
 				std::cout << l_q_1 << " " << l_res_1 << std::endl;
 				std::cout << l_q_2 << " " << l_res_2 << std::endl;
 				std::cout << l_q_3 << " " << l_res_3 << std::endl;
-				std::cout << "........Failed Serialization to/from string with maximum precision" << std::endl;
+				std::cout << "........Failed  to/from string test with maximum precision" << std::endl;
 				return false;
 			}
-			std::cout << "........Serialization  to/from string Successfully" << std::endl;
+			std::cout << "........To/from string test passed successfully" << std::endl;
 			// convert quaternions to byte array
-			std::vector<unsigned char> l_buff;
-			l_q_1.to_binary(l_buff);
-			l_q_2.to_binary(l_buff);
-			l_q_3.to_binary(l_buff);
-			vufQuaternion<T> l_res_11, l_res_22, l_res_33;
+			std::vector<char> l_buff;
+			l_offset = l_q_1.to_binary(l_buff);
+			l_offset = l_q_2.to_binary(l_buff, l_offset);
+			l_offset = l_q_3.to_binary(l_buff, l_offset);
+			vufQuaternion<T> l_res_11, l_res_21, l_res_31;
 			l_offset = l_res_11.from_binary(l_buff);
-			l_offset = l_res_22.from_binary(l_buff, l_offset);
-			l_offset = l_res_33.from_binary(l_buff, l_offset);
-			if (l_res_11 != l_q_1 || l_res_22 != l_q_2 || l_res_33 != l_q_3)
+			l_offset = l_res_21.from_binary(l_buff, l_offset);
+			l_offset = l_res_31.from_binary(l_buff, l_offset);
+			if (l_res_11 != l_q_1 || l_res_21 != l_q_2 || l_res_31 != l_q_3)
 			{
-				std::cout << "........Failed Serialization to/from binary" << std::endl;
+				std::cout << "........Failed To/from binary tast" << std::endl;
 				return false;
 			}
-			std::cout << "........Serialization  to/from binary Successfully" << std::endl;
+			std::cout << "........To/from binary test passed successfully" << std::endl;
+
+			// encode/decode
+			l_offset = l_q_1.encode_to_buff(l_buff);
+			l_offset = l_q_2.encode_to_buff(l_buff, l_offset);
+			l_offset = l_q_3.encode_to_buff(l_buff, l_offset);
+			vufQuaternion<T> l_res_12, l_res_22, l_res_32;
+			l_offset = l_res_12.decode_from_buff(l_buff);
+			l_offset = l_res_22.decode_from_buff(l_buff, l_offset);
+			l_offset = l_res_32.decode_from_buff(l_buff, l_offset);
+			if (l_res_12 != l_q_1 || l_res_22 != l_q_2 || l_res_32 != l_q_3)
+			{
+				std::cout << "........Failed Encode/decode to/from buffer test" << std::endl;
+				return false;
+			}
+			std::cout << "........Encode/decode to/from buffer test passed successfully" << std::endl;
+
 			std::cout << "....Serialization Test Pass Successfully" << std::endl;
 			return true;
 		}

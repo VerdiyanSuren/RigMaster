@@ -61,7 +61,7 @@ namespace vufMath
 				l_res_2.is_equivalent(l_src_2, 0.00001) == false ||
 				l_res_3.is_equivalent(l_src_3, 0.00001) == false)
 			{
-				std::cout << "........Failed Serialization to/from string 1" << std::endl;
+				std::cout << "........Failed Serialization to/from string test 1" << std::endl;
 				return false;
 			}
 			// convert them to string with maximum precision
@@ -77,42 +77,55 @@ namespace vufMath
 
 			if (l_res_1 != l_src_1 || l_res_2 != l_src_2 || l_res_3 != l_src_3)
 			{
-				std::cout << "........Failed Serialization to/from string 2" << std::endl;
+				std::cout << "........Failed Serialization to/from string test 2" << std::endl;
 				return false;
 			}
-			std::cout << "........Serialization  to/from string Successfully" << std::endl;
+			std::cout << "........To/from string test passed successfully" << std::endl;
 			if (l_src_1 != l_m_1 || l_src_2 != l_m_2 || l_src_3 != l_m_3)
 			{
-				std::cout << "........Failed Serialization 2 to/from string" << std::endl;
+				std::cout << "........Failed to/from string test 2" << std::endl;
 				return false;
 			}
-			std::cout << "........Serialization 2 to/from string Successfully" << std::endl;
+			std::cout << "........To/from string test 2 passed successfully" << std::endl;
 
-			std::vector<unsigned char> buff;
-			l_src_1.to_binary(buff);
-			l_src_2.to_binary(buff);
-			l_src_3.to_binary(buff);
-			vufMatrix4<T> l_res_11, l_res_22, l_res_33;
+			std::vector< char> buff;
+			l_offset = l_src_1.to_binary(buff);
+			l_offset = l_src_2.to_binary(buff, l_offset);
+			l_offset = l_src_3.to_binary(buff, l_offset);
+			vufMatrix4<T> l_res_11, l_res_21, l_res_31;
 
 			l_offset = l_res_11.from_binary(buff);
-			l_offset = l_res_22.from_binary(buff, l_offset);
-			l_offset = l_res_33.from_binary(buff, l_offset);
+			l_offset = l_res_21.from_binary(buff, l_offset);
+			l_offset = l_res_31.from_binary(buff, l_offset);
 
-			if (l_res_11 != l_src_1 || l_res_22 != l_src_2 || l_res_33 != l_src_3)
+			if (l_res_11 != l_src_1 || l_res_21 != l_src_2 || l_res_31 != l_src_3)
 			{
-				std::cout << "........Failed Serialization to/from binary" << std::endl;
+				std::cout << "........Failed To/from binary test" << std::endl;
 				return false;
 			}
-			std::cout << "........Serialization  to/from binary Successfully" << std::endl;
+			std::cout << "........To/from binary test passed saccessfully" << std::endl;
 			if (l_src_1 != l_m_1 || l_src_2 != l_m_2 || l_src_3 != l_m_3)
 			{
-				std::cout << "........Failed Serialization 2 to/from binary" << std::endl;
+				std::cout << "........Failed to/from binary test 2" << std::endl;
 				return false;
 			}
-			std::cout << "........Serialization 2 to/from binary Successfully" << std::endl;
+			std::cout << "........To/from binary test 2 passed successfully" << std::endl;
 
-			/*
-			*/
+			// encode decod
+			l_offset = l_src_1.encode_to_buff(buff);
+			l_offset = l_src_2.encode_to_buff(buff, l_offset);
+			l_offset = l_src_3.encode_to_buff(buff, l_offset);
+			vufMatrix4<T> l_res_12, l_res_22, l_res_32;
+
+			l_offset = l_res_12.decode_from_buff(buff);
+			l_offset = l_res_22.decode_from_buff(buff, l_offset);
+			l_offset = l_res_32.decode_from_buff(buff, l_offset);
+			if (l_res_12 != l_src_1 || l_res_22 != l_src_2 || l_res_32 != l_src_3)
+			{
+				std::cout << "........Failed encode/decode to/from buffer test" << std::endl;
+				return false;
+			}
+			std::cout << "........Encode/decode to/from buffer passed successfully" << std::endl;
 			std::cout << "....Serialization Test Pass Successfully" << std::endl;
 
 			return true;

@@ -2015,34 +2015,35 @@ namespace vufMath
 			return p_offset;
 		}
 		/** write into bytes array return size of array of baties*/
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_writen_size = 0;
-			uint64_t l_old_buff_sz = p_buff.size();
-			
-			p_buff.resize(l_old_buff_sz + 16 * sizeof(T));
-			
-			for (uint64_t i = l_old_buff_sz; i < p_buff.size(); ++i)
+			if (p_buff.size() < p_offset + sizeof(T) * 16)
 			{
-				p_buff[i] = l_x[l_writen_size++];
+				p_buff.resize(p_offset + sizeof(T) * 16);
 			}
-			return l_writen_size;
+			char* l_data = (char*)m_ptr;
+			std::memcpy(&p_buff[p_offset], l_data, sizeof(T) * 16);			
+			return p_offset + sizeof(T) * 16;
 		}
 		/** read vector from binary return new offset readed */
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 16 * sizeof(T))
 			{
 				return 0;
 			}
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_read_size = 0;
-			for (uint64_t i = p_offset; i < p_offset + 16 * sizeof(T); ++i)
-			{
-				l_x[l_read_size++] = p_buff[i];
-			}
-			return p_offset + l_read_size;
+			char* l_data = (char*)m_ptr;
+			std::memcpy( l_data, &p_buff[p_offset], sizeof(T) * 16);
+			return p_offset + sizeof(T) * 16;
+		}
+
+		uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		{
+			return vuf::txtSerializer::encode_to_buff(m_ptr, 16 * sizeof(T), p_buff, p_offset);
+		}
+		uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		{
+			return vuf::txtSerializer::decode_from_buff(m_ptr, 16 * sizeof(T), p_buff, p_offset);
 		}
 
 		friend  vufMatrix4<T> operator *(T p_val, const vufMatrix4<T>& p_matr)
@@ -2074,6 +2075,7 @@ namespace vufMath
 	//-------------------------------------------------------------------------------------------------------------------------
 	//  M A T R I X   O B J E C T
 	//-------------------------------------------------------------------------------------------------------------------------
+/*
 #pragma region VUF_MATRIX_OBJECT
 	template<typename T, template <typename> class MATRIX >
 	class vufMatrixObject :public vufObject
@@ -2366,6 +2368,7 @@ namespace vufMath
 	//-------------------------------------------------------------------------------------------------------------------------
 	// USING NAMES
 	//-------------------------------------------------------------------------------------------------------------------------
+*/
 #pragma region USING_MANES_MATRICES
 	
 	using vufMatrix_2f = vufMatrix2<float>;
@@ -2375,26 +2378,26 @@ namespace vufMath
 	using vufMatrix_3d = vufMatrix3<double>;
 	using vufMatrix_4d = vufMatrix4<double>;
 	
-	using vufMatrixObject_2f = vufMatrixObject<float,  vufMatrix2>;
-	using vufMatrixObject_3f = vufMatrixObject<float,  vufMatrix3>;
-	using vufMatrixObject_4f = vufMatrixObject<float,  vufMatrix4>;
-	using vufMatrixObject_2d = vufMatrixObject<double, vufMatrix2>;
-	using vufMatrixObject_3d = vufMatrixObject<double, vufMatrix3>;
-	using vufMatrixObject_4d = vufMatrixObject<double, vufMatrix4>;
+	//using vufMatrixObject_2f = vufMatrixObject<float,  vufMatrix2>;
+	//using vufMatrixObject_3f = vufMatrixObject<float,  vufMatrix3>;
+	//using vufMatrixObject_4f = vufMatrixObject<float,  vufMatrix4>;
+	//using vufMatrixObject_2d = vufMatrixObject<double, vufMatrix2>;
+	//using vufMatrixObject_3d = vufMatrixObject<double, vufMatrix3>;
+	//using vufMatrixObject_4d = vufMatrixObject<double, vufMatrix4>;
 	
-	using vufMatrixArrayObject_2f = vufMatrixArrayObject<float,		vufMatrix2>;
-	using vufMatrixArrayObject_3f = vufMatrixArrayObject<float,		vufMatrix3>;
-	using vufMatrixArrayObject_4f = vufMatrixArrayObject<float,		vufMatrix4>;
-	using vufMatrixArrayObject_2d = vufMatrixArrayObject<double,	vufMatrix2>;
-	using vufMatrixArrayObject_3d = vufMatrixArrayObject<double,	vufMatrix3>;
-	using vufMatrixArrayObject_4d = vufMatrixArrayObject<double,	vufMatrix4>;
+	//using vufMatrixArrayObject_2f = vufMatrixArrayObject<float,		vufMatrix2>;
+	//using vufMatrixArrayObject_3f = vufMatrixArrayObject<float,		vufMatrix3>;
+	//using vufMatrixArrayObject_4f = vufMatrixArrayObject<float,		vufMatrix4>;
+	//using vufMatrixArrayObject_2d = vufMatrixArrayObject<double,	vufMatrix2>;
+	//using vufMatrixArrayObject_3d = vufMatrixArrayObject<double,	vufMatrix3>;
+	//using vufMatrixArrayObject_4d = vufMatrixArrayObject<double,	vufMatrix4>;
 
-	using vufMatrixArrayFn_2f = vufObjectArrayFn<float,  vufMatrix2>;
-	using vufMatrixArrayFn_3f = vufObjectArrayFn<float,  vufMatrix3>;
-	using vufMatrixArrayFn_4f = vufObjectArrayFn<float,  vufMatrix4>;
-	using vufMatrixArrayFn_2d = vufObjectArrayFn<double, vufMatrix2>;
-	using vufMatrixArrayFn_3d = vufObjectArrayFn<double, vufMatrix3>;
-	using vufMatrixArrayFn_4d = vufObjectArrayFn<double, vufMatrix4>;
+	//using vufMatrixArrayFn_2f = vufObjectArrayFn<float,  vufMatrix2>;
+	//using vufMatrixArrayFn_3f = vufObjectArrayFn<float,  vufMatrix3>;
+	//using vufMatrixArrayFn_4f = vufObjectArrayFn<float,  vufMatrix4>;
+	//using vufMatrixArrayFn_2d = vufObjectArrayFn<double, vufMatrix2>;
+	//using vufMatrixArrayFn_3d = vufObjectArrayFn<double, vufMatrix3>;
+	//using vufMatrixArrayFn_4d = vufObjectArrayFn<double, vufMatrix4>;
 
 #pragma endregion USING_MANES_MATRICES
 

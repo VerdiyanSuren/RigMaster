@@ -11,7 +11,6 @@ int main()
 	return 0;
 }
 */
-#include <serializer/vufStdVectorNumberSerializerFn.h>
 
 int main()
 {

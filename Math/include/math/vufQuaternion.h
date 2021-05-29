@@ -343,32 +343,35 @@ namespace vufMath
 			return p_offset;
 		}
 		/** write into bytes array return size of array of baties*/
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_writen_size = 0;
-			uint64_t l_old_buff_sz = p_buff.size();
-			p_buff.resize(l_old_buff_sz + 4 * sizeof(T));
-			for (uint64_t i = l_old_buff_sz; i < p_buff.size(); ++i)
+			if (p_buff.size() < p_offset + sizeof(T) * 4)
 			{
-				p_buff[i] = l_x[l_writen_size++];
+				p_buff.resize(p_offset + sizeof(T) * 4);
 			}
-			return l_writen_size;
+			char* l_data = (char*)&x;
+			std::memcpy(&p_buff[p_offset], l_data, sizeof(T) * 4);
+			return p_offset + sizeof(T) * 4;
 		}
 		/** read vector from binary return size of readed */
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 4 * sizeof(T))
 			{
 				return 0;
 			}
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_read_size = 0;
-			for (uint64_t i = p_offset; i < p_offset + 4 * sizeof(T); ++i)
-			{
-				l_x[l_read_size++] = p_buff[i];
-			}
-			return p_offset + l_read_size;
+			char* l_data = (char*)&x;
+			std::memcpy(l_data, &p_buff[p_offset], sizeof(T) * 4);
+			return  p_offset + 4 * sizeof(T);
+		}
+
+		uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		{
+			return vuf::txtSerializer::encode_to_buff(&x, 4 * sizeof(T), p_buff, p_offset);
+		}
+		uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		{
+			return vuf::txtSerializer::decode_from_buff(&x, 4 * sizeof(T), p_buff, p_offset);
 		}
 
 		static inline vufQuaternion set_by_angle_and_axis(const T p_angle, const vufVector4<T>& p_axis)
@@ -551,6 +554,7 @@ namespace vufMath
 	//------------------------------------------------------------------------------------------------------------------
 	// vufQuaternion Object
 	//------------------------------------------------------------------------------------------------------------------
+	/*
 #pragma region VUF_QUATERNION_OBJECT
 	template<typename T>
 	class vufQuaternionObject :public vufObject
@@ -732,19 +736,19 @@ namespace vufMath
 		return std::static_pointer_cast<vufQuaternionArrayObject<double>>(vufObject::m_this.lock());
 	}
 #pragma endregion VUF_QUATERNION_OBJECT_ARRAY
-
+*/
 #pragma region USING_NAMES
 	using vufQuaternion_f = vufQuaternion<float>;
 	using vufQuaternion_d = vufQuaternion<double>;
 
-	using vufQuaternionObject_f = vufQuaternionObject<float>;
-	using vufQuaternionObject_d = vufQuaternionObject<float>;
+	//using vufQuaternionObject_f = vufQuaternionObject<float>;
+	//using vufQuaternionObject_d = vufQuaternionObject<float>;
 
-	using vufQuaternionArrayObject_f = vufQuaternionArrayObject<float>;
-	using vufQuaternionArrayObject_d = vufQuaternionArrayObject<double>;
+	//using vufQuaternionArrayObject_f = vufQuaternionArrayObject<float>;
+	//using vufQuaternionArrayObject_d = vufQuaternionArrayObject<double>;
 
-	using vufQuaternionArrayFn_f = vufObjectArrayFn<float,  vufQuaternion>;
-	using vufQuaternionArrayFn_d = vufObjectArrayFn<double, vufQuaternion>;
+	//using vufQuaternionArrayFn_f = vufObjectArrayFn<float,  vufQuaternion>;
+	//using vufQuaternionArrayFn_d = vufObjectArrayFn<double, vufQuaternion>;
 #pragma endregion
 }
 #endif // !VF_MATH_QTRN_H

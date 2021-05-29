@@ -386,6 +386,14 @@ namespace vufMath
 															l_dist_1, l_dist_2,
 															l_res_t, l_res_dist, p_percition);
 		}
+		virtual uint64_t	encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const override
+		{
+			return 0;
+		}
+		virtual uint64_t	decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		override
+		{
+			return 0;
+		}
 
 
 		virtual vufCurveType	get_type()											const override
@@ -428,11 +436,11 @@ namespace vufMath
 			l_ss << l_str_offset << "[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
 		}
 		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0) override;
-		virtual uint64_t		to_binary(std::vector<unsigned char>& p_buff)							const override
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)					const override
 		{
 			return 0;
 		}
-		virtual uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0) override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override
 		{
 			return 0;
 		}

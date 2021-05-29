@@ -6,7 +6,7 @@
 #include <vufLog.h>
 namespace vuf
 {
-	class TxtSeriaslizerUT
+	class txtSeriaslizerUT
 	{
 	public:
 		bool run(bool p_verbose = false)
@@ -31,7 +31,7 @@ namespace vuf
 	private:
 		bool test_serialization(bool p_verbose = false)
 		{
-			if (test_encode_to_chars<int>(p_verbose) == true)
+			if (test_encode_decode<int>(p_verbose) == true)
 			{
 				std::cout << "___int serialization succeed" << std::endl;
 			}
@@ -40,7 +40,7 @@ namespace vuf
 				VF_LOG_ERR(vufStringUtils::string_padding(std::string("___int seriualization failed")));
 				return false;
 			}
-			if (test_encode_to_chars<double>(p_verbose) == true)
+			if (test_encode_decode<double>(p_verbose) == true)
 			{
 				std::cout << "___double serialization succeed" << std::endl;
 			}
@@ -53,16 +53,16 @@ namespace vuf
 			return true;
 		}
 		template <typename T>
-		bool test_encode_to_chars(bool p_verbose = false)
+		bool test_encode_decode(bool p_verbose = false)
 		{
 			//-----------------------------------------------------------------------------------------------------------------------------
 			// encode_to_buff
 			// decode_from_buff
 
 			// encode
-			T l_val_1 = (T)50676870.122132;
+			T l_val_1 = (T)-50676870.122132;
 			T l_val_2 = (T)-368687687.122132;
-			T l_val_3 = (T)798698689.122132;
+			T l_val_3 = (T)-798698689.122132;
 			constexpr char* l_char_ptr = R"(
 				this is a 
 				multiline 
@@ -137,11 +137,11 @@ namespace vuf
 					std::cout << "," << l_val_arr_21[i];
 				}
 				std::cout << "]" << std::endl;
-				std::cout << "____initial " << l_str_11 << std::endl << std::endl;
+				std::cout << "____decoded " << l_str_11 << std::endl << std::endl;
 				std::cout << "____---------------------------------------------------------------------" << std::endl;
 			}
 			if (l_val_1 != l_val_11			|| l_val_2 != l_val_21			|| l_val_3 != l_val_31 || 
-				l_val_arr_1 != l_val_arr_11 || l_val_arr_2 != l_val_arr_21	)
+				l_val_arr_1 != l_val_arr_11 || l_val_arr_2 != l_val_arr_21	|| l_str_1 != l_str_11)
 			{
 				VF_LOG_ERR("____Failed txtSerializer::encode_to_buff");
 				return false;

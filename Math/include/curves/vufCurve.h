@@ -91,7 +91,28 @@ namespace vufMath
 			}
 			return *this;
 		}
-
+		bool operator==(const vufPolinomCoeff& p_other) const
+		{
+			for (int i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				if (a[i] != p_other.a[i])
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		bool operator!=(const vufPolinomCoeff& p_other) const
+		{
+			for (int i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				if (a[i] != p_other.a[i])
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 		T eval(T t) const
 		{
 			T l_sum = 0;
@@ -277,28 +298,34 @@ namespace vufMath
 			return l_offset;
 		}
 		*/
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
-			std::vector<T> l_vec(MAX_POLYNOM_DEGREE + 1);
-			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			if (p_buff.size() < p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1))
 			{
-				l_vec[i] = a[i];
+				p_buff.resize(p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1));
 			}
-			vufNumericArrayFn<T> l_fn(l_vec);
-			return l_fn.to_binary(p_buff);
+			std::memcpy(&p_buff[p_offset], a, sizeof(T) * (MAX_POLYNOM_DEGREE + 1));
+			return  p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1);
 		}
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{
-			std::vector<T> l_vec;
-			vufNumericArrayFn<T> l_fn(l_vec);
-			uint64_t l_offset = l_fn.from_binary(p_buff, p_offset);
-			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			if (p_buff.size() < p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1))
 			{
-				a[i] = l_vec[i];
+				return 0;
 			}
-			return l_offset;
+			std::memcpy(a, &p_buff[p_offset], sizeof(T) * (MAX_POLYNOM_DEGREE + 1));
+			return p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1);
 		}
 		
+		uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		{
+			return vuf::txtSerializer::encode_to_buff(a, (MAX_POLYNOM_DEGREE + 1) * sizeof(T), p_buff, p_offset);
+		}
+		uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		{
+			return vuf::txtSerializer::decode_from_buff(a, (MAX_POLYNOM_DEGREE + 1) * sizeof(T), p_buff, p_offset);
+		}
+
 		friend std::ostream& operator<<(std::ostream& p_out, const vufPolinomCoeff<T, MAX_POLYNOM_DEGREE>& p_polinom)
 		{
 			p_out << "[ " << p_polinom.to_string() << " ]";
@@ -455,16 +482,17 @@ namespace vufMath
 		virtual V<T>			get_pos_at(T p_t)			const = 0;
 		virtual V<T>			get_tangent_at(T p_t)		const = 0;
 
-		virtual T	get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001) const= 0;
+		virtual T	get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10,		T p_percition = 0.00001) const= 0;
 		virtual T	get_closest_point_param_on_interval( const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const = 0;
 		
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;
-		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)					= 0;
-		virtual uint64_t		to_binary(std::vector<unsigned char>& p_buff)							const	= 0;
-		virtual uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)	= 0;
-		
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const	= 0;
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)				= 0;
+		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const	= 0;
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)				= 0;
+
 		// convert to explicit
 		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()		const { return nullptr; }
 		virtual	std::shared_ptr< vufCurveExplicit<T, V>>		as_implicit_curve()		const { return nullptr; }

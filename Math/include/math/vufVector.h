@@ -1,12 +1,14 @@
 #ifndef VF_MATH_VECTR_H
 #define VF_MATH_VECTR_H
 #include <cmath>
-#include "vufMathInclude.h"
+#include <vufMathInclude.h>
+
 #include <iostream>
 #include <sstream>
 #include <exception>
 #include <vector>
 
+#include <serializer/vufTxtSerializer.h>
 #include <vufObject.h>
 #include <vufObjectArrayFn.h>
 
@@ -988,33 +990,36 @@ namespace vufMath
 			}
 			return p_offset;
 		}
-		/** write into bytes array return size of array of baties*/
-		uint64_t		to_binary( std::vector<unsigned char>& p_buff )	const
+		/** write into bytes array return size of array of byties*/
+		uint64_t		to_binary( std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{			
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_writen_size = 0;
-			uint64_t l_old_buff_sz = p_buff.size();
-			p_buff.resize( l_old_buff_sz + 4 * sizeof(T) );
-			for ( uint64_t i = l_old_buff_sz; i < p_buff.size(); ++i)
+			if (p_buff.size() < p_offset + sizeof(T) * 4 )
 			{
-				p_buff[i] = l_x[l_writen_size++];
+				p_buff.resize(p_offset + sizeof(T) * 4);
 			}
-			return l_writen_size;
+			char* l_data = (char*)&x;
+			std::memcpy(&p_buff[p_offset], l_data, sizeof(T) * 4);
+			return p_offset + sizeof(T) * 4;
 		}
 		/** read vector from binary return size of readed */
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 4 * sizeof(T))
 			{
 				return 0;
 			}
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_read_size = 0;
-			for ( uint64_t i = p_offset; i < p_offset + 4 * sizeof(T); ++i)
-			{
-				l_x[l_read_size++] = p_buff[i];
-			}
-			return p_offset + l_read_size;
+			char* l_data = (char*)&x;	
+			std::memcpy(l_data, &p_buff[p_offset], sizeof(T) * 4);
+			return  p_offset + 4 * sizeof(T);
+		}
+
+		uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) const
+		{
+			return vuf::txtSerializer::encode_to_buff(&x, 4 * sizeof(T), p_buff, p_offset);
+		}
+		uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		{
+			return vuf::txtSerializer::decode_from_buff(&x, 4 * sizeof(T), p_buff, p_offset);
 		}
 		//----------------------------------
 		inline bool		is_equivalent(const vufVector4& p_other, T p_tolerance = vufVector4_kTol)
@@ -1104,6 +1109,7 @@ namespace vufMath
 	//------------------------------------------------------------------------------------------------------------------
 	// vufVector Object
 	//------------------------------------------------------------------------------------------------------------------
+	/*
 #pragma region VUF_VECTOR_OBJECT
 	template<typename T, template <typename> class VECTOR >
 	class vufVectorObject :public vufObject
@@ -1151,11 +1157,11 @@ namespace vufMath
 		{
 			return m_vector.from_string(p_str, p_offset);
 		}
-		virtual uint64_t	to_binary(std::vector<unsigned char>& p_buff)		const override
+		virtual uint64_t	to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const override
 		{
-			return m_vector.to_binary(p_buff);
+			return m_vector.to_binary(p_buff,p_offset);
 		}
-		virtual uint64_t	from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)  override
+		virtual uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)  override
 		{
 			return m_vector.from_binary(p_buff, p_offset);
 		}
@@ -1462,6 +1468,7 @@ namespace vufMath
 	//-------------------------------------------------------------------------------------------------------------------------
 	// USING NAMES
 	//-------------------------------------------------------------------------------------------------------------------------
+	*/
 #pragma region USING_NAMES
 	using vufVector_2f = vufVector2<float>; 
 	using vufVector_3f = vufVector3<float>;
@@ -1469,7 +1476,7 @@ namespace vufMath
 	using vufVector_2d = vufVector2<double>;
 	using vufVector_3d = vufVector3<double>;
 	using vufVector_4d = vufVector4<double>;
-
+	/*
 	using vufVectorObject_2f = vufVectorObject<float,  vufVector2>;
 	using vufVectorObject_3f = vufVectorObject<float,  vufVector3>;
 	using vufVectorObject_4f = vufVectorObject<float,  vufVector4>;
@@ -1490,6 +1497,7 @@ namespace vufMath
 	using vufVectorArrayFn_2f = vufObjectArrayFn<float,  vufVector2>;
 	using vufVectorArrayFn_3f = vufObjectArrayFn<float,  vufVector3>;
 	using vufVectorArrayFn_4f = vufObjectArrayFn<float,  vufVector4>;
+	*/
 
 #pragma endregion USING_NAMES 
 
