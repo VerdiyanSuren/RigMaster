@@ -25,6 +25,69 @@ namespace vufMath
 		virtual int			get_interval_index(T p_t) const = 0;
 		virtual uint32_t	get_interval_count() const = 0;
 
+		virtual uint64_t		get_binary_size() const override = 0
+		{
+			//std::cout << "------------------------------------- EXPLICIT::get_binary_size()--------------------- " << std::endl;
+			uint64_t l_array_size = m_nodes_pos_v.size();
+			uint64_t l_size = 0;
+			l_size += vufCurve < T, V>::get_binary_size(); 
+//std::cout << "vufCurve<T,V>::get_binary_size() " << l_size << std::endl;
+			l_size += sizeof(m_knot_weighted);
+			l_size += sizeof(l_array_size);
+			l_size += m_nodes_pos_v.size() * sizeof(V<T>);
+			return l_size;
+		}
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const override = 0
+		{
+			//std::cout << "------------------------------------- EXPLICIT::to_binary()--------------------- " << std::endl;
+
+			// resize if needed
+			uint64_t l_size = vufCurveExplicit<T, V>::get_binary_size();
+			if (p_buff.size() < p_offset + l_size)
+			{
+				p_buff.resize(p_offset + l_size);
+			}
+			uint64_t l_array_size = m_nodes_pos_v.size();
+			p_offset = vufCurve < T, V>::to_binary(p_buff, p_offset);
+//std::cout << "vufCurve<T, V>::to_binary->offset " << p_offset << std::endl;
+
+			std::memcpy(&p_buff[p_offset], &m_knot_weighted,		sizeof(m_knot_weighted));				p_offset += sizeof(m_knot_weighted);
+			std::memcpy(&p_buff[p_offset], &l_array_size,			sizeof(l_array_size));					p_offset += sizeof(l_array_size);
+			std::memcpy(&p_buff[p_offset], m_nodes_pos_v.data(),	m_nodes_pos_v.size() * sizeof(V<T>));	p_offset += m_nodes_pos_v.size() * sizeof(V<T>);
+
+			return p_offset;
+		}
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override= 0
+		{
+			//std::cout << "------------------------------------- EXPLICIT::from_binary()--------------------- " << std::endl;
+			p_offset = vufCurve < T, V>::from_binary(p_buff, p_offset);
+			if (p_offset == 0)
+			{
+				return 0;
+			}
+			uint64_t l_array_size;
+			if (p_buff.size() < p_offset + sizeof(m_knot_weighted))
+			{
+				return 0;
+			}
+			std::memcpy(&m_knot_weighted, &p_buff[p_offset],  sizeof(m_knot_weighted));				p_offset += sizeof(m_knot_weighted);
+			
+			if (p_buff.size() < p_offset + sizeof(l_array_size))
+			{
+				return 0;
+			}
+			
+			std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));					p_offset += sizeof(l_array_size);
+			m_nodes_pos_v.resize(l_array_size);
+			if (l_array_size == 0)
+			{
+				return p_offset;
+			}
+			std::memcpy(&m_nodes_pos_v[0], &p_buff[p_offset], l_array_size * sizeof(V<T>));			p_offset += l_array_size * sizeof(V<T>);
+
+			return p_offset;
+		}
+
 		virtual		std::shared_ptr< vufCurveExplicit<T, V> >	as_explicit_curve()	 const override
 		{ 
 			return std::static_pointer_cast<vufCurveExplicit<T, V>>(vufCurve<T,V>::m_this.lock());

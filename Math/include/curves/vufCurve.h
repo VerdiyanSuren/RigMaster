@@ -298,6 +298,10 @@ namespace vufMath
 			return l_offset;
 		}
 		*/
+		uint64_t		get_binary_size() const
+		{
+			return sizeof(T) * (MAX_POLYNOM_DEGREE + 1);
+		}
 		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
 			if (p_buff.size() < p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1))
@@ -488,10 +492,54 @@ namespace vufMath
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;
-		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const	= 0;
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)				= 0;
-		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const	= 0;
-		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)				= 0;
+		virtual uint64_t		get_binary_size() const = 0
+		{
+			return  sizeof(m_valid) + 
+					sizeof(m_has_degree) + 
+					sizeof(m_degree) + 
+					sizeof(m_explicit) + 
+					sizeof(m_close);
+		}
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
+		{
+			// resize if needed
+			uint64_t l_size = vufCurve<T, V>::get_binary_size();
+			if (p_buff.size() < p_offset + l_size)
+			{
+				p_buff.resize(p_offset + l_size);
+			}
+			std::memcpy(&p_buff[p_offset], &m_valid,		sizeof(m_valid));		p_offset += sizeof(m_valid);
+			std::memcpy(&p_buff[p_offset], &m_has_degree,	sizeof(m_has_degree));	p_offset += sizeof(m_has_degree);
+			std::memcpy(&p_buff[p_offset], &m_degree,		sizeof(m_degree));		p_offset += sizeof(m_degree);
+			std::memcpy(&p_buff[p_offset], &m_explicit,		sizeof(m_explicit));	p_offset += sizeof(m_explicit);
+			std::memcpy(&p_buff[p_offset], &m_close,		sizeof(m_close));		p_offset += sizeof(m_close);
+			return p_offset;
+		}
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) = 0
+		{
+			if (p_buff.size() < p_offset + vufCurve<T, V>::get_binary_size())
+			{
+				return 0;
+			}
+			std::memcpy(&m_valid,		&p_buff[p_offset], sizeof(m_valid));		p_offset += sizeof(m_valid);
+			std::memcpy(&m_has_degree,	&p_buff[p_offset], sizeof(m_has_degree));	p_offset += sizeof(m_has_degree);
+			std::memcpy(&m_degree,		&p_buff[p_offset], sizeof(m_degree));		p_offset += sizeof(m_degree);
+			std::memcpy(&m_explicit,	&p_buff[p_offset], sizeof(m_explicit));		p_offset += sizeof(m_explicit);
+			std::memcpy(&m_close,		&p_buff[p_offset], sizeof(m_close));		p_offset += sizeof(m_close);
+			return p_offset;
+		}
+		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const
+		{
+			uint64_t l_size = get_binary_size();
+			std::vector<char> l_buff(l_size);
+			to_binary(l_buff);
+			p_offset = vuf::txtSerializer::encode_to_buff(l_buff.data(), l_size, p_buff, p_offset);
+			return p_offset;
+		}
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		{
+			return 0
+		}
 
 		// convert to explicit
 		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()		const { return nullptr; }

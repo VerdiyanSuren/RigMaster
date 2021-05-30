@@ -37,6 +37,7 @@ std::vector<uint16_t>			vuf::txtSerializer::g_byte_to_char_v;
 #define VF_TXT_SERIALIZER_RELEAZE()	\
 vuf::txtSerializer::release();
 
+
 namespace vuf
 {
 	class VF_API txtSerializer
@@ -71,7 +72,7 @@ namespace vuf
 			g_char_to_byte_m.clear();
 			g_byte_to_char_v.clear();
 		}
-		
+
 		// binary -> ASCII(encoded)
 		static uint64_t encode_to_buff( const void* p_bytes_ptr, uint64_t p_size, std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{

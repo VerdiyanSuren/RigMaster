@@ -482,73 +482,148 @@ namespace vufMath
 				}
 			}
 			l_ss << l_str_offset << "[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
+			return l_ss.str();
 		}
 		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0) override;
-		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0) const override
+		virtual uint64_t		get_binary_size()													const override
 		{
-			// -- curve
-			//m_valid		(bool)
-			//m_has_degree	(bool)
-			//m_degree		(uint32_t)
-			//m_explicit	(bool)
-			//m_close		(bool)
-			uint64_t l_curve_size = sizeof(m_valid) + sizeof(m_has_degree) + sizeof(m_degree) + sizeof(m_explicit) + sizeof(m_close);
-			
-			// -- explicit
-			// m_knot_weighted	(bool)
-			// m_nodes_pos_v	(array)
-			l_curve_size += sizeof(m_knot_weighted) + sizeof(uint64_t) + m_nodes_pos_v.size() * sizeof(V<T>);
-			// -- open bspline
+//std::cout << "-------------------------------------OPEN_BSPLINE::get_binary_size()--------------------- "<< std::endl;
+			uint64_t l_size = 0;
+			l_size += vufCurveExplicit<T, V>::get_binary_size();
+//std::cout << "vufCurveExplicit<T, V>::get_binary_size() " << l_size << std::endl;
 			// m_knot_v			(array);
+			l_size += sizeof(uint64_t) + m_knot_v.size() * sizeof(T);
 			// m_n_v			(array(array))
+			l_size += sizeof(uint64_t);
+			for (uint64_t i = 0; i < m_n_v.size(); ++i)
+			{
+				l_size += sizeof(uint64_t);
+				for (uint64_t j = 0; j < m_n_v[i].size(); ++j)
+				{
+					l_size += m_n_v[i][j].get_binary_size();
+				}
+			}
 			// m_dn_v			(array(array))
-			l_curve_size += sizeof(uint64_t) + m_knot_v.size() * sizeof(T);
-			l_curve_size += sizeof(uint64_t);
-			for (uint64_t i = 0; i < m_n_v.size(); ++i)
+			l_size += sizeof(uint64_t);			
+			for (uint64_t i = 0; i < m_dn_v.size(); ++i)
 			{
-				l_curve_size += sizeof(uint64_t) + m_n_v[i].size() * sizeof(vufPolinomCoeff<T, CURVE_DEGREE > );
+				l_size += sizeof(uint64_t);
+				for (uint64_t j = 0; j < m_dn_v[i].size(); ++j)
+				{
+					l_size +=  m_dn_v[i][j].get_binary_size();
+				}
 			}
-			l_curve_size += sizeof(uint64_t);
-			for (uint64_t i = 0; i < m_n_v.size(); ++i)
-			{
-				l_curve_size += sizeof(uint64_t) + m_dn_v[i].size() * sizeof(vufPolinomCoeff<T, CURVE_DEGREE > );
-			}
+			return  l_size;
+		}
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)			const override
+		{
+			std::cout << "-------------------------------------OPEN_BSPLINE::to_binary()--------------------- " << std::endl;
+			uint64_t l_curve_size = get_binary_size();
 			//------------------------------------------------------
+			// resize if needed
 			if (p_buff.size() < p_offset + l_curve_size)
 			{
 				p_buff.resize(p_offset + l_curve_size);
 			}
-			// -- curve
-			std::memcpy(&p_buff[p_offset], &m_valid,		sizeof(m_valid));			p_offset += sizeof(m_valid);
-			std::memcpy(&p_buff[p_offset], &m_has_degree,	sizeof(m_has_degree));		p_offset += sizeof(m_has_degree);
-			std::memcpy(&p_buff[p_offset], &m_degree,		sizeof(m_degree));			p_offset += sizeof(m_degree);
-			std::memcpy(&p_buff[p_offset], &m_explicit,		sizeof(m_explicit));		p_offset += sizeof(m_explicit);
-			std::memcpy(&p_buff[p_offset], &m_close,		sizeof(m_close));			p_offset += sizeof(m_close);
-			// -- explicit
-			std::memcpy(&p_buff[p_offset], &m_knot_weighted,sizeof(m_knot_weighted));	p_offset += sizeof(m_knot_weighted);
-			uint64_t l_array_size = m_nodes_pos_v.size();
-			std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));						p_offset += sizeof(l_array_size);
-			if (l_array_size != 0)
+			//------------------------------------------------------
+			p_offset = vufCurveExplicit<T, V>::to_binary(p_buff, p_offset);
+//std::cout << "vufCurveExplicit<T, V>::to_binary->offset " << p_offset << std::endl;
+			if (p_offset == 0)
 			{
-				std::memcpy(&p_buff[p_offset], m_nodes_pos_v.data(), m_nodes_pos_v.size() * sizeof(V<T>));	p_offset += sizeof(l_array_size);
+				return 0;
 			}
 			// -- open bspline
-
-			return 0;
+			//m_knot_v
+			uint64_t l_array_size = m_knot_v.size();
+			std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			std::memcpy(&p_buff[p_offset], m_knot_v.data(), m_knot_v.size() * sizeof(T));	p_offset += m_knot_v.size() * sizeof(T);
+			// m_n_v
+			l_array_size = m_n_v.size();
+			std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			for (uint64_t i = 0; i < m_n_v.size(); ++i)
+			{
+				l_array_size = m_n_v[i].size();
+				std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));		p_offset += sizeof(l_array_size);
+				for (uint64_t j = 0; j < m_n_v[i].size(); ++j)
+				{
+					p_offset = m_n_v[i][j].to_binary(p_buff, p_offset);
+				}
+			}
+			// m_dn_v
+			l_array_size = m_dn_v.size();
+			std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			for (uint64_t i = 0; i < m_dn_v.size(); ++i)
+			{
+				l_array_size = m_dn_v[i].size();
+				std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));		p_offset += sizeof(l_array_size);
+				for (uint64_t j = 0; j < m_dn_v[i].size(); ++j)
+				{
+					p_offset = m_dn_v[i][j].to_binary(p_buff, p_offset);
+				}
+			}
+			return p_offset;
 		}
 		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override
 		{
-			return 0;
+			p_offset = vufCurveExplicit<T, V>::from_binary(p_buff, p_offset);
+			if (p_offset == 0)
+			{
+				return 0;
+			};
+			//m_knot_v
+			uint64_t l_array_size;
+			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
+			std::memcpy(&l_array_size, &p_buff[p_offset],  sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			m_knot_v.resize(l_array_size);
+			if (p_buff.size() < p_offset + m_knot_v.size() * sizeof(T)) return 0;
+			if (l_array_size > 0)
+			{
+				std::memcpy(&m_knot_v[0], &p_buff[p_offset],  l_array_size * sizeof(T));	p_offset += l_array_size * sizeof(T);
+			}
+			// m_n_v
+			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
+			std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			m_n_v.resize(l_array_size);
+			if (l_array_size > 0)
+			{
+				for (uint64_t i = 0; i < m_n_v.size(); ++i)
+				{
+					if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
+					std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));	p_offset += sizeof(l_array_size);
+					m_n_v[i].resize(l_array_size);
+					for (uint64_t j = 0; j < m_n_v[i].size(); ++j)
+					{
+						p_offset = m_n_v[i][j].from_binary(p_buff, p_offset);
+					}
+				}
+			}
+			// m_dn_v
+			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
+			std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			m_dn_v.resize(l_array_size);
+			if (l_array_size > 0)
+			{
+				for (uint64_t i = 0; i < m_dn_v.size(); ++i)
+				{
+					if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
+					std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));	p_offset += sizeof(l_array_size);
+					m_dn_v[i].resize(l_array_size);
+					for (uint64_t j = 0; j < m_dn_v[i].size(); ++j)
+					{
+						p_offset = m_dn_v[i][j].from_binary(p_buff, p_offset);
+					}
+				}
+			}
+			return p_offset;
 		}
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)	const override
 		{
-			return 0;
+			return vufCurve<T, V>::encode_to_buff(p_buff, p_offset);
 		}
 		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) override
 		{
-			return 0;
+			return vufCurve<T, V>::decode_from_buff(p_buff, p_offset);
 		}
-
 		/*
 		virtual void		log_me(int p_tab_count = 0) const override
 		{
