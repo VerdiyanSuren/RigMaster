@@ -538,7 +538,7 @@ namespace vufMath
 		}
 		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
 		{
-			return 0
+			return 0;
 		}
 
 		// convert to explicit

@@ -4,6 +4,9 @@
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\curves">
+      <UniqueIdentifier>{B0529C46-9C20-904C-85B4-007371216CB1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\data">
       <UniqueIdentifier>{B2CED969-9E31-690E-47B7-A1C433F93491}</UniqueIdentifier>
     </Filter>
@@ -34,6 +37,12 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\curves">
+      <UniqueIdentifier>{D44DB254-C005-F4A1-290D-CDFD15E48E92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curves\data">
+      <UniqueIdentifier>{DD133BA3-499F-A867-52B0-2B5CBEBA0468}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\data">
       <UniqueIdentifier>{D6B02ECF-C27D-89DA-EB96-7782D7C2BE68}</UniqueIdentifier>
     </Filter>
@@ -60,6 +69,42 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\vufCurveBSplineNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveBlendNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveClosestPointNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveFromMayaNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveGetTransform.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveLocator.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveNullNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveQuaternionNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveRebuildData.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveRebuildNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurvesInclude.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufToMayaCurveNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
     <ClInclude Include="include\data\vufData.h">
       <Filter>include\data</Filter>
     </ClInclude>
@@ -70,6 +115,9 @@
       <Filter>include\data</Filter>
     </ClInclude>
     <ClInclude Include="include\dataCollectors\vufMatrixListNode.h">
+      <Filter>include\dataCollectors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\dataCollectors\vufMatrixListNullNode.h">
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h">
@@ -158,10 +206,46 @@
     <ClCompile Include="include\vufLogMaya.cpp">
       <Filter>include</Filter>
     </ClCompile>
+    <ClCompile Include="src\curves\data\vufCurveData.cpp">
+      <Filter>src\curves\data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveBSplineNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveBlendNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveClosestPointNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveGetTransformNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveLocator.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveNullNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveRebuildData.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveRebuildNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufFCurvFromMayaNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufToMayaCurveNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
     <ClCompile Include="src\data\vufData.cpp">
       <Filter>src\data</Filter>
     </ClCompile>
     <ClCompile Include="src\dataCollectors\vufMatrixListNode.cpp">
+      <Filter>src\dataCollectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dataCollectors\vufMatrixListNullNode.cpp">
       <Filter>src\dataCollectors</Filter>
     </ClCompile>
     <ClCompile Include="src\expressions\data\vufMayaLuaPortData.cpp">

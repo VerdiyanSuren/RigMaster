@@ -113,7 +113,7 @@ namespace vuf
 			p_offset = encode_to_buff(&p_src, sizeof(p_src), p_buff, p_offset);
 			return p_offset;
 		}
-		static uint64_t encode_string_to_buff(const std::string& p_src, std::vector< char>& p_buff, uint64_t p_offset = 0)
+		static uint64_t encode_std_string_to_buff(const std::string& p_src, std::vector< char>& p_buff, uint64_t p_offset = 0)
 		{
 			uint64_t l_str_size = p_src.size();
 			p_offset = encode_to_buff(&l_str_size, sizeof(l_str_size), p_buff, p_offset);
@@ -164,7 +164,7 @@ namespace vuf
 			p_offset = decode_from_buff(&p_src, sizeof(p_src), p_buff, p_offset);
 			return p_offset;
 		}
-		static uint64_t decode_string_from_buff(std::string& p_src, std::vector< char>& p_buff, uint64_t p_offset = 0)
+		static uint64_t decode_std_string_from_buff(std::string& p_src, std::vector< char>& p_buff, uint64_t p_offset = 0)
 		{
 			std::vector<char> l_char_vec;
 			p_offset = decode_std_vector_from_buff(l_char_vec, p_buff, p_offset);
@@ -183,7 +183,6 @@ namespace vuf
 			if (p_offset_ptr != nullptr) *p_offset_ptr += sizeof(T);
 			return l_res;
 		}
-		
 		template<>
 		static std::string convert_bytes_to_value<std::string>(const std::vector<unsigned char>& p_bytes, uint64_t* p_offset_ptr)
 		{

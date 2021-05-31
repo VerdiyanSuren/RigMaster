@@ -10,10 +10,11 @@
 #include <expressions/nodes/vufMayaLuaTxtNode.h>
 #include <expressions/nodes/vufMayaLuaExpressionNode.h>
 #include <dataCollectors/vufMatrixListNode.h>
+#include <dataCollectors/vufMatrixListNullNode.h>
 #include <expressions/ui/vufExpressionWindowCmd.h>
 
 #include <vufMayaGlobalIncludes.h>
-#include <vufTxtSerializer.h>
+#include <serializer/vufTxtSerializer.h>
 
 #include <expressions/luaWrappers/luaUnitTest/vufLuaMayaMathUnitTest.h>
 
@@ -28,6 +29,7 @@ const MTypeId	vufMayaLuaExpressionNode::	g_id(0x197530);	const MString	vufMayaLu
 //  Transform List
 //const MTypeId	mpxTransformListWrapper::	g_id(0x297630);	const MString	mpxTransformListWrapper::	g_type_name("TransformListData");
 const MTypeId	vufMatrixListNode::			g_id(0x297630);	const MString	vufMatrixListNode::			g_type_name("vufMatrixList");
+const MTypeId	vufMatrixListNullNode::		g_id(0x297730);	const MString	vufMatrixListNullNode::		g_type_name("vufMatrixListNull");
 
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
@@ -50,6 +52,7 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufMayaLuaTxtNode);
 	VF_REGISTER_NODE(vufMayaLuaExpressionNode);
 	VF_REGISTER_NODE(vufMatrixListNode);
+	VF_REGISTER_NODE(vufMatrixListNullNode);
 
 	// register commands
 	VF_REGISTER_COMMAND(vufExpressionWindowCmd);
@@ -71,6 +74,7 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufMayaLuaTxtNode);
 	VF_DEREGISTER_NODE(vufMayaLuaExpressionNode);
 	VF_DEREGISTER_NODE(vufMatrixListNode);
+	VF_DEREGISTER_NODE(vufMatrixListNullNode);
 
 
 	VF_DEREGISTER_DATA(mpxMayaLuaPortWrapper);

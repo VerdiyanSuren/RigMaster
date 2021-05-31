@@ -3,7 +3,7 @@
 #include <expressions/luaWrappers/vufLuaMQuaternion.h>
 #include <expressions/luaWrappers/vufLuaMEulerRotation.h>
 #include <expressions/luaWrappers/vufLuaMMatrix.h>
-#include <vufVector.h>
+#include <math/vufVector.h>
 
 using namespace vufRM;
 

@@ -569,7 +569,7 @@ namespace vufMath
 		}
 		virtual uint64_t	decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		override
 		{
-			return 0;
+			return vufCurve<T, V>::decode_from_buff(p_buff, p_offset);
 		}
 		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0) override;
 

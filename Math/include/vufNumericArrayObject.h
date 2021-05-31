@@ -247,7 +247,7 @@ namespace vufMath
 		std::vector<T>& m_numeric_array_v;
 	};
 #pragma endregion
-#pragma region USING_MANES_NUMERIC_ARRAY
+#pragma region USING_NANES_NUMERIC_ARRAY
 	using vufFloatArrayObject	= vufNumericArrayObject<float>;
 	using vufDoubleArrayObject	= vufNumericArrayObject<double>;
 	using vufIntArrayObject		= vufNumericArrayObject<int>;

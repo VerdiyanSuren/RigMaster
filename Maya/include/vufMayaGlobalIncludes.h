@@ -91,15 +91,5 @@ std::ostream& operator,(std::ostream& out, const T& t)
 }
 std::ostream& operator,(std::ostream& out, std::ostream& (*f)(std::ostream&));
 
-//---------------------------------------------------------------------------------
-// Serialization macroses
-//---------------------------------------------------------------------------------
-#define VF_READ_SERIALIZED_FROM_ASCII(VAR_NAME,TYPE)													\
-{																										\
-	MString l_str = p_args.asString(p_last_element++, &l_status); CHECK_MSTATUS_AND_RETURN_IT(l_status);\
-	std::vector<unsigned char> l_bytes_vector = vuf::txtSerializer::to_bytes(l_str.asChar());			\
-	VAR_NAME = vuf::txtSerializer::convert_bytes_to_value<TYPE>(l_bytes_vector);						\
-}																										\
-
 
 #endif // !VF_TP_GLBL_INCLDS_H

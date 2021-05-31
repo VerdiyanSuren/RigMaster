@@ -1,5 +1,5 @@
-#ifndef VF_TP_TRNSFRM_LST_NODE_H
-#define VF_TP_TRNSFRM_LST_NODE_H
+#ifndef VF_RM_TRNSFRM_LST_NODE_H
+#define VF_RM_TRNSFRM_LST_NODE_H
 
 #include <maya/MPxNode.h>
 #include <maya/MMatrixArray.h>
@@ -19,16 +19,12 @@ namespace vufRM
 
 		static const MTypeId	g_id;
 		//attributes
-		static MObject	g_lock_attr;
 		static MObject	g_transform_in_attr;
 		static MObject	g_data_out_attr;
-		static MObject	g_data_store_attr;
 
-		static const MString	g_type_name;;
-		uint64_t				m_gen_id;
+		static const MString	g_type_name;
 	private:
-		MMatrixArray m_array;
+		MMatrixArray m_matrix_array;
 	};
-
 }
-#endif // !VF_TP_TRNSFRM_LST_NODE_H
+#endif // !VF_RM_TRNSFRM_LST_NODE_H

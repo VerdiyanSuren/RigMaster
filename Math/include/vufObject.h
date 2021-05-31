@@ -144,7 +144,7 @@ namespace vufMath
 		virtual uint64_t			to_binary(std::vector<unsigned char>& p_buff) const			= 0;
 		virtual uint64_t			from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0) = 0;
 
-		virtual vufObjectType									get_type() const = 0;
+		virtual vufObjectType		get_type() const = 0;
 		// standart vectors
 		virtual std::shared_ptr< vufVectorObject<float,  vufVector2> >		as_vector_object_2f()	const { return nullptr; }
 		virtual std::shared_ptr< vufVectorObject<float,  vufVector3> >		as_vector_object_3f()	const { return nullptr; }

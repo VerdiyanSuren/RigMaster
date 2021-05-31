@@ -3,16 +3,17 @@
 
 #include <data/vufData.h>
 #include <vufLuaWrapper.h>
-#include <vufMatrix.h>
+#include <math/vufMatrix.h>
 #include <expressions/data/vufMayaLuaPortInternalData.h>
 #include <curves/vufCurveContatiner.h>
+#include <vector>
 namespace vufRM
 {
 
 	VF_RM_DECLARE_STANDART_DATA_CLASS(mpxMayaLuaTxtWrapper,		vufMayaLuaTxtData,			vuf::vufTxt);
 	VF_RM_DECLARE_STANDART_DATA_CLASS(mpxMayaLuaPortWrapper,	vufMayaLuaPortData,			vufMayaLuaPortInternalData);
 	VF_RM_DECLARE_STANDART_DATA_CLASS(mpxCurveWrapper,			vufCurveContainerData_4d,	vufMath::vufCurveContainer_4d);
-	//VF_RM_DECLARE_STANDART_DATA_CLASS(mpxTransformListWrapper,	vufTransformListData,	vufMath::vufMatrixArrayObject_4d);
+	//VF_RM_DECLARE_STANDART_DATA_CLASS(mpxMatrixListWrapper,		vufMatrixListData,			std::vector<vufMath::vufMatrix4<double>>);
 	//add new datas here
 
 	/*

@@ -39,13 +39,16 @@
     <ClInclude Include="include\coreUtils\vufStringUtils.h">
       <Filter>include\coreUtils</Filter>
     </ClInclude>
-    <ClInclude Include="include\serializer\vufTxtStdVectorSerializerFn.h">
-      <Filter>include\serializer</Filter>
-    </ClInclude>
     <ClInclude Include="include\serializer\vufTxtSerializer.h">
       <Filter>include\serializer</Filter>
     </ClInclude>
+    <ClInclude Include="include\serializer\vufTxtStdVectorSerializerFn.h">
+      <Filter>include\serializer</Filter>
+    </ClInclude>
     <ClInclude Include="include\unitTestCore\serializer\vufTxtSeriaslizerUT.h">
+      <Filter>include\unitTestCore\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTestCore\serializer\vufTxtStdVectorSerializerFnUt.h">
       <Filter>include\unitTestCore\serializer</Filter>
     </ClInclude>
     <ClInclude Include="include\vufCoreInclude.h">
@@ -53,9 +56,6 @@
     </ClInclude>
     <ClInclude Include="include\vufLog.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\unitTestCore\serializer\vufTxtStdVectorSerializerFnUt.h">
-      <Filter>include\unitTestCore\serializer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
