@@ -1,12 +1,12 @@
 #ifndef VF_TP_QUAT_LCTR_H
 #define VF_TP_QUAT_LCTR_H
 
-#include "locator/vufLocator.h"
-#include "math/curves/vufCurveContatiner.h"
+#include <locator/vufLocator.h>
+#include <curves/vufCurveContatiner.h>
 #include <memory>
 
 
-namespace vufTP
+namespace vufRM
 {
 	class vufCurveLocator : public MPxLocatorNode
 	{

@@ -4,29 +4,29 @@
 #include <maya/MPointArray.h>
 #include <maya/MDoubleArray.h>
 
-#include "quatCurves/vufToMayaCurveNode.h"
-#include "quatCurves/vufCurveData.h"
-#include "vufGlobalIncludes.h"
+#include <curves/vufCurveToMayaNode.h>
+#include <data/vufMayaDataList.h>
+#include <vufMayaGlobalIncludes.h>
 
 
-using namespace vufTP;
+using namespace vufRM;
 
 //attributes
-MObject	vufToMayaCurveNode::g_lock_attr;
-MObject	vufToMayaCurveNode::g_data_in_attr;
-MObject	vufToMayaCurveNode::g_maya_curve_attr;
+MObject	vufCurveToMayaNode::g_lock_attr;
+MObject	vufCurveToMayaNode::g_data_in_attr;
+MObject	vufCurveToMayaNode::g_maya_curve_attr;
 
-void* vufToMayaCurveNode::creator()
+void* vufCurveToMayaNode::creator()
 {
-	return new vufToMayaCurveNode();
+	return new vufCurveToMayaNode();
 }
-MStatus	vufToMayaCurveNode::initialize()
+MStatus	vufCurveToMayaNode::initialize()
 {
 	MStatus l_status;
 	MFnTypedAttribute		l_typed_attr_fn;
 	MFnNumericAttribute		l_numeric_attr_fn;
 
-	VF_TP_CREATE_AND_ADD_LOCK_ATTR();
+	VF_RM_CREATE_AND_ADD_LOCK_ATTR();
 
 	//in quat curve data
 	g_data_in_attr = l_typed_attr_fn.create("inCurveData", "icd", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
@@ -52,7 +52,7 @@ MStatus	vufToMayaCurveNode::initialize()
 
 	return MS::kSuccess;
 }
-MStatus vufToMayaCurveNode::compute(const MPlug& p_plug, MDataBlock& p_data)
+MStatus vufCurveToMayaNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_maya_curve_attr)
 	{

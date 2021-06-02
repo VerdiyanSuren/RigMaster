@@ -5,7 +5,7 @@
 #include "math/curves/vufCurve.h"
 #include "math/curves/vufCurveRebuildFn.h"
 
-namespace vufTP
+namespace vufRM
 {
 	class vufCurveRebuildData_4d :public vufData
 	{

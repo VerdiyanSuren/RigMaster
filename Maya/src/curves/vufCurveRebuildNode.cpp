@@ -5,14 +5,12 @@
 #include <maya/MArrayDataHandle.h>
 #include <maya/MFnCompoundAttribute.h>
 
-#include "quatCurves/vufCurveRebuildNode.h"
-#include "quatCurves/vufCurveData.h"
-#include "quatCurves/vufCurveRebuildData.h"
-#include "vufGlobalIncludes.h"
+#include <curves/vufCurveRebuildNode.h>
+#include <data/vufMayaDataList.h>
+#include <vufMayaGlobalIncludes.h>
 
 
-
-using namespace vufTP;
+using namespace vufRM;
 using namespace vufMath;
 
 MObject	vufCurveRebuildNode::g_lock_attr;
@@ -45,8 +43,8 @@ MStatus	vufCurveRebuildNode::initialize()
 	MFnEnumAttribute		l_enum_attr_fn;
 	MFnCompoundAttribute	l_compound_attr_fn;
 	//------------------------------------------------------------------------------------------------
-	VF_TP_CREATE_AND_ADD_LOCK_ATTR();
-	VF_TP_CREATE_AND_ADD_PASS_ATTR();
+	VF_RM_CREATE_AND_ADD_LOCK_ATTR();
+	VF_RM_CREATE_AND_ADD_PASS_ATTR();
 	//------------------------------------------------------------------------------------------------
 	// Rebuild Always
 	g_rebuild_always_attr = l_numeric_attr_fn.create("rebuildAlways", "ral", MFnNumericData::kBoolean, false, &l_status);
@@ -124,18 +122,18 @@ MStatus	vufCurveRebuildNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		if (l_passed == true)
 		{
 			// Work as non locked null node
-			std::shared_ptr<vufCurveContainerData_4d> l_in_data;
-			std::shared_ptr<vufCurveContainerData_4d> l_out_data;
+			std::shared_ptr<vufCurveData> l_in_data;
+			std::shared_ptr<vufCurveData> l_out_data;
 			
-			VF_TP_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_curve_container_out_attr, l_out_data);
-			VF_TP_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_curve_container_in_attr, l_in_data);
+			VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_curve_container_out_attr, l_out_data);
+			VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveData, p_data, g_curve_container_in_attr, l_in_data);
 			if (l_in_data != nullptr)
 			{
-				l_out_data->m_curve_container_ptr = l_in_data->m_curve_container_ptr;
+				l_out_data->m_internal_data = l_in_data->m_internal_data;
 				p_data.setClean(g_curve_container_out_attr);
 				return MS::kSuccess;
 			}
-			l_out_data->m_curve_container_ptr = nullptr;
+			l_out_data->m_internal_data = nullptr;
 			p_data.setClean(g_curve_container_out_attr);
 			return MS::kSuccess;
 		}
@@ -143,11 +141,10 @@ MStatus	vufCurveRebuildNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		bool l_locked = p_data.inputValue(g_lock_attr).asBool();
 		if (l_locked == true)
 		{
-			std::shared_ptr<vufCurveContainerData_4d> l_in_data;
-			std::shared_ptr<vufCurveContainerData_4d> l_out_data;
+			std::shared_ptr<vufCurveData> l_in_data;
+			std::shared_ptr<vufCurveData> l_out_data;
 
 		}
-		std::shared_ptr<vufCurveRebuildData_4d> l_my_rebuild_data;
 
 		p_data.setClean(g_curve_container_out_attr);
 	}

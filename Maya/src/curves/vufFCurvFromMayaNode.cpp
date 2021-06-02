@@ -4,13 +4,13 @@
 #include <maya/MDoubleArray.h>
 #include <maya/MPointArray.h>
 
-#include "quatCurves/vufCurveFromMayaNode.h"
-#include "quatCurves/vufCurveData.h"
-#include "math/curves/vufOpenBSpline.h"
-#include "vufGlobalIncludes.h"
+#include <curves/vufCurveFromMayaNode.h>
+#include <data/vufMayaDataList.h>
+#include <curves/vufOpenBSpline.h>
+#include <vufMayaGlobalIncludes.h>
 
 
-using namespace vufTP;
+using namespace vufRM;
 using namespace vufMath;
 
 MObject	vufFromMayaCurveNode::g_lock_attr;
@@ -33,7 +33,7 @@ MStatus	vufFromMayaCurveNode::initialize()
 
 	//------------------------------------------------------------------------------------------------
 	// Lock
-	VF_TP_CREATE_AND_ADD_LOCK_ATTR();
+	VF_RM_CREATE_AND_ADD_LOCK_ATTR();
 	//------------------------------------------------------------------------------------------------
 	// Maya Curve Attribute
 	g_maya_curve_attr = l_typed_attr_fn.create("mayaCurve","mc",MFnData::kNurbsCurve, MObject::kNullObj, &l_status);
@@ -71,8 +71,8 @@ MStatus	vufFromMayaCurveNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		bool	l_locked			= p_data.inputValue(g_lock_attr).asBool();
 		//-----------------------------------------------------------------------
 		// Read our container data
-		std::shared_ptr<vufCurveContainerData_4d> l_out_data;
-		VF_TP_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_out_attr, l_out_data);
+		std::shared_ptr<vufCurveData> l_out_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
 		auto l_data_owner_id = l_out_data->get_owner_id();
 		if (l_out_data->get_owner_id() != m_gen_id)
 		{
@@ -80,9 +80,9 @@ MStatus	vufFromMayaCurveNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			// Copy data and make mine
 		}
 		l_out_data->set_owner_id(m_gen_id);
-		if (l_out_data->m_curve_container_ptr == nullptr)
+		if (l_out_data->m_internal_data == nullptr)
 		{
-			l_out_data->m_curve_container_ptr = vufCurveContainer_4d::create();
+			l_out_data->m_internal_data = vufCurveContainer_4d::create();
 		}
 		if (l_locked == true)
 		{
@@ -105,8 +105,8 @@ MStatus	vufFromMayaCurveNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_maya_crv_fn.getCVs(l_cv_array, MSpace::kWorld);
 			int l_degree = l_maya_crv_fn.degree();
 			//---------------------------------------------------------------------
-			bool l_is_crv_new	= l_out_data->m_curve_container_ptr->switch_curve( l_degree, vufMath::vufCurveType::k_open_bspline);
-			auto l_crv_ptr		= l_out_data->m_curve_container_ptr->get_curve_ptr()->as_explicit_curve();
+			bool l_is_crv_new	= l_out_data->m_internal_data->switch_curve( l_degree, vufMath::vufCurveType::k_open_bspline);
+			auto l_crv_ptr		= l_out_data->m_internal_data->get_curve_ptr()->as_explicit_curve();
 			
 			if (l_crv_ptr != nullptr )
 			{				
@@ -125,7 +125,7 @@ MStatus	vufFromMayaCurveNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
-		l_out_data->m_curve_container_ptr->set_curve_ptr(nullptr);
+		l_out_data->m_internal_data->set_curve_ptr(nullptr);
 		p_data.setClean(g_data_out_attr);
 		return MS::kSuccess;
 	}

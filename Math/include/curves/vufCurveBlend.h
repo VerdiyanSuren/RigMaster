@@ -17,7 +17,6 @@ namespace vufMath
 	private:
 		vufCurveBlend() :vufCurve<T, V>()
 		{
-			//std::cout << "OpenBSpline constructor" << std::endl;
 			vufCurve<T, V>::m_degree = 0;
 			vufCurve<T, V>::m_close = false;
 		}
@@ -90,36 +89,7 @@ namespace vufMath
 
 		void				set_weight(T p_val) { m_weight = p_val; }
 		T					get_weight() const { return m_weight; }
-		/// Get copy of this curve.	Original curve is unchenged
-		virtual std::shared_ptr<vufCurve<T, V>> get_copy() const override
-		{
-			std::shared_ptr< vufCurveBlend > l_ptr = vufCurveBlend::create();
 
-			l_ptr->m_degree = vufCurve<T, V>::m_degree;
-			l_ptr->m_close = vufCurve<T, V>::m_close;
-			l_ptr->m_valid = vufCurve<T, V>::m_valid;
-
-			l_ptr->m_first_container_ptr  = m_first_container_ptr == nullptr ? nullptr : m_first_container_ptr->get_copy();
-			l_ptr->m_second_container_ptr = m_second_container_ptr == nullptr ? nullptr : m_second_container_ptr->get_copy();
-
-			l_ptr->m_weight = m_weight;
-
-			return l_ptr;
-		}
-		/** set and get control point position*/
-		virtual T			get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001) const override
-		{
-			return get_closest_point_param_i(p_point, p_divisions, p_percition);
-		}
-		
-		virtual T	get_closest_point_param_on_interval(const V<T>& p_point,T p_t_1, T p_t_2, T p_percition = 0.00001) const  override
-		{
-			return get_closest_point_param_on_interval_i(	p_point, 
-															p_t_1, p_t_1, p_percition);
-		}
-		
-
-		//virtual int			get_interval_count() const = 0;
 		virtual vufCurveType	get_type()					const override
 		{
 			return vufCurveType::k_blend_curve;
@@ -156,25 +126,75 @@ namespace vufMath
 			}
 			return V<T>();
 		}
-
-		virtual void		log_me(int p_tab_count = 0) const override
+		/** set and get control point position*/
+		virtual T			get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001) const override
 		{
-			VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_AQUAA, VF_CONSOLE_COLOR_BLACK);
-
-			std::string l_str_offset(p_tab_count * 4, '.');
-			//std::cout << l_str_offset <<"-------------------------------------------------------------" << std::endl;
-			std::cout << l_str_offset << "[ Curve Blend <" << typeid(T).name() << ", " << typeid(V).name() << "> ]" << std::endl;
-			std::cout << " ]" << std::endl;
-			VF_CONSOLE_RESET_COLOR();
-			/*
-			std::cout << l_str_offset << "-------------------------------------------------------------" << std::endl;
-			*/
+			return get_closest_point_param_i(p_point, p_divisions, p_percition);
 		}
+		virtual T	get_closest_point_param_on_interval(const V<T>& p_point,T p_t_1, T p_t_2, T p_percition = 0.00001) const  override
+		{
+			return get_closest_point_param_on_interval_i(	p_point, 
+															p_t_1, p_t_1, p_percition);
+		}
+		//virtual int			get_interval_count() const = 0;
+		/// Get copy of this curve.	Original curve is unchenged
+		virtual std::shared_ptr<vufCurve<T, V>> get_copy() const override
+		{
+			std::shared_ptr< vufCurveBlend > l_ptr = vufCurveBlend::create();
+
+			l_ptr->m_degree = vufCurve<T, V>::m_degree;
+			l_ptr->m_close = vufCurve<T, V>::m_close;
+			l_ptr->m_valid = vufCurve<T, V>::m_valid;
+
+			l_ptr->m_first_container_ptr  = m_first_container_ptr == nullptr ? nullptr : m_first_container_ptr->get_copy();
+			l_ptr->m_second_container_ptr = m_second_container_ptr == nullptr ? nullptr : m_second_container_ptr->get_copy();
+
+			l_ptr->m_weight = m_weight;
+
+			return l_ptr;
+		}
+
+		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const override
+		{
+			// To Do 
+			// Implement This
+			return std::string();
+		}
+		virtual uint64_t		get_binary_size() const override
+		{
+			// To Do 
+			// Implement This
+			return  0;
+		}
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const override
+		{
+			// To Do 
+			// Implement This
+			return 0;
+		}
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override
+		{
+			// To Do 
+			// Implement This
+			return 0;
+		}
+		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const override
+		{
+			// To Do 
+			// Implement This
+			return 0;
+		}
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) override
+		{
+			// To Do 
+			// Implement This
+			return 0;
+		}
+
 		virtual std::shared_ptr<vufCurveBlend <T,V>>		as_curve_blend()	const override 
 		{ 
 			return std::static_pointer_cast<vufCurveBlend<T, V>>(vufCurve<T, V>::m_this.lock());
 		}
-
 	private:
 		std::shared_ptr< vufCurveContainer<T, V> >	m_first_container_ptr  = nullptr;
 		std::shared_ptr< vufCurveContainer<T, V> >	m_second_container_ptr = nullptr;

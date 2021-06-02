@@ -1,10 +1,10 @@
-#ifndef VF_TP_BLEND_CRV_NODE_H
-#define VF_TP_BLEND_CRV_NODE_H
+#ifndef VF_RM_BLEND_CRV_NODE_H
+#define VF_RM_BLEND_CRV_NODE_H
 
 #include <maya/MPxNode.h>
-#include "quatCurves/vufCurvesInclude.h"
+#include <curves/vufCurvesInclude.h>
 
-namespace vufTP
+namespace vufRM
 {
 	class vufCurveBlendNode : public MPxNode
 	{

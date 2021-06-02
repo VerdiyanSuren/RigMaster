@@ -24,7 +24,6 @@ namespace vufRM
 
 		static const MString	g_type_name;
 	private:
-		MMatrixArray m_matrix_array;
 	};
 }
 #endif // !VF_RM_TRNSFRM_LST_NODE_H

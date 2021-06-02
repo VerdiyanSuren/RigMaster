@@ -3,7 +3,7 @@
 
 #include <maya/MPxNode.h>
 
-namespace vufTP
+namespace vufRM
 {
 	class vufCurveRebuildNode : public MPxNode
 	{

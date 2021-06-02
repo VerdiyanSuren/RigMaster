@@ -203,24 +203,10 @@ namespace vufMath
 		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0) const
 		{
 			std::stringstream l_ss;
-			if (p_precision > 0)
-			{
-				if (p_precision > 64)
-				{
-					l_ss.precision(64);
-				}
-				else
-				{
-					l_ss.precision(p_precision);
-				}
-			}
-			if (p_tab_count > 0)
-			{
-				for (uint32_t i = 0; i < p_tab_count; ++i)
-				{
-					l_ss << "____";
-				}
-			}
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+			l_ss << l_str_offset;
 			bool l_record_exist = false;
 			for (int i = MAX_POLYNOM_DEGREE; i >= 0; --i)
 			{
@@ -445,7 +431,7 @@ namespace vufMath
 	*/
 	enum class vufCurveType :uint8_t
 	{
-		k_unknown					= 0,
+		k_none						= 0,
 		//open curves
 		k_open_bezier_piecewise		= 1,
 		k_close_bezier_piecewise	= 2,
@@ -528,7 +514,7 @@ namespace vufMath
 			std::memcpy(&m_close,		&p_buff[p_offset], sizeof(m_close));		p_offset += sizeof(m_close);
 			return p_offset;
 		}
-		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const
+		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
 		{
 			uint64_t l_size = get_binary_size();
 			std::vector<char> l_buff(l_size);
@@ -536,14 +522,16 @@ namespace vufMath
 			p_offset = vuf::txtSerializer::encode_to_buff(l_buff.data(), l_size, p_buff, p_offset);
 			return p_offset;
 		}
-		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
 		{
+			// To Do 
+			// Implement This
 			return 0;
 		}
 
 		// convert to explicit
 		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()		const { return nullptr; }
-		virtual	std::shared_ptr< vufCurveExplicit<T, V>>		as_implicit_curve()		const { return nullptr; }
+		//virtual	std::shared_ptr< vufCurveImplicit<T, V>>		as_implicit_curve()		const { return nullptr; }
 		// convert to open bspline
 		virtual std::shared_ptr<vufOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const {	return nullptr;	}
 		virtual std::shared_ptr<vufOpenBSpline <T, V, 2>>		as_open_bspline_di()	const { return nullptr; }

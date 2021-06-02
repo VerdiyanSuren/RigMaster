@@ -8,15 +8,15 @@
 #include <maya/MQuaternion.h>
 #include <maya/MEulerRotation.h>
 
-#include "quatCurves/vufCurveGetTransform.h"
-#include "math/vufMatrix.h"
-#include "math/vufQuaternion.h"
-#include "quatCurves/vufCurveData.h"
+#include <curves/vufCurveGetTransformNode.h>
+#include <math/vufMatrix.h>
+#include <math/vufQuaternion.h>
+#include <data/vufMayaDataList.h>
 
 
 #include <maya/MMatrix.h>
 
-using namespace vufTP;
+using namespace vufRM;
 using namespace vufMath;
 
 MObject	vufCurveGetTransformNode::g_parent_xform_attr;
@@ -204,14 +204,14 @@ MStatus	vufCurveGetTransformNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 		double l_rot_param	= p_data.inputValue(g_param_rot_attr).asDouble();
 		double l_scl_param	= p_data.inputValue(g_param_scl_attr).asDouble();
 
-		std::shared_ptr<vufCurveContainerData_4d> l_in_data;
-		VF_TP_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_in_curve_attr, l_in_data);
-		if (l_in_data != nullptr && l_in_data->m_curve_container_ptr != nullptr)
+		std::shared_ptr<vufCurveData> l_in_data;
+		VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveData, p_data, g_in_curve_attr, l_in_data);
+		if (l_in_data != nullptr && l_in_data->m_internal_data != nullptr)
 		{
 			//std::cout << "Compute: " << l_offset + l_pos_param <<std::endl;
-			auto l_pos = l_in_data->m_curve_container_ptr->get_pos_at(l_offset + l_pos_param);
-			auto l_qtr = l_in_data->m_curve_container_ptr->get_quaternion_at(l_offset + l_rot_param);
-			auto l_scl = l_in_data->m_curve_container_ptr->get_scale_at(l_offset + l_scl_param);
+			auto l_pos = l_in_data->m_internal_data->get_pos_at(l_offset + l_pos_param);
+			auto l_qtr = l_in_data->m_internal_data->get_quaternion_at(l_offset + l_rot_param);
+			auto l_scl = l_in_data->m_internal_data->get_scale_at(l_offset + l_scl_param);
 			//std::cout << "q: " << l_qtr << std::endl;
 			vufMatrix_4d l_matr;
 			l_matr.set_quaternion(l_qtr);

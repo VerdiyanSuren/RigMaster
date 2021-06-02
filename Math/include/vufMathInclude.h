@@ -26,24 +26,53 @@
 		++OFFSET;										\
 	}
 //--------------------------------------------------------------------------------
+#pragma region SIRIALIZE_ROUTINE
+#define VF_SAFE_CHECK_SIZE_AND_RETURN_IF_FAILED(BUFF, OFFSET, SIZE )	\
+	if (BUFF.size() < OFFSET + SIZE) return 0;
+
+#define VF_SAFE_READ_AND_RETURN_IF_FAILED(BUFF, OFFSET, DATA, SIZE )	\
+	if (BUFF.size() < OFFSET + SIZE) return 0;							\
+	std::memcpy(&DATA, &p_buff[p_offset], SIZE);						\
+	OFFSET += SIZE;
+
+#pragma endregion SIRIALIZE_ROUTINE
+//--------------------------------------------------------------------------------
 #pragma region SERIALIZE_NUMERIC_ARRAY
+// Set precission
+#define VF_SET_PRECISION(SS,PRECISION)				\
+	if (PRECISION > 0)								\
+	{												\
+		if (PRECISION > 64)							\
+		{											\
+			SS.precision(64);						\
+		}											\
+		else										\
+		{											\
+			SS.precision(PRECISION);				\
+		}											\
+	}
+
+// Tab count
+#define VF_GENERATE_TAB_COUNT(STR,COUNT,SYMBOL)		\
+	STR = std::string(COUNT * 4, SYMBOL);
+
 // Serialize numeric
 // Write numeric to string
-#define VF_NUMERIC_ARRAY_TO_STRING_AND_RETURN_IT(ARRAY)	\
-	uint64_t l_sz = ARRAY.size();						\
-	std::stringstream l_ss;								\
-	l_ss.precision(64);									\
-	l_ss << "[[" << l_sz << ']';						\
-	if (l_sz > 0)										\
-	{													\
-		l_ss << ARRAY[0];								\
-	}													\
-	for (uint64_t i = 1; i < l_sz; ++i)					\
-	{													\
-		l_ss << "," <<  ARRAY[i];						\
-	}													\
-	l_ss << ']';										\
-	return l_ss.str()
+#define VF_NUMERIC_ARRAY_TO_STRING(SS,ARRAY)	\
+{												\
+	uint64_t l_sz = ARRAY.size();				\
+	SS << "[[" << l_sz << ']';					\
+	if (l_sz > 0)								\
+	{											\
+		l_ss << ARRAY[0];						\
+	}											\
+	for (uint64_t i = 1; i < l_sz; ++i)			\
+	{											\
+		l_ss << "," << ARRAY[i];				\
+	}											\
+	l_ss << ']';								\
+}
+
 // Read numeric from string 
 #define VF_NUMERIC_ARRAY_FROM_STRING_AND_RETURN_OFFSET( STR, OFFSET, ARRAY)								\
 	uint64_t l_str_pos = OFFSET;																		\

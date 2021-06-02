@@ -1,11 +1,11 @@
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 
-#include "quatCurves/vufCurveNullNode.h"
-#include "quatCurves/vufCurveData.h"
-#include "vufGlobalIncludes.h"
+#include <curves/vufCurveNullNode.h>
+#include <data/vufMayaDataList.h>
+#include <vufMayaGlobalIncludes.h>
 
-using namespace vufTP;
+using namespace vufRM;
 
 MObject	vufCurveNullNode::g_lock_attr;
 MObject	vufCurveNullNode::g_data_in_attr;
@@ -30,7 +30,7 @@ MStatus	vufCurveNullNode::initialize()
 	l_numeric_attr_fn.setHidden(false);
 	l_numeric_attr_fn.setKeyable(true);
 	*/
-	VF_TP_CREATE_AND_ADD_LOCK_ATTR();
+	VF_RM_CREATE_AND_ADD_LOCK_ATTR();
 	// Input Data
 	g_data_in_attr = l_typed_attr_fn.create("inCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -69,12 +69,12 @@ MStatus	vufCurveNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		MStatus l_status;
 		bool	l_locked = p_data.inputValue(g_lock_attr).asBool();
 
-		std::shared_ptr<vufCurveContainerData_4d> l_in_data;
-		std::shared_ptr<vufCurveContainerData_4d> l_out_data;
-		std::shared_ptr<vufCurveContainerData_4d> l_internal_data;
+		std::shared_ptr<vufCurveData> l_in_data;
+		std::shared_ptr<vufCurveData> l_out_data;
+		std::shared_ptr<vufCurveData> l_internal_data;
 
-		VF_TP_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_out_attr,	l_out_data);
-		VF_TP_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_store_data_attr,l_internal_data);
+		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr,	l_out_data);
+		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_store_data_attr,l_internal_data);
 		//------------------------------------------------------------------------------------------------------------
 		// Locked Node
 		if (l_locked == true)
@@ -86,12 +86,12 @@ MStatus	vufCurveNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		//------------------------------------------------------------------------------------------------------------
 		// Unlocked Node
 		m_was_locked = false;
-		l_internal_data->m_curve_container_ptr	= nullptr;
-		l_out_data->m_curve_container_ptr		= nullptr;
-		VF_TP_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_in_attr, l_in_data);
+		l_internal_data->m_internal_data	= nullptr;
+		l_out_data->m_internal_data = nullptr;
+		VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_in_attr, l_in_data);
 		if (l_in_data != nullptr)
 		{
-			l_out_data->m_curve_container_ptr = l_in_data->m_curve_container_ptr;
+			l_out_data->m_internal_data = l_in_data->m_internal_data;
 		}
 		p_data.setClean(g_data_out_attr);
 		return MS::kSuccess;
@@ -99,22 +99,22 @@ MStatus	vufCurveNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	return MS::kUnknownParameter;
 }
 void vufCurveNullNode::get_locked_ptr(	MDataBlock& p_data,
-										std::shared_ptr<vufCurveContainerData_4d>& p_internal,
-										std::shared_ptr<vufCurveContainerData_4d>& p_input,
-										std::shared_ptr<vufCurveContainerData_4d>& p_result)
+										std::shared_ptr<vufCurveData>& p_internal,
+										std::shared_ptr<vufCurveData>& p_input,
+										std::shared_ptr<vufCurveData>& p_result)
 {
 	if (m_was_locked == true)
 	{
-		p_result->m_curve_container_ptr = p_internal->m_curve_container_ptr;
+		p_result->m_internal_data = p_internal->m_internal_data;
 		return;
 	}
-	VF_TP_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_in_attr, p_input);
-	p_internal->m_curve_container_ptr = nullptr;
-	if (p_input != nullptr && p_input->m_curve_container_ptr != nullptr)
+	VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_in_attr, p_input);
+	p_internal->m_internal_data = nullptr;
+	if (p_input != nullptr && p_input->m_internal_data != nullptr)
 	{
-		p_internal->m_curve_container_ptr = p_input->m_curve_container_ptr->get_copy();
+		p_internal->m_internal_data = p_input->m_internal_data->get_copy();
 	}
-	p_result->m_curve_container_ptr = p_internal->m_curve_container_ptr;
+	p_result->m_internal_data = p_internal->m_internal_data;
 	m_was_locked = true;
 }
 

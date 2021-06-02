@@ -2,6 +2,7 @@
 #define VF_TP_QUAT_CRV_NODE_H
 
 #include <maya/MPxNode.h>
+#include <maya/MMatrixArray.h>
 #include <curves/vufCurvesInclude.h>
 
 namespace vufRM
@@ -41,18 +42,17 @@ namespace vufRM
 		static MObject	g_degree_attr;
 
 		// Quaternion
-		VF_TP_CRV_NODE_DECLARE_QUATERNIONS_ATTR();
+		VF_RM_CRV_NODE_DECLARE_QUATERNIONS_ATTR();
 		// Rebuild
-		VF_TP_CRV_NODE_DECLARE_REBUILD_ATTR();
+		VF_RM_CRV_NODE_DECLARE_REBUILD_ATTR();
 		// Scale
-		VF_TP_CRV_NODE_DECLARE_SCALE_ATTR();
+		VF_RM_CRV_NODE_DECLARE_SCALE_ATTR();
 
 		static MObject	g_transfoms_attr;
 		static MObject	g_data_out_attr;
 
 	private:
 		uint64_t		m_gen_id;
-
 	};
 }
 #endif // !VF_TP_QUAT_CRV_NODE_H

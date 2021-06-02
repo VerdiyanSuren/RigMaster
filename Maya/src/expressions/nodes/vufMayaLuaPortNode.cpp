@@ -81,4 +81,3 @@ MStatus	vufMayaLuaPortNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 
 	return MS::kUnknownParameter;
 }
-

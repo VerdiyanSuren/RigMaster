@@ -3,12 +3,12 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MFnCompoundAttribute.h>
 
-#include "quatCurves/vufCurveBlendNode.h"
-#include "math/curves/vufCurveBlend.h"
-#include "quatCurves/vufCurveData.h"
-#include "vufGlobalIncludes.h"
+#include <curves/vufCurveBlendNode.h>
+#include <curves/vufCurveBlend.h>
+#include <data/vufMayaDataList.h>
+#include <vufMayaGlobalIncludes.h>
 
-using namespace vufTP;
+using namespace vufRM;
 using namespace vufMath;
 
 MObject	vufCurveBlendNode::g_curve_container_1_attr;
@@ -47,7 +47,7 @@ MStatus	vufCurveBlendNode::initialize()
 	CHECK_MSTATUS(l_typed_attr_fn.setHidden(false));
 	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 
-	VF_TP_CREATE_STORABLE_NUMERIC_ATTR(g_weight_attr, weight, w, kDouble, 0.5);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_weight_attr, "weight", "w", kDouble, 0.5);
 	CHECK_MSTATUS(l_numeric_attr_fn.setKeyable(true)); 
 	CHECK_MSTATUS(l_numeric_attr_fn.setMin(0));
 	CHECK_MSTATUS(l_numeric_attr_fn.setMax(1));
@@ -77,27 +77,27 @@ MStatus	vufCurveBlendNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		MStatus l_status;
 		double l_weight = p_data.inputValue(g_weight_attr).asDouble();
 
-		std::shared_ptr<vufCurveContainerData_4d> l_in_container_1;
-		std::shared_ptr<vufCurveContainerData_4d> l_in_container_2;
-		std::shared_ptr<vufCurveContainerData_4d> l_out_data;
+		std::shared_ptr<vufCurveData> l_in_container_1;
+		std::shared_ptr<vufCurveData> l_in_container_2;
+		std::shared_ptr<vufCurveData> l_out_data;
 		//std::shared_ptr<vufCurveContainerData_4d> l_internal_data;
 
-		VF_TP_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_out_attr, l_out_data);
+		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
 
-		VF_TP_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_curve_container_1_attr, l_in_container_1);
-		VF_TP_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_curve_container_2_attr, l_in_container_2);
-		if (l_out_data->m_curve_container_ptr == nullptr)
+		VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveData, p_data, g_curve_container_1_attr, l_in_container_1);
+		VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveData, p_data, g_curve_container_2_attr, l_in_container_2);
+		if (l_out_data->m_internal_data == nullptr)
 		{
-			l_out_data->m_curve_container_ptr = vufCurveContainer_4d::create();
+			l_out_data->m_internal_data = vufCurveContainer_4d::create();
 		}
-		vufCurveContainer_4d& l_container = *(l_out_data->m_curve_container_ptr.get());
+		vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
 		l_container.switch_curve(0, vufCurveType::k_blend_curve);
 		l_container.switch_quaternion_fn(vufCurveQuatFnType::k_blend);
 		
 		auto l_crv_ptr = l_container.get_curve_ptr();
 		std::shared_ptr<vufCurveBlend_4d> l_blend_ptr = std::static_pointer_cast<vufCurveBlend_4d>( l_crv_ptr );
-		l_blend_ptr->set_container_ptr_1(l_in_container_1->m_curve_container_ptr);
-		l_blend_ptr->set_container_ptr_2(l_in_container_2->m_curve_container_ptr);
+		l_blend_ptr->set_container_ptr_1(l_in_container_1->m_internal_data);
+		l_blend_ptr->set_container_ptr_2(l_in_container_2->m_internal_data);
 		l_blend_ptr->set_weight(l_weight);
 		
 		p_data.setClean(g_data_out_attr);

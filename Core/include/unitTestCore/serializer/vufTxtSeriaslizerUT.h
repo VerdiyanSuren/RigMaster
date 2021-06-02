@@ -83,7 +83,7 @@ namespace vuf
 			l_offset			= txtSerializer::encode_number_to_buff(l_val_3, l_buff, l_offset);
 			l_offset			= txtSerializer::encode_std_vector_to_buff(l_val_arr_1, l_buff, l_offset);
 			l_offset			= txtSerializer::encode_std_vector_to_buff(l_val_arr_2, l_buff, l_offset);
-			l_offset			= txtSerializer::encode_string_to_buff(l_str_1, l_buff, l_offset);
+			l_offset			= txtSerializer::encode_std_string_to_buff(l_str_1, l_buff, l_offset);
 			// decode
 			T l_val_11;
 			T l_val_21;
@@ -96,7 +96,7 @@ namespace vuf
 			l_offset = txtSerializer::decode_number_from_buff(l_val_31, l_buff, l_offset);
 			l_offset = txtSerializer::decode_std_vector_from_buff(l_val_arr_11, l_buff, l_offset);
 			l_offset = txtSerializer::decode_std_vector_from_buff(l_val_arr_21, l_buff, l_offset);
-			l_offset = txtSerializer::decode_string_from_buff(l_str_11, l_buff, l_offset);
+			l_offset = txtSerializer::decode_std_string_from_buff(l_str_11, l_buff, l_offset);
 
 			if (p_verbose == true)
 			{

@@ -1,14 +1,16 @@
-#include "quatCurves/vufCurveLocator.h"
-#include "quatCurves/vufCurveData.h"
-#include "math/curves/vufCurve.h"
-#include "math/curves/vufCurveContatiner.h"
+
+#include <curves/locator/vufCurveLocator.h>
+#include <data/vufMayaDataList.h>
+#include <curves/vufCurve.h>
+#include <curves/vufCurveContatiner.h>
 
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MHWGeometryUtilities.h>
 #include <maya/MPointArray.h>
+#include <maya/MGlobal.h>
 
-using namespace vufTP;
+using namespace vufRM;
 using namespace vufMath;
 
 MObject	vufCurveLocator::g_in_data_attr;
@@ -105,8 +107,9 @@ MUserData*			vufCurveLocatorDrawOverride::prepareForDraw(	const MDagPath& p_obj_
 	
 	l_status = p_data_plug.getValue(l_input_data_obj);
 	if (l_status != MS::kSuccess)
+	{
 		return nullptr;
-
+	}
 	MFnPluginData	l_plugin_data_fn(l_input_data_obj);
 	mpxCurveWrapper* l_in_data_wrap_ptr = (mpxCurveWrapper*)l_plugin_data_fn.constData(&l_status);
 	if (l_in_data_wrap_ptr == nullptr)
@@ -115,7 +118,7 @@ MUserData*			vufCurveLocatorDrawOverride::prepareForDraw(	const MDagPath& p_obj_
 		return nullptr;
 	}
 	auto l_data_ptr = l_in_data_wrap_ptr->get_data();
-	l_locator_data_ptr->m_curve_container_ptr = l_data_ptr == nullptr ? nullptr: l_data_ptr->m_curve_container_ptr;
+	l_locator_data_ptr->m_curve_container_ptr = l_data_ptr == nullptr ? nullptr: l_data_ptr->m_internal_data;
 	return p_old_data;
 }
 // All draw routinies are here
@@ -128,22 +131,19 @@ void				vufCurveLocatorDrawOverride::addUIDrawables(	const MDagPath&					p_obj_p
 	{
 		return;
 	}
-
 	vufCurveLocatorData* l_locator_data_ptr = (vufCurveLocatorData*)p_data;
 	if (l_locator_data_ptr->m_curve_container_ptr == nullptr)
 	{
 		return;
 	}
-
 	std::shared_ptr<vufMath::vufCurve_4d> l_curve_ptr = l_locator_data_ptr->m_curve_container_ptr->get_curve_ptr();
 	if (l_curve_ptr == nullptr || l_curve_ptr->is_valid() == false)
 	{
 		return;
-	}
-	
+	}	
 	//p_draw_manager.beginDrawable();
 	p_draw_manager.beginDrawInXray();
-	
+
 	p_draw_manager.setColor(MColor(1.0, .0, .0));
 	double	l_step = 1.0 / 100.;
 	vufVector_4d	l_start = l_locator_data_ptr->m_curve_container_ptr->get_pos_at(0.0 );
@@ -160,7 +160,8 @@ void				vufCurveLocatorDrawOverride::addUIDrawables(	const MDagPath&					p_obj_p
 		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
 
 		p_draw_manager.line( l_0,l_1);
-	}	
+	}
+
 	p_draw_manager.endDrawInXray();
 	//p_draw_manager.endDrawable();
 }

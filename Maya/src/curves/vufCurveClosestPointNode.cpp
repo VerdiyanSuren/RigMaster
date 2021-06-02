@@ -1,15 +1,14 @@
-#include "quatCurves/vufCurveData.h"
-#include "quatCurves/vufCurveClosestPointNode.h"
-#include "quatCurves/vufCurveData.h"
-#include "vufGlobalIncludes.h"
-#include "math/vufVector.h"
+#include <data/vufMayaDataList.h>
+#include <curves/vufCurveClosestPointNode.h>
+#include <vufMayaGlobalIncludes.h>
+#include <math/vufVector.h>
 
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnMatrixAttribute.h>
 #include <maya/MMatrix.h>
 
-using namespace vufTP;
+using namespace vufRM;
 using namespace vufMath;
 MObject	vufCurveClosestPointNode::g_in_curve_attr;
 MObject	vufCurveClosestPointNode::g_xform_in_attr;
@@ -92,11 +91,11 @@ MStatus	vufCurveClosestPointNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 		p_plug == g_dist_attr)
 	{
 		MMatrix l_matr = p_data.inputValue(g_xform_in_attr).asMatrix();
-		std::shared_ptr<vufCurveContainerData_4d> l_in_data;
-		VF_TP_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_in_curve_attr, l_in_data);
-		if (l_in_data != nullptr && l_in_data->m_curve_container_ptr != nullptr)
+		std::shared_ptr<vufCurveData> l_in_data;
+		VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveData, p_data, g_in_curve_attr, l_in_data);
+		if (l_in_data != nullptr && l_in_data->m_internal_data != nullptr)
 		{		
-			auto l_crv_ptr = l_in_data->m_curve_container_ptr->get_curve_ptr();
+			auto l_crv_ptr = l_in_data->m_internal_data->get_curve_ptr();
 			vufVector_4d l_point(l_matr[3][0], l_matr[3][1], l_matr[3][2]);
 			//l_crv_ptr->log_me();
 			auto l_param	= l_crv_ptr->get_closest_point_param(l_point);

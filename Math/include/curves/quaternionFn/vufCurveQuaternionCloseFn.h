@@ -97,25 +97,7 @@ namespace vufMath
 			return vufQuaternion<T>();
 		}
 
-		virtual vufCurveQuatFnType get_type() const override { return vufCurveQuatFnType::k_closest; }
-		virtual void	log_me(int p_tab_count = 0) const override
-		{
-			std::string l_str_offset(p_tab_count * 4, '.');
-			VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_GREEN, VF_CONSOLE_COLOR_BLACK);
-			std::cout << std::fixed;
-			std::cout << l_str_offset << "[ Quaternion Close Fn ]: " << std::endl;
-			std::cout << l_str_offset << "Pin_to_start: " << vufCurveQuaternionFn<T, V>::m_pin_start << std::endl;
-			std::cout << l_str_offset << "Pin_star_value: " << vufCurveQuaternionFn<T, V>::m_pin_start_value << std::endl;
-			std::cout << l_str_offset << "Pin_to_end: " << vufCurveQuaternionFn<T, V>::m_pin_end << std::endl;
-			std::cout << l_str_offset << "Pin_end value: " << vufCurveQuaternionFn<T, V>::m_pin_end_value << std::endl;
-			std::cout << l_str_offset << "Quaternion params: [";
-			for (uint64_t i = 0; i < m_quat_param_v.size(); ++i)
-			{
-				std::cout << " " << m_quat_param_v[i];
-			}
-			std::cout << " ]" << std::endl;
-			VF_CONSOLE_RESET_COLOR();
-		}
+		virtual vufCurveQuatFnType get_type() const override { return vufCurveQuatFnType::k_closest; }		
 		virtual void	set_item_count(uint32_t p_count) override
 		{
 			if (m_positon_v.size() != p_count)
@@ -234,6 +216,91 @@ namespace vufMath
 		{
 			return std::static_pointer_cast<vufCurveQuaternionCloseFn<T, V>> (vufCurveQuaternionCloseFn<T, V>::m_this.lock());
 		}
+
+		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const = 0
+		{
+			std::stringstream l_ss;
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+
+			l_ss << l_str_offset << "[ vufCurveQuaternionCloseFn < " << typeid(T).name() << ", " << typeid(V).name() << "> ]" << std::endl;
+			l_ss << vufCurveQuaternionFn<T, V>::to_string(-1, p_tab_count + 1);
+			
+			l_ss << l_str_offset << "____y_axis: ";
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_y_axis_v);
+			l_ss << std::endl;
+
+			l_ss << l_str_offset << "____positon_v: ";
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_positon_v);
+			l_ss << std::endl;
+
+			l_ss << l_str_offset << "____quaternion_a: ";
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_quaternion_a_v);
+			l_ss << std::endl;
+
+			l_ss << l_str_offset << "____quaternion_b: ";
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_quaternion_b_v);
+			l_ss << std::endl;
+
+			l_ss << l_str_offset << "____quat_param_v: ";
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_quat_param_v);
+			l_ss << std::endl;
+
+			l_ss << l_str_offset << "____quat_indeces_v: ";
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_quat_indeces_v);
+			l_ss << std::endl;
+
+			return l_ss.str();
+		}
+		virtual uint64_t		get_binary_size()														const = 0
+		{
+			uint64_t l_size = vufCurveQuaternionFn<T, V>::get_binary_size();
+			
+
+			return l_size;
+		}
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
+		{
+			uint64_t l_size = vufCurveQuaternionFn<T, V>::get_binary_size();
+			if (p_buff.size() < p_offset + l_size)
+			{
+				p_buff.resize(p_offset + l_size);
+			}
+			std::memcpy(&p_buff[p_offset], &m_valid, sizeof(m_valid));			p_offset += sizeof(m_valid);
+			std::memcpy(&p_buff[p_offset], &m_pin_start, sizeof(m_pin_start));		p_offset += sizeof(m_pin_start);
+			std::memcpy(&p_buff[p_offset], &m_pin_start_value, sizeof(m_pin_start_value));	p_offset += sizeof(m_pin_start_value);
+			std::memcpy(&p_buff[p_offset], &m_pin_end, sizeof(m_pin_end));			p_offset += sizeof(m_pin_end);
+			std::memcpy(&p_buff[p_offset], &m_pin_end_value, sizeof(m_pin_end_value));	p_offset += sizeof(m_pin_end_value);
+			std::memcpy(&p_buff[p_offset], &m_offset, sizeof(m_offset));			p_offset += sizeof(m_offset);
+
+			return p_offset;
+		}
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) = 0
+		{
+			uint64_t l_size = vufCurveQuaternionFn<T, V>::get_binary_size();
+			if (p_buff.size() < p_offset + l_size)
+			{
+				return 0;
+			}
+			std::memcpy(&m_valid, &p_buff[p_offset], sizeof(m_valid));			p_offset += sizeof(m_valid);
+			std::memcpy(&m_pin_start, &p_buff[p_offset], sizeof(m_pin_start));		p_offset += sizeof(m_pin_start);
+			std::memcpy(&m_pin_start_value, &p_buff[p_offset], sizeof(m_pin_start_value));	p_offset += sizeof(m_pin_start_value);
+			std::memcpy(&m_pin_end, &p_buff[p_offset], sizeof(m_pin_end));			p_offset += sizeof(m_pin_end);
+			std::memcpy(&m_pin_end_value, &p_buff[p_offset], sizeof(m_pin_end_value));	p_offset += sizeof(m_pin_end_value);
+			std::memcpy(&m_offset, &p_buff[p_offset], sizeof(m_offset));			p_offset += sizeof(m_offset);
+
+			return p_offset;
+		}
+		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
+		{
+			uint64_t l_size = get_binary_size();
+			std::vector<char> l_buff(l_size);
+			to_binary(l_buff);
+			p_offset = vuf::txtSerializer::encode_to_buff(l_buff.data(), l_size, p_buff, p_offset);
+			return p_offset;
+		}
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0;
 
 	private:
 		std::vector <V<T>>				m_y_axis_v;			// y axices of nodes nodes array

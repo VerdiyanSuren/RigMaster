@@ -90,6 +90,11 @@ namespace vufMath
 		{
 			if (m_curve_ptr == nullptr || m_curve_ptr->get_degree() != p_degree || m_curve_ptr->get_type() != p_type )
 			{
+				if (p_type == vufCurveType::k_none)
+				{
+					m_curve_ptr = nullptr;
+					return true;
+				}
 				// handle open b spline
 				if (p_type == vufCurveType::k_open_bspline)
 				{
@@ -158,13 +163,18 @@ namespace vufMath
 			return false;
 		}
 		/// Return true if new rebuild has fn been created and assigned to container 
-		bool								switch_rebuild_fn(vufCurveRebuildType p_type)
+		bool								switch_rebuild_fn(vufCurveRebuildFnType p_type)
 		{
 			if (m_rebuild_fn == nullptr || m_rebuild_fn->get_type() != p_type)
 			{
 				//To Do 
 				// Create from base rebuild class as quaternion fn
-				if (p_type == vufCurveRebuildType::k_constant_step)
+				if (p_type == vufCurveRebuildFnType::k_none)
+				{
+					m_rebuild_fn = nullptr;
+					return true;
+				}
+				if (p_type == vufCurveRebuildFnType::k_constant_step)
 				{
 					m_rebuild_fn = vufCurveRebuildUniformFn<T,V>::create();
 					return true;
@@ -172,11 +182,32 @@ namespace vufMath
 			}
 			return false;
 		}
+		/// Return true if new remap has fn been created and assigned to container 
+		bool								switch_remap_fn(vufCurveRemapFnType p_type)
+		{
+			if (m_rebuild_fn == nullptr || m_remap_fn->get_type() != p_type)
+			{
+				//To Do 
+				// Create from base rebuild class as quaternion fn
+				if (p_type == vufCurveRemapFnType::k_none)
+				{
+					m_remap_fn = nullptr;
+					return true;
+				}
+			}
+			return false;
+		}
+
 		///  Return true if new quaternion fn has been created and assigned to container 
 		bool								switch_quaternion_fn(vufCurveQuatFnType p_type)
 		{
 			if ( m_quatrernion_fn == nullptr || m_quatrernion_fn->get_type() != p_type )
-			{				
+			{	
+				if (p_type == vufCurveQuatFnType::k_none)
+				{
+					m_quatrernion_fn = nullptr;
+					return true;
+				}
 				m_quatrernion_fn = vufCurveQuaternionFn<T, V>::create(p_type);
 				return true;
 			}
@@ -190,12 +221,16 @@ namespace vufMath
 
 			if (m_scale_fn == nullptr || m_scale_fn->get_type() != p_type)
 			{	
+				if (p_type == vufCurveScaleFnType::k_none)
+				{
+					m_scale_fn = nullptr;
+					return true;
+				}
 				m_scale_fn = vufCurveScaleFn<T,V>::create(p_type);
 				return true;
 			}
 			return false;
 		}
-		
 
 
 		/// Assign given curve to container
@@ -216,8 +251,8 @@ namespace vufMath
 				m_curve_ptr = m_curve_ptr->get_copy();
 			}
 		}
-		
-		
+
+
 		/// Assign rebuilded fn to container 
 		void										set_rebuild_fn_ptr(std::shared_ptr<vufCurveRebuildFn<T,V>> p_rebuild_ptr)
 		{
@@ -236,8 +271,8 @@ namespace vufMath
 				m_rebuild_fn = m_rebuild_fn->make_copy();
 			}
 		}
-		
-		
+	
+
 		/// Assign quaternion fn to container 
 		void										set_quaternion_fn_ptr(std::shared_ptr<vufCurveQuaternionFn<T, V>> p_quat_ptr)
 		{
@@ -256,7 +291,7 @@ namespace vufMath
 				m_quatrernion_fn = m_quatrernion_fn->make_copy();
 			}
 		}
-		
+
 
 		/// Assign scale fn to container 
 		void										set_scale_fn_ptr(std::shared_ptr<vufCurveScaleFn<T, V>> p_scl_fn_ptr)
@@ -297,6 +332,13 @@ namespace vufMath
 
 
 		/* -> remap -> rebuild */
+		void rebuild()
+		{
+			if (m_rebuild_fn != nullptr)
+			{
+				m_rebuild_fn->rebuild(*this);
+			}
+		}
 		T	 get_curve_val_by_remaped(T p_val)		const
 		{
 			T l_val = p_val;
@@ -371,62 +413,216 @@ namespace vufMath
 		// Function Sets
 		std::shared_ptr<vufCurveRebuildFn<T,V> >			m_rebuild_fn		= nullptr;
 		std::shared_ptr<vufCurveRemapFn<T> >				m_remap_fn			= nullptr;
-		std::shared_ptr<vufCurveQuaternionFn<T, V> >		m_quatrernion_fn	= nullptr;
+		std::shared_ptr<vufCurveQuaternionFn<T, V> >		m_quaternion_fn		= nullptr;
 		std::shared_ptr< vufCurveScaleFn<T, V>	 >			m_scale_fn			= nullptr;
 	public:
-		std::string		to_string() const
+		std::string	to_string(int p_precision = -1, uint32_t p_tab_count = 0)	const
 		{
-			return std::string();
+			std::stringstream l_ss;
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+
+			l_ss << l_str_offset << "[ Curve Container: <" << typeid(T).name() << ", " << typeid(V).name() << "> ]" << std::endl;
+			// curve info
+			l_ss << l_str_offset << "____" << "Curve: >" << std::endl;
+			if (m_curve_ptr == nullptr)
+			{
+				l_ss << l_str_offset << "________" << "Null" << std::endl;
+			}
+			else
+			{
+				l_ss << m_curve_ptr->to_string(p_precision, p_tab_count + 2)  << std::endl;
+			}
+			// rebuild info
+			l_ss << l_str_offset << "____" << "Rebuild: >" << std::endl;
+			if (m_rebuild_fn == nullptr)
+			{
+				l_ss << l_str_offset << "________" << "Null" << std::endl;
+			}
+			else
+			{
+				l_ss << m_rebuild_fn->to_string(p_precision, p_tab_count + 2) << std::endl;
+			}
+			//remap info
+			l_ss << l_str_offset << "____" << "Remap: >" << std::endl;
+			if (m_remap_fn == nullptr)
+			{
+				l_ss << l_str_offset << "________" << "Null" << std::endl;
+			}
+			else
+			{
+				l_ss << m_remap_fn->to_string(p_precision, p_tab_count + 2) << std::endl;
+			}
+			// quaternion info
+			l_ss << l_str_offset << "____" << "Quaternion: >" << std::endl;
+			if (m_quaternion_fn == nullptr)
+			{
+				l_ss << l_str_offset << "________" << "Null" << std::endl;
+			}
+			else
+			{
+				l_ss << m_quaternion_fn->to_string(p_precision, p_tab_count + 2) << std::endl;
+			}
+			// scale info
+			l_ss << l_str_offset << "____" << "Scale: >" << std::endl;
+			if (m_scale_fn == nullptr)
+			{
+				l_ss << l_str_offset << "________" << "Null" << std::endl;
+			}
+			else
+			{
+				l_ss << m_scale_fn->to_string(p_precision, p_tab_count + 2) << std::endl;
+			}
+			return l_ss.str();
 		}
-		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
+		uint64_t	get_binary_size()											const
 		{
+			uint64_t l_size = 0;
+			l_size += sizeof(uint8_t);	// type_of_curve;
+			l_size += sizeof(uint32_t);	// degree
+			if (m_curve_ptr != nullptr)
+			{
+				l_size += m_curve_ptr->get_binary_size();
+			}
+			l_size += sizeof(uint8_t);//type_of_rebuild;
+			if (m_rebuild_fn != nullptr)
+			{
+				l_size += m_rebuild_fn->get_binary_size();
+			}
+			l_size += sizeof(uint8_t);//type_of_remap;
+			if (m_remap_fn != nullptr)
+			{
+				l_size += m_remap_fn->get_binary_size();
+			}
+			l_size += sizeof(uint8_t);//type_of_quaternion;
+			if (m_quaternion_fn != nullptr)
+			{
+				l_size += m_quaternion_fn->get_binary_size();
+			}
+			l_size += sizeof(uint8_t);//type_of_scale;
+			if (m_scale_fn != nullptr)
+			{
+				l_size += m_scale_fn->get_binary_size();
+			}
+			return l_size;
+		}
+		uint64_t	to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const 
+		{
+			std::cout << "CURVE CONTAINER TO BINARY SIZE" << std::endl;
+			uint64_t l_container_size = get_binary_size();
+			//------------------------------------------------------
+			// resize if needed
+			if (p_buff.size() < p_offset + l_container_size)
+			{
+				p_buff.resize(p_offset + l_container_size);
+			}
+			//------------------------------------------------------
+			// curve
+			if (m_curve_ptr == nullptr)
+			{
+				uint8_t l_none = (uint8_t)vufCurveType::k_none;
+				uint32_t l_degree = 0;
+				std::memcpy(&p_buff[p_offset], &l_none, sizeof(l_none));		p_offset += sizeof(l_none);
+				std::memcpy(&p_buff[p_offset], &l_degree, sizeof(l_degree));	p_offset += sizeof(l_degree);
+			}
+			else
+			{
+				uint8_t l_none		= (uint8_t)m_curve_ptr->get_type();
+				uint32_t l_degree	= m_curve_ptr->get_degree();
+				p_offset = m_curve_ptr->to_binary(p_buff, p_offset);
+			}
+			// rebuild
+			if (m_rebuild_fn == nullptr)
+			{
+				uint8_t l_none = (uint8_t)vufCurveRebuildFnType::k_none;
+				std::memcpy(&p_buff[p_offset], &l_none, sizeof(l_none));		p_offset += sizeof(l_none);
+			}
+			else
+			{
+				p_offset = m_rebuild_fn->to_binary(p_buff, p_offset);
+			}
+			// quatrernion
+			if (m_quaternion_fn == nullptr)
+			{
+				uint8_t l_none = (uint8_t)vufCurveQuatFnType::k_none;
+				std::memcpy(&p_buff[p_offset], &l_none, sizeof(l_none));		p_offset += sizeof(l_none);
+			}
+			else
+			{
+				p_offset = m_quaternion_fn->to_binary(p_buff, p_offset);
+			}
+			// scale
+			if (m_scale_fn == nullptr)
+			{
+				uint8_t l_none = (uint8_t)vufCurveScaleFnType::k_none;
+				std::memcpy(&p_buff[p_offset], &l_none, sizeof(l_none));		p_offset += sizeof(l_none);
+			}
+			else
+			{
+				p_offset = m_scale_fn->to_binary(p_buff, p_offset);
+			}
 			return p_offset;
 		}
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+		uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
+		{
+			uint64_t l_container_size = get_binary_size();
+			//------------------------------------------------------
+			// resize if needed
+			if (p_buff.size() < p_offset + l_container_size)
+			{
+				return 0;
+			}
+			uint8_t l_type;
+			uint32_t l_degree;
+			// curve
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_degree, sizeof(l_degree));
+			switch_curve(l_degree, (vufCurveType)l_type);
+			if (m_curve_ptr != nullptr)
+			{
+				p_offset = m_curve_ptr->from_binary(p_buff, p_offset);
+			}
+			// rebuild
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
+			switch_rebuild_fn(vufCurveRebuildFnType(l_type));
+			if (m_rebuild_fn != nullptr)
+			{
+				p_offset = m_rebuild_fn->from_binary(p_buff, p_offset);
+			}
+			// remap
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
+			switch_rebuild_fn(vufCurveRemapFnType(l_type));
+			if (m_remap_fn != nullptr)
+			{
+				p_offset = m_remap_fn->from_binary(p_buff, p_offset);
+			}
+			// quaternion
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
+			switch_rebuild_fn(vufCurveQuatFnType(l_type));
+			if (m_quaternion_fn != nullptr)
+			{
+				p_offset = m_quaternion_fn->from_binary(p_buff, p_offset);
+			}
+			// scale
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
+			switch_rebuild_fn(vufCurveScaleFnType(l_type));
+			if (m_scale_fn != nullptr)
+			{
+				p_offset = m_scale_fn->from_binary(p_buff, p_offset);
+			}
+			return p_offset;
+		}
+
+		uint64_t	encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)	const 
 		{
 			return 0;
 		}
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
-		{			
-			return p_offset;
-		}
-		void log_me(int p_tab_count = 0) const
+		uint64_t	decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
 		{
-			std::string l_str_offset( p_tab_count*4,'.');
-			//VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_AQUAA, VF_CONSOLE_COLOR_BLACK);
-			VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_LIGHT_PURPLE, VF_CONSOLE_COLOR_BLACK);
-         	std::cout << l_str_offset << "[ Curve Container ]:> " <<std::endl;
-			VF_CONSOLE_RESET_COLOR();
-			// log 
-			if (m_curve_ptr == nullptr)
-			{
-				std::cout << l_str_offset << l_str_offset << "[ Curve: NULL ]" << std::endl;
-			}
-			else
-			{
-				m_curve_ptr->log_me(p_tab_count + 1);
-			}
-			if (m_rebuild_fn == nullptr)
-			{
-				std::cout << l_str_offset << l_str_offset << "[ Rebuild Fn: NULL ]" << std::endl;
-			}
-			else
-			{
-				m_rebuild_fn->log_me(p_tab_count + 1);
-			}
-			if (m_quatrernion_fn == nullptr)
-			{
-				std::cout << l_str_offset << l_str_offset << "[ Quaternion Fn: NULL ]" << std::endl;
-			}
-			else
-			{
-				m_quatrernion_fn->log_me(p_tab_count + 1);
-			}
-
-			VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_LIGHT_PURPLE, VF_CONSOLE_COLOR_BLACK);
-			std::cout << l_str_offset << "[ Curve Container ]: " << std::endl;
-			VF_CONSOLE_RESET_COLOR();
+			return 0;
 		}
+
 		friend std::ostream& operator<<(std::ostream& out, const vufCurveContainer<T,V>& v)
 		{
 			out << "[ Curve Container ]: " << std::endl;

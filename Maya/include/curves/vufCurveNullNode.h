@@ -3,10 +3,10 @@
 
 #include <maya/MPxNode.h>
 //#include "math/curves/vufCurveContatiner.h"
-#include "quatCurves/vufCurveData.h"
+#include <data/vufMayaDataList.h>
 #include <memory>
 
-namespace vufTP
+namespace vufRM
 {
 	class vufCurveNullNode : public MPxNode
 	{
@@ -31,9 +31,9 @@ namespace vufTP
 	private: 
 		/// func(p_data, internal, input, out)
 		void get_locked_ptr(MDataBlock& p_data,
-							std::shared_ptr<vufCurveContainerData_4d>& p_internal,
-							std::shared_ptr<vufCurveContainerData_4d>& p_input,
-							std::shared_ptr<vufCurveContainerData_4d>& p_result );
+							std::shared_ptr<vufCurveData>& p_internal,
+							std::shared_ptr<vufCurveData>& p_input,
+							std::shared_ptr<vufCurveData>& p_result );
 		bool m_was_locked = true;
 	};
 

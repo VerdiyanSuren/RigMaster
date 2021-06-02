@@ -139,7 +139,7 @@ namespace vufMath
 			return nullptr;
 		}
 		/** Serializations*/
-		virtual std::string			to_string()	const											= 0;
+		virtual std::string			to_string(int p_precision = -1, uint32_t p_tab_count = 0)	const = 0;
 		virtual uint64_t			from_string(const std::string& p_str, uint64_t p_offset = 0)= 0;
 		virtual uint64_t			to_binary(std::vector<unsigned char>& p_buff) const			= 0;
 		virtual uint64_t			from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0) = 0;

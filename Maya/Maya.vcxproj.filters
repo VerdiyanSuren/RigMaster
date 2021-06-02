@@ -7,6 +7,9 @@
     <Filter Include="include\curves">
       <UniqueIdentifier>{B0529C46-9C20-904C-85B4-007371216CB1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\curves\locator">
+      <UniqueIdentifier>{13FE26F8-FFF7-4F4A-E864-E65AD4FDB5B6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\data">
       <UniqueIdentifier>{B2CED969-9E31-690E-47B7-A1C433F93491}</UniqueIdentifier>
     </Filter>
@@ -31,6 +34,9 @@
     <Filter Include="include\expressions\ui">
       <UniqueIdentifier>{289BC8C0-1495-F112-FD01-8823E99A577F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\locator">
+      <UniqueIdentifier>{EC23D9BF-58AF-4684-61C0-C978CDCAA284}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\utils">
       <UniqueIdentifier>{C98351A6-3544-CDDC-FE7E-165A6AFE11B9}</UniqueIdentifier>
     </Filter>
@@ -42,6 +48,9 @@
     </Filter>
     <Filter Include="src\curves\data">
       <UniqueIdentifier>{DD133BA3-499F-A867-52B0-2B5CBEBA0468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curves\locator">
+      <UniqueIdentifier>{37DD87AF-23C1-4805-8C21-435878243387}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\data">
       <UniqueIdentifier>{D6B02ECF-C27D-89DA-EB96-7782D7C2BE68}</UniqueIdentifier>
@@ -69,6 +78,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\locator\vufCurveLocator.h">
+      <Filter>include\curves\locator</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\vufCurveBSplineNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
@@ -81,10 +93,7 @@
     <ClInclude Include="include\curves\vufCurveFromMayaNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurveGetTransform.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveLocator.h">
+    <ClInclude Include="include\curves\vufCurveGetTransformNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveNullNode.h">
@@ -102,7 +111,7 @@
     <ClInclude Include="include\curves\vufCurvesInclude.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufToMayaCurveNode.h">
+    <ClInclude Include="include\curves\vufCurveToMayaNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\data\vufData.h">
@@ -192,6 +201,9 @@
     <ClInclude Include="include\expressions\ui\vufLuaTextEditor.h">
       <Filter>include\expressions\ui</Filter>
     </ClInclude>
+    <ClInclude Include="include\locator\vufLocator.h">
+      <Filter>include\locator</Filter>
+    </ClInclude>
     <ClInclude Include="include\utils\vufMayaUtils.h">
       <Filter>include\utils</Filter>
     </ClInclude>
@@ -209,6 +221,9 @@
     <ClCompile Include="src\curves\data\vufCurveData.cpp">
       <Filter>src\curves\data</Filter>
     </ClCompile>
+    <ClCompile Include="src\curves\locator\vufCurveLocator.cpp">
+      <Filter>src\curves\locator</Filter>
+    </ClCompile>
     <ClCompile Include="src\curves\vufCurveBSplineNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
@@ -221,13 +236,7 @@
     <ClCompile Include="src\curves\vufCurveGetTransformNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\vufCurveLocator.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
     <ClCompile Include="src\curves\vufCurveNullNode.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
-    <ClCompile Include="src\curves\vufCurveRebuildData.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveRebuildNode.cpp">
@@ -236,7 +245,7 @@
     <ClCompile Include="src\curves\vufFCurvFromMayaNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\vufToMayaCurveNode.cpp">
+    <ClCompile Include="src\curves\vufCurveToMayaNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\data\vufData.cpp">

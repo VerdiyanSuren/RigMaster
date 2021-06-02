@@ -1159,8 +1159,8 @@ namespace vufMath
 		T				get_scale_z() const
 		{
 			auto sgn = (get_axis_x_3().cross_in_place(get_axis_y_3())).dot(get_axis_z_3()) < 0.0;
-			return sgn = true ?  sqrt( m_ptr[2][0] * m_ptr[2][0] + m_ptr[2][1] * m_ptr[2][1] + m_ptr[2][2] * m_ptr[2][2] ) :
-								-sqrt( m_ptr[2][0] * m_ptr[2][0] + m_ptr[2][1] * m_ptr[2][1] + m_ptr[2][2] * m_ptr[2][2] );
+			return sgn == true ?	sqrt( m_ptr[2][0] * m_ptr[2][0] + m_ptr[2][1] * m_ptr[2][1] + m_ptr[2][2] * m_ptr[2][2] ) :
+									-sqrt( m_ptr[2][0] * m_ptr[2][0] + m_ptr[2][1] * m_ptr[2][1] + m_ptr[2][2] * m_ptr[2][2] );
 		}
 		vufQuaternion<T> get_quaternion() const
 		{

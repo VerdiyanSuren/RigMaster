@@ -3,13 +3,13 @@
 
 #include <maya/MPxNode.h>
 
-namespace vufTP
+namespace vufRM
 {
-	class vufToMayaCurveNode : public MPxNode
+	class vufCurveToMayaNode : public MPxNode
 	{
 	public:
-		vufToMayaCurveNode() {}
-		virtual ~vufToMayaCurveNode() {}
+		vufCurveToMayaNode() {}
+		virtual ~vufCurveToMayaNode() {}
 
 		static void*	creator();
 		static MStatus	initialize();

@@ -48,9 +48,14 @@ namespace vufMath
 			return true;
 		}
 
-		virtual std::string to_string()					const override
+		virtual std::string to_string(int p_precision = -1, uint32_t p_tab_count = 0)		const override
 		{
-			VF_NUMERIC_ARRAY_TO_STRING_AND_RETURN_IT(m_numeric_array_v);
+			std::stringstream l_ss;
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_numeric_array_v);
+			return l_ss.str();
 		}
 		virtual uint64_t	from_string(const std::string& p_str, uint64_t p_offset = 0) override
 		{			
@@ -169,7 +174,6 @@ namespace vufMath
 		virtual std::shared_ptr < vufNumericArrayObject<int> >		as_int_array_object()		const override { return nullptr; }
 		virtual std::shared_ptr < vufNumericArrayObject<bool> >		as_bool_array_object()		const override { return nullptr; }
 
-
 		std::vector<T> m_numeric_array_v;
 	};
 	// <float> specialization  
@@ -227,9 +231,14 @@ namespace vufMath
 		vufNumericArrayFn(std::vector<T>& p_vec) :m_numeric_array_v(p_vec) {};
 		vufNumericArrayFn(const vufNumericArrayFn& p_other) :m_numeric_array_v(p_other.m_numeric_array_v) {}
 
-		std::string to_string()					const
+		std::string to_string(int p_precision = -1, uint32_t p_tab_count = 0) const
 		{
-			VF_NUMERIC_ARRAY_TO_STRING_AND_RETURN_IT(m_numeric_array_v);
+			std::stringstream l_ss;
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_numeric_array_v);
+			return l_ss.str();
 		}
 		uint64_t	from_string(const std::string& p_str, uint64_t p_offset = 0) 
 		{

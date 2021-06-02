@@ -13,10 +13,10 @@ namespace vufMath
 	enum class vufCurveScaleFnType :uint8_t
 	{
 		//open curves
-		k_closest_params	= 0,
-		k_fixed_params		= 1,
-		k_ends				= 2,
-		k_unknown			= 3
+		k_none				= 0,
+		k_closest_params	= 1,
+		k_fixed_params		= 2,
+		k_ends				= 3
 	};
 
 	// functions set to work with specific part 
@@ -47,7 +47,7 @@ namespace vufMath
 		T		get_offset() const			{ return m_offset; }
 		void	set_offset(T p_val)			{ m_offset = p_val; }
 
-		virtual vufCurveScaleFnType get_type() const = 0 { return vufCurveScaleFnType::k_unknown; }
+		virtual vufCurveScaleFnType get_type() const = 0 { return vufCurveScaleFnType::k_none; }
 		virtual void	log_me(int p_tab_count = 0) const = 0;
 		/// Set count of scale influencers
 		virtual void	set_item_count(uint32_t p_count) = 0;
@@ -65,6 +65,14 @@ namespace vufMath
 		virtual std::shared_ptr< vufCurveScaleFn<T, V>> get_copy() const = 0;		
 		/// return casted pointer if inherited class if possible exept nullptr
 		virtual std::shared_ptr < vufScaleCloseCurveFn<T, V> > as_scale_close_fn() const { return nullptr; }
+
+		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const = 0;
+		virtual uint64_t		get_binary_size()														const = 0;
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0;
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		= 0;
+		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0;
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		= 0;
+
 	protected:
 		bool	m_pin_start = false;
 		T		m_pin_start_value = 0.0;

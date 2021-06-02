@@ -463,25 +463,21 @@ namespace vufMath
 		{
 			std::stringstream l_ss;
 			std::string l_str_offset;
-			if (p_precision > 0)
-			{
-				if (p_precision > 64)
-				{
-					l_ss.precision(64);
-				}
-				else
-				{
-					l_ss.precision(p_precision);
-				}
-			}
-			if (p_tab_count > 0)
-			{
-				for (uint32_t i = 0; i < p_tab_count; ++i)
-				{
-					l_str_offset = l_str_offset +  "____";
-				}
-			}
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
 			l_ss << l_str_offset << "[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
+			l_ss << l_str_offset << "____Controls Count: " << m_nodes_pos_v.size() << std::endl;
+			l_ss << l_str_offset << "____Knots: ";
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_knot_v);
+			l_ss << std::endl;
+			for (int i = 0; i < (int)m_n_v.size(); ++i)
+			{
+				l_ss << l_str_offset << "____[ " << get_interval_t_min_i(i) << ", " << get_interval_t_max_i(i) << " ] " << std::endl;
+				for (int j = 0; j < (int)m_n_v[i].size(); ++j)
+				{
+					l_ss << l_str_offset << "____[" << j << "] " << m_n_v[i][j].to_string() <<  std::endl;
+				}
+			}
 			return l_ss.str();
 		}
 		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0) override;
@@ -517,7 +513,7 @@ namespace vufMath
 		}
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)			const override
 		{
-			std::cout << "-------------------------------------OPEN_BSPLINE::to_binary()--------------------- " << std::endl;
+			//std::cout << "-------------------------------------OPEN_BSPLINE::to_binary()--------------------- " << std::endl;
 			uint64_t l_curve_size = get_binary_size();
 			//------------------------------------------------------
 			// resize if needed
@@ -572,24 +568,21 @@ namespace vufMath
 			};
 			//m_knot_v
 			uint64_t l_array_size;
-			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-			std::memcpy(&l_array_size, &p_buff[p_offset],  sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_array_size, sizeof(l_array_size));
 			m_knot_v.resize(l_array_size);
 			if (p_buff.size() < p_offset + m_knot_v.size() * sizeof(T)) return 0;
 			if (l_array_size > 0)
 			{
-				std::memcpy(&m_knot_v[0], &p_buff[p_offset],  l_array_size * sizeof(T));	p_offset += l_array_size * sizeof(T);
+				VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_knot_v[0], l_array_size * sizeof(T));
 			}
 			// m_n_v
-			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-			std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_array_size, sizeof(l_array_size));
 			m_n_v.resize(l_array_size);
 			if (l_array_size > 0)
 			{
 				for (uint64_t i = 0; i < m_n_v.size(); ++i)
 				{
-					if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-					std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));	p_offset += sizeof(l_array_size);
+					VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_array_size, sizeof(l_array_size));
 					m_n_v[i].resize(l_array_size);
 					for (uint64_t j = 0; j < m_n_v[i].size(); ++j)
 					{
@@ -598,15 +591,13 @@ namespace vufMath
 				}
 			}
 			// m_dn_v
-			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-			std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));			p_offset += sizeof(l_array_size);
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_array_size, sizeof(l_array_size));
 			m_dn_v.resize(l_array_size);
 			if (l_array_size > 0)
 			{
 				for (uint64_t i = 0; i < m_dn_v.size(); ++i)
 				{
-					if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-					std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));	p_offset += sizeof(l_array_size);
+					VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_array_size, sizeof(l_array_size));
 					m_dn_v[i].resize(l_array_size);
 					for (uint64_t j = 0; j < m_dn_v[i].size(); ++j)
 					{

@@ -2,6 +2,7 @@
 #define VF_MATH_CLOSE_BSPLINE_CRV_H
 
 #include <curves/vufCurveExplicit.h>
+#include <vufNumericArrayObject.h>
 #include <vufLog.h>
 #include <cmath>
 
@@ -426,7 +427,13 @@ namespace vufMath
 					l_str_offset = l_str_offset + "____";
 				}
 			}
-			l_ss << l_str_offset << "[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
+			l_ss << l_str_offset << "[ General Open BSpline: " << typeid(T).name() << ", " << typeid(V).name() << ", degree: " << CURVE_DEGREE << " ]" << std::endl;
+			l_ss << l_str_offset << l_str_offset << "Controls count: "	<< m_nodes_pos_v.size() << "]" << std::endl;
+			l_ss << l_str_offset << l_str_offset << "Nodes count: "		<< m_node_count << std::endl;
+			l_ss << l_str_offset << l_str_offset << "Knot array count:";
+			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_knot_v);
+			l_ss<< std::endl;
+			l_ss << l_str_offset << l_str_offset << "Nodes count: " << m_node_count << std::endl;
 			return l_ss.str();
 		}
 		virtual uint64_t	get_binary_size()														const override

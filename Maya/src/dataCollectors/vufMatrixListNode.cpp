@@ -57,18 +57,16 @@ MStatus	vufMatrixListNode::initialize()
 MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
-	{		
+	{	
 		// Read Transforms and fill matricies
+		MMatrixArray l_matrix_array;
 		MArrayDataHandle l_ah = p_data.inputValue(g_transform_in_attr);
 		unsigned int l_matr_arr_length = l_ah.elementCount();
-		if (m_matrix_array.length() != l_matr_arr_length)
-		{
-			m_matrix_array.setLength(l_matr_arr_length);
-		}
+		l_matrix_array.setLength(l_matr_arr_length);
 		int l_matrix_index = 0;
 		for (;;)
 		{
-			m_matrix_array[l_matrix_index] = l_ah.inputValue().asMatrix();
+			l_matrix_array[l_matrix_index] = l_ah.inputValue().asMatrix();
 			++l_matrix_index;
 			if (!l_ah.next()) break;
 		}
@@ -76,7 +74,7 @@ MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		// set output handle
 		MDataHandle l_out_handle = p_data.outputValue(g_data_out_attr);
 		MFnMatrixArrayData l_data_fn;
-		MObject l_obj_data = l_data_fn.create(m_matrix_array);
+		MObject l_obj_data = l_data_fn.create(l_matrix_array);
 		l_out_handle.setMObject(l_obj_data);
 		p_data.setClean(g_data_out_attr);
 
