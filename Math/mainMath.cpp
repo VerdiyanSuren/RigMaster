@@ -3,8 +3,8 @@
 #include <unitTests/vufTestAll.h>
 //#include <curves/vufCurveContatiner.h>
 
-#include <curves/vufOpenBSpline.h>
-#include <curves/vufCloseBSpline.h>
+#include <curves/vufCurveOpenBSpline.h>
+#include <curves/vufCurveCloseBSpline.h>
 #include <curves/vufCurveContatiner.h>
 #include <vufLog.h>
 
@@ -17,12 +17,14 @@ using namespace vufMath;
 int main()
 {
 	vuf::txtSerializer::init();
-	vufTestAll().run();
+	vufTestAll().run(true);
+	system("pause");
+
 	auto l_cntnr = vufCurveContainer<double, vufVector4>::create();
-	auto l_crv_1 = vufOpenBSpline<double, vufVector4, 4>::create();
-	auto l_crv_2 = vufOpenBSpline<double, vufVector4, 4>::create();
-	auto l_crv_cls_1 = vufCloseBSpline<double, vufVector4, 4>::create();
-	auto l_crv_cls_2 = vufCloseBSpline<double, vufVector4, 4>::create();
+	auto l_crv_1 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
+	auto l_crv_2 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
+	auto l_crv_cls_1 = vufCurveCloseBSpline<double, vufVector4, 4>::create();
+	auto l_crv_cls_2 = vufCurveCloseBSpline<double, vufVector4, 4>::create();
 
 	l_crv_1->set_nodes_count(10);
 	l_crv_cls_1->set_nodes_count(10);
@@ -34,6 +36,9 @@ int main()
 	l_cntnr->set_curve_ptr(l_crv_1);
 	l_cntnr->switch_rebuild_fn(vufCurveRebuildFnType::k_constant_step);
 	l_cntnr->rebuild();
+	l_cntnr->switch_quaternion_fn(vufCurveQuatFnType::k_closest);
+	l_cntnr->compute_bind_params( 10);
+	l_cntnr->match_quaternions();
 	std::cout << l_cntnr->to_string() << std::endl;
 
 	std::cout << "---------------------------------------------------------------" << std::endl;

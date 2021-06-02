@@ -22,14 +22,6 @@ namespace vufMath
 		}
 
 		virtual vufCurveQuatFnType get_type() const override { return vufCurveQuatFnType::k_blend; }
-		virtual void	log_me(int p_tab_count = 0) const override
-		{
-			std::string l_str_offset(p_tab_count * 4, '.');
-			VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_GREEN, VF_CONSOLE_COLOR_BLACK);
-			std::cout << std::fixed;
-			std::cout << l_str_offset << "[ Quaternion Blend Fn ]: " << std::endl;
-			VF_CONSOLE_RESET_COLOR();
-		}
 		virtual void	set_item_count(uint32_t p_count) override	{}
 		virtual void	set_item_at(uint32_t p_index, const V<T> p_pos, const vufMatrix4<T>& p_matr) override {}
 		/// Compute or set influencer param on the curve
@@ -93,6 +85,32 @@ namespace vufMath
 		{ 
 			return std::static_pointer_cast<vufCurveQuaternionBlendFn>(vufCurveQuaternionFn<T, V>::m_this.lock());
 		}
+
+		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const override
+		{
+			return std::string();
+		}
+		virtual uint64_t		get_binary_size()														const override
+		{
+			return 0;
+		}
+		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const override
+		{
+			return 0;
+		}
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
+		{
+			return 0;
+		}
+		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const override
+		{
+			return 0;
+		}
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		override
+		{
+			return 0;
+		}
+
 	};
 
 }

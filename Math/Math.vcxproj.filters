@@ -57,7 +57,7 @@
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCloseBSpline.h">
+    <ClInclude Include="include\curves\vufCurveCloseBSpline.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurve.h">
@@ -78,7 +78,7 @@
     <ClInclude Include="include\curves\vufMathCurvesInclude.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufOpenBSpline.h">
+    <ClInclude Include="include\curves\vufCurveOpenBSpline.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\math\vufMatrix.h">
@@ -89,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="include\math\vufVector.h">
       <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\curve\curveTest.h">
+      <Filter>include\unitTests\curve</Filter>
     </ClInclude>
     <ClInclude Include="include\unitTests\curve\polinomTest.h">
       <Filter>include\unitTests\curve</Filter>

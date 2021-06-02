@@ -56,7 +56,6 @@ namespace vufMath
 
 		void			is_valid() const { return m_valid; }
 		virtual vufCurveQuatFnType get_type() const = 0 { return vufCurveQuatFnType::k_none; }
-		virtual void	log_me(int p_tab_count = 0) const = 0;
 		virtual void	set_item_count(uint32_t p_count) = 0;
 		virtual void	set_item_at(uint32_t p_index, const V<T> p_pos, const vufMatrix4<T>& p_qmatr) = 0;
 		/// Compute or set influencer param on the curve

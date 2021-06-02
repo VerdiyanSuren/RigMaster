@@ -108,10 +108,10 @@
     <ClInclude Include="include\curves\vufCurveRebuildNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurvesInclude.h">
+    <ClInclude Include="include\curves\vufCurveToMayaNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurveToMayaNode.h">
+    <ClInclude Include="include\curves\vufCurvesInclude.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\data\vufData.h">
@@ -242,10 +242,10 @@
     <ClCompile Include="src\curves\vufCurveRebuildNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\vufFCurvFromMayaNode.cpp">
+    <ClCompile Include="src\curves\vufCurveToMayaNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\vufCurveToMayaNode.cpp">
+    <ClCompile Include="src\curves\vufFCurvFromMayaNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\data\vufData.cpp">

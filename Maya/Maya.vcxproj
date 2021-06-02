@@ -374,8 +374,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <ClInclude Include="include\curves\vufCurveQuaternionNode.h" />
     <ClInclude Include="include\curves\vufCurveRebuildData.h" />
     <ClInclude Include="include\curves\vufCurveRebuildNode.h" />
-    <ClInclude Include="include\curves\vufCurvesInclude.h" />
     <ClInclude Include="include\curves\vufCurveToMayaNode.h" />
+    <ClInclude Include="include\curves\vufCurvesInclude.h" />
     <ClInclude Include="include\data\vufData.h" />
     <ClInclude Include="include\data\vufDataTemplate.h" />
     <ClInclude Include="include\data\vufMayaDataList.h" />
@@ -420,8 +420,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
     <ClCompile Include="src\curves\vufCurveGetTransformNode.cpp" />
     <ClCompile Include="src\curves\vufCurveNullNode.cpp" />
     <ClCompile Include="src\curves\vufCurveRebuildNode.cpp" />
-    <ClCompile Include="src\curves\vufFCurvFromMayaNode.cpp" />
     <ClCompile Include="src\curves\vufCurveToMayaNode.cpp" />
+    <ClCompile Include="src\curves\vufFCurvFromMayaNode.cpp" />
     <ClCompile Include="src\data\vufData.cpp" />
     <ClCompile Include="src\dataCollectors\vufMatrixListNode.cpp" />
     <ClCompile Include="src\dataCollectors\vufMatrixListNullNode.cpp" />

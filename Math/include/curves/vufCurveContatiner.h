@@ -3,8 +3,8 @@
 
 #include <curves/vufCurve.h>
 #include <math/vufQuaternion.h>
-#include <curves/vufOpenBSpline.h>
-#include <curves/vufCloseBSpline.h>
+#include <curves/vufCurveOpenBSpline.h>
+#include <curves/vufCurveCloseBSpline.h>
 #include <curves/vufCurveBlend.h>
 #include <curves/rebuildFn/vufCurveRebuildFn.h>
 
@@ -66,9 +66,9 @@ namespace vufMath
 			{
 				l_ptr->m_remap_fn = m_remap_fn->get_copy();
 			}
-			if (m_quatrernion_fn != nullptr)
+			if (m_quaternion_fn != nullptr)
 			{
-				l_ptr->m_quatrernion_fn = m_quatrernion_fn->get_copy();
+				l_ptr->m_quaternion_fn = m_quaternion_fn->get_copy();
 			}
 			if (m_scale_fn != nullptr)
 			{
@@ -201,14 +201,14 @@ namespace vufMath
 		///  Return true if new quaternion fn has been created and assigned to container 
 		bool								switch_quaternion_fn(vufCurveQuatFnType p_type)
 		{
-			if ( m_quatrernion_fn == nullptr || m_quatrernion_fn->get_type() != p_type )
+			if ( m_quaternion_fn == nullptr || m_quaternion_fn->get_type() != p_type )
 			{	
 				if (p_type == vufCurveQuatFnType::k_none)
 				{
-					m_quatrernion_fn = nullptr;
+					m_quaternion_fn = nullptr;
 					return true;
 				}
-				m_quatrernion_fn = vufCurveQuaternionFn<T, V>::create(p_type);
+				m_quaternion_fn = vufCurveQuaternionFn<T, V>::create(p_type);
 				return true;
 			}
 			return false;
@@ -330,8 +330,7 @@ namespace vufMath
 			}
 		}
 
-
-		/* -> remap -> rebuild */
+		// rebuild interface
 		void rebuild()
 		{
 			if (m_rebuild_fn != nullptr)
@@ -339,6 +338,25 @@ namespace vufMath
 				m_rebuild_fn->rebuild(*this);
 			}
 		}
+		// quaternion intrerface
+		bool	compute_bind_params(uint32_t p_divisions = 10, T p_percition = 0.00001)
+		{
+			if (m_quaternion_fn != nullptr)
+			{
+				return m_quaternion_fn->compute_bind_params(*this, p_divisions, p_percition);
+			}
+			return false;
+		}
+		// Make quaternions non flipped
+		bool	match_quaternions() 
+		{
+			if (m_quaternion_fn != nullptr)
+			{
+				return m_quaternion_fn->match_quaternions(*this);
+			}
+			return false;
+		}
+		/* -> remap -> rebuild */
 		T	 get_curve_val_by_remaped(T p_val)		const
 		{
 			T l_val = p_val;
@@ -386,10 +404,10 @@ namespace vufMath
 		{
 			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
 			{
-				if (m_quatrernion_fn != nullptr)
+				if (m_quaternion_fn != nullptr)
 				{
 					T l_new_val = get_curve_val_by_remaped(p_val);
-					return m_quatrernion_fn->get_quaternion_at(*this, l_new_val);
+					return m_quaternion_fn->get_quaternion_at(*this, l_new_val);
 				}
 			}
 			return vufQuaternion<T>();

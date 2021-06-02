@@ -11,27 +11,27 @@
 namespace vufMath
 {
 	template <class T, template<typename> class V, uint32_t CURVE_DEGREE = 2>
-	class vufOpenBSpline : public vufCurveExplicit<T, V>
+	class vufCurveOpenBSpline : public vufCurveExplicit<T, V>
 	{
 	private:
 	public:
-		vufOpenBSpline() :vufCurveExplicit<T, V>()
+		vufCurveOpenBSpline() :vufCurveExplicit<T, V>()
 		{
 			//std::cout << "OpenBSpline constructor" << std::endl;
 			vufCurve<T, V>::m_degree = CURVE_DEGREE;
 			vufCurve<T, V>::m_close = false;
 		}
-		virtual ~vufOpenBSpline() {}
-		static  std::shared_ptr< vufOpenBSpline >	create()
+		virtual ~vufCurveOpenBSpline() {}
+		static  std::shared_ptr< vufCurveOpenBSpline >	create()
 		{
-			std::shared_ptr< vufOpenBSpline >  l_ptr = std::shared_ptr<vufOpenBSpline>(new vufOpenBSpline());
+			std::shared_ptr< vufCurveOpenBSpline >  l_ptr = std::shared_ptr<vufCurveOpenBSpline>(new vufCurveOpenBSpline());
 			VF_MATH_CURVE_CREATOR_BODY(l_ptr);
 			return l_ptr;
 		}
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
-			std::shared_ptr< vufOpenBSpline > l_ptr = vufOpenBSpline::create();
+			std::shared_ptr< vufCurveOpenBSpline > l_ptr = vufCurveOpenBSpline::create();
 
 			l_ptr->m_degree = vufCurve<T, V>::m_degree;
 			l_ptr->m_close	= vufCurve<T, V>::m_close;
@@ -642,11 +642,11 @@ namespace vufMath
 		}
 		*/
 
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const override { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 2>>		as_open_bspline_di()	const override { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 3>>		as_open_bspline_tri()	const override { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 4>>		as_open_bspline_tetra()	const override { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const override { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const override { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 2>>		as_open_bspline_di()	const override { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 3>>		as_open_bspline_tri()	const override { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 4>>		as_open_bspline_tetra()	const override { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const override { return nullptr; }
 
 	private:
 		std::vector<T>												m_knot_v;
@@ -658,39 +658,39 @@ namespace vufMath
 
 	//specializations
 	template<>
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 1>>		vufOpenBSpline <double, vufVector4, 1>::as_open_bspline_mono()	const
+	std::shared_ptr<vufCurveOpenBSpline <double, vufVector4, 1>>		vufCurveOpenBSpline <double, vufVector4, 1>::as_open_bspline_mono()	const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4,1>>(vufCurve<double,vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveOpenBSpline<double, vufVector4,1>>(vufCurve<double,vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 2>>		vufOpenBSpline <double, vufVector4, 2>::as_open_bspline_di()		const
+	std::shared_ptr<vufCurveOpenBSpline <double, vufVector4, 2>>		vufCurveOpenBSpline <double, vufVector4, 2>::as_open_bspline_di()		const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveOpenBSpline<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 3>>		vufOpenBSpline <double, vufVector4, 3>::as_open_bspline_tri()	const
+	std::shared_ptr<vufCurveOpenBSpline <double, vufVector4, 3>>		vufCurveOpenBSpline <double, vufVector4, 3>::as_open_bspline_tri()	const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveOpenBSpline<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>	
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 4>>		vufOpenBSpline <double, vufVector4, 4>::as_open_bspline_tetra()	const
+	std::shared_ptr<vufCurveOpenBSpline <double, vufVector4, 4>>		vufCurveOpenBSpline <double, vufVector4, 4>::as_open_bspline_tetra()	const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4, 4>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveOpenBSpline<double, vufVector4, 4>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufOpenBSpline <double, vufVector4, 5>>		vufOpenBSpline <double, vufVector4, 5>::as_open_bspline_penta()	const
+	std::shared_ptr<vufCurveOpenBSpline <double, vufVector4, 5>>		vufCurveOpenBSpline <double, vufVector4, 5>::as_open_bspline_penta()	const
 	{
-		return std::static_pointer_cast<vufOpenBSpline<double, vufVector4, 5>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveOpenBSpline<double, vufVector4, 5>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 
 
 #pragma region USING
-	using vufOpenBSpline_2f = vufOpenBSpline<float,  vufVector2>;
-	using vufOpenBSpline_2d = vufOpenBSpline<double, vufVector2>;
-	using vufOpenBSpline_3f = vufOpenBSpline<float,  vufVector3>;
-	using vufOpenBSpline_3d = vufOpenBSpline<double, vufVector3>;
-	using vufOpenBSpline_4f = vufOpenBSpline<float,  vufVector4>;
-	using vufOpenBSpline_4d = vufOpenBSpline<double, vufVector4>;
+	using vufOpenBSpline_2f = vufCurveOpenBSpline<float,  vufVector2>;
+	using vufOpenBSpline_2d = vufCurveOpenBSpline<double, vufVector2>;
+	using vufOpenBSpline_3f = vufCurveOpenBSpline<float,  vufVector3>;
+	using vufOpenBSpline_3d = vufCurveOpenBSpline<double, vufVector3>;
+	using vufOpenBSpline_4f = vufCurveOpenBSpline<float,  vufVector4>;
+	using vufOpenBSpline_4d = vufCurveOpenBSpline<double, vufVector4>;
 #pragma endregion
 }
 #endif // !VF_MATH_OPEN_BSPLINE_CRV_H

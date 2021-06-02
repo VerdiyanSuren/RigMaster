@@ -6,7 +6,8 @@
 #include <sstream>
 #include <math/vufVector.h>
 #include <math/vufQuaternion.h>
-#include <vufNumericArrayObject.h>
+#include <serializer/vufTxtStdVectorSerializerFn.h>
+//#include <vufNumericArrayObject.h>
 
 #define VF_MATH_CURVE_CREATOR_BODY(SHARED_CRV) \
 		SHARED_CRV->m_this = std::static_pointer_cast<vufCurve<T, V>>(SHARED_CRV);
@@ -414,8 +415,8 @@ namespace vufMath
 	
 	template <class T, template<typename> class V>				class vufCurveExplicit;
 
-	template <class T, template<typename> class V, uint32_t>	class vufOpenBSpline;
-	template <class T, template<typename> class V, uint32_t>	class vufCloseBSpline;
+	template <class T, template<typename> class V, uint32_t>	class vufCurveOpenBSpline;
+	template <class T, template<typename> class V, uint32_t>	class vufCurveCloseBSpline;
 	template <class T, template<typename> class V, uint32_t>	class vufOpenBezier;
 	template <class T, template<typename> class V, uint32_t>	class vufCloseBezier; 
 
@@ -519,32 +520,35 @@ namespace vufMath
 			uint64_t l_size = get_binary_size();
 			std::vector<char> l_buff(l_size);
 			to_binary(l_buff);
-			p_offset = vuf::txtSerializer::encode_to_buff(l_buff.data(), l_size, p_buff, p_offset);
+			vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);
+			p_offset = l_serializer.encode_to_buff(p_buff, p_offset);
 			return p_offset;
 		}
 		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
 		{
-			// To Do 
-			// Implement This
-			return 0;
+			std::vector<char> l_buff;
+			vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);
+			p_offset = l_serializer.decode_from_buff(p_buff, p_offset);
+			from_binary(l_buff);
+			return p_offset;
 		}
 
 		// convert to explicit
 		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()		const { return nullptr; }
 		//virtual	std::shared_ptr< vufCurveImplicit<T, V>>		as_implicit_curve()		const { return nullptr; }
 		// convert to open bspline
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const {	return nullptr;	}
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 2>>		as_open_bspline_di()	const { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 3>>		as_open_bspline_tri()	const { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 4>>		as_open_bspline_tetra()	const { return nullptr; }
-		virtual std::shared_ptr<vufOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const {	return nullptr;	}
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 2>>		as_open_bspline_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 3>>		as_open_bspline_tri()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 4>>		as_open_bspline_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const { return nullptr; }
 
 		// convert to close bspline
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 1>>		as_close_bspline_mono()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 2>>		as_close_bspline_di()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 3>>		as_close_bspline_tri()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 4>>		as_close_bspline_tetra()const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 5>>		as_close_bspline_penta()const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 1>>		as_close_bspline_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 2>>		as_close_bspline_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 3>>		as_close_bspline_tri()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 4>>		as_close_bspline_tetra()const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 5>>		as_close_bspline_penta()const { return nullptr; }
 
 		// convert to open bezier
 		virtual std::shared_ptr<vufOpenBezier <T, V, 1>>		as_open_bezier_mono()	const { return nullptr; }

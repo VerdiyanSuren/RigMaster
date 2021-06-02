@@ -1,8 +1,8 @@
-#ifndef VF_MATH_CRVE_BLEND_H
-#define VF_MATH_CRVE_BLEND_H
+#ifndef VF_MATH_CRV_BLEND_H
+#define VF_MATH_CRV_BLEND_H
 
 #include <curves/vufCurve.h>
-#include <curves/vufCurveContatiner.h>
+//#include <curves/vufCurveContatiner.h>
 #include <math/vufVector.h>
 #include <memory>
 
@@ -172,7 +172,7 @@ namespace vufMath
 			// Implement This
 			return 0;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
 		{
 			// To Do 
 			// Implement This
@@ -184,7 +184,7 @@ namespace vufMath
 			// Implement This
 			return 0;
 		}
-		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) override
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		override
 		{
 			// To Do 
 			// Implement This
@@ -199,8 +199,7 @@ namespace vufMath
 		std::shared_ptr< vufCurveContainer<T, V> >	m_first_container_ptr  = nullptr;
 		std::shared_ptr< vufCurveContainer<T, V> >	m_second_container_ptr = nullptr;
 		T											m_weight = 0;
-	};
-	
+	};	
 
 #pragma region USING
 	using vufCurveBlend_2f = vufCurveBlend<float,  vufVector2>;
@@ -212,4 +211,4 @@ namespace vufMath
 #pragma endregion
 
 }
-#endif // !VF_MATH_CRVE_BLEND_H
+#endif // !VF_MATH_CRV_BLEND_H

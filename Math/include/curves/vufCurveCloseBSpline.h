@@ -9,25 +9,25 @@
 namespace vufMath
 {
 	template <class T, template<typename> class V, uint32_t CURVE_DEGREE = 2>
-	class vufCloseBSpline : public vufCurveExplicit<T, V>
+	class vufCurveCloseBSpline : public vufCurveExplicit<T, V>
 	{
 	private:
 	public:
-		vufCloseBSpline() :vufCurveExplicit<T, V>()
+		vufCurveCloseBSpline() :vufCurveExplicit<T, V>()
 		{
 			vufCurve<T, V>::m_degree = CURVE_DEGREE;
 			vufCurve<T, V>::m_close = true;
 		}
-		virtual ~vufCloseBSpline() {}
-		static	std::shared_ptr<vufCloseBSpline> create()
+		virtual ~vufCurveCloseBSpline() {}
+		static	std::shared_ptr<vufCurveCloseBSpline> create()
 		{
-			std::shared_ptr< vufCloseBSpline >  l_ptr = std::shared_ptr<vufCloseBSpline>(new vufCloseBSpline());
+			std::shared_ptr< vufCurveCloseBSpline >  l_ptr = std::shared_ptr<vufCurveCloseBSpline>(new vufCurveCloseBSpline());
 			VF_MATH_CURVE_CREATOR_BODY(l_ptr);
 			return l_ptr;
 		}
 		virtual std::shared_ptr<vufCurve<T, V>>  get_copy() const override
 		{
-			std::shared_ptr< vufCloseBSpline > l_ptr = vufCloseBSpline::create();
+			std::shared_ptr< vufCurveCloseBSpline > l_ptr = vufCurveCloseBSpline::create();
 
 			l_ptr->m_degree = vufCurve<T, V>::m_degree;
 			l_ptr->m_close = vufCurve<T, V>::m_close;
@@ -609,11 +609,11 @@ namespace vufMath
 		*/
 
 		// convert to close bspline
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 1>>	as_close_bspline_mono()		const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 2>>	as_close_bspline_di()		const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 3>>	as_close_bspline_tri()		const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 4>>	as_close_bspline_tetra()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBSpline <T, V, 5>>	as_close_bspline_penta()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 1>>	as_close_bspline_mono()		const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 2>>	as_close_bspline_di()		const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 3>>	as_close_bspline_tri()		const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 4>>	as_close_bspline_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 5>>	as_close_bspline_penta()	const { return nullptr; }
 	private:
 		std::vector<T>												m_knot_v;
 		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_n_v;	// [time interval, node index] = basis function
@@ -622,29 +622,29 @@ namespace vufMath
 	};
 	//specializations
 	template<>
-	std::shared_ptr<vufCloseBSpline <double, vufVector4, 1>>		vufCloseBSpline <double, vufVector4, 1>::as_close_bspline_mono()	const
+	std::shared_ptr<vufCurveCloseBSpline <double, vufVector4, 1>>		vufCurveCloseBSpline <double, vufVector4, 1>::as_close_bspline_mono()	const
 	{
-		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 1>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveCloseBSpline<double, vufVector4, 1>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufCloseBSpline <double, vufVector4, 2>>		vufCloseBSpline <double, vufVector4, 2>::as_close_bspline_di()		const
+	std::shared_ptr<vufCurveCloseBSpline <double, vufVector4, 2>>		vufCurveCloseBSpline <double, vufVector4, 2>::as_close_bspline_di()		const
 	{
-		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveCloseBSpline<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufCloseBSpline <double, vufVector4, 3>>		vufCloseBSpline <double, vufVector4, 3>::as_close_bspline_tri()	const
+	std::shared_ptr<vufCurveCloseBSpline <double, vufVector4, 3>>		vufCurveCloseBSpline <double, vufVector4, 3>::as_close_bspline_tri()	const
 	{
-		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveCloseBSpline<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufCloseBSpline <double, vufVector4, 4>>		vufCloseBSpline <double, vufVector4, 4>::as_close_bspline_tetra()	const
+	std::shared_ptr<vufCurveCloseBSpline <double, vufVector4, 4>>		vufCurveCloseBSpline <double, vufVector4, 4>::as_close_bspline_tetra()	const
 	{
-		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 4>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveCloseBSpline<double, vufVector4, 4>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufCloseBSpline <double, vufVector4, 5>>		vufCloseBSpline <double, vufVector4, 5>::as_close_bspline_penta()	const
+	std::shared_ptr<vufCurveCloseBSpline <double, vufVector4, 5>>		vufCurveCloseBSpline <double, vufVector4, 5>::as_close_bspline_penta()	const
 	{
-		return std::static_pointer_cast<vufCloseBSpline<double, vufVector4, 5>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveCloseBSpline<double, vufVector4, 5>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 }
 #endif !VF_MATH_CLOSE_BSPLINE_CRV_H
