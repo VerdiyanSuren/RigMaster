@@ -26,10 +26,14 @@ namespace vufMath
 			vufVector4Test<double>				l_test_vector_4d;
 			vufMatrix4Test<double>				l_test_matrix_4d;
 			vufQuaternionTest<double>			l_test_quaternion_d;
+			
 			vufPolinomCoeffTest<double>			l_polinom_d;
 			vufCurveOpenBSplineTest<double>		l_open_bspline_d;
 			vufCurveCloseBSplineTest<double>	l_close_bspline_d;
-
+			vufCurveRebuildUniformTest<double>	l_rebuild_uniform_d;
+			vufCurveQuaternionCloseTest<double> l_quat_close_d;
+			vufCurveScaleCloseTest<double>		l_scale_close_d;
+			vufCurveContainerTest<double>		l_constatiner_d;
 			//vufVectorObjectArrayTest<double, vufVector2> test_vector_object_array_2d;
 			//vufVectorObjectArrayTest<double, vufVector3> test_vector_object_array_3d;
 			//vufVectorObjectArrayTest<double, vufVector4> l_test_vector_object_array_4d;
@@ -76,7 +80,10 @@ namespace vufMath
 			if (l_polinom_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
 			if (l_open_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
 			if (l_close_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
-
+			if (l_rebuild_uniform_d.run(p_verbose) == false){ std::cin.get();	return false; }
+			if (l_quat_close_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
+			if (l_scale_close_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (l_constatiner_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
 			return true;
 		}
 	};

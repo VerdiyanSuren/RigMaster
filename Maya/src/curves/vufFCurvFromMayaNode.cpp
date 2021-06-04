@@ -6,7 +6,7 @@
 
 #include <curves/vufCurveFromMayaNode.h>
 #include <data/vufMayaDataList.h>
-#include <curves/vufOpenBSpline.h>
+#include <curves/vufCurveOpenBSpline.h>
 #include <vufMayaGlobalIncludes.h>
 
 

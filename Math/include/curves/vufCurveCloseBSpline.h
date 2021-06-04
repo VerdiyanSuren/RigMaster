@@ -441,28 +441,6 @@ namespace vufMath
 			//std::cout << "-------------------------------------OPEN_BSPLINE::get_binary_size()--------------------- "<< std::endl;
 			uint64_t l_size = 0;
 			l_size += vufCurveExplicit<T, V>::get_binary_size();
-			// m_knot_v			(array);
-			l_size += sizeof(uint64_t) + m_knot_v.size() * sizeof(T);
-			// m_n_v			(array(array))
-			l_size += sizeof(uint64_t);
-			for (uint64_t i = 0; i < m_n_v.size(); ++i)
-			{
-				l_size += sizeof(uint64_t);
-				for (uint64_t j = 0; j < m_n_v[i].size(); ++j)
-				{
-					l_size += m_n_v[i][j].get_binary_size();
-				}
-			}
-			// m_dn_v			(array(array))
-			l_size += sizeof(uint64_t);
-			for (uint64_t i = 0; i < m_dn_v.size(); ++i)
-			{
-				l_size += sizeof(uint64_t);
-				for (uint64_t j = 0; j < m_dn_v[i].size(); ++j)
-				{
-					l_size += m_dn_v[i][j].get_binary_size();
-				}
-			}
 			l_size += sizeof(m_node_count);
 			return  l_size;
 		}
@@ -482,91 +460,23 @@ namespace vufMath
 			{
 				return 0;
 			}
-			// -- open bspline
-			//m_knot_v
-			uint64_t l_array_size = m_knot_v.size();
-			std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));			p_offset += sizeof(l_array_size);
-			std::memcpy(&p_buff[p_offset], m_knot_v.data(), m_knot_v.size() * sizeof(T));	p_offset += m_knot_v.size() * sizeof(T);
-			// m_n_v
-			l_array_size = m_n_v.size();
-			std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));			p_offset += sizeof(l_array_size);
-			for (uint64_t i = 0; i < m_n_v.size(); ++i)
-			{
-				l_array_size = m_n_v[i].size();
-				std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));		p_offset += sizeof(l_array_size);
-				for (uint64_t j = 0; j < m_n_v[i].size(); ++j)
-				{
-					p_offset = m_n_v[i][j].to_binary(p_buff, p_offset);
-				}
-			}
-			// m_dn_v
-			l_array_size = m_dn_v.size();
-			std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));			p_offset += sizeof(l_array_size);
-			for (uint64_t i = 0; i < m_dn_v.size(); ++i)
-			{
-				l_array_size = m_dn_v[i].size();
-				std::memcpy(&p_buff[p_offset], &l_array_size, sizeof(l_array_size));		p_offset += sizeof(l_array_size);
-				for (uint64_t j = 0; j < m_dn_v[i].size(); ++j)
-				{
-					p_offset = m_dn_v[i][j].to_binary(p_buff, p_offset);
-				}
-			}
-			std::memcpy(&p_buff[p_offset], &m_node_count, sizeof(m_node_count));			p_offset += sizeof(m_node_count);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_node_count, sizeof(m_node_count));
 			return p_offset;
 		}
 		virtual uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{
+			vufCurve<T, V>::m_valid = false;
 			p_offset = vufCurveExplicit<T, V>::from_binary(p_buff, p_offset);
 			if (p_offset == 0)
 			{
+				vufCurve<T, V>::m_valid = false;
 				return 0;
 			};
-			//m_knot_v
-			uint64_t l_array_size;
-			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-			std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));			p_offset += sizeof(l_array_size);
-			m_knot_v.resize(l_array_size);
-			if (p_buff.size() < p_offset + m_knot_v.size() * sizeof(T)) return 0;
-			if (l_array_size > 0)
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_node_count, sizeof(m_node_count));
+			if (init_knot_vector() == true && update_basises_i() == true)
 			{
-				std::memcpy(&m_knot_v[0], &p_buff[p_offset], l_array_size * sizeof(T));	p_offset += l_array_size * sizeof(T);
+				vufCurve<T, V>::m_valid = true;
 			}
-			// m_n_v
-			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-			std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));			p_offset += sizeof(l_array_size);
-			m_n_v.resize(l_array_size);
-			if (l_array_size > 0)
-			{
-				for (uint64_t i = 0; i < m_n_v.size(); ++i)
-				{
-					if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-					std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));	p_offset += sizeof(l_array_size);
-					m_n_v[i].resize(l_array_size);
-					for (uint64_t j = 0; j < m_n_v[i].size(); ++j)
-					{
-						p_offset = m_n_v[i][j].from_binary(p_buff, p_offset);
-					}
-				}
-			}
-			// m_dn_v
-			if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-			std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));			p_offset += sizeof(l_array_size);
-			m_dn_v.resize(l_array_size);
-			if (l_array_size > 0)
-			{
-				for (uint64_t i = 0; i < m_dn_v.size(); ++i)
-				{
-					if (p_buff.size() < p_offset + sizeof(l_array_size)) return 0;
-					std::memcpy(&l_array_size, &p_buff[p_offset], sizeof(l_array_size));	p_offset += sizeof(l_array_size);
-					m_dn_v[i].resize(l_array_size);
-					for (uint64_t j = 0; j < m_dn_v[i].size(); ++j)
-					{
-						p_offset = m_dn_v[i][j].from_binary(p_buff, p_offset);
-					}
-				}
-			}
-			if (p_buff.size() < p_offset + sizeof(m_node_count)) return 0;
-			std::memcpy(&m_node_count, &p_buff[p_offset], sizeof(m_node_count));			p_offset += sizeof(m_node_count);
 			return p_offset;
 		}
 
@@ -578,35 +488,6 @@ namespace vufMath
 		{
 			return vufCurve<T, V>::decode_from_buff(p_buff, p_offset);
 		}
-		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0) override;
-
-		/*
-		virtual void		log_me(int p_tab_count = 0) const override
-		{
-			VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_AQUAA, VF_CONSOLE_COLOR_BLACK);
-
-			std::string l_str_offset(p_tab_count * 4, '.');
-			//std::cout << l_str_offset <<"-------------------------------------------------------------" << std::endl;
-			std::cout << l_str_offset << "[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
-			std::cout << l_str_offset << "Control Points Count: " << vufCurveExplicit<T, V>::m_nodes_pos_v.size() << std::endl;
-			//To Do
-			// Add Control Points Value Info
-			std::cout << l_str_offset << "....Knot Vector [";
-			for (auto i : m_knot_v)
-			{
-				std::cout << " " << i;
-			}
-			std::cout << " ]" << std::endl;
-			std::cout << l_str_offset << "....Segments: " << get_interval_count() << " [";
-			for (uint32_t i = 0; i < get_interval_count(); ++i)
-			{
-				std::cout << "(" << get_interval_t_min(i) << "," << get_interval_t_max(i) << ")";
-			}
-			std::cout << " ]" << std::endl;
-			VF_CONSOLE_RESET_COLOR();
-
-		}
-		*/
 
 		// convert to close bspline
 		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 1>>	as_close_bspline_mono()		const { return nullptr; }

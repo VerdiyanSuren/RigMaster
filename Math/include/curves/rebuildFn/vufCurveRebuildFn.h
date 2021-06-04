@@ -51,7 +51,7 @@ namespace vufMath
 
 		virtual vufCurveRebuildFnType	get_type() const = 0 { return vufCurveRebuildFnType::k_none; }
 		
-		virtual void		rebuild( const vufCurveContainer<T, V>& p_curve_containe) = 0;
+		virtual void		rebuild( const vufCurve<T, V>& p_curve ) = 0;
 		virtual T			get_curve_val_by_rebuilded(T p_val) const = 0;
 		virtual T			get_rebuilded_val_by_curve(T p_val) const = 0;
 		virtual std::shared_ptr< vufCurveRebuildFn<T, V>> get_copy() const = 0;
@@ -83,7 +83,7 @@ namespace vufMath
 		}
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
 		{
-			uint64_t l_size = vufCurveRebuildFn<T, V>::get_binary_size();
+			uint64_t l_size = get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
 			{
 				p_buff.resize(p_offset + l_size);
@@ -112,13 +112,12 @@ namespace vufMath
 		}
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
 		{
-			uint64_t l_size = get_binary_size();
-			std::vector<char> l_buff(l_size);
-			to_binary(l_buff);
-			p_offset = vuf::txtSerializer::encode_to_buff(l_buff.data(), l_size, p_buff, p_offset);
-			return p_offset;
+			VF_ENCODE_FOR_BASE();
 		}
-		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0;
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
+		{
+			VF_DECODE_FOR_BASE();
+		}
 	protected:
 		bool	m_clamp_start		= false;
 		T		m_clamp_start_value	= 0.0;
@@ -142,9 +141,9 @@ namespace vufMath
 			l_ptr->m_this = l_ptr;
 			return l_ptr;
 		}
-		uint32_t get_explicit_samples_i(std::shared_ptr<vufCurve<T,V>> p_crv_ptr) const
+		uint32_t get_explicit_samples_i(const vufCurve<T, V>& p_curve) const
 		{
-			auto l_crv_ptr = p_crv_ptr->as_explicit_curve();
+			auto l_crv_ptr = p_curve.as_explicit_curve();
 			uint32_t l_sp_count = l_crv_ptr->get_interval_count();
 			return l_sp_count * m_div_per_segment + 1;
 		}
@@ -153,13 +152,12 @@ namespace vufMath
 		{ 
 			return vufCurveRebuildFnType::k_constant_step;
 		}
-		virtual void	rebuild( const vufCurveContainer<T, V>& p_curve_container) override
+		virtual void	rebuild(const vufCurve<T, V>& p_curve ) override
 		{			
-			auto l_crv_ptr = p_curve_container.get_curve_ptr();
 			m_total_div = m_div_per_segment;
-			if (l_crv_ptr->is_explicit() == true)
+			if (p_curve.is_explicit() == true)
 			{
-				m_total_div = get_explicit_samples_i(l_crv_ptr);
+				m_total_div = get_explicit_samples_i(p_curve);
 			}	
 			m_curve_length		= 0;
 
@@ -170,7 +168,7 @@ namespace vufMath
 				m_curve_length_to_val_v.resize(m_total_div);
 			}
 			;
-			V<T> l_vec_prev = l_crv_ptr->get_pos_at(0);
+			V<T> l_vec_prev = p_curve.get_pos_at(0);
 			m_uniform_to_curve_val_v[0]	= 0;
 			m_curve_to_uniform_val_v[0]	= 0;
 			m_curve_length_to_val_v[0]	= 0;
@@ -178,7 +176,7 @@ namespace vufMath
 			for (uint64_t i = 1; i < m_total_div; ++i)
 			{
 				T l_crv_val = ((T)i) / (T(m_total_div - 1));
-				V<T> l_vec = l_crv_ptr->get_pos_at(l_crv_val);
+				V<T> l_vec = p_curve.get_pos_at(l_crv_val);
 				m_curve_length_to_val_v[i] = m_curve_length_to_val_v[i-1] + l_vec_prev.distance_to(l_vec);
 				l_vec_prev = l_vec;
 			}
@@ -331,30 +329,31 @@ namespace vufMath
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const override
 		{
 			p_offset  = vufCurveRebuildFn<T, V>::to_binary(p_buff, p_offset);
-			std::memcpy(&p_buff[p_offset], &m_div_per_segment,	sizeof(m_div_per_segment));					p_offset += sizeof(m_div_per_segment);
-			std::memcpy(&p_buff[p_offset], &m_total_div,		sizeof(m_total_div));						p_offset += sizeof(m_total_div);
-			std::memcpy(&p_buff[p_offset], &m_curve_length,		sizeof(m_curve_length));					p_offset += sizeof(m_curve_length);
-
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_div_per_segment,	sizeof(m_div_per_segment));
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_total_div,		sizeof(m_total_div));
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_curve_length,		sizeof(m_curve_length));
+			
 			uint64_t l_size = m_uniform_to_curve_val_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));										p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], m_uniform_to_curve_val_v.data(), l_size * sizeof(T));		p_offset += l_size * sizeof(T);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_uniform_to_curve_val_v[0], l_size * sizeof(T));
 			}
 
 			l_size = m_curve_to_uniform_val_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));		p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], m_curve_to_uniform_val_v.data(), l_size * sizeof(T));		p_offset += l_size * sizeof(T);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_curve_to_uniform_val_v[0], l_size * sizeof(T));
 			}
 
 			l_size = m_curve_length_to_val_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));		p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], m_curve_length_to_val_v.data(), l_size * sizeof(T));			p_offset += l_size * sizeof(T);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_curve_length_to_val_v[0], l_size * sizeof(T));
 			}
+
 			return p_offset;
 		}
 		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
@@ -388,13 +387,12 @@ namespace vufMath
 		}
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const override
 		{
-			return 0;
+			return vufCurveRebuildFn<T, V>::encode_to_buff(p_buff, p_offset);
 		}
 		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		override
 		{
-			return 0;
+			return vufCurveRebuildFn<T, V>::decode_from_buff(p_buff, p_offset);
 		}
-
 
 		uint32_t m_div_per_segment	= 5;
 		uint64_t m_total_div		= 0;

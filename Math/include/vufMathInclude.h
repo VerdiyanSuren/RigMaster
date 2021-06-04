@@ -35,6 +35,28 @@
 	std::memcpy(&DATA, &p_buff[p_offset], SIZE);						\
 	OFFSET += SIZE;
 
+#define VF_SAFE_WRITE_TO_BUFF(BUFF, OFFSET, DATA, SIZE )				\
+	if (BUFF.size() < OFFSET + SIZE) BUFF.resize(OFFSET + SIZE);		\
+	std::memcpy(&p_buff[p_offset], &DATA, SIZE);						\
+	OFFSET += SIZE;
+
+// encode for base
+#define VF_ENCODE_FOR_BASE()										\
+	uint64_t l_size = get_binary_size();							\
+	std::vector<char> l_buff(l_size);								\
+	to_binary(l_buff);												\
+	vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);		\
+	p_offset = l_serializer.encode_to_buff(p_buff, p_offset);		\
+	return p_offset;
+
+// decode for base
+#define VF_DECODE_FOR_BASE()										\
+	std::vector<char> l_buff;										\
+	vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);		\
+	p_offset = l_serializer.decode_from_buff(p_buff, p_offset);		\
+	from_binary(l_buff);											\
+	return p_offset;
+
 #pragma endregion SIRIALIZE_ROUTINE
 //--------------------------------------------------------------------------------
 #pragma region SERIALIZE_NUMERIC_ARRAY

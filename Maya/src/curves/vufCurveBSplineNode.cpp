@@ -8,7 +8,7 @@
 #include <maya/MGlobal.h>
 
 #include <curves/vufCurveBSplineNode.h>
-#include <curves/vufOpenBSpline.h>
+#include <curves/vufCurveOpenBSpline.h>
 #include <math/vufMatrix.h>
 #include <maya/MMatrix.h>
 #include <maya/MFnMatrixArrayData.h>
@@ -186,7 +186,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				l_r_ptr->set_clamp_end_value(l_rbld_pin_end_value);
 				l_r_ptr->set_offset(l_rbld_offset);
 				l_r_ptr->m_div_per_segment = l_rbld_samples;
-				l_r_ptr->rebuild(l_container);
+				l_r_ptr->rebuild(*(l_container.get_curve_ptr()));
 			}
 		}
 		if (l_rebuild_mode == 1 /* keep rebuild fn*/)

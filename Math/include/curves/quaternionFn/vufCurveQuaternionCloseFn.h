@@ -280,45 +280,45 @@ namespace vufMath
 			p_offset = vufCurveQuaternionFn<T, V>::to_binary(p_buff, p_offset);
 			// m_y_axis_v
 			l_size = m_y_axis_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));										p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], &m_y_axis_v[0], l_size* sizeof(V<T>));						p_offset += l_size * sizeof(V<T>);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_y_axis_v[0], l_size * sizeof(V<T>));
 			}
 			// m_positon_v
 			l_size = m_positon_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));										p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], &m_positon_v[0], l_size * sizeof(V<T>));						p_offset += l_size * sizeof(V<T>);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_positon_v[0], l_size * sizeof(V<T>));
 			}
 			// m_quaternion_a_v
 			l_size = m_quaternion_a_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));										p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], &m_quaternion_a_v[0], l_size * sizeof(vufQuaternion<T>));	p_offset += l_size * sizeof(vufQuaternion<T>);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_quaternion_a_v[0], l_size * sizeof(vufQuaternion<T>));
 			}
 			// m_quaternion_b_v
 			l_size = m_quaternion_b_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));										p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], &m_quaternion_b_v[0], l_size * sizeof(vufQuaternion<T>));	p_offset += l_size * sizeof(vufQuaternion<T>);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_quaternion_b_v[0], l_size * sizeof(vufQuaternion<T>));
 			}
 			// m_quat_param_v
 			l_size = m_quat_param_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));										p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], &m_quat_param_v[0], l_size * sizeof(T));						p_offset += l_size * sizeof(T);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_quat_param_v[0], l_size * sizeof(T));
 			}
 			// m_quat_indeces_v
 			l_size = m_quat_indeces_v.size();
-			std::memcpy(&p_buff[p_offset], &l_size, sizeof(l_size));										p_offset += sizeof(l_size);
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
 			if (l_size > 0)
 			{
-				std::memcpy(&p_buff[p_offset], &m_quat_indeces_v[0], l_size * sizeof(T));					p_offset += l_size * sizeof(uint32_t);
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_quat_indeces_v[0], l_size * sizeof(uint32_t));
 			}
 
 			return p_offset;
@@ -369,7 +369,7 @@ namespace vufMath
 			{
 				VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_quat_indeces_v[0], l_size * sizeof(uint32_t));
 			}
-
+			
 			return p_offset;
 		}
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const override
@@ -378,9 +378,8 @@ namespace vufMath
 		}
 		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
 		{
-			return 0;
+			return vufCurveQuaternionFn<T, V>::decode_from_buff(p_buff, p_offset);
 		}
-
 	private:
 		std::vector <V<T>>				m_y_axis_v;			// y axices of nodes nodes array
 		std::vector< V<T>>				m_positon_v;		// quaternion nodes 3d position array

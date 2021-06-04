@@ -6,7 +6,7 @@ namespace vufMath
 
 	enum class vufCurveRemapFnType :uint8_t
 	{
-		k_unknown = 3
+		k_none = 0
 	};
 	template <class T>
 	class vufCurveRemapFn
@@ -18,7 +18,7 @@ namespace vufMath
 		{
 			return nullptr;
 		}
-		virtual vufCurveRemapFnType	get_type() const = 0 { return vufCurveRemapFnType::k_unknown; }
+		virtual vufCurveRemapFnType	get_type() const = 0 { return vufCurveRemapFnType::k_none; }
 		virtual void			log_me(int p_tab_count = 0) const = 0;
 
 

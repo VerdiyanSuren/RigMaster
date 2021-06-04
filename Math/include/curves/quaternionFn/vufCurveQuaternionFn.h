@@ -130,13 +130,12 @@ namespace vufMath
 		}
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
 		{
-			uint64_t l_size = get_binary_size();
-			std::vector<char> l_buff(l_size);
-			to_binary(l_buff);
-			p_offset = vuf::txtSerializer::encode_to_buff(l_buff.data(), l_size, p_buff, p_offset);
-			return p_offset;
+			VF_ENCODE_FOR_BASE();
 		}
-		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		= 0;
+		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
+		{
+			VF_DECODE_FOR_BASE();
+		}
 
 	 protected:
 		bool	m_pin_start = false;
