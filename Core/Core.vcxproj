@@ -200,11 +200,6 @@
     <Lib>
       <AdditionalLibraryDirectories>C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Debug_windows_Maya2019_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Debug_windows_Maya2019_x86_64\Sandbox &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Debug_windows_Maya2019_x86_64\Math &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Debug_windows_Maya2019_x86_64\Math &gt; nul)
-IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Debug_windows_Maya2019_x86_64\Maya &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Debug_windows_Maya2019_x86_64\Maya &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2020|x64'">
     <ClCompile>
@@ -281,11 +276,6 @@ IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I 
     <Lib>
       <AdditionalLibraryDirectories>C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
-    <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Release_windows_Maya2019_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Release_windows_Maya2019_x86_64\Sandbox &gt; nul)
-IF EXIST ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Release_windows_Maya2019_x86_64\Math &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Release_windows_Maya2019_x86_64\Math &gt; nul)
-IF EXIST ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib\ (xcopy /Q /E /Y /I ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Release_windows_Maya2019_x86_64\Maya &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release_windows_Maya2019_x86_64\Core\Core.lib ..\bin\Release_windows_Maya2019_x86_64\Maya &gt; nul)</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2020|x64'">
     <ClCompile>

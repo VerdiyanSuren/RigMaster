@@ -178,7 +178,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;include;..\Math\include;..\Core\include;..\LuaWrapper\include;C:\Program Files\Autodesk\Maya2018\include;C:\Program Files\Autodesk\Maya2018\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;C:\Program Files\Autodesk\Maya2018\include;C:\Program Files\Autodesk\Maya2018\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -187,7 +187,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2018_x86_64\Core;..\bin\Debug_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2018_x86_64\Lua;..\bin\Debug_windows_Maya2018_x86_64\Core;bin\Debug_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2018_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -199,7 +199,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;include;..\Math\include;..\Core\include;..\LuaWrapper\include;C:\Program Files\Autodesk\Maya2019\include;C:\Program Files\Autodesk\Maya2019\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;C:\Program Files\Autodesk\Maya2019\include;C:\Program Files\Autodesk\Maya2019\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -208,7 +208,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2019_x86_64\Core;..\bin\Debug_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2019_x86_64\Lua;..\bin\Debug_windows_Maya2019_x86_64\Core;bin\Debug_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2019_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PreBuildEvent>
@@ -224,7 +224,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;include;..\Math\include;..\Core\include;..\LuaWrapper\include;C:\Program Files\Autodesk\Maya2020\include;C:\Program Files\Autodesk\Maya2020\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;C:\Program Files\Autodesk\Maya2020\include;C:\Program Files\Autodesk\Maya2020\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -233,7 +233,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2020_x86_64\Core;..\bin\Debug_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2020_x86_64\Lua;..\bin\Debug_windows_Maya2020_x86_64\Core;bin\Debug_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2020_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -245,7 +245,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;include;..\Math\include;..\Core\include;..\LuaWrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -263,7 +263,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;include;..\Math\include;..\Core\include;..\LuaWrapper\include;C:\Program Files\Autodesk\Maya2018\include;C:\Program Files\Autodesk\Maya2018\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;C:\Program Files\Autodesk\Maya2018\include;C:\Program Files\Autodesk\Maya2018\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -277,7 +277,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2018_x86_64\Core;..\bin\Release_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2018_x86_64\Lua;..\bin\Release_windows_Maya2018_x86_64\Core;bin\Release_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2018_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -289,7 +289,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;include;..\Math\include;..\Core\include;..\LuaWrapper\include;C:\Program Files\Autodesk\Maya2019\include;C:\Program Files\Autodesk\Maya2019\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;C:\Program Files\Autodesk\Maya2019\include;C:\Program Files\Autodesk\Maya2019\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -303,7 +303,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2019_x86_64\Core;..\bin\Release_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2019_x86_64\Lua;..\bin\Release_windows_Maya2019_x86_64\Core;bin\Release_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2019_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PreBuildEvent>
@@ -319,7 +319,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;include;..\Math\include;..\Core\include;..\LuaWrapper\include;C:\Program Files\Autodesk\Maya2020\include;C:\Program Files\Autodesk\Maya2020\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;C:\Program Files\Autodesk\Maya2020\include;C:\Program Files\Autodesk\Maya2020\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -333,7 +333,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2020_x86_64\Core;..\bin\Release_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2020_x86_64\Lua;..\bin\Release_windows_Maya2020_x86_64\Core;bin\Release_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2020_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -345,7 +345,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;include;..\Math\include;..\Core\include;..\LuaWrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

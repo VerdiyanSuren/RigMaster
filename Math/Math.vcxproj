@@ -338,14 +338,14 @@
     <ClInclude Include="include\curves\scaleFn\vufCurveScale2EndsFn.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseFn.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h" />
-    <ClInclude Include="include\curves\vufCurveCloseBSpline.h" />
     <ClInclude Include="include\curves\vufCurve.h" />
     <ClInclude Include="include\curves\vufCurveBlend.h" />
+    <ClInclude Include="include\curves\vufCurveCloseBSpline.h" />
     <ClInclude Include="include\curves\vufCurveContatiner.h" />
     <ClInclude Include="include\curves\vufCurveExplicit.h" />
+    <ClInclude Include="include\curves\vufCurveOpenBSpline.h" />
     <ClInclude Include="include\curves\vufCurveSlide.h" />
     <ClInclude Include="include\curves\vufMathCurvesInclude.h" />
-    <ClInclude Include="include\curves\vufCurveOpenBSpline.h" />
     <ClInclude Include="include\math\vufMatrix.h" />
     <ClInclude Include="include\math\vufQuaternion.h" />
     <ClInclude Include="include\math\vufVector.h" />

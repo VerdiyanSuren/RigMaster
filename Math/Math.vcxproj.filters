@@ -57,13 +57,13 @@
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurveCloseBSpline.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
     <ClInclude Include="include\curves\vufCurve.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveBlend.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveCloseBSpline.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveContatiner.h">
@@ -72,13 +72,13 @@
     <ClInclude Include="include\curves\vufCurveExplicit.h">
       <Filter>include\curves</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\vufCurveOpenBSpline.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\vufCurveSlide.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufMathCurvesInclude.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveOpenBSpline.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\math\vufMatrix.h">
