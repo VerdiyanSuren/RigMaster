@@ -44,7 +44,7 @@ namespace vufRM
 
 		static MObject	g_res_scl_attr;
 
-		static MObject	g_res_xform;
+		static MObject	g_res_xform_attr;
 		static MObject	g_res_vufTransform;
 	};
 

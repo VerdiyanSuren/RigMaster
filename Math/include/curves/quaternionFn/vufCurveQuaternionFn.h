@@ -10,6 +10,7 @@ namespace vufMath
 {
 	template<class T, template<typename> class V>	class vufCurveContainer;
 	template <class T, template<typename> class V>	class vufCurveQuaternionCloseFn;
+	template <class T, template<typename> class V>	class vufCurveQuaternionTransportFn;
 	template <class T, template<typename> class V>	class vufCurveQuaternionBlendFn;
 
 #pragma region VF_CURVE_FN_BASE
@@ -18,7 +19,8 @@ namespace vufMath
 		//open curves
 		k_none		= 0,
 		k_closest	= 1,
-		k_blend		= 2
+		k_transport = 2,
+		k_blend		= 3
 	};
 
 	// functions set to work with specific part 
@@ -33,6 +35,10 @@ namespace vufMath
 			if (p_type == vufCurveQuatFnType::k_closest)
 			{
 				return vufCurveQuaternionCloseFn<T, V>::create();
+			}
+			if (p_type == vufCurveQuatFnType::k_closest)
+			{
+				return vufCurveQuaternionTransportFn<T, V>::create();
 			}
 			if (p_type == vufCurveQuatFnType::k_blend)
 			{
@@ -57,7 +63,7 @@ namespace vufMath
 		void			is_valid() const { return m_valid; }
 		virtual vufCurveQuatFnType get_type() const = 0 { return vufCurveQuatFnType::k_none; }
 		virtual void	set_item_count(uint32_t p_count) = 0;
-		virtual void	set_item_at(uint32_t p_index, const V<T> p_pos, const vufMatrix4<T>& p_qmatr) = 0;
+		virtual void	set_item_at(uint32_t p_index, const vufMatrix4<T>& p_qmatr) = 0;
 		/// Compute or set influencer param on the curve
 		virtual bool	compute_bind_params(const vufCurveContainer<T, V>& p_curve_container, uint32_t p_divisions = 10, T p_percition = 0.00001) = 0;
 		// Make quaternions non flipped
@@ -68,6 +74,7 @@ namespace vufMath
 		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>> get_copy() const = 0;
 
 		virtual std::shared_ptr < vufCurveQuaternionCloseFn<T, V> > as_closest_fn() const { return nullptr; }
+		virtual std::shared_ptr < vufCurveQuaternionTransportFn<T, V> > as_tranport_fn() const { return nullptr; }
 		virtual std::shared_ptr < vufCurveQuaternionBlendFn<T, V> > as_blend_fn()	const { return nullptr; }
 
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const = 0

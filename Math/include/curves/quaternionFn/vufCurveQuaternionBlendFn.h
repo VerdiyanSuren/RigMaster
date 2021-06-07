@@ -23,7 +23,7 @@ namespace vufMath
 
 		virtual vufCurveQuatFnType get_type() const override { return vufCurveQuatFnType::k_blend; }
 		virtual void	set_item_count(uint32_t p_count) override	{}
-		virtual void	set_item_at(uint32_t p_index, const V<T> p_pos, const vufMatrix4<T>& p_matr) override {}
+		virtual void	set_item_at(uint32_t p_index, const vufMatrix4<T>& p_matr) override {}
 		/// Compute or set influencer param on the curve
 		virtual bool	compute_bind_params(const vufCurveContainer<T, V>& p_curve_container, uint32_t p_division, T p_percition = 0.00001) override { return true; }
 		// Make quaternions non flopped

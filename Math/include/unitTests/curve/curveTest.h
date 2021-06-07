@@ -420,7 +420,7 @@ namespace vufMath
 			for (int i = 0; i < 5; ++i)
 			{
 				vufMatrix4<double> l_matr = vufMatrix4<double>::random_matrix();
-				l_quat_1->set_item_at(i, l_matr.get_translation_4(), l_matr);
+				l_quat_1->set_item_at(i, l_matr);
 			}
 			l_quat_1->compute_bind_params(*l_cntnr, 10);
 			l_quat_1->match_quaternions(*l_cntnr);
@@ -659,7 +659,7 @@ namespace vufMath
 			for (int i = 0; i < 5; ++i)
 			{
 				vufMatrix4<double> l_matr = vufMatrix4<double>::random_matrix();
-				l_quat->set_item_at(i, l_matr.get_translation_4(), l_matr);
+				l_quat->set_item_at(i, l_matr);
 			}
 			l_quat->compute_bind_params(*l_cntnr_1, 10);
 			l_quat->match_quaternions(*l_cntnr_1);

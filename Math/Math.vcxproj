@@ -333,6 +333,7 @@
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionBlendFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionCloseFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionFn.h" />
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionTransportFn.h" />
     <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildFn.h" />
     <ClInclude Include="include\curves\remapFn\vufCurveRemapFn.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScale2EndsFn.h" />

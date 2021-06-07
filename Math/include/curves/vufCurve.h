@@ -472,7 +472,10 @@ namespace vufMath
 		virtual vufCurveType	get_type()					const = 0;
 		virtual V<T>			get_pos_at(T p_t)			const = 0;
 		virtual V<T>			get_tangent_at(T p_t)		const = 0;
-
+		//virtual V<T>			get_velocity_at(T p_t)		const = 0;
+		//virtual V<T>			get_normal_at(T p_t)		const = 0;
+		//virtual V<T>			get_binormal(T p_t)			const = 0;
+		//virtual vufMatrix4<T> get_frenet_frame_at(T p_t)  const = 0;
 		virtual T	get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10,		T p_percition = 0.00001) const= 0;
 		virtual T	get_closest_point_param_on_interval( const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const = 0;
 		

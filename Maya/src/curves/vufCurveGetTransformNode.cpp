@@ -38,7 +38,7 @@ MObject	vufCurveGetTransformNode::g_res_rot_z_attr;
 
 MObject	vufCurveGetTransformNode::g_res_scl_attr;
 
-MObject	vufCurveGetTransformNode::g_res_xform;
+MObject	vufCurveGetTransformNode::g_res_xform_attr;
 MObject	vufCurveGetTransformNode::g_res_vufTransform;
 
 
@@ -143,7 +143,7 @@ MStatus	vufCurveGetTransformNode::initialize()
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_numeric_attr_fn.setWritable(false));
 
-	g_res_xform = l_matrix_attr_fn.create("xForm", "xfr", MFnMatrixAttribute::kDouble, &l_status);
+	g_res_xform_attr = l_matrix_attr_fn.create("xForm", "xfr", MFnMatrixAttribute::kDouble, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_matrix_attr_fn.setWritable(false));
 
@@ -152,7 +152,7 @@ MStatus	vufCurveGetTransformNode::initialize()
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_res_pos_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_res_rot_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_res_scl_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_res_xform));
+	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_res_xform_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.setWritable(false));
 
 	//------------------------------------------------------------------
@@ -196,9 +196,10 @@ MStatus	vufCurveGetTransformNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			p_plug == g_res_rot_y_attr		|| 
 			p_plug == g_res_rot_z_attr		|| 
 			p_plug == g_res_scl_attr		||
-			p_plug == g_res_xform)
+			p_plug == g_res_xform_attr)
 	{
-		MMatrix l_matr		= p_data.inputValue(g_parent_xform_attr).asMatrix();
+		//VF_LOG_INFO("COMPUTE TRANSFORM");
+		MMatrix l_parent_matr= p_data.inputValue(g_parent_xform_attr).asMatrix();
 		double l_offset		= p_data.inputValue(g_param_attr).asDouble();
 		double l_pos_param	= p_data.inputValue(g_param_pos_attr).asDouble();
 		double l_rot_param	= p_data.inputValue(g_param_rot_attr).asDouble();
@@ -216,7 +217,7 @@ MStatus	vufCurveGetTransformNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			vufMatrix_4d l_matr;
 			l_matr.set_quaternion(l_qtr);
 			l_matr.set_translation(l_pos);
-			
+			MMatrix* l_maya_matr = (MMatrix*)&l_matr;
 			//auto l_euler = l_matr.get_euler_xyz();
 			l_qtr.conjugate_in_place();
 			MQuaternion l_mq(l_qtr.x, l_qtr.y, l_qtr.z, l_qtr.w);
@@ -228,12 +229,14 @@ MStatus	vufCurveGetTransformNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			p_data.outputValue(g_res_rot_y_attr).setDouble(l_euler.y);
 			p_data.outputValue(g_res_rot_z_attr).setDouble(l_euler.z);
 			p_data.outputValue(g_res_scl_attr).set3Double(l_scl.x, l_scl.y, l_scl.z);
+			p_data.outputValue(g_res_xform_attr).setMMatrix(*l_maya_matr);
 
 			
 			p_data.setClean(g_res_pos_attr);
 			p_data.setClean(g_res_rot_x_attr);
 			p_data.setClean(g_res_rot_y_attr);
 			p_data.setClean(g_res_rot_z_attr);
+			p_data.setClean(g_res_xform_attr);
 			p_data.setClean(g_res_compound_attr);
 		}
 		return MS::kSuccess;

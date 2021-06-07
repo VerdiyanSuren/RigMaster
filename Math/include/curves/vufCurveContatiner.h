@@ -10,6 +10,7 @@
 
 #include <curves/quaternionFn/vufCurveQuaternionFn.h>
 #include <curves/quaternionFn/vufCurveQuaternionCloseFn.h>
+#include <curves/quaternionFn/vufCurveQuaternionTransportFn.h>
 #include <curves/quaternionFn/vufCurveQuaternionBlendFn.h>
 
 #include <curves/scaleFn/vufCurveScaleFn.h>
@@ -205,7 +206,7 @@ namespace vufMath
 		bool								switch_quaternion_fn(vufCurveQuatFnType p_type)
 		{
 			if ( m_quaternion_fn == nullptr || m_quaternion_fn->get_type() != p_type )
-			{	
+			{				
 				if (p_type == vufCurveQuatFnType::k_none)
 				{
 					m_quaternion_fn = nullptr;

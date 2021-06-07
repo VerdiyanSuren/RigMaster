@@ -225,11 +225,12 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				l_qtr_ptr->set_item_count(l_transforms_sz);
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
-					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) &l_matrix_array[i];
 					l_qtr_ptr->set_item_at(i, l_matr->get_translation_4(), *l_matr);
 				}
 				l_qtr_ptr->compute_bind_params(l_container,10);
 				l_qtr_ptr->match_quaternions(l_container);
+				//VF_LOG_INFO(l_qtr_ptr->to_string());
 			}
 		}
 		if (l_quat_mode == 1 /* just update quaternions values*/)

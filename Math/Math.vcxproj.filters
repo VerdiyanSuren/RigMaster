@@ -132,6 +132,9 @@
     <ClInclude Include="include\vufObjectArrayFn.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionTransportFn.h">
+      <Filter>include\curves\quaternionFn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainMath.cpp" />

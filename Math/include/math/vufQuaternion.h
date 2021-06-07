@@ -30,7 +30,7 @@ namespace vufMath
 		vufQuaternion(const vufVector4<T>& v) :x(v.x), y(v.y), z(v.z), w(v.w) {}
 		vufQuaternion(const T angle, const vufVector4<T>& axis)
 		{
-			vufVector4<T> ax = axis.normalize();
+			vufVector4<T> ax = axis.get_normalized();
 			w = cos(angle / 2.);
 			x = sin(angle / 2);
 			y = x * ax.y;
@@ -471,7 +471,7 @@ namespace vufMath
 		}
 		//void RotateArcInPlace ( const vufVector& from, const vufVector& to );
 		// increment_quaternion_with_2vectors_in_place
-		static inline void slerp_720(const vufQuaternion& q1, const vufQuaternion q2, T u, vufQuaternion& res)
+		static inline void			slerp_720(const vufQuaternion& q1, const vufQuaternion q2, T u, vufQuaternion& res)
 		{
 			T d = q1.dot(q2);
 			if (d > .0)
@@ -516,7 +516,7 @@ namespace vufMath
 			res.normalized_in_place();
 			return res;
 		}
-		static inline void slerp_360(const vufQuaternion& q1, const vufQuaternion q2, T u, vufQuaternion& res)
+		static inline void			slerp_360(const vufQuaternion& q1, const vufQuaternion q2, T u, vufQuaternion& res)
 		{
 			T d = q1.dotMult(q2);
 			vufQuaternion Q1(q1);
