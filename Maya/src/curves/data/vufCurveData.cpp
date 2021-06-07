@@ -11,6 +11,8 @@ vufCurveData::~vufCurveData()
 {}
 MStatus 	vufCurveData::readASCII(const MArgList& p_args, unsigned int& p_last_element)
 {
+	m_internal_data = vufCurveContainer_4d::create();
+
 	MStatus l_status;
 	uint64_t l_size;
 	l_size = p_args.asInt(p_last_element++, &l_status);
@@ -25,8 +27,10 @@ MStatus 	vufCurveData::readASCII(const MArgList& p_args, unsigned int& p_last_el
 }
 MStatus 	vufCurveData::readBinary(std::istream& p_in, unsigned int	p_length)
 {
+	m_internal_data = vufCurveContainer_4d::create();
+
 	uint64_t l_size;
-	p_in.read((char*)&(l_size), sizeof(uint64_t));
+	p_in.read((char*)(&l_size), sizeof(uint64_t));
 	if (l_size == 0)
 	{
 		return MS::kSuccess;
@@ -38,6 +42,10 @@ MStatus 	vufCurveData::readBinary(std::istream& p_in, unsigned int	p_length)
 }
 MStatus 	vufCurveData::writeASCII(std::ostream& p_out)
 {
+	if (m_internal_data == nullptr)
+	{
+		return MS::kSuccess;
+	}
 	std::vector<char> l_buff;
 	m_internal_data->encode_to_buff(l_buff);
 	int l_size = (int)l_buff.size();
@@ -52,6 +60,12 @@ MStatus 	vufCurveData::writeASCII(std::ostream& p_out)
 }
 MStatus 	vufCurveData::writeBinary(std::ostream& p_out)
 {
+	if (m_internal_data == nullptr)
+	{
+		uint64_t l_size = 0;
+		p_out.write((char*)&l_size, sizeof(l_size));
+		return MS::kSuccess;
+	}
 	std::vector<char> l_buff;
 	m_internal_data->to_binary(l_buff);
 	uint64_t l_size = (int)l_buff.size();

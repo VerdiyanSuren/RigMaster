@@ -177,8 +177,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;VF_BUILD_DLL;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -190,13 +190,16 @@
       <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2018_x86_64\Lua;..\bin\Debug_windows_Maya2018_x86_64\Core;..\bin\Debug_windows_Maya2018_x86_64\GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2018_x86_64\GraphicEngine\GraphicEngine.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Debug_windows_Maya2018_x86_64\GraphicEngine\GraphicEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2018_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Debug_windows_Maya2018_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2018_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Debug_windows_Maya2018_x86_64\Sandbox &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2019|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;VF_BUILD_DLL;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -208,13 +211,16 @@
       <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2019_x86_64\Lua;..\bin\Debug_windows_Maya2019_x86_64\Core;..\bin\Debug_windows_Maya2019_x86_64\GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2019_x86_64\GraphicEngine\GraphicEngine.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Debug_windows_Maya2019_x86_64\GraphicEngine\GraphicEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2019_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Debug_windows_Maya2019_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2019_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Debug_windows_Maya2019_x86_64\Sandbox &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2020|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;VF_BUILD_DLL;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -226,13 +232,16 @@
       <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2020_x86_64\Lua;..\bin\Debug_windows_Maya2020_x86_64\Core;..\bin\Debug_windows_Maya2020_x86_64\GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2020_x86_64\GraphicEngine\GraphicEngine.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Debug_windows_Maya2020_x86_64\GraphicEngine\GraphicEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_Maya2020_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Debug_windows_Maya2020_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_Maya2020_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Debug_windows_Maya2020_x86_64\Sandbox &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug vufApp19|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;VF_BUILD_DLL;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -244,13 +253,16 @@
       <AdditionalLibraryDirectories>..\bin\Debug_windows_vufApp19_x86_64\Lua;..\bin\Debug_windows_vufApp19_x86_64\Core;..\bin\Debug_windows_vufApp19_x86_64\GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_vufApp19_x86_64\GraphicEngine\GraphicEngine.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Debug_windows_vufApp19_x86_64\GraphicEngine\GraphicEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Debug_windows_vufApp19_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Debug_windows_vufApp19_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug_windows_vufApp19_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Debug_windows_vufApp19_x86_64\Sandbox &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2018|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;VF_BUILD_DLL;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -267,13 +279,16 @@
       <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2018_x86_64\Lua;..\bin\Release_windows_Maya2018_x86_64\Core;..\bin\Release_windows_Maya2018_x86_64\GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2018_x86_64\GraphicEngine\GraphicEngine.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Release_windows_Maya2018_x86_64\GraphicEngine\GraphicEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Release_windows_Maya2018_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Release_windows_Maya2018_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release_windows_Maya2018_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Release_windows_Maya2018_x86_64\Sandbox &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2019|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;VF_BUILD_DLL;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -290,13 +305,16 @@
       <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2019_x86_64\Lua;..\bin\Release_windows_Maya2019_x86_64\Core;..\bin\Release_windows_Maya2019_x86_64\GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2019_x86_64\GraphicEngine\GraphicEngine.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Release_windows_Maya2019_x86_64\GraphicEngine\GraphicEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Release_windows_Maya2019_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Release_windows_Maya2019_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release_windows_Maya2019_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Release_windows_Maya2019_x86_64\Sandbox &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2020|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;VF_BUILD_DLL;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -313,13 +331,16 @@
       <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2020_x86_64\Lua;..\bin\Release_windows_Maya2020_x86_64\Core;..\bin\Release_windows_Maya2020_x86_64\GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2020_x86_64\GraphicEngine\GraphicEngine.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Release_windows_Maya2020_x86_64\GraphicEngine\GraphicEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Release_windows_Maya2020_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Release_windows_Maya2020_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release_windows_Maya2020_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Release_windows_Maya2020_x86_64\Sandbox &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release vufApp19|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;VF_BUILD_DLL;VF_CONSOLE_USE_COLORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Lua\src;..\Core\include;..\Math\include;..\GLFW\include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -336,7 +357,22 @@
       <AdditionalLibraryDirectories>..\bin\Release_windows_vufApp19_x86_64\Lua;..\bin\Release_windows_vufApp19_x86_64\Core;..\bin\Release_windows_vufApp19_x86_64\GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_vufApp19_x86_64\GraphicEngine\GraphicEngine.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Release_windows_vufApp19_x86_64\GraphicEngine\GraphicEngine.dll\ (xcopy /Q /E /Y /I ..\bin\Release_windows_vufApp19_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Release_windows_vufApp19_x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release_windows_vufApp19_x86_64\GraphicEngine\GraphicEngine.dll ..\bin\Release_windows_vufApp19_x86_64\Sandbox &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\openGL\vufGLApplication.h" />
+    <ClInclude Include="include\openGL\vufGLWindow.h" />
+    <ClInclude Include="include\vufApplication.h" />
+    <ClInclude Include="include\vufEngineEntryPoint.h" />
+    <ClInclude Include="include\vufEngineInclude.h" />
+    <ClInclude Include="include\vufWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\openGL\OGLWindow.cpp" />
+    <ClCompile Include="src\vufApplication.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

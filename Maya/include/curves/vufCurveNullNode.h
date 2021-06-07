@@ -29,12 +29,7 @@ namespace vufRM
 		static const MString	g_type_name;
 
 	private: 
-		/// func(p_data, internal, input, out)
-		void get_locked_ptr(MDataBlock& p_data,
-							std::shared_ptr<vufCurveData>& p_internal,
-							std::shared_ptr<vufCurveData>& p_input,
-							std::shared_ptr<vufCurveData>& p_result );
-		bool m_was_locked = true;
+		bool			m_locked = true;
 	};
 
 }

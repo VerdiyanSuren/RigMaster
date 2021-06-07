@@ -11,6 +11,8 @@
 #include <unitTestCore/serializer/vufTxtStdVectorSerializerFnUt.h>
 #include <iostream>
 
+#include <vufApplication.h>
+
 extern "C"
 {
 #include "lua.h"
@@ -18,13 +20,34 @@ extern "C"
 }
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables
 VF_LOG_DEFINE_STD_LOGGER();
+/*
+class vufSandbox : public vuf::Application
+{
+public:
+	vufSandbox() :Application() {}
+	~vufSandbox() {}
 
+};
+*/
+extern vuf::Application* vuf::createApplication();
+vuf::Application* vuf::createApplication()
+{
+	//return new vufSandbox();
+	return new vuf::Application();
+}
 using namespace vuf;
+
+
 
 int main()
 {
 	vuf::txtSeriaslizerUT().run(true);
 	vuf::txtStdVectorSerializerFnUt().run(true);
+
+	auto g_app = vuf::createApplication();
+	g_app->run();
+	delete g_app;
+
 	system("pause");
 	return 0;
 

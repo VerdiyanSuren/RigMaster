@@ -13,16 +13,20 @@ project "Sandbox"
 		"%{IncludeDir.LuaWrapper}",
 		"%{IncludeDir.Math}",
 		"%{IncludeDir.Sandbox}",
+		"%{IncludeDir.GraphicEngine}",
+		
 	}
 	libdirs
 	{
 		"../bin/" .. outputdir .. "/Lua",
-		"../bin/" .. outputdir .. "/Core"
+		"../bin/" .. outputdir .. "/Core",
+		"../bin/" .. outputdir .. "/GraphicEngine"
 	}
 	links
 	{
 		"Lua.lib",
-		"Core.lib"
+		"Core.lib",
+		"GraphicEngine.lib"
 	}
 	files
 	{

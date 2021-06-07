@@ -25,7 +25,6 @@ namespace vufRM
 
 		static const MString	g_type_name;
 	private:
-		MMatrixArray	m_matrix_array;
 		bool			m_locked = true;
 	};
 }

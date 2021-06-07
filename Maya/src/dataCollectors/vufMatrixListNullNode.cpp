@@ -70,16 +70,17 @@ MStatus	vufMatrixListNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		// if unlocked just pass
 		if (l_locked == false) 
 		{
+			//VF_LOG_INFO("UNLOCKED");
 			m_locked = false;
 
 			MDataHandle l_input_data_map	= p_data.inputValue(g_data_in_attr);
 			MObject		l_in_obj			= l_input_data_map.data();
 			MFnMatrixArrayData l_in_data_fn(l_in_obj);
-			m_matrix_array = l_in_data_fn.array();
+			MMatrixArray l_matrix_array = l_in_data_fn.array();
 			// set output handle
 			MDataHandle l_out_handle = p_data.outputValue(g_data_out_attr);
 			MFnMatrixArrayData l_out_data_fn;
-			MObject l_out_obj_data = l_out_data_fn.create(m_matrix_array);
+			MObject l_out_obj_data = l_out_data_fn.create(l_matrix_array);
 			l_out_handle.setMObject(l_out_obj_data);
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
@@ -87,39 +88,41 @@ MStatus	vufMatrixListNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		// if just locked
 		if (m_locked == false)
 		{
+			//VF_LOG_INFO("JUST LOCKED");
 			m_locked = true;
 
 			MDataHandle l_input_data_map = p_data.inputValue(g_data_in_attr);
 			MObject		l_in_obj = l_input_data_map.data();
 			MFnMatrixArrayData l_in_data_fn(l_in_obj);
-			m_matrix_array = l_in_data_fn.array();
+			MMatrixArray l_matrix_array = l_in_data_fn.array();
 			
 			// set hidden 
 			MDataHandle l_store_handle = p_data.outputValue(g_data_store_attr);
 			MFnMatrixArrayData l_store_data_fn;
-			MObject l_store_obj_data = l_store_data_fn.create(m_matrix_array);
+			MObject l_store_obj_data = l_store_data_fn.create(l_matrix_array);
 			l_store_handle.setMObject(l_store_obj_data);
 			
 			// set output handle
 			MDataHandle l_out_handle = p_data.outputValue(g_data_out_attr);
 			MFnMatrixArrayData l_out_data_fn;
-			MObject l_out_obj_data = l_out_data_fn.create(m_matrix_array);
+			MObject l_out_obj_data = l_out_data_fn.create(l_matrix_array);
 			l_out_handle.setMObject(l_out_obj_data);
 			p_data.setClean(g_data_out_attr);
 			p_data.setClean(g_data_store_attr);
 
 			return MS::kSuccess;
 		}
+		//VF_LOG_INFO("LOCKED");
 		// if locked
 		MDataHandle l_store_data_map = p_data.outputValue(g_data_store_attr);
 		MObject		l_store_obj = l_store_data_map.data();
 		MFnMatrixArrayData l_store_data_fn(l_store_obj);
-		m_matrix_array = l_store_data_fn.array();
+		MMatrixArray l_matrix_array = l_store_data_fn.array();
 		 
 		// set output handle
 		MDataHandle l_out_handle = p_data.outputValue(g_data_out_attr);
 		MFnMatrixArrayData l_data_fn;
-		MObject l_obj_data = l_data_fn.create(m_matrix_array);
+		MObject l_obj_data = l_data_fn.create(l_matrix_array);
 		l_out_handle.setMObject(l_obj_data);
 		p_data.setClean(g_data_out_attr);
 

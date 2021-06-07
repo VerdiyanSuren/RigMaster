@@ -14,24 +14,35 @@ project "GraphicEngine"
 		IncludeDir["Lua"],
 		IncludeDir["Core"],
 		IncludeDir["Math"],
-		IncludeDir["GLFW"]
+		IncludeDir["GLFW"],
+		IncludeDir["GraphicEngine"]
 	}
 	files
 	{
 		"src/**.cpp",
 		"**.cpp",
 		"include/**.h"
-	}
+	}	
 	libdirs
 	{
 		"../bin/" .. outputdir .. "/Lua",
 		"../bin/" .. outputdir .. "/Core",
 		"../bin/" .. outputdir .. "/GLFW"		
-	}
+	}	
 	links
 	{
 		"Core.lib",
 		"GLFW.lib",
 		"Lua.lib"
+	}	
+	defines
+	{
+		"VF_BUILD_DLL",
+		"VF_CONSOLE_USE_COLORS"
+	}
+	
+	postbuildcommands
+	{
+		("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/Sandbox")
 	}
 	

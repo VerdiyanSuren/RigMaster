@@ -40,7 +40,7 @@ MStatus	vufCurveNullNode::initialize()
 	CHECK_MSTATUS(l_typed_attr_fn.setHidden(false));
 	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 	// Internal Data to store and lock
-	g_store_data_attr = l_typed_attr_fn.create("curveInternal", "ci", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_store_data_attr = l_typed_attr_fn.create("hiddenCD", "hcd", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setConnectable(false);
@@ -68,54 +68,60 @@ MStatus	vufCurveNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	{
 		MStatus l_status;
 		bool	l_locked = p_data.inputValue(g_lock_attr).asBool();
-
-		std::shared_ptr<vufCurveData> l_in_data;
-		std::shared_ptr<vufCurveData> l_out_data;
-		std::shared_ptr<vufCurveData> l_internal_data;
-
-		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr,	l_out_data);
-		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_store_data_attr,l_internal_data);
-		//------------------------------------------------------------------------------------------------------------
-		// Locked Node
-		if (l_locked == true)
+		// if unlocked just pass
+		if (l_locked == false)
 		{
-			get_locked_ptr(p_data, l_internal_data, l_in_data, l_out_data);
+			//VF_LOG_INFO("UNLOCKED");
+			m_locked = false;
+			std::shared_ptr<vufCurveData> l_in_data;
+			std::shared_ptr<vufCurveData> l_out_data;
+			std::shared_ptr<vufCurveData> l_store_data;
+
+			VF_RM_GET_DATA_FROM_OUT_AND_CREATE(	mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr,		l_out_data);
+			VF_RM_GET_DATA_FROM_OUT_AND_CREATE(	mpxCurveWrapper, vufCurveData, p_data, g_store_data_attr,	l_store_data);
+			VF_RM_GET_DATA_FROM_IN(				mpxCurveWrapper, vufCurveData, p_data, g_data_in_attr,		l_in_data);
+			if (l_in_data != nullptr)
+			{
+				l_out_data->m_internal_data = l_in_data->m_internal_data;
+			}
+			l_store_data->m_internal_data = nullptr;
+			p_data.setClean(g_store_data_attr);
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
-		//------------------------------------------------------------------------------------------------------------
-		// Unlocked Node
-		m_was_locked = false;
-		l_internal_data->m_internal_data	= nullptr;
-		l_out_data->m_internal_data = nullptr;
-		VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_in_attr, l_in_data);
-		if (l_in_data != nullptr)
+		// if just locked
+		if (m_locked == false)
 		{
-			l_out_data->m_internal_data = l_in_data->m_internal_data;
+			//VF_LOG_INFO("JUST LOCKED");
+			m_locked = true;
+			std::shared_ptr<vufCurveData> l_in_data;
+			std::shared_ptr<vufCurveData> l_out_data;
+			std::shared_ptr<vufCurveData> l_store_data;
+			VF_RM_GET_DATA_FROM_OUT_AND_CREATE(	mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr,	l_out_data);
+			VF_RM_GET_DATA_FROM_OUT_AND_CREATE(	mpxCurveWrapper, vufCurveData, p_data, g_store_data_attr,l_store_data);
+			VF_RM_GET_DATA_FROM_IN(				mpxCurveWrapper, vufCurveData, p_data, g_data_in_attr,	l_in_data);
+			if (l_in_data != nullptr)
+			{
+				l_out_data->m_internal_data		= l_in_data->m_internal_data;
+				// To Do 
+				// copy enstead of assigning
+				l_store_data->m_internal_data	= l_in_data->m_internal_data;
+			}
+			p_data.setClean(g_store_data_attr);
+			p_data.setClean(g_data_out_attr);
+			return MS::kSuccess;
 		}
+		//VF_LOG_INFO("LOCKED");
+		// if locked
+		std::shared_ptr<vufCurveData> l_out_data;
+		std::shared_ptr<vufCurveData> l_store_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr,	l_out_data);
+		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_store_data_attr, l_store_data);
+		l_out_data->m_internal_data = l_store_data->m_internal_data;
 		p_data.setClean(g_data_out_attr);
-		return MS::kSuccess;
+		return MS::kSuccess;		
 	}
 	return MS::kUnknownParameter;
-}
-void vufCurveNullNode::get_locked_ptr(	MDataBlock& p_data,
-										std::shared_ptr<vufCurveData>& p_internal,
-										std::shared_ptr<vufCurveData>& p_input,
-										std::shared_ptr<vufCurveData>& p_result)
-{
-	if (m_was_locked == true)
-	{
-		p_result->m_internal_data = p_internal->m_internal_data;
-		return;
-	}
-	VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveContainerData_4d, p_data, g_data_in_attr, p_input);
-	p_internal->m_internal_data = nullptr;
-	if (p_input != nullptr && p_input->m_internal_data != nullptr)
-	{
-		p_internal->m_internal_data = p_input->m_internal_data->get_copy();
-	}
-	p_result->m_internal_data = p_internal->m_internal_data;
-	m_was_locked = true;
 }
 
 /*

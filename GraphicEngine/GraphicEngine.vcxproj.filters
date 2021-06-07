@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\openGL">
+      <UniqueIdentifier>{BD783862-A946-2C68-92DA-9C8E7E4708CD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\openGL">
+      <UniqueIdentifier>{E1734E70-CD2B-90BD-3633-6919220A2BAE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\openGL\vufGLApplication.h">
+      <Filter>include\openGL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\openGL\vufGLWindow.h">
+      <Filter>include\openGL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufApplication.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufEngineEntryPoint.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufEngineInclude.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\vufWindow.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\openGL\OGLWindow.cpp">
+      <Filter>src\openGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vufApplication.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
