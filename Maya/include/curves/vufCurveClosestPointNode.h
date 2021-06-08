@@ -1,5 +1,5 @@
-#ifndef VF_TP_CRV_CLST_PNT_NODE_H
-#define VF_TP_CRV_CLST_PNT_NODE_H
+#ifndef VF_RM_CRV_CLST_PNT_NODE_H
+#define VF_RM_CRV_CLST_PNT_NODE_H
 
 #include <maya/MPxNode.h>
 
@@ -26,7 +26,7 @@ namespace vufRM
 		static MObject	g_dist_attr;
 	};
 }
-#endif // !VF_TP_CRV_CLST_PNT_NODE_H
+#endif // !VF_RM_CRV_CLST_PNT_NODE_H
 
 
 

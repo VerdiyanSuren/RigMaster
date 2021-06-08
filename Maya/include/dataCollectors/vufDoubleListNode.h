@@ -1,29 +1,28 @@
-#ifndef VF_RM_MATRIX_LST_NODE_H
-#define VF_RM_MATRIX_LST_NODE_H
+#ifndef VF_RM_DOUBLE_LST_NODE_H
+#define VF_RM_DOUBLE_LST_NODE_H
 
 #include <maya/MPxNode.h>
-//#include <maya/MMatrixArray.h>
 
 namespace vufRM
 {
-	class vufMatrixListNode : public MPxNode
+	class vufDoubleListNode : public MPxNode
 	{
 	public:
-		vufMatrixListNode();
-		virtual ~vufMatrixListNode() {}
+		vufDoubleListNode();
+		virtual ~vufDoubleListNode() {}
 
-		static  void*	creator();
+		static  void* creator();
 		static  MStatus	initialize();
 		virtual MStatus	compute(const MPlug& plug, MDataBlock& data) override;
 		//virtual MStatus	connectionBroken(const MPlug& p_my_plug, const MPlug& p_other_plug, bool asSrc) override;
 
 		static const MTypeId	g_id;
 		//attributes
-		static MObject	g_transform_in_attr;
+		static MObject	g_double_in_attr;
 		static MObject	g_data_out_attr;
 
 		static const MString	g_type_name;
 	private:
 	};
 }
-#endif // !VF_RM_MATRIX_LST_NODE_H
+#endif // !VF_RM_DOUBLE_LST_NODE_H

@@ -42,6 +42,9 @@
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionFn.h">
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionTransportFn.h">
+      <Filter>include\curves\quaternionFn</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildFn.h">
       <Filter>include\curves\rebuildFn</Filter>
     </ClInclude>
@@ -131,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="include\vufObjectArrayFn.h">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionTransportFn.h">
-      <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

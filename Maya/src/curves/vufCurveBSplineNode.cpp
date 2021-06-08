@@ -80,7 +80,7 @@ MStatus	vufCurveBSplineNode::initialize()
 	l_typed_attr_fn.setWritable(true);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setHidden(false);
-	l_typed_attr_fn.setKeyable(true);	
+	l_typed_attr_fn.setKeyable(true);
 	//------------------------------------------------------------------------------------------------
 	// Out Curve Data
 	g_data_out_attr = l_typed_attr_fn.create("outCurve", "oc", mpxCurveWrapper::g_id,MObject::kNullObj, &l_status);
@@ -226,7 +226,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
 					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) &l_matrix_array[i];
-					l_qtr_ptr->set_item_at(i, l_matr->get_translation_4(), *l_matr);
+					l_qtr_ptr->set_item_at(i, *l_matr);
 				}
 				l_qtr_ptr->compute_bind_params(l_container,10);
 				l_qtr_ptr->match_quaternions(l_container);
@@ -247,7 +247,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
 					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
-					l_qtr_ptr->set_item_at(i, l_matr->get_translation_4(), *l_matr);
+					l_qtr_ptr->set_item_at(i, *l_matr);
 				}
 				l_qtr_ptr->match_quaternions(l_container);
 			}

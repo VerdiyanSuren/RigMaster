@@ -108,6 +108,9 @@ namespace vufRM
 			k_lua_port_data,
 			k_lua_script_data,
 			k_curve_data,
+			k_curve_quat_data,
+			k_curve_scale_data,
+			k_curve_rebuild_data,
 			k_test_data
 		};
 		void		set_owner_id(uint64_t p_new_owner_id)	{ m_owner_node_id = p_new_owner_id; }

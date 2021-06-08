@@ -1,5 +1,5 @@
-#ifndef VF_TP_TO_MAYA_CRV_NODE_H
-#define VF_TP_TO_MAYA_CRV_NODE_H
+#ifndef VF_RM_TO_MAYA_CRV_NODE_H
+#define VF_RM_TO_MAYA_CRV_NODE_H
 
 #include <maya/MPxNode.h>
 
@@ -27,4 +27,4 @@ namespace vufRM
 	};
 }
 
-#endif // !VF_TP_FROM_MAYA_CRV_H
+#endif // !VF_RM_TO_MAYA_CRV_NODE_H

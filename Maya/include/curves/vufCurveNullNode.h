@@ -1,5 +1,5 @@
-#ifndef VF_TP_QUAT_NULL_NODE_H
-#define VF_TP_QUAT_NULL_NODE_H
+#ifndef VF_RM_CURVE_NULL_NODE_H
+#define VF_RM_CURVE_NULL_NODE_H
 
 #include <maya/MPxNode.h>
 //#include "math/curves/vufCurveContatiner.h"
@@ -33,4 +33,4 @@ namespace vufRM
 	};
 
 }
-#endif // !VF_TP_QUAT_NULL_NODE_H
+#endif // !VF_RM_CURVE_NULL_NODE_H

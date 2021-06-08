@@ -1,16 +1,15 @@
-#ifndef VF_RM_TRNSFRM_LST_NULL_NODE_H
-#define VF_RM_TRNSFRM_LST_NULL_NODE_H
+#ifndef VF_RM_DOUBLE_LST_NULL_NODE_H
+#define VF_RM_DOUBLE_LST_NULL_NODE_H
 
 #include <maya/MPxNode.h>
-//#include <maya/MMatrixArray.h>
 
 namespace vufRM
 {
-	class vufMatrixListNullNode : public MPxNode
+	class vufDoubleListNullNode : public MPxNode
 	{
 	public:
-		vufMatrixListNullNode();
-		virtual ~vufMatrixListNullNode() {}
+		vufDoubleListNullNode();
+		virtual ~vufDoubleListNullNode() {}
 
 		static  void* creator();
 		static  MStatus	initialize();
@@ -29,6 +28,4 @@ namespace vufRM
 	};
 }
 
-
-
-#endif !VF_RM_TRNSFRM_LST_NULL_NODE_H
+#endif !VF_RM_DOUBLE_LST_NULL_NODE_H

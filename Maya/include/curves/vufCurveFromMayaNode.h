@@ -1,5 +1,5 @@
-#ifndef VF_TP_FROM_MAYA_CRV_NODE_H
-#define VF_TP_FROM_MAYA_CRV_NODE_H
+#ifndef VF_RM_FROM_MAYA_CRV_NODE_H
+#define VF_RM_FROM_MAYA_CRV_NODE_H
 
 #include <maya/MPxNode.h>
 

@@ -322,7 +322,7 @@ namespace vufMath
 		{
 			m_remap_fn = p_remap_ptr;
 		}
-		std::shared_ptr<vufRemapCurveFn<T>>		get_remap_fn_ptr() const
+		std::shared_ptr<vufRemapCurveFn<T>>		get_remap_fn_ptr()
 		{
 			return m_remap_fn;
 		}

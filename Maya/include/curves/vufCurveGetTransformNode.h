@@ -1,5 +1,5 @@
-#ifndef VF_CRV_GET_TRNSFRM_H
-#define VF_CRV_GET_TRNSFRM_H
+#ifndef VF_RM_CRV_GET_TRNSFRM_H
+#define VF_RM_CRV_GET_TRNSFRM_H
 
 #include <maya/MPxNode.h>
 
@@ -49,4 +49,4 @@ namespace vufRM
 	};
 
 }
-#endif // !VF_CRV_GET_TRNSFRM_H
+#endif // !VF_RM_CRV_GET_TRNSFRM_H
