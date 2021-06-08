@@ -95,7 +95,7 @@ MStatus	vufCurveQuatCloseNode::initialize()
 	l_typed_attr_fn.setWritable(false);
 	l_status = addAttribute(g_data_out_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
-	g_data_store_attr = l_typed_attr_fn.create("hiddenCD", "hcd", mpxCurveQuatWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_store_attr = l_typed_attr_fn.create("hiddenQD", "hqd", mpxCurveQuatWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setConnectable(false);

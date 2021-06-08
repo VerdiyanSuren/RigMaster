@@ -23,6 +23,7 @@
 #include <curves/vufCurveBSplineNode.h>
 #include <curves/vufCurveBlendNode.h>
 #include <curves/vufCurveQuatCloseNode.h>
+#include <curves/vufCurveQuatFrameNode.h>
 #include <curves/vufCurveNullNode.h>
 #include <curves/vufCurveGetTransformNode.h>
 #include <curves/vufCurveClosestPointNode.h>
@@ -65,6 +66,7 @@ const MTypeId	vufCurveNullNode::			g_id(0x298930);	const MString	vufCurveNullNod
 const MTypeId	vufCurveGetTransformNode::	g_id(0x299030);	const MString	vufCurveGetTransformNode::	g_type_name("vufCurveGetXForm");
 const MTypeId	vufCurveClosestPointNode::	g_id(0x299130);	const MString	vufCurveClosestPointNode::	g_type_name("vufCurveClosestPoint");
 const MTypeId	vufCurveQuatCloseNode::		g_id(0x299230);	const MString	vufCurveQuatCloseNode::		g_type_name("vufCurveRotationClosest");
+const MTypeId	vufCurveQuatFrameNode::		g_id(0x299330);	const MString	vufCurveQuatFrameNode::		g_type_name("vufCurveRotationFrame");
 
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
@@ -105,6 +107,7 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufCurveGetTransformNode);
 	VF_REGISTER_NODE(vufCurveClosestPointNode);
 	VF_REGISTER_NODE(vufCurveQuatCloseNode);
+	VF_REGISTER_NODE(vufCurveQuatFrameNode);
 
 	VF_RM_REGISTER_LOCATOR(vufCurveLocator, l_plugin, l_status);
 	// register commands
@@ -141,6 +144,7 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufCurveGetTransformNode);
 	VF_DEREGISTER_NODE(vufCurveClosestPointNode);
 	VF_DEREGISTER_NODE(vufCurveQuatCloseNode);
+	VF_DEREGISTER_NODE(vufCurveQuatFrameNode);
 
 	VF_DEREGISTER_DATA(mpxMayaLuaPortWrapper);
 	VF_DEREGISTER_DATA(mpxMayaLuaTxtWrapper);
