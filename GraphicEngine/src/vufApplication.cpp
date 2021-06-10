@@ -1,7 +1,7 @@
 #include <vufApplication.h>
 #include <vufLog.h>
 
-using namespace vuf;
+using namespace vufEngine;
 
 VF_LOG_DEFINE_STD_LOGGER();
 

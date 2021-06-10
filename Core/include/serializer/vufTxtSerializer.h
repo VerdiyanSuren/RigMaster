@@ -2,10 +2,13 @@
 #define VF_CORE_TXT_SERIALIZER_H
 
 #include <vufCoreInclude.h>
+#include <mathUtils/vufMathUtil.h>
 #include <map>
 #include <vector>
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <locale>
 /**
 This class designed to compact writing/reading to/from txt format all data include non text data.
 You should do 2 things before use this class in your application
@@ -172,7 +175,469 @@ namespace vuf
 			return p_offset;
 		}
 
-		
+		// compression
+
+		static uint64_t zip_to_string(	const std::string& p_src,		std::string& p_dist)
+		{
+			if (p_src.size() < 2)
+			{
+				p_dist = std::string();
+				return 0;
+			}
+			std::stringstream l_ss;
+			uint64_t l_number = 1;
+			char l_char = p_src[0];
+			for (uint64_t i = 1; i < p_src.size(); ++i)
+			{
+				if (l_char == p_src[i])
+				{
+					l_number++;
+					continue;
+				}
+				if (l_number > 2)
+				{
+					l_ss << l_number << l_char;
+					l_number = 1;
+					l_char = p_src[i];
+					continue;
+				}
+				if (l_number == 2)
+				{
+					l_ss << l_char;
+				}
+				l_ss << l_char;
+				l_char = p_src[i];
+				l_number = 1;
+			}
+			if (l_number > 2)
+			{
+				l_ss << l_number << l_char;
+				l_number = 1;
+				p_dist = l_ss.str();
+				return p_dist.size();
+			}
+			if (l_number == 2)
+			{
+				l_ss << l_char;
+			}
+			l_ss << l_char;
+			p_dist = l_ss.str();
+			return p_dist.size();
+		}
+		static uint64_t zip_to_string(	const std::vector<char>& p_src, std::string& p_dist)
+		{			
+			if (p_src.size() < 2 )
+			{
+				p_dist = std::string();
+				return 0;
+			}
+			std::stringstream l_ss;
+ 			uint64_t l_number = 1;
+			char l_char = p_src[0];
+			for (uint64_t i = 1; i < p_src.size(); ++i)
+			{
+				if (l_char == p_src[i])
+				{
+					l_number++;
+					continue;
+				}
+				if (l_number > 2)
+				{
+					l_ss << l_number << l_char;
+					l_number = 1;
+					l_char = p_src[i];
+					continue;
+				}
+				if (l_number == 2)
+				{
+					l_ss << l_char;
+				}
+				l_ss << l_char;
+				l_char		= p_src[i];
+				l_number	= 1;
+			}
+			if (l_number > 2)
+			{
+				l_ss << l_number << l_char;
+				l_number = 1;
+				p_dist = l_ss.str();
+				return p_dist.size();
+			}
+			if (l_number == 2)
+			{
+				l_ss << l_char;
+			}
+			l_ss << l_char;
+			p_dist =  l_ss.str();			
+			return p_dist.size();
+		}
+		static uint64_t zip_to_buff(	const std::string& p_src,		std::vector<char>& p_dist)
+		{
+			p_dist.clear();
+			if (p_src.size() < 2)
+			{
+				return 0;
+			}
+			p_dist.reserve(get_zip_size(p_src));
+			uint64_t l_number = 1;
+			char l_char = p_src[0];
+			for (uint64_t i = 1; i < p_src.size(); ++i)
+			{
+				if (l_char == p_src[i])
+				{
+					l_number++;
+					continue;
+				}
+				if (l_number > 2)
+				{
+					std::string l_str = std::to_string(l_number);
+					for (int j = 0; j < l_str.size(); ++j)
+					{
+						p_dist.push_back(l_str[j]);
+					}
+					p_dist.push_back(l_char);
+					l_number = 1;
+					l_char = p_src[i];
+					continue;
+				}
+				if (l_number == 2)
+				{
+					p_dist.push_back(l_char);
+				}
+				p_dist.push_back(l_char);
+				l_char = p_src[i];
+				l_number = 1;
+			}
+			if (l_number > 2)
+			{
+				std::string l_str = std::to_string(l_number);
+				for (int j = 0; j < l_str.size(); ++j)
+				{
+					p_dist.push_back(l_str[j]);
+				}
+				p_dist.push_back(l_char);
+				return p_dist.size();
+			}
+			if (l_number == 2)
+			{
+				p_dist.push_back(l_char);
+			}
+			p_dist.push_back(l_char);
+			return p_dist.size();
+		}
+		static uint64_t zip_to_buff(	const std::vector<char> p_src,	std::vector<char>& p_dist)
+		{
+			p_dist.clear();
+			if (p_src.size() < 2)
+			{
+				return 0;
+			}
+			p_dist.reserve(get_zip_size(p_src));
+			uint64_t l_number = 1;
+			char l_char = p_src[0];
+			for (uint64_t i = 1; i < p_src.size(); ++i)
+			{
+				if (l_char == p_src[i])
+				{
+					l_number++;
+					continue;
+				}
+				if (l_number > 2)
+				{
+					std::string l_str = std::to_string(l_number);
+					for (int j = 0; j < l_str.size(); ++j)
+					{
+						p_dist.push_back(l_str[j]);
+					}
+					p_dist.push_back(l_char);
+					l_number = 1;
+					l_char = p_src[i];
+					continue;
+				}
+				if (l_number == 2)
+				{
+					p_dist.push_back(l_char);
+				}
+				p_dist.push_back(l_char);
+				l_char = p_src[i];
+				l_number = 1;
+			}
+			if (l_number > 2)
+			{
+				std::string l_str = std::to_string(l_number);
+				for (int j = 0; j < l_str.size(); ++j)
+				{
+					p_dist.push_back(l_str[j]);
+				}
+				p_dist.push_back(l_char);
+				return p_dist.size();
+			}
+			if (l_number == 2)
+			{
+				p_dist.push_back(l_char);
+			}
+			p_dist.push_back(l_char);
+			return p_dist.size();
+		}
+		static uint64_t get_zip_size(	const std::string& p_src)
+		{
+			if (p_src.size() < 2)
+			{
+				return 0;
+			}
+			uint64_t l_offset = 0;
+
+			uint64_t l_number = 1;
+			char l_char = p_src[0];
+			for (uint64_t i = 1; i < p_src.size(); ++i)
+			{
+				if (l_char == p_src[i])
+				{
+					l_number++;
+					continue;
+				}
+				if (l_number > 1)
+				{
+					l_offset += vufMath::mathUtil::number_of_digits(l_number) + 1;
+					l_number = 1;
+					l_char = p_src[i];
+					continue;
+				}
+				l_offset++;
+				l_number = 1;
+				l_char = p_src[i];
+			}
+			if (l_number > 1)
+			{
+				l_offset += vufMath::mathUtil::number_of_digits(l_number) + 1;
+				return l_offset;
+			}
+			return l_offset + 1;
+		}
+		static uint64_t get_zip_size(	const std::vector<char>& p_src)
+		{
+			if (p_src.size() < 2)
+			{
+				return 0;
+			}
+			uint64_t l_offset = 0;
+
+			uint64_t l_number = 1;
+			char l_char = p_src[0];
+			for (uint64_t i = 1; i < p_src.size(); ++i)
+			{
+				if (l_char == p_src[i])
+				{
+					l_number++;
+					continue;
+				}
+				if (l_number > 1)
+				{
+					l_offset += vufMath::mathUtil::number_of_digits(l_number) + 1;
+					l_number = 1;
+					l_char = p_src[i];
+					continue;
+				}
+				l_offset++;
+				l_number = 1;
+				l_char = p_src[i];
+			}
+			if (l_number > 1)
+			{
+				l_offset += vufMath::mathUtil::number_of_digits(l_number) + 1;
+				return l_offset;
+			}
+			return l_offset + 1;
+		}
+
+		static uint64_t unzip_to_string(const std::string& p_src,		std::string& p_dist)
+		{
+			std::locale l_loc;
+			uint64_t l_size = 0;
+			uint64_t l_number = 0;
+			std::stringstream l_ss;
+			for (uint64_t i = 0; i < p_src.size(); ++i)
+			{
+				if (isdigit(p_src[i], l_loc))
+				{
+					l_number = l_number * 10 + p_src[i] - 48;
+					//std::cout << l_number << std::endl;
+					continue;
+				}
+				if (l_number == 0)
+				{
+					l_ss << p_src[i];
+					l_number = 0;
+					continue;
+				}
+				for (uint64_t j = 0; j < l_number; ++j)
+				{
+					l_ss << p_src[i];
+				}
+				l_number = 0;
+			}
+			p_dist = l_ss.str();
+			return p_dist.length();
+		}
+		static uint64_t unzip_to_string(const std::vector<char>& p_src, std::string& p_dist)
+		{
+			std::locale l_loc;
+			uint64_t l_size = 0;
+			uint64_t l_number = 0;
+			std::stringstream l_ss;
+			for (uint64_t i = 0; i < p_src.size(); ++i)
+			{
+				if (isdigit(p_src[i], l_loc))
+				{
+					l_number = l_number * 10 + p_src[i] - 48;
+					//std::cout << l_number << std::endl;
+					continue;
+				}
+				if (l_number == 0)
+				{
+					l_ss << p_src[i];
+					l_number = 0;
+					continue;
+				}
+				for (uint64_t j = 0; j < l_number; ++j)
+				{
+					l_ss << p_src[i];
+				}
+				l_number = 0;
+			}
+			p_dist = l_ss.str();
+			return p_dist.length();
+		}
+		static uint64_t unzip_to_buff(	const std::string& p_src,		std::vector<char>& p_dist)
+		{
+			p_dist.clear();
+			p_dist.reserve(get_unzip_size(p_src));
+			std::locale l_loc;
+			uint64_t l_size = 0;
+			uint64_t l_number = 0;
+			for (uint64_t i = 0; i < p_src.size(); ++i)
+			{
+				if (isdigit(p_src[i], l_loc))
+				{
+					l_number = l_number * 10 + p_src[i] - 48;
+					//std::cout << l_number << std::endl;
+					continue;
+				}
+				if (l_number == 0)
+				{
+					p_dist.push_back( p_src[i]);
+					l_number = 0;
+					continue;
+				}
+				for (uint64_t j = 0; j < l_number; ++j)
+				{
+					p_dist.push_back( p_src[i]);
+				}
+				l_number = 0;
+			}
+			return p_dist.size();
+		}
+		static uint64_t unzip_to_buff(	const std::vector<char> p_src,	std::vector<char>& p_dist)
+		{
+			p_dist.clear();
+			p_dist.reserve(get_unzip_size(p_src));
+			std::locale l_loc;
+			uint64_t l_size = 0;
+			uint64_t l_number = 0;
+			for (uint64_t i = 0; i < p_src.size(); ++i)
+			{
+				if (isdigit(p_src[i], l_loc))
+				{
+					l_number = l_number * 10 + p_src[i] - 48;
+					//std::cout << l_number << std::endl;
+					continue;
+				}
+				if (l_number == 0)
+				{
+					p_dist.push_back(p_src[i]);
+					l_number = 0;
+					continue;
+				}
+				for (uint64_t j = 0; j < l_number; ++j)
+				{
+					p_dist.push_back(p_src[i]);
+				}
+				l_number = 0;
+			}
+			return p_dist.size();
+		}
+		static uint64_t get_unzip_size(	const std::string& p_src)
+		{
+			std::locale l_loc;
+			uint64_t l_size		= 0;
+			uint64_t l_number	= 0;
+
+			for (uint64_t i = 0; i < p_src.length(); ++i)
+			{
+				if (isdigit(p_src[i], l_loc))
+				{
+					l_number = l_number * 10 + p_src[i] - 48;
+					//std::cout << l_number << std::endl;
+					continue;
+				}
+				if (l_number == 0)
+				{
+					l_size++;
+					l_number = 0;
+					continue;
+				}				
+				l_size += l_number;
+				l_number = 0;
+			}
+			return l_size;
+		}
+		static uint64_t get_unzip_size(	const std::vector<char>& p_src)
+		{
+			std::locale l_loc;
+			uint64_t l_size = 0;
+			uint64_t l_number = 0;
+
+			for (uint64_t i = 0; i < p_src.size(); ++i)
+			{
+				if (isdigit(p_src[i], l_loc))
+				{
+					l_number = l_number * 10 + p_src[i] - 48;
+					//std::cout << l_number << std::endl;
+					continue;
+				}
+				if (l_number == 0)
+				{
+					l_size++;
+					l_number = 0;
+					continue;
+				}
+				l_size += l_number;
+				l_number = 0;
+			}
+			return l_size;
+		}
+
+		/*
+		void unzip(const std::string& p_src, std::vector<char>& p_dist)
+		{
+			std::locale l_loc;
+			uint64_t l_number	= 0;
+			for (uint64_t i = 0; i < p_src.length(); ++i)
+			{
+				if (isdigit(p_src[i], l_loc))
+				{
+					l_number = l_number * 10 + p_src[i] - 48;
+					continue;
+				}
+				l_number = l_number == 0 ? 1 : l_number;
+				for (uint64_t j = 0; j < l_number; ++j)
+				{
+					p_dist.push_back(p_src[i]);	
+				}
+			}
+			return 0;
+		}
+		*/
 		// Convertors
 		template<typename T>
 		static T convert_bytes_to_value(const std::vector<unsigned char>& p_bytes, uint64_t* p_offset_ptr = nullptr)

@@ -350,6 +350,7 @@
     <ClInclude Include="include\math\vufMatrix.h" />
     <ClInclude Include="include\math\vufQuaternion.h" />
     <ClInclude Include="include\math\vufVector.h" />
+    <ClInclude Include="include\mathUtils\vufMathUtil.h" />
     <ClInclude Include="include\unitTests\curve\curveTest.h" />
     <ClInclude Include="include\unitTests\curve\polinomTest.h" />
     <ClInclude Include="include\unitTests\math\vufMatrix4Test.h" />

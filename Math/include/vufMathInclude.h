@@ -26,7 +26,7 @@
 		++OFFSET;										\
 	}
 //--------------------------------------------------------------------------------
-#pragma region SIRIALIZE_ROUTINE
+#pragma region SERIALIZE_ROUTINE
 #define VF_SAFE_CHECK_SIZE_AND_RETURN_IF_FAILED(BUFF, OFFSET, SIZE )	\
 	if (BUFF.size() < OFFSET + SIZE) return 0;
 
@@ -57,7 +57,7 @@
 	from_binary(l_buff);											\
 	return p_offset;
 
-#pragma endregion SIRIALIZE_ROUTINE
+#pragma endregion SERIALIZE_ROUTINE
 //--------------------------------------------------------------------------------
 #pragma region SERIALIZE_NUMERIC_ARRAY
 // Set precission

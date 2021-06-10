@@ -77,13 +77,13 @@ namespace vufMath
 			//if (!test_bool_array.run()) { std::cin.get();		return false; }
 
 
-			if (l_polinom_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
-			if (l_open_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (l_close_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			//if (l_polinom_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
+			//if (l_open_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			//if (l_close_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
 			if (l_rebuild_uniform_d.run(p_verbose) == false){ std::cin.get();	return false; }
-			if (l_quat_close_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
-			if (l_scale_close_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (l_constatiner_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			//if (l_quat_close_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
+			//if (l_scale_close_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			//if (l_constatiner_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
 			return true;
 		}
 	};

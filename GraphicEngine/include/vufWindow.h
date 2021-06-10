@@ -1,17 +1,17 @@
 #ifndef VF_ENGINE_WINDOW_H
 #define VF_ENGINE_WINDOW_H
-
+#include <string>
 #include <vufEngineInclude.h>
 
-namespace vuf
+namespace vufEngine
 {
-	struct windowProps
+	struct WindowProps
 	{
 		std::string		m_title;
 		uint32_t		m_width;
 		uint32_t		m_height;
 
-		windowProps(const std::string& p_title = "Hazel Engine",
+		WindowProps(const std::string& p_title = "Hazel Engine",
 					uint32_t p_width = 1600,
 					uint32_t p_height = 900)
 					: m_title(p_title), m_width(p_width), m_height(p_height)

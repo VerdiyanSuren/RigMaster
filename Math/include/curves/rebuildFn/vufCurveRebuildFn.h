@@ -201,7 +201,7 @@ namespace vufMath
 				}
 				l_u_1 = l_u_2;
 				l_t_1 = l_t_2;
-			}			
+			}
 		}
 		virtual T		get_curve_val_by_rebuilded(T p_val) const override
 		{

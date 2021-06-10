@@ -388,6 +388,57 @@ namespace vufMath
 		VF_MATH_CRV_GATHER_INFO_I_BODY;
 
 		// inherited virtual methods
+		virtual bool			rebuild(uint32_t p_division_count,
+										std::vector<T>& p_uniform_to_curve_val_v,
+										std::vector<T>& p_curve_to_uniform_val_v,
+										std::vector<T>& p_curve_length_to_val_v) const override
+		{
+			uint32_t	l_total_div = l_crv_ptr->get_interval_count_i() * p_division_count + 1;;
+			T			l_curve_length = 0;
+
+			if (p_uniform_to_curve_val_v.size() != l_total_div)
+			{
+				p_uniform_to_curve_val_v.resize(l_total_div);
+				p_curve_to_uniform_val_v.resize(l_total_div);
+				p_curve_length_to_val_v.resize(	l_total_div);
+			}
+			V<T> l_vec_prev = p_curve.get_pos_at_i(0);
+			p_uniform_to_curve_val_v[0] = 0;
+			p_curve_to_uniform_val_v[0] = 0;
+			p_curve_length_to_val_v[0]	= 0;
+			// Compute curve length until sample point
+			for (uint64_t i = 1; i < l_total_div; ++i)
+			{
+				T l_crv_val = ((T)i) / (T(m_total_div - 1));
+				V<T> l_vec = get_pos_at_i(l_crv_val);
+				p_curve_length_to_val_v[i] = p_curve_length_to_val_v[i - 1] + l_vec_prev.distance_to(l_vec);
+				l_vec_prev = l_vec;
+			}
+			l_curve_length = p_curve_length_to_val_v.back();
+			T l_u_1 = 0, l_u_2, l_t_1 = 0, l_t_2;
+			uint64_t l_ndx = 0;
+			T l_step = 1. / (T(l_total_div - 1));
+			T l_dnx = .0, l_tetta = .0;
+			for (uint64_t i = 1; i < l_total_div; ++i)
+			{
+				l_u_2 = p_curve_length_to_val_v[i] / l_curve_length;
+				p_curve_to_uniform_val_v[i] = l_u_2;
+
+				l_t_2 = (T(i)) / (T(l_total_div - 1));
+
+				while (l_tetta <= l_u_2)
+				{
+					p_uniform_to_curve_val_v[l_ndx] = (l_t_1 * (l_u_2 - l_tetta) + l_t_2 * (l_tetta - l_u_1)) / (l_u_2 - l_u_1);
+					l_ndx++;
+					l_dnx++;
+					l_tetta = l_dnx * l_step;
+				}
+				l_u_1 = l_u_2;
+				l_t_1 = l_t_2;
+			}
+			return true;
+		}
+
 		virtual T			get_interval_t_min(int p_interval_index) const override { return get_interval_t_min_i(p_interval_index); }
 		virtual T			get_interval_t_max(int p_interval_index) const override	{ return get_interval_t_max_i(p_interval_index); }
 		virtual int			get_interval_index(T p_t) const							{ return get_interval_index_i(p_t); }

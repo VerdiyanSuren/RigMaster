@@ -1,18 +1,21 @@
 #include <vufLog.h>
 #include <openGL/vufGLWindow.h>
 
-using namespace vuf;
+using namespace vufEngine;
 
-OGLWindow::OGLWindow(const windowProps& p_props)
+GLWindow::GLWindow(const WindowProps& p_props)
 {
 	init(p_props);
 }
-OGLWindow::~OGLWindow()
+GLWindow::~GLWindow()
 {
 	shutdown();
 }
-
-void OGLWindow::init(const windowProps& p_props)
+GLWindow* GLWindow::create(const WindowProps& props = WindowProps())
+{
+	return new GLWindow(props);
+}
+void GLWindow::init(const WindowProps& p_props)
 {
 	m_data.m_title	= p_props.m_title;
 	m_data.m_width	= p_props.m_width;
@@ -33,4 +36,31 @@ void OGLWindow::init(const windowProps& p_props)
 	glfwSetWindowUserPointer(m_window, &m_data);
 	set_vsync(true);
 
+}
+void GLWindow::on_update()
+{
+	glClearColor(1, 0, 1, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glfwSwapBuffers(m_window);
+	glfwPollEvents();
+}
+void GLWindow::shutdown()
+{
+	glfwDestroyWindow(m_window);
+}
+void GLWindow::set_vsync(bool enabled)
+{
+	if (enabled == true)
+	{
+		glfwSwapInterval(1);
+	}
+	else
+	{
+		glfwSwapInterval(0);
+	}
+	m_data.m_vsync = enabled;
+}
+bool GLWindow::is_vsync() const
+{
+	return m_data.m_vsync;
 }

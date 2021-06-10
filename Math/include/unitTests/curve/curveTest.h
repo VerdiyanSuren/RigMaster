@@ -94,8 +94,8 @@ namespace vufMath
 				std::cout << l_str << std::endl;
 			}
 			// encode decode
-			l_write_offset	= l_crv_1->encode_to_buff(l_buff, 50);
-			l_read_offset	= l_crv_2->decode_from_buff(l_buff, 50);
+			l_write_offset	= l_crv_1->encode_to_buff(l_buff);
+			l_read_offset	= l_crv_2->decode_from_buff(l_buff);
 			if ( l_write_offset != l_read_offset)
 			{
 				VF_LOG_ERR("encode_to_buff()  decode_from_buff() have different sizes.");
@@ -123,9 +123,23 @@ namespace vufMath
 
 			if (p_verbose == true)
 			{
+				std::cout << std::endl;
+				std::cout << "verbose for encode decode" << std::endl;
+				std::cout << "buff size: " << l_buff.size() << std::endl;
 				std::string l_str(l_buff.begin(), l_buff.end());
 				std::cout << l_str << std::endl;
+				std::cout << "get_zip size from buff: \n" << vuf::txtSerializer::get_zip_size(l_buff) << std::endl;
+				std::cout << "get_zip size from string: \n" << vuf::txtSerializer::get_zip_size(l_str) << std::endl;
+				std::string l_zip_str;
+				std::string l_zip_str2;
+				vuf::txtSerializer::zip_to_string(l_buff, l_zip_str);
+				vuf::txtSerializer::zip_to_string(l_str, l_zip_str2);
+				std::cout << "zip to string from buff: " << l_zip_str << std::endl;
+				std::cout << "zip to string from string: " << l_zip_str2 << std::endl;
+				std::cout << "zip form buff size: " << l_zip_str.length() << std::endl;
+				std::cout << "zip form stirng size: " << l_zip_str2.length() << std::endl;
 			}
+
 			std::cout << "....Serialization Test Pass Successfully" << std::endl;
 			return true;
 		}
@@ -326,8 +340,8 @@ namespace vufMath
 			if (p_verbose == true)
 			{
 				std::cout << "l_size " << l_size << " l_write " << l_write << " l_read " << l_read << std::endl;
-				std::string l_str(l_buff.begin(), l_buff.end());
-				std::cout << l_str << std::endl;
+				//std::string l_str(l_buff.begin(), l_buff.end());
+				//std::cout << l_str << std::endl;
 			}
 			// encode decode 
 			l_write		= l_rbld_1->encode_to_buff(l_buff);
@@ -361,9 +375,70 @@ namespace vufMath
 			}
 			if (p_verbose == true)
 			{
-				std::cout << " l_write " << l_write << " l_read " << l_read << std::endl;
+				std::cout << std::endl;
+				std::cout << "verbose for encode decode" << std::endl;
+				std::cout << " l_write " << l_write << " l_read " << l_read << std::endl;				
+
+				std::cout << "buff size: " << l_buff.size() << std::endl;
 				std::string l_str(l_buff.begin(), l_buff.end());
 				std::cout << l_str << std::endl;
+				// zip
+				// string
+				std::cout << "get_zip size from buff: \n" << vuf::txtSerializer::get_zip_size(l_buff) << std::endl;
+				std::cout << "get_zip size from string: \n" << vuf::txtSerializer::get_zip_size(l_str) << std::endl;
+				std::string l_zip_str;
+				std::string l_zip_str2;
+				vuf::txtSerializer::zip_to_string(l_buff, l_zip_str);
+				vuf::txtSerializer::zip_to_string(l_str, l_zip_str2);
+				std::cout << "zip to string from buff: " << l_zip_str << std::endl;
+				std::cout << "zip to string from string: " << l_zip_str2 << std::endl;
+				std::cout << "zip from buff size: " << l_zip_str.length() << std::endl;
+				std::cout << "zip from string size: " << l_zip_str2.length() << std::endl;
+
+				// buff
+				std::vector<char> l_zip_buff_from_str;
+				std::vector<char> l_zip_buff_from_buff;
+				vuf::txtSerializer::zip_to_buff(l_str, l_zip_buff_from_str);
+				vuf::txtSerializer::zip_to_buff(l_buff, l_zip_buff_from_buff);
+				
+				std::string l_zip_str_s( l_zip_buff_from_str.begin(),	l_zip_buff_from_str.end());
+				std::string l_zip_str_b( l_zip_buff_from_buff.begin(),	l_zip_buff_from_buff.end());
+				
+				std::cout << "zip to buff from string: \n"		<< l_zip_str_s << std::endl;
+				std::cout << "zip to buff from string size: "	<< l_zip_buff_from_str.size() << std::endl;
+				std::cout << "zip to buff from buff: \n"		<< l_zip_str_b << std::endl;
+				std::cout << "zip to buff from buff size: "		<< l_zip_buff_from_buff.size() << std::endl;
+				//vuf::txtSerializer::zip_to_string(l_str, l_zip_str2);
+
+				//unzip
+				std::cout << std::endl;
+				std::cout << "get_unzip size from buff: \n" <<		vuf::txtSerializer::get_unzip_size(l_zip_str) << std::endl;
+				std::cout << "get_unzip size from string: \n" <<	vuf::txtSerializer::get_unzip_size(l_zip_buff_from_str) << std::endl;
+				// string
+				std::string l_unzip_str_s;
+				std::string l_unzip_str_b;
+				vuf::txtSerializer::unzip_to_string(l_zip_str,				l_unzip_str_s);
+				vuf::txtSerializer::unzip_to_string(l_zip_buff_from_str,	l_unzip_str_b);
+				std::cout << "unzip to string from string: " << l_unzip_str_s << std::endl;
+				std::cout << "unzip to string from string size: " << l_unzip_str_s.length() << std::endl;
+				std::cout << "unzip matched: " << (l_unzip_str_s == l_str) << std::endl;
+				std::cout << "unzip to string from buff: " << l_unzip_str_b << std::endl;
+				std::cout << "unzip from string size: " << l_unzip_str_b.length() << std::endl;
+				std::cout << "unzip matched: " << (l_unzip_str_b == l_str) << std::endl;
+
+				//buff
+				std::vector<char> l_unzip_buff_from_str;
+				std::vector<char> l_unzip_buff_from_buff;
+				vuf::txtSerializer::unzip_to_buff(l_zip_str,			l_unzip_buff_from_str);
+				vuf::txtSerializer::unzip_to_buff(l_zip_buff_from_str,	l_unzip_buff_from_buff);
+				l_unzip_str_s = std::string(l_unzip_buff_from_str.begin(), l_unzip_buff_from_str.end());
+				l_unzip_str_b = std::string(l_unzip_buff_from_buff.begin(), l_unzip_buff_from_buff.end());
+				std::cout << "unzip to buff from string: \n" << l_unzip_str_s << std::endl;
+				std::cout << "unzip to buff from string size: " << l_unzip_str_s.length() << std::endl;
+				std::cout << "unzip matched: " << (l_unzip_str_s == l_str) << std::endl;
+				std::cout << "unzip to buff from buff: \m" << l_unzip_str_b << std::endl;
+				std::cout << "unzip to buff from buff size: " << l_unzip_str_b.length() << std::endl;
+				std::cout << "unzip matched: " << (l_unzip_str_b == l_str) << std::endl;
 			}
 
 			std::cout << "....Serialization Test Pass Successfully" << std::endl;

@@ -22,6 +22,9 @@
     <Filter Include="include\math">
       <UniqueIdentifier>{22BEDE69-0E21-6E0E-B7A6-A6C4A3E83991}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\mathUtils">
+      <UniqueIdentifier>{336F58CE-9F85-5664-E8FC-E185545227EC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\unitTests">
       <UniqueIdentifier>{4BEBB63E-B701-B5D4-0079-40F66CCE855C}</UniqueIdentifier>
     </Filter>
@@ -92,6 +95,9 @@
     </ClInclude>
     <ClInclude Include="include\math\vufVector.h">
       <Filter>include\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mathUtils\vufMathUtil.h">
+      <Filter>include\mathUtils</Filter>
     </ClInclude>
     <ClInclude Include="include\unitTests\curve\curveTest.h">
       <Filter>include\unitTests\curve</Filter>

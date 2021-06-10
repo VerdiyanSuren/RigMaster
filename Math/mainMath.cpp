@@ -2,7 +2,7 @@
 
 #include <unitTests/vufTestAll.h>
 //#include <curves/vufCurveContatiner.h>
-
+#include <mathUtils/vufMathUtil.h>
 #include <curves/vufCurveOpenBSpline.h>
 #include <curves/vufCurveCloseBSpline.h>
 #include <curves/vufCurveContatiner.h>

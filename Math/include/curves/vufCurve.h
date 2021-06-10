@@ -466,13 +466,17 @@ namespace vufMath
 		/** suportes open and close */
 		bool		is_open()		const	{ return  m_close == false; }
 		bool		is_close()		const	{ return  m_close; }
-		//T		 get_node_max_influence_t(int p_node_index) const { return m_nodes_max_influence_t_v[p_node_index]; }
-
+		
+		// return -1 if length could be easily calculated. Actual for math curves
+		virtual T				get_length() const { return -1; }
+		virtual bool			rebuild(uint32_t p_division_count,
+										std::vector<T>& p_uniform_to_curve_val_v,
+										std::vector<T>& p_curve_to_uniform_val_v,
+										std::vector<T>& p_curve_length_to_val_v) const = 0;
 		//virtual int			get_interval_count() const = 0;
 		virtual vufCurveType	get_type()					const = 0;
 		virtual V<T>			get_pos_at(T p_t)			const = 0;
 		virtual V<T>			get_tangent_at(T p_t)		const = 0;
-		//virtual V<T>			get_velocity_at(T p_t)		const = 0;
 		//virtual V<T>			get_normal_at(T p_t)		const = 0;
 		//virtual V<T>			get_binormal(T p_t)			const = 0;
 		//virtual vufMatrix4<T> get_frenet_frame_at(T p_t)  const = 0;
@@ -482,9 +486,10 @@ namespace vufMath
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;
-		virtual uint64_t		get_binary_size() const = 0
+		virtual uint64_t		get_binary_size(uint32_t p_version = 0) const = 0
 		{
-			return  sizeof(m_valid) + 
+			return  sizeof(uint32_t)	//version
+					sizeof(m_valid) + 
 					sizeof(m_has_degree) + 
 					sizeof(m_degree) + 
 					sizeof(m_explicit) + 

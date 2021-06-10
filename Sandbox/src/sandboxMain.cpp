@@ -11,7 +11,7 @@
 #include <unitTestCore/serializer/vufTxtStdVectorSerializerFnUt.h>
 #include <iostream>
 
-#include <vufApplication.h>
+//#include <vufApplication.h>
 
 extern "C"
 {
@@ -28,13 +28,13 @@ public:
 	~vufSandbox() {}
 
 };
-*/
 extern vuf::Application* vuf::createApplication();
 vuf::Application* vuf::createApplication()
 {
 	//return new vufSandbox();
 	return new vuf::Application();
 }
+*/
 using namespace vuf;
 
 
@@ -43,11 +43,12 @@ int main()
 {
 	vuf::txtSeriaslizerUT().run(true);
 	vuf::txtStdVectorSerializerFnUt().run(true);
-
+	/*
 	auto g_app = vuf::createApplication();
 	g_app->run();
 	delete g_app;
 
+	*/
 	system("pause");
 	return 0;
 

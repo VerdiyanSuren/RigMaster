@@ -362,6 +362,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Events\vufEvent.h" />
     <ClInclude Include="include\openGL\vufGLApplication.h" />
     <ClInclude Include="include\openGL\vufGLWindow.h" />
     <ClInclude Include="include\vufApplication.h" />
@@ -370,10 +371,11 @@
     <ClInclude Include="include\vufWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\openGL\OGLWindow.cpp" />
+    <ClCompile Include="src\openGL\vufGLApplication.cpp" />
+    <ClCompile Include="src\openGL\vufGLWindow.cpp" />
     <ClCompile Include="src\vufApplication.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project>
+</Project> 
