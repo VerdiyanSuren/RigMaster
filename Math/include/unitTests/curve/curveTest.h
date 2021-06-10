@@ -35,6 +35,7 @@ namespace vufMath
 		bool test_serialization(bool p_verbose = false)
 		{
 			std::cout << "....Serialization Test" << std::endl;
+			uint32_t l_version;
 			auto l_crv_1 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
 			auto l_crv_2 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
 			l_crv_1->set_nodes_count(4);
@@ -57,7 +58,7 @@ namespace vufMath
 			std::vector<char> l_buff(128);
 			uint64_t l_size			= l_crv_1->get_binary_size();
 			uint64_t l_write_offset = l_crv_1->to_binary(l_buff);
-			uint64_t l_read_offset	= l_crv_2->from_binary(l_buff);
+			uint64_t l_read_offset	= l_crv_2->from_binary(l_buff, l_version);
 			//uint64_t l_write_offset = l_crv_1->to_binary(p_buff,50);
 			if (l_size  != l_write_offset || l_write_offset != l_read_offset)
 			{
@@ -171,6 +172,7 @@ namespace vufMath
 		bool test_serialization(bool p_verbose = false)
 		{
 			std::cout << "....Serialization Test" << std::endl;
+			uint32_t l_version;
 			auto l_crv_1 = vufCurveCloseBSpline<double, vufVector4, 4>::create();
 			auto l_crv_2 = vufCurveCloseBSpline<double, vufVector4, 4>::create();
 			l_crv_1->set_nodes_count(4);
@@ -192,7 +194,7 @@ namespace vufMath
 			std::vector<char> l_buff;
 			uint64_t l_size = l_crv_1->get_binary_size();
 			uint64_t l_write_offset = l_crv_1->to_binary(l_buff);
-			uint64_t l_read_offset = l_crv_2->from_binary(l_buff);
+			uint64_t l_read_offset = l_crv_2->from_binary(l_buff, l_version);
 			if (l_size != l_write_offset || l_write_offset != l_read_offset)
 			{
 				VF_LOG_ERR("get_binary_size()  to_binary() from_binary() have different sizes.");
@@ -289,6 +291,7 @@ namespace vufMath
 		bool test_serialization(bool p_verbose = false)
 		{
 			std::cout << "....Serialization Test" << std::endl;
+			uint32_t l_version;
 			auto l_cntnr	= vufCurveContainer<T, vufVector4>::create();
 			auto l_crv_c	= vufCurveCloseBSpline<T, vufVector4, 4>::create();
 			auto l_crv_o	= vufCurveOpenBSpline<T, vufVector4, 4>::create();
@@ -309,7 +312,7 @@ namespace vufMath
 			std::vector<char> l_buff;
 			uint64_t l_size		= l_rbld_1->get_binary_size();
 			uint64_t l_write	= l_rbld_1->to_binary(l_buff);
-			uint64_t l_read		= l_rbld_2->from_binary(l_buff);
+			uint64_t l_read		= l_rbld_2->from_binary(l_buff, l_version);
 			if (l_size != l_write || l_write != l_read)
 			{
 				VF_LOG_ERR("Failed.to_binary form_binary rebuild uniform sizes are different");
@@ -436,7 +439,7 @@ namespace vufMath
 				std::cout << "unzip to buff from string: \n" << l_unzip_str_s << std::endl;
 				std::cout << "unzip to buff from string size: " << l_unzip_str_s.length() << std::endl;
 				std::cout << "unzip matched: " << (l_unzip_str_s == l_str) << std::endl;
-				std::cout << "unzip to buff from buff: \m" << l_unzip_str_b << std::endl;
+				std::cout << "unzip to buff from buff: \n" << l_unzip_str_b << std::endl;
 				std::cout << "unzip to buff from buff size: " << l_unzip_str_b.length() << std::endl;
 				std::cout << "unzip matched: " << (l_unzip_str_b == l_str) << std::endl;
 			}
@@ -472,6 +475,7 @@ namespace vufMath
 		bool test_serialization(bool p_verbose = false)
 		{
 			std::cout << "....Serialization Test" << std::endl;
+			uint32_t l_version;
 			auto l_cntnr = vufCurveContainer<T, vufVector4>::create();
 			auto l_crv_c = vufCurveCloseBSpline<T, vufVector4, 4>::create();
 			auto l_crv_o = vufCurveOpenBSpline<T, vufVector4, 4>::create();
@@ -503,7 +507,7 @@ namespace vufMath
 			std::vector<char> l_buff;
 			uint64_t l_size		= l_quat_1->get_binary_size();
 			uint64_t l_write	= l_quat_1->to_binary(l_buff);
-			uint64_t l_read		= l_quat_2->from_binary(l_buff);
+			uint64_t l_read		= l_quat_2->from_binary(l_buff, l_version);
 			if (l_size != l_write || l_write != l_read)
 			{
 				VF_LOG_ERR("Failed.to_binary form_binary quaternion close sizes are different");
@@ -588,6 +592,7 @@ namespace vufMath
 		bool test_serialization(bool p_verbose = false)
 		{
 			std::cout << "....Serialization Test" << std::endl;
+			uint32_t l_version;
 			auto l_cntnr = vufCurveContainer<T, vufVector4>::create();
 			auto l_crv_c = vufCurveCloseBSpline<T, vufVector4, 4>::create();
 			auto l_crv_o = vufCurveOpenBSpline<T, vufVector4, 4>::create();
@@ -623,7 +628,7 @@ namespace vufMath
 			std::vector<char> l_buff;
 			uint64_t l_size		= l_scl_1->get_binary_size();
 			uint64_t l_write	= l_scl_1->to_binary(l_buff);
-			uint64_t l_read		= l_scl_2->from_binary(l_buff);
+			uint64_t l_read		= l_scl_2->from_binary(l_buff, l_version);
 			if (l_size != l_write || l_write != l_read)
 			{
 				std::cout << "l_size " << l_size << " l_write " << l_write << " l_read " << l_read << std::endl;
@@ -710,6 +715,7 @@ namespace vufMath
 		bool test_serialization(bool p_verbose = false)
 		{
 			std::cout << "....Serialization Test" << std::endl;
+			uint32_t l_version;
 			auto l_cntnr_1	= vufCurveContainer<T, vufVector4>::create();
 			auto l_cntnr_2	= vufCurveContainer<T, vufVector4>::create();
 			auto l_crv		= vufCurveCloseBSpline<T, vufVector4, 4>::create();
@@ -762,7 +768,7 @@ namespace vufMath
 			std::vector<char> l_buff;
 			uint64_t l_size		= l_cntnr_1->get_binary_size();
 			uint64_t l_write	= l_cntnr_1->to_binary(l_buff);
-			uint64_t l_read		= l_cntnr_2->from_binary(l_buff);
+			uint64_t l_read		= l_cntnr_2->from_binary(l_buff, l_version);
 			if (l_size != l_write || l_write != l_read)
 			{
 				std::cout << "l_size " << l_size << " l_write " << l_write << " l_read " << l_read << std::endl;

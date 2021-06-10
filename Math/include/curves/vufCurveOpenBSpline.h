@@ -297,7 +297,7 @@ namespace vufMath
 			return true;
 		}
 		
-		V<T>				get_pos_at_i(T p_t)		const
+		inline V<T>				get_pos_at_i(T p_t)		const
 		{
 			if (p_t < 0.0)
 			{
@@ -320,7 +320,7 @@ namespace vufMath
 			}
 			return l_res;
 		}
-		V<T>				get_tangent_at_i(T p_t) const
+		inline V<T>				get_tangent_at_i(T p_t) const
 		{
 			if (p_t < 0.0)
 			{
@@ -333,7 +333,7 @@ namespace vufMath
 				return vufCurveExplicit<T, V>::m_nodes_pos_v[l_last_node_id] * m_n_v[l_last_interval_id][l_last_node_id].eval(1.0);
 			}
 
-			V<T>	l_res;
+			V<T>	l_res = V<T>();
 			int		l_node_id = 0;
 			int		l_interval_id = get_interval_index(p_t);
 			for (int l_dgr = 0; l_dgr < CURVE_DEGREE + 1; ++l_dgr)
@@ -343,6 +343,37 @@ namespace vufMath
 			}
 			return l_res;
 		}
+		inline V<T>				get_tangent_normalized_at_i(T p_t)	const
+		{
+			return get_tangent_at_i(p_t).normalize_in_place();
+		}
+		inline V<T>				get_normal_at_i(T p_t)	const
+		{
+			if (p_t < 0.0)
+			{
+				return get_normal_at_i(0.0);
+			}
+			if (p_t > 1.0)
+			{
+				return get_normal_at_i(1.0);
+			}
+			V<T>	l_res = V<T>();
+			int		l_node_id = 0;
+			int		l_interval_id = get_interval_index(p_t);
+			for (int l_dgr = 0; l_dgr < CURVE_DEGREE + 1; ++l_dgr)
+			{
+				l_node_id = l_interval_id + l_dgr;
+				l_res += vufCurveExplicit<T, V>::m_nodes_pos_v[l_node_id] * m_dn_v[l_interval_id][l_node_id].get_derivative().eval(p_t);
+			}
+			V<T> l_tangent = get_tangent_at_i(p_t);
+			l_res.make_ortho_to_in_place(l_tangent);
+			if (l_res.length2() < VF_MATH_EPSILON)
+			{
+				return V<T>();
+			}
+			return l_res.normalize_in_place();
+		}
+
 		T					get_closest_point_param_i(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001) const
 		{
 			T l_dist_prev, l_dist_next, l_closest_dist, l_closest_t = 0;
@@ -393,7 +424,7 @@ namespace vufMath
 										std::vector<T>& p_curve_to_uniform_val_v,
 										std::vector<T>& p_curve_length_to_val_v) const override
 		{
-			uint32_t	l_total_div = l_crv_ptr->get_interval_count_i() * p_division_count + 1;;
+			uint32_t	l_total_div = get_interval_count_i() * p_division_count + 1;;
 			T			l_curve_length = 0;
 
 			if (p_uniform_to_curve_val_v.size() != l_total_div)
@@ -402,14 +433,14 @@ namespace vufMath
 				p_curve_to_uniform_val_v.resize(l_total_div);
 				p_curve_length_to_val_v.resize(	l_total_div);
 			}
-			V<T> l_vec_prev = p_curve.get_pos_at_i(0);
+			V<T> l_vec_prev = get_pos_at_i(0);
 			p_uniform_to_curve_val_v[0] = 0;
 			p_curve_to_uniform_val_v[0] = 0;
 			p_curve_length_to_val_v[0]	= 0;
 			// Compute curve length until sample point
 			for (uint64_t i = 1; i < l_total_div; ++i)
 			{
-				T l_crv_val = ((T)i) / (T(m_total_div - 1));
+				T l_crv_val = ((T)i) / (T(l_total_div - 1));
 				V<T> l_vec = get_pos_at_i(l_crv_val);
 				p_curve_length_to_val_v[i] = p_curve_length_to_val_v[i - 1] + l_vec_prev.distance_to(l_vec);
 				l_vec_prev = l_vec;
@@ -482,7 +513,7 @@ namespace vufMath
 			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index];
 		}
 		
-		virtual T			get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001)  const override
+		virtual T			get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001)		const override
 		{
 			return get_closest_point_param_i(p_point, p_divisions, p_percition);
 		}
@@ -510,7 +541,15 @@ namespace vufMath
 		{
 			return get_tangent_at_i(p_t);
 		}
-		
+		virtual V<T>			get_tangent_normalized_at(T p_t)	const override
+		{
+			return get_tangent_normalized_at_i(p_t);
+		}
+		virtual V<T>		get_normal_at(T p_t)									const override
+		{
+			return get_normal_at_i(p_t);
+		}
+
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)	const override
 		{
 			std::stringstream l_ss;
@@ -535,7 +574,6 @@ namespace vufMath
 		//virtual uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0) override;
 		virtual uint64_t		get_binary_size()													const override
 		{
-//std::cout << "-------------------------------------OPEN_BSPLINE::get_binary_size()--------------------- "<< std::endl;
 			uint64_t l_size = 0;
 			l_size += vufCurveExplicit<T, V>::get_binary_size();
 			return  l_size;
@@ -558,10 +596,10 @@ namespace vufMath
 			}
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version,  uint64_t p_offset = 0) override
 		{
 			vufCurve<T, V>::m_valid = false;
-			p_offset = vufCurveExplicit<T, V>::from_binary(p_buff, p_offset);
+			p_offset = vufCurveExplicit<T, V>::from_binary(p_buff, p_version, p_offset);
 			if (p_offset == 0)
 			{
 				vufCurve<T, V>::m_valid = false;

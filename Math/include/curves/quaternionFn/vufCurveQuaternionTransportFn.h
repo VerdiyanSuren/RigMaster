@@ -16,7 +16,7 @@ namespace vufMath
 		/// creator
 		static std::shared_ptr<vufCurveQuaternionTransportFn<T, V>> create()
 		{
-			auto l_ptr = std::shared_ptr< vufCurveQuaternionTransportFn>(new vufCurveQuaternionTransportFn<T, V>);
+			auto l_ptr = std::shared_ptr< vufCurveQuaternionTransportFn>(new vufCurveQuaternionTransportFn<T, V>());
 			l_ptr->m_this = l_ptr;
 			return l_ptr;
 		}
@@ -92,6 +92,7 @@ namespace vufMath
 					l_tng = l_crv_ptr->get_tangent_at(p_val);
 					l_vec = l_res.rotate_vector_by_quaternion(l_vec);
 					return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
+					//return l_res;
 				}
 			}
 			return vufQuaternion<T>();
@@ -118,7 +119,8 @@ namespace vufMath
 			auto l_crv_ptr = p_curve_container.get_curve_ptr();
 			uint32_t l_start = 0, l_end = (uint32_t)m_quat_param_v.size();
 			m_quat_param_v[0] = 0;
-			m_quat_param_v.back() = 1;
+			m_quat_param_v.back() = 1.;
+			/*
 			if (l_crv_ptr->is_close() == false)
 			{
 				if (vufCurveQuaternionFn<T, V>::m_pin_start == true)
@@ -132,31 +134,37 @@ namespace vufMath
 					--l_end;
 				}
 			}
+			*/
 			//-----------------------------------
-			T l_step = (m_quat_param_v.back() - m_quat_param_v[0]) / (T)(l_end - l_start);
+			T l_step = (m_quat_param_v.back() - m_quat_param_v[0]) / (T)(l_end -1 - l_start);
 			// for first root param start
-			m_tangent_v[0] = l_crv_ptr->get_tangent_at(m_quat_param_v[0]);
-			m_tangent_v[0].normalize_in_place();
+			m_tangent_v[0] = l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[0]);
 			m_y_axis_v[0].make_ortho_to_in_place(m_tangent_v[0]);
 			m_y_axis_v[0].normalize_in_place();
 			//------------------------------------
 			for (uint32_t i = 1; i < l_end; ++i)
 			{
 				m_quat_param_v[i] = m_quat_param_v[0] + l_step * (T)i;
-				m_tangent_v[i] = l_crv_ptr->get_tangent_at(m_quat_param_v[i]);				
-				m_tangent_v[i].normalize_in_place();
+				//std::cout << m_quat_param_v[i] << std::endl;
+				m_tangent_v[i] = l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[i]);
 				V<T> l_cross = m_tangent_v[i - 1].get_cross(m_tangent_v[i]);
+				
 				if (l_cross.length2() < 0.00000001)
 				{
 					m_y_axis_v[i] = m_y_axis_v[i - 1];
 					continue;
-				}
+				}				
 				l_cross.normalize_in_place();
 				T l_dot		= m_tangent_v[i - 1].dot(m_tangent_v[i]);
-				T l_angle = acos(VF_CLAMP(-1., 1., l_dot));
+				T l_angle	= -acos(VF_CLAMP(-1., 1., l_dot));
 				vufQuaternion<T> l_rot(l_angle, l_cross);
 				m_y_axis_v[i] = l_rot.rotate_vector_by_quaternion(m_y_axis_v[i - 1]);
 				m_y_axis_v[i].normalize_in_place();
+				if (m_y_axis_v[i].dot(m_y_axis_v[i - 1]) < 0.0)
+				{
+					m_y_axis_v[i] = -m_y_axis_v[i];
+				}
+				//std::cout << m_tangent_v[i].length() << " " << m_tangent_v[i-1].length() << " " << l_dot << " " << l_angle << " " << m_y_axis_v[i] << std::endl;
 			}
 			// convert to quaternion
 			for (uint32_t i = 0; i < l_end; ++i)
@@ -319,10 +327,10 @@ namespace vufMath
 
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff,uint32_t& p_version, uint64_t p_offset = 0)		override
 		{
 			uint64_t l_size;
-			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff, p_offset);
+			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff, p_version, p_offset);
 			// m_y_axis_v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));
 			m_y_axis_v.resize(l_size);

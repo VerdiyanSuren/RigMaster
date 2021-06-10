@@ -254,6 +254,22 @@ namespace vufMath
 
 			//p = ( *this )*(-v)*conj;
 			p = conj * v * (*this);
+			//p = (*this) *v *conj ;
+			/*
+			void rotate_vector_by_quaternion(const Vector3& v, const Quaternion& q, Vector3& vprime)
+			{
+				// Extract the vector part of the quaternion
+				Vector3 u(q.x, q.y, q.z);
+
+				// Extract the scalar part of the quaternion
+				float s = q.w;
+
+				// Do the math
+				vprime = 2.0f * dot(u, v) * u
+						+ (s*s - dot(u, u)) * v
+						+ 2.0f * s * cross(u, v);
+			}
+			*/
 			return vufVector4<T>(p.x, p.y, p.z);
 		}
 		inline vufQuaternion increment_quaternion_with_2vectors(const vufVector3<T>& vFrom, const vufVector3<T>& vTo) const

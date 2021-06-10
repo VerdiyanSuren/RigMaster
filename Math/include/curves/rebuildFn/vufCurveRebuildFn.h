@@ -73,7 +73,7 @@ namespace vufMath
 		}
 		virtual uint64_t		get_binary_size()														const = 0
 		{
-			uint64_t l_size = 0;
+			uint64_t l_size = sizeof(uint32_t);
 			l_size += sizeof(m_clamp_start);
 			l_size += sizeof(m_clamp_start_value);
 			l_size += sizeof(m_clamp_end);
@@ -83,11 +83,13 @@ namespace vufMath
 		}
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
 		{
+			uint32_t l_version = VF_MATH_VERSION;
 			uint64_t l_size = get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
 			{
 				p_buff.resize(p_offset + l_size);
-			}			
+			}
+			std::memcpy(&p_buff[p_offset], &l_version,				sizeof(l_version));				p_offset += sizeof(l_version);
 			std::memcpy(&p_buff[p_offset], &m_clamp_start,			sizeof(m_clamp_start));			p_offset += sizeof(m_clamp_start);
 			std::memcpy(&p_buff[p_offset], &m_clamp_start_value,	sizeof(m_clamp_start_value));	p_offset += sizeof(m_clamp_start_value);
 			std::memcpy(&p_buff[p_offset], &m_clamp_end,			sizeof(m_clamp_end));			p_offset += sizeof(m_clamp_end);
@@ -96,18 +98,20 @@ namespace vufMath
 
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) = 0
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0) = 0
 		{
 			uint64_t l_size = vufCurveRebuildFn<T, V>::get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
 			{
 				return 0;
 			}
-			std::memcpy( &m_clamp_start,		&p_buff[p_offset],	sizeof(m_clamp_start));			p_offset += sizeof(m_clamp_start);
-			std::memcpy( &m_clamp_start_value,	&p_buff[p_offset],	sizeof(m_clamp_start_value));	p_offset += sizeof(m_clamp_start_value);
-			std::memcpy( &m_clamp_end,			&p_buff[p_offset],	sizeof(m_clamp_end));			p_offset += sizeof(m_clamp_end);
-			std::memcpy( &m_clamp_end_value,	&p_buff[p_offset],	sizeof(m_clamp_end_value));		p_offset += sizeof(m_clamp_end_value);
-			std::memcpy( &m_offset,				&p_buff[p_offset],	sizeof(m_offset));				p_offset += sizeof(m_offset);
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, p_version,			sizeof(p_version));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_clamp_start,		sizeof(m_clamp_start));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_clamp_start_value,sizeof(m_clamp_start_value));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_clamp_end,		sizeof(m_clamp_end));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_clamp_end_value,	sizeof(m_clamp_end_value));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset,			sizeof(m_offset));
+
 			return p_offset;
 		}
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
@@ -356,9 +360,9 @@ namespace vufMath
 
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff,uint32_t& p_version, uint64_t p_offset = 0)		override
 		{
-			p_offset = vufCurveRebuildFn<T, V>::from_binary(p_buff, p_offset);
+			p_offset = vufCurveRebuildFn<T, V>::from_binary(p_buff, p_version, p_offset);
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_div_per_segment,	sizeof(m_div_per_segment));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_total_div,		sizeof(m_total_div));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_curve_length,		sizeof(m_curve_length));

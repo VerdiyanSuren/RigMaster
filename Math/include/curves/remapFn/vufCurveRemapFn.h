@@ -26,7 +26,7 @@ namespace vufMath
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const = 0;
 		virtual uint64_t		get_binary_size()														const = 0;
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0;
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		= 0;
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff,uint32_t& p_version, uint64_t p_offset = 0)		= 0;
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0;
 		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		= 0;
 

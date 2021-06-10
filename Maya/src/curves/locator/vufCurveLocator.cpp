@@ -149,17 +149,47 @@ void				vufCurveLocatorDrawOverride::addUIDrawables(	const MDagPath&					p_obj_p
 	vufVector_4d	l_start = l_locator_data_ptr->m_curve_container_ptr->get_pos_at(0.0 );
 	MPoint l_0(l_start.x, l_start.y, l_start.z);
 	MPoint l_1;
-	for (int i = 1; i < 100; ++i)
+	for (int i = 0; i < 100; ++i)
 	{
 		p_draw_manager.setColor(MColor( (float)i/100.f, 1.0f - (float)i / 100.0f, .0f));
-		auto l_pos = l_locator_data_ptr->m_curve_container_ptr-> get_pos_at(l_step * ((double)i));
+		auto l_pos		= l_locator_data_ptr->m_curve_container_ptr->get_pos_at(l_step * ((double)i));
+		auto l_tangent	= l_locator_data_ptr->m_curve_container_ptr->get_tangent_at(l_step * ((double)i));
+		auto l_normal	= l_locator_data_ptr->m_curve_container_ptr->get_normal_at(l_step * ((double)i));
+		auto l_quat = l_locator_data_ptr->m_curve_container_ptr->get_quaternion_at(l_step * ((double)i));
+		l_tangent.normalize_in_place();
+		l_normal.normalize_in_place();
+		auto l_binormal = l_tangent.get_cross(l_normal);
+		l_binormal.normalize_in_place();
+
+		vufMatrix_4d l_matr = vufMatrix_4d();
+		vufMatrix_4d l_matr_frame = vufMatrix_4d();
+		l_matr_frame.set_axis_x(l_tangent);
+		l_matr_frame.set_axis_y(l_normal);
+		l_matr_frame.set_axis_z(l_binormal);
+		//auto l_quat = l_matr.get_quaternion();
+		auto l_quat_frame = l_matr_frame.get_quaternion();
+		l_matr_frame.set_quaternion(l_quat_frame);
+		l_tangent	= l_matr_frame.get_axis_x_4();
+		l_normal	= l_matr_frame.get_axis_y_4();
+
+		l_matr.set_quaternion(l_quat);
+		auto l_t	= l_matr.get_axis_x_4();
+		auto l_n	= l_matr.get_axis_y_4();
 		l_1 = l_0;
 		l_0.x = l_pos.x;
 		l_0.y = l_pos.y;
 		l_0.z = l_pos.z;
+
+		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
+		p_draw_manager.line( l_0,l_1);
 		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
 
-		p_draw_manager.line( l_0,l_1);
+		p_draw_manager.setColor(MColor(1.0f, .0f, .0f));
+		p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_tangent))));
+		p_draw_manager.setColor(MColor(0.0f, .0f, 1.0f));
+		p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_normal* 2))));
+		p_draw_manager.setColor(MColor(0.0f, 1.0f, .0f));
+		p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_n))));
 	}
 
 	p_draw_manager.endDrawInXray();

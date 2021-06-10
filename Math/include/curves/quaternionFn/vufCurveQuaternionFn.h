@@ -36,7 +36,7 @@ namespace vufMath
 			{
 				return vufCurveQuaternionCloseFn<T, V>::create();
 			}
-			if (p_type == vufCurveQuatFnType::k_closest)
+			if (p_type == vufCurveQuatFnType::k_transport)
 			{
 				return vufCurveQuaternionTransportFn<T, V>::create();
 			}
@@ -93,7 +93,7 @@ namespace vufMath
 		}
 		virtual uint64_t		get_binary_size()														const = 0
 		{
-			uint64_t l_size = 0;
+			uint64_t l_size = sizeof(uint32_t);
 			l_size += sizeof(m_valid);
 			l_size += sizeof(m_pin_start);
 			l_size += sizeof(m_pin_start_value);
@@ -105,11 +105,13 @@ namespace vufMath
 		}
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
 		{
-			uint64_t l_size = vufCurveQuaternionFn<T, V>::get_binary_size();
+			uint32_t l_version	= VF_MATH_VERSION;
+			uint64_t l_size		= vufCurveQuaternionFn<T, V>::get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
 			{
 				p_buff.resize(p_offset + l_size);
 			}
+			std::memcpy(&p_buff[p_offset], &l_version,			sizeof(l_version));			p_offset += sizeof(l_version);
 			std::memcpy(&p_buff[p_offset], &m_valid,			sizeof(m_valid));			p_offset += sizeof(m_valid);
 			std::memcpy(&p_buff[p_offset], &m_pin_start,		sizeof(m_pin_start));		p_offset += sizeof(m_pin_start);
 			std::memcpy(&p_buff[p_offset], &m_pin_start_value,	sizeof(m_pin_start_value));	p_offset += sizeof(m_pin_start_value);
@@ -119,19 +121,20 @@ namespace vufMath
 
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) = 0
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0) = 0
 		{
 			uint64_t l_size = vufCurveQuaternionFn<T, V>::get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
 			{
 				return 0;
 			}
-			std::memcpy(&m_valid,			&p_buff[p_offset], sizeof(m_valid));			p_offset += sizeof(m_valid);
-			std::memcpy(&m_pin_start,		&p_buff[p_offset], sizeof(m_pin_start));		p_offset += sizeof(m_pin_start);
-			std::memcpy(&m_pin_start_value, &p_buff[p_offset], sizeof(m_pin_start_value));	p_offset += sizeof(m_pin_start_value);
-			std::memcpy(&m_pin_end,			&p_buff[p_offset], sizeof(m_pin_end));			p_offset += sizeof(m_pin_end);
-			std::memcpy(&m_pin_end_value,	&p_buff[p_offset], sizeof(m_pin_end_value));	p_offset += sizeof(m_pin_end_value);
-			std::memcpy(&m_offset,			&p_buff[p_offset], sizeof(m_offset));			p_offset += sizeof(m_offset);
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, p_version,			sizeof(p_version));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_valid,			sizeof(m_valid));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_start,		sizeof(m_pin_start));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_start_value,	sizeof(m_pin_start_value));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_end,			sizeof(m_pin_end));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_end_value,	sizeof(m_pin_end_value));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset,			sizeof(m_offset));
 
 			return p_offset;
 		}

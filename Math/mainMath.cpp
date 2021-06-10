@@ -45,15 +45,16 @@ int main()
 	std::cout << "open bspline size: " << l_crv_1->get_binary_size() << std::endl;
 	std::vector<char> l_buff(2048);
 	uint64_t l_offset = 0;
+	uint32_t l_version;
 	l_offset = l_crv_1->to_binary(l_buff);
 	std::cout << "offset_1: " << l_offset << std::endl;
-	l_offset = l_crv_2->from_binary(l_buff);
+	l_offset = l_crv_2->from_binary(l_buff, l_version);
 	std::cout << "offset_2: " << l_offset << std::endl;
 	std::cout << "---------------------------------------------------------------" << std::endl;
 	std::cout << "close bspline size: " << l_crv_cls_1->get_binary_size() << std::endl;
 	l_offset = l_crv_cls_1->to_binary(l_buff);
 	std::cout << "offset_1: " << l_offset << std::endl;
-	l_offset = l_crv_cls_1->from_binary(l_buff);
+	l_offset = l_crv_cls_1->from_binary(l_buff, l_version);
 	std::cout << "offset_2: " << l_offset << std::endl;
 	std::cout << "---------------------------------------------------------------" << std::endl;
 	//vufCurveContainer<double, vufVector4> l_container;

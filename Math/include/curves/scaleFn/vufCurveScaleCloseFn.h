@@ -265,9 +265,9 @@ namespace vufMath
 			return p_offset;
 
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff,uint32_t& p_version, uint64_t p_offset = 0)		override
 		{
-			p_offset = vufCurveScaleFn<T, V>::from_binary(p_buff, p_offset);
+			p_offset = vufCurveScaleFn<T, V>::from_binary(p_buff, p_version, p_offset);
 			uint64_t l_size; 
 			// m_positon_v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));

@@ -474,10 +474,21 @@ namespace vufMath
 										std::vector<T>& p_curve_to_uniform_val_v,
 										std::vector<T>& p_curve_length_to_val_v) const = 0;
 		//virtual int			get_interval_count() const = 0;
-		virtual vufCurveType	get_type()					const = 0;
-		virtual V<T>			get_pos_at(T p_t)			const = 0;
-		virtual V<T>			get_tangent_at(T p_t)		const = 0;
-		//virtual V<T>			get_normal_at(T p_t)		const = 0;
+		virtual vufCurveType	get_type()							const = 0;
+		virtual V<T>			get_pos_at(T p_t)					const = 0;
+		virtual V<T>			get_tangent_at(T p_t)				const = 0;
+		virtual V<T>			get_tangent_normalized_at(T p_t)	const
+		{
+			// To Do 
+			// make abstract
+			return V<T>();
+		}
+		virtual V<T>			get_normal_at(T p_t)				const
+		{
+			// To Do 
+			// make abstract
+			return V<T>();
+		}
 		//virtual V<T>			get_binormal(T p_t)			const = 0;
 		//virtual vufMatrix4<T> get_frenet_frame_at(T p_t)  const = 0;
 		virtual T	get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10,		T p_percition = 0.00001) const= 0;
@@ -486,9 +497,9 @@ namespace vufMath
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;
-		virtual uint64_t		get_binary_size(uint32_t p_version = 0) const = 0
+		virtual uint64_t		get_binary_size() const = 0
 		{
-			return  sizeof(uint32_t)	//version
+			return  sizeof(uint32_t) +	//version
 					sizeof(m_valid) + 
 					sizeof(m_has_degree) + 
 					sizeof(m_degree) + 
@@ -498,11 +509,13 @@ namespace vufMath
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
 		{
 			// resize if needed
+			uint32_t l_version = VF_MATH_VERSION;
 			uint64_t l_size = vufCurve<T, V>::get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
 			{
 				p_buff.resize(p_offset + l_size);
 			}
+			std::memcpy(&p_buff[p_offset], &l_version,		sizeof(l_version));		p_offset += sizeof(l_version);
 			std::memcpy(&p_buff[p_offset], &m_valid,		sizeof(m_valid));		p_offset += sizeof(m_valid);
 			std::memcpy(&p_buff[p_offset], &m_has_degree,	sizeof(m_has_degree));	p_offset += sizeof(m_has_degree);
 			std::memcpy(&p_buff[p_offset], &m_degree,		sizeof(m_degree));		p_offset += sizeof(m_degree);
@@ -510,17 +523,19 @@ namespace vufMath
 			std::memcpy(&p_buff[p_offset], &m_close,		sizeof(m_close));		p_offset += sizeof(m_close);
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) = 0
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0) = 0
 		{
 			if (p_buff.size() < p_offset + vufCurve<T, V>::get_binary_size())
 			{
 				return 0;
 			}
-			std::memcpy(&m_valid,		&p_buff[p_offset], sizeof(m_valid));		p_offset += sizeof(m_valid);
-			std::memcpy(&m_has_degree,	&p_buff[p_offset], sizeof(m_has_degree));	p_offset += sizeof(m_has_degree);
-			std::memcpy(&m_degree,		&p_buff[p_offset], sizeof(m_degree));		p_offset += sizeof(m_degree);
-			std::memcpy(&m_explicit,	&p_buff[p_offset], sizeof(m_explicit));		p_offset += sizeof(m_explicit);
-			std::memcpy(&m_close,		&p_buff[p_offset], sizeof(m_close));		p_offset += sizeof(m_close);
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, p_version,		sizeof(p_version));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_valid,		sizeof(m_valid));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_has_degree,	sizeof(m_has_degree));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_degree,		sizeof(m_degree));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_explicit,		sizeof(m_explicit));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_close,		sizeof(m_close));
+
 			return p_offset;
 		}
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
@@ -528,7 +543,7 @@ namespace vufMath
 			VF_ENCODE_FOR_BASE();
 		}
 		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
-		{
+		{			
 			VF_DECODE_FOR_BASE();
 		}
 

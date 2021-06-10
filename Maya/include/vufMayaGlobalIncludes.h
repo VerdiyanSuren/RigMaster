@@ -62,7 +62,7 @@ namespace vufRM
 
 // Create Numeric Attribute
 #define VF_RM_CREATE_STORABLE_NUMERIC_ATTR(ATTR, LONG_NAME, SHORT_NAME, TYPE, DEFAULT_VALUE)					\
-	ATTR = l_numeric_attr_fn.create( LONG_NAME, SHORT_NAME, MFnNumericData::TYPE, DEFAULT_VALUE, &l_status);	\
+	ATTR = l_numeric_attr_fn.create( LONG_NAME, SHORT_NAME, MFnNumericData::##TYPE, DEFAULT_VALUE, &l_status);	\
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);																		\
 	CHECK_MSTATUS(l_numeric_attr_fn.setDefault(DEFAULT_VALUE));													\
 	CHECK_MSTATUS(l_numeric_attr_fn.setStorable(true));

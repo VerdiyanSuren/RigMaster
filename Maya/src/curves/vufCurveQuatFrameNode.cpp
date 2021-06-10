@@ -54,7 +54,7 @@ MStatus	vufCurveQuatFrameNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.setDefault(false));
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
 	/* Division for closest point*/
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_division_attr, "division", "div", kInt, 0.0);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_division_attr, "division", "div", kInt, 0);
 	l_numeric_attr_fn.setMin(1);
 	l_numeric_attr_fn.setDefault(10);
 	/* Pin Start Quaternion */
@@ -191,6 +191,7 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		l_quat_ptr->set_offset(l_quat_offset_value);
 
 		l_quat_ptr->set_item_count(l_division);
+		std::cout << l_matr << std::endl;
 		l_quat_ptr->set_item_at(0, *((vufMatrix4<double>*)(&l_matr)) );
 		l_quat_ptr->compute_bind_params(l_out_container, l_division);
 		l_quat_ptr->match_quaternions(l_out_container);

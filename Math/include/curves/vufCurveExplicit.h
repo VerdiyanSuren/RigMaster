@@ -31,7 +31,6 @@ namespace vufMath
 			uint64_t l_array_size = m_nodes_pos_v.size();
 			uint64_t l_size = 0;
 			l_size += vufCurve < T, V>::get_binary_size(); 
-//std::cout << "vufCurve<T,V>::get_binary_size() " << l_size << std::endl;
 			l_size += sizeof(m_knot_weighted);
 			l_size += sizeof(l_array_size);
 			l_size += m_nodes_pos_v.size() * sizeof(V<T>);
@@ -49,7 +48,6 @@ namespace vufMath
 			}
 			uint64_t l_array_size = m_nodes_pos_v.size();
 			p_offset = vufCurve < T, V>::to_binary(p_buff, p_offset);
-//std::cout << "vufCurve<T, V>::to_binary->offset " << p_offset << std::endl;
 
 			std::memcpy(&p_buff[p_offset], &m_knot_weighted,		sizeof(m_knot_weighted));				p_offset += sizeof(m_knot_weighted);
 			std::memcpy(&p_buff[p_offset], &l_array_size,			sizeof(l_array_size));					p_offset += sizeof(l_array_size);
@@ -57,10 +55,10 @@ namespace vufMath
 
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override= 0
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0) override= 0
 		{
 			//std::cout << "------------------------------------- EXPLICIT::from_binary()--------------------- " << std::endl;
-			p_offset = vufCurve < T, V>::from_binary(p_buff, p_offset);
+			p_offset = vufCurve < T, V>::from_binary(p_buff, p_version, p_offset);
 			if (p_offset == 0)
 			{
 				return 0;

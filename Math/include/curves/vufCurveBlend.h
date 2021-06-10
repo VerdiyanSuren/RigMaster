@@ -90,6 +90,15 @@ namespace vufMath
 		void				set_weight(T p_val) { m_weight = p_val; }
 		T					get_weight() const { return m_weight; }
 
+		virtual bool			rebuild(uint32_t p_division_count,
+			std::vector<T>& p_uniform_to_curve_val_v,
+			std::vector<T>& p_curve_to_uniform_val_v,
+			std::vector<T>& p_curve_length_to_val_v) const
+		{
+			// To Do 
+			// Implement
+			return false;
+		}
 		virtual vufCurveType	get_type()					const override
 		{
 			return vufCurveType::k_blend_curve;
@@ -172,7 +181,7 @@ namespace vufMath
 			// Implement This
 			return 0;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& l_version, uint64_t p_offset = 0)		override
 		{
 			// To Do 
 			// Implement This

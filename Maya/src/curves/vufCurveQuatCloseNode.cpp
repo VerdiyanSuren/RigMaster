@@ -52,7 +52,9 @@ MStatus	vufCurveQuatCloseNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.setDefault(false));
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
 	/* Division for closest point*/
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_division_attr, "division", "div", kInt, 0.0);
+
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_division_attr, "division", "div", kInt, 0);
+
 	/* Pin Start Quaternion */
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_start_attr,			"rotationPinStart",		"rsp", kBoolean, false);
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_start_value_attr,	"rotaionPinStartValue", "rsv", kDouble, 0.0);

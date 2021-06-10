@@ -153,8 +153,7 @@ namespace vufMath
 			{
 				m_quat_param_v[i]	= l_crv_ptr->get_closest_point_param(m_positon_v[i], p_divisions, p_percition);
 				
-				V<T> l_tangent		= l_crv_ptr->get_tangent_at(m_quat_param_v[i]);
-				l_tangent.normalize_in_place();
+				V<T> l_tangent		= l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[i]);				
 				
 				m_y_axis_v[i].make_ortho_to_in_place(l_tangent);
 				m_y_axis_v[i].normalize_in_place();
@@ -348,10 +347,10 @@ namespace vufMath
 
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff,uint32_t& p_version,  uint64_t p_offset = 0)		override
 		{
 			uint64_t l_size;
-			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff,p_offset);
+			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff, p_version, p_offset);
 			// m_y_axis_v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));
 			m_y_axis_v.resize(l_size);

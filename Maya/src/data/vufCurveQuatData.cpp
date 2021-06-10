@@ -35,6 +35,7 @@ MStatus 	vufCurveQuatData::readBinary(std::istream& p_in, unsigned int	p_length)
 	if (m_internal_data != nullptr)
 	{
 		uint64_t l_size;
+		uint32_t l_version;
 		p_in.read((char*)(&l_size), sizeof(uint64_t));
 		if (l_size == 0)
 		{
@@ -42,7 +43,7 @@ MStatus 	vufCurveQuatData::readBinary(std::istream& p_in, unsigned int	p_length)
 		}
 		std::vector<char> l_buff(l_size);
 		p_in.read(&(l_buff[0]), l_size);
-		m_internal_data->from_binary(l_buff);
+		m_internal_data->from_binary(l_buff, l_version);
 
 	}
 	return MS::kSuccess;
