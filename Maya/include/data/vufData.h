@@ -39,7 +39,51 @@
 		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);							\
 		l_wrapp_ptr->set_data(data_var);												\
 	}																					\
-}																						\
+}
+
+#define VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(WRAPPER_CLASS, DATA_CLASS, data_block, attr, data_var,ID)	\
+{																												\
+	MDataHandle	 l_out_handle	= data_block.outputValue(attr);													\
+	WRAPPER_CLASS *l_wrapp_ptr	= (WRAPPER_CLASS*)l_out_handle.asPluginData();									\
+	if (l_wrapp_ptr == nullptr)																					\
+	{																											\
+		/*std::cout << "Data is Empty" <<std::endl;*/															\
+		MFnPluginData l_data_creator;																			\
+		l_out_handle.set(l_data_creator.create(WRAPPER_CLASS::g_id, &l_status));								\
+		CHECK_MSTATUS_AND_RETURN_IT(l_status);																	\
+		l_wrapp_ptr = (WRAPPER_CLASS*)l_out_handle.asPluginData();												\
+	}																											\
+	data_var = l_wrapp_ptr->get_data();																			\
+	if (data_var == nullptr)																					\
+	{																											\
+		/*std::cout << "Wanna constructor" <<std::endl;*/														\
+		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);													\
+		data_var->set_owner_id(ID);																				\
+		l_wrapp_ptr->set_data(data_var);																		\
+	}																											\
+	if (data_var->get_owner_id() != ID)																			\
+	{																											\
+		auto l_internal_data = data_var->m_internal_data;														\
+		if (data_var->m_internal_data != nullptr)																\
+		{																										\
+			l_internal_data = data_var->m_internal_data->get_copy();											\
+		}																										\
+		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);													\
+		data_var->set_owner_id(ID);																				\
+		l_wrapp_ptr->set_data(data_var);																		\
+		data_var->m_internal_data = l_internal_data;															\
+	}																											\
+}
+
+#define VF_RM_INIT_AND_ADD_HIDDEN_ATTR(ATTR,LONG_NAME,SHORT_NAME,WRAPPER_CLASS)									\
+{																												\
+	ATTR = l_typed_attr_fn.create(LONG_NAME, SHORT_NAME, WRAPPER_CLASS::g_id, MObject::kNullObj, &l_status);	\
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);																		\
+	l_typed_attr_fn.setStorable(true);																			\
+	l_typed_attr_fn.setConnectable(false);																		\
+	l_typed_attr_fn.setHidden(true);																			\
+	l_status = addAttribute(ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);										\
+}
 
 /**
 * Try to read data from input

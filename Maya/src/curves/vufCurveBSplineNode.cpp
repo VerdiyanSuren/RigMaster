@@ -23,6 +23,10 @@ using namespace vufMath;
 MObject	vufCurveBSplineNode::g_curve_compound_attr;
 MObject	vufCurveBSplineNode::g_close_attr;
 MObject	vufCurveBSplineNode::g_degree_attr;
+MObject	vufCurveBSplineNode::g_rebuild_store_attr;
+MObject	vufCurveBSplineNode::g_quaternion_store_attr;
+MObject	vufCurveBSplineNode::g_scale_store_attr;
+//MObject	vufCurveBSplineNode::g_remap_store_attr;
 
 VF_RM_CRV_NODE_DEFINE_QUATERNIONS_ATTR(vufCurveBSplineNode);
 VF_RM_CRV_NODE_DEFINE_REBUILD_ATTR(vufCurveBSplineNode);
@@ -104,6 +108,10 @@ MStatus	vufCurveBSplineNode::initialize()
 	VF_RM_CRV_NODE_QUATERNIONS_ATTR_AFFECT_TO(	g_data_out_attr);
 	VF_RM_CRV_NODE_SCALE_ATTR_AFFECT_TO(		g_data_out_attr);
 
+	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_rebuild_store_attr,	"hRebuild",		"hrb", mpxCurveRebuildWrapper);
+	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_quaternion_store_attr, "hRotation",	"hrt", mpxCurveQuatWrapper);
+	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_scale_store_attr,		"hScale",		"hsc", mpxCurveScaleWrapper);
+
 	l_status = attributeAffects(g_transfoms_attr, g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	return MS::kSuccess;
@@ -116,14 +124,9 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		//------------------------------------------------------------------------------
 		// handle out data
 		std::shared_ptr<vufCurveData>	l_out_data;
-		VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data, m_gen_id);
+		//VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
 		//------------------------------------------------------------------------------
-		// reference check
-		auto l_data_owner_id = l_out_data->get_owner_id();
-		if (l_out_data->get_owner_id() != m_gen_id)
-		{
-			//To Do Copy data and make mine
-		}
 		l_out_data->set_owner_id(m_gen_id);
 		if (l_out_data->m_internal_data == nullptr)
 		{
@@ -172,6 +175,8 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 #pragma region HANDLE_REBUILD
 		//------------------------------------------------------------------------------
 		// Handle rebuild fn 
+		std::shared_ptr<vufCurveRebuildData>	l_rebuild_store_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveRebuildWrapper, vufCurveRebuildData, p_data, g_rebuild_store_attr, l_rebuild_store_data, m_gen_id);
 		VF_RM_CRV_NODE_READ_REBUILD_ATTR();
 		if (l_rebuild_mode == 0 /*apply. always refresh*/)
 		{
@@ -187,27 +192,33 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				l_r_ptr->set_offset(l_rbld_offset);
 				l_r_ptr->m_div_per_segment = l_rbld_samples;
 				l_r_ptr->rebuild(*(l_container.get_curve_ptr()));
+				l_rebuild_store_data->m_internal_data = l_rbl_ptr;
 			}
 		}
 		if (l_rebuild_mode == 1 /* keep rebuild fn*/)
 		{
-			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_out_data->m_internal_data->get_rebuild_fn_ptr();
-			l_rbl_ptr->set_clamp_start(l_rbld_pin_start);
-			l_rbl_ptr->set_clamp_start_value(l_rbld_pin_start_value);
-			l_rbl_ptr->set_clamp_end(l_rbld_pin_end);
-			l_rbl_ptr->set_clamp_end_value(l_rbld_pin_end_value);
-			l_rbl_ptr->set_offset(l_rbld_offset);
-
+			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_rebuild_store_data->m_internal_data;
+			if (l_rbl_ptr != nullptr)
+			{
+				l_rbl_ptr->set_clamp_start(l_rbld_pin_start);
+				l_rbl_ptr->set_clamp_start_value(l_rbld_pin_start_value);
+				l_rbl_ptr->set_clamp_end(l_rbld_pin_end);
+				l_rbl_ptr->set_clamp_end_value(l_rbld_pin_end_value);
+				l_rbl_ptr->set_offset(l_rbld_offset);
+			}
 		}
 		if (l_rebuild_mode == 2 /* delete rebuild fn*/)
 		{
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(nullptr);
-		}		
+			l_rebuild_store_data->m_internal_data = nullptr;
+		}
 
 #pragma endregion
 #pragma region HANDLE_QUATERNION		
 		//------------------------------------------------------------------------------
-		// Handle quaternion		
+		// Handle quaternion
+		std::shared_ptr<vufCurveQuatData>	l_quaternion_store_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveQuatWrapper, vufCurveQuatData, p_data, g_quaternion_store_attr, l_quaternion_store_data, m_gen_id);
 		VF_RM_CRV_NODE_READ_QUATERNIONS_ATTR();
 
 		if (l_quat_mode == 0 /* apply. always refresh*/)
@@ -230,12 +241,14 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				}
 				l_qtr_ptr->compute_bind_params(l_container,10);
 				l_qtr_ptr->match_quaternions(l_container);
+
+				l_quaternion_store_data->m_internal_data = l_quaternion_ptr;
 				//VF_LOG_INFO(l_qtr_ptr->to_string());
 			}
 		}
 		if (l_quat_mode == 1 /* just update quaternions values*/)
 		{
-			std::shared_ptr<vufCurveQuaternionFn_4d> l_qtr_ptr = l_out_data->m_internal_data->get_quaternion_fn_ptr();
+			std::shared_ptr<vufCurveQuaternionFn_4d> l_qtr_ptr = l_quaternion_store_data->m_internal_data;
 			if (l_qtr_ptr != nullptr)
 			{
 
@@ -255,12 +268,17 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		if (l_quat_mode == 2 /*delete quaternion fn*/)
 		{
 			l_out_data->m_internal_data->set_quaternion_fn_ptr(nullptr);
+			l_quaternion_store_data->m_internal_data = nullptr;;
+
 		}
 #pragma endregion
 #pragma region HANDLE_SCALE
 		//------------------------------------------------------------------------------
 		// Handle scale
+		std::shared_ptr<vufCurveScaleData>	l_scale_store_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveScaleWrapper, vufCurveScaleData, p_data, g_scale_store_attr, l_scale_store_data, m_gen_id);
 		VF_RM_CRV_NODE_READ_SCALE_ATTR();
+
 		if (l_scale_mode == 0 /* apply. always refresh*/)
 		{
 			l_out_data->m_internal_data->switch_scale_fn(vufCurveScaleFnType::k_closest_params);
@@ -285,12 +303,13 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				}
 				l_scale_ptr->compute_bind_param(l_container, 10);
 				l_scale_ptr->match_scales(l_container);
+				l_scale_store_data->m_internal_data = l_scale_ptr;
 			}
 		}
 		if (l_scale_mode == 1 /* just update scale fn */)
 		{
 			l_out_data->m_internal_data->switch_scale_fn(vufCurveScaleFnType::k_closest_params);
-			std::shared_ptr<vufCurveScaleFn_4d> l_scale_ptr = l_out_data->m_internal_data->get_scale_fn_ptr();
+			std::shared_ptr<vufCurveScaleFn_4d> l_scale_ptr = l_scale_store_data->m_internal_data;
 			if (l_scale_ptr != nullptr)
 			{
 				l_scale_ptr->set_pin_start(l_scale_pin_start);
@@ -313,8 +332,12 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		if (l_scale_mode == 2 /* delete scale fn */)
 		{
 			l_out_data->m_internal_data->set_scale_fn_ptr(nullptr);
+			l_scale_store_data->m_internal_data = nullptr;
 		}
 #pragma endregion
+		p_data.setClean(g_rebuild_store_attr);
+		p_data.setClean(g_quaternion_store_attr);
+		p_data.setClean(g_scale_store_attr);
 		p_data.setClean(g_data_out_attr);
 		return MS::kSuccess;
 	}

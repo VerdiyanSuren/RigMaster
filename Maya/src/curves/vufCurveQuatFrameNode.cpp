@@ -191,7 +191,7 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		l_quat_ptr->set_offset(l_quat_offset_value);
 
 		l_quat_ptr->set_item_count(l_division);
-		std::cout << l_matr << std::endl;
+		//std::cout << l_matr << std::endl;
 		l_quat_ptr->set_item_at(0, *((vufMatrix4<double>*)(&l_matr)) );
 		l_quat_ptr->compute_bind_params(l_out_container, l_division);
 		l_quat_ptr->match_quaternions(l_out_container);
