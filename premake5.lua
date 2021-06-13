@@ -15,7 +15,7 @@ include "Dependencies.lua"
 workspace "RigMaster"
 	architecture 	"x64"	
 	configurations 	{ "Debug","Release"}
-	platforms 		{ "Maya2018", "Maya2019", "Maya2020" ,"vufApp19" }
+	platforms 		{ "Maya2018", "Maya2019", "Maya2020" ,"Maya2022","vufApp19" }
 	
 outputdir = "%{cfg.buildcfg}_%{cfg.system}_%{cfg.platform}_%{cfg.architecture}"
 
@@ -48,6 +48,11 @@ filter { "system:windows", "platforms:Maya2019" }
 filter { "system:windows", "platforms:Maya2020" }
 	toolset 		"msc-v141"
 	systemversion 	"10.0.18362.0"
+	
+filter { "system:windows", "platforms:Maya2022" }
+	cppdialect 		"C++17"
+	toolset 		"msc-v142"
+	systemversion 	"latest"
 
 filter { "system:windows", "platforms:vufApp19" }
 	toolset 		"msc-v142"

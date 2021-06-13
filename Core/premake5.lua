@@ -33,22 +33,43 @@ project "Core"
 	filter { "system:windows", "platforms:Maya2018" }
 	includedirs 
 	{
-		"C:/local/boost_1_69_0_vs_14_0"
+		"C:/local/boost_1_76_0_vs_14_0"
 	}
 	libdirs
 	{
-		"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+		"C:/local/boost_1_76_0_vs_14_0/lib64-msvc-14.0"
 	}
-
+	---------------------------------------------------
 	filter { "system:windows", "platforms:Maya2019" }
 	includedirs 
 	{
-		"C:/local/boost_1_69_0_vs_14_0"
+		"C:/local/boost_1_76_0_vs_14_0"
 	}
 	libdirs
 	{
-		"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+		"C:/local/boost_1_76_0_vs_14_0/lib64-msvc-14.0"
 	}
+	---------------------------------------------------
+	filter { "system:windows", "platforms:Maya2020" }
+	includedirs 
+	{
+		"C:/local/boost_1_76_0_vs_14_1"
+	}
+	libdirs
+	{
+		"C:/local/boost_1_76_0_vs_14_1/lib64-msvc-14.1"
+	}
+	---------------------------------------------------
+	filter { "system:windows", "platforms:Maya2022" }
+	includedirs 
+	{
+		"C:/local/boost_1_76_0_vs_14_2"
+	}
+	libdirs
+	{
+		"C:/local/boost_1_76_0_vs_14_2/lib64-msvc-14.2"
+	}
+	---------------------------------------------------
 	--postbuildcommands
 	--{
 	--	("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir .. "/Sandbox"),

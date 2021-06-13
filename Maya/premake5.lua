@@ -60,7 +60,7 @@ project "Maya"
 		{
 			"bin/" .. outputdir .. "/Lua",
 			"C:/Program Files/Autodesk/Maya2018/lib",
-			"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+			"C:/local/boost_1_76_0_vs_14_0/lib64-msvc-14.0"
 		}
 		postbuildcommands 
 		{
@@ -80,7 +80,7 @@ project "Maya"
 		{
 			"bin/" .. outputdir .. "/Lua",
 			"C:/Program Files/Autodesk/Maya2019/lib",
-			"C:/local/boost_1_69_0_vs_14_0/lib64-msvc-14.0"
+			"C:/local/boost_1_76_0_vs_14_0/lib64-msvc-14.0"
 		}
 		prebuildcommands 
 		{
@@ -106,12 +106,32 @@ project "Maya"
 		libdirs
 		{
 			"bin/" .. outputdir .. "/Lua",
-			"C:/Program Files/Autodesk/Maya2020/lib"
+			"C:/Program Files/Autodesk/Maya2020/lib",
+			"C:/local/boost_1_76_0_vs_14_1/lib64-msvc-14.1"
 		}
 		postbuildcommands 
 		{
-			("copy %{cfg.buildtarget.directory}%{cfg.targetname}.mll \"C:/Program Files/Autodesk/Maya2020/bin/plug-ins/vufRigMaster.mll\"")
-			--("{COPY} %{cfg.targetdir}/%{cfg.targetname}.mll  C:/Program Files/Autodesk/Maya2020/bin/plug-ins/vufRigMaster.mll")
+			("copy %{cfg.buildtarget.directory}%{cfg.targetname}.mll \"C:/Program Files/Autodesk/Maya2020/bin/plug-ins/vufRigMaster.mll\""),
+			("copy %{cfg.buildtarget.directory}Lua.dll \"C:/Program Files/Autodesk/Maya2020/bin/Lua.dll\"")
+		}
+	
+	-- Maya 2022 specialization
+	filter { "system:windows", "platforms:Maya2022" }
+		includedirs 
+		{
+			"C:/Program Files/Autodesk/Maya2022/include",
+			"C:/Program Files/Autodesk/Maya2022/include/qt"
+		}
+		libdirs
+		{
+			"bin/" .. outputdir .. "/Lua",
+			"C:/Program Files/Autodesk/Maya2022/lib",
+			"C:/local/boost_1_76_0_vs_14_2/lib64-msvc-14.2"
+		}
+		postbuildcommands 
+		{
+			("copy %{cfg.buildtarget.directory}%{cfg.targetname}.mll \"C:/Program Files/Autodesk/Maya2022/bin/plug-ins/vufRigMaster.mll\""),
+			("copy %{cfg.buildtarget.directory}Lua.dll \"C:/Program Files/Autodesk/Maya2022/bin/Lua.dll\"")
 		}
 
 

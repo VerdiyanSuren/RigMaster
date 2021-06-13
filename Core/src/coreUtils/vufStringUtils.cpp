@@ -1,6 +1,7 @@
 #include "coreUtils/vufStringUtils.h"
 #include "vufLog.h"
 #include "vufCoreInclude.h"
+#include <stdexcept>
 
 using namespace vuf;
 

@@ -13,6 +13,10 @@
       <Configuration>Debug Maya2020</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Maya2022|x64">
+      <Configuration>Debug Maya2022</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug vufApp19|x64">
       <Configuration>Debug vufApp19</Configuration>
       <Platform>x64</Platform>
@@ -27,6 +31,10 @@
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release Maya2020|x64">
       <Configuration>Release Maya2020</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Maya2022|x64">
+      <Configuration>Release Maya2022</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release vufApp19|x64">
@@ -59,6 +67,12 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2022|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug vufApp19|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -83,6 +97,12 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2022|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release vufApp19|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -101,6 +121,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug Maya2020|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug Maya2022|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug vufApp19|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -111,6 +134,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release Maya2020|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release Maya2022|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release vufApp19|x64'">
@@ -135,6 +161,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\bin\Debug_windows_Maya2020_x86_64\Maya\</OutDir>
     <IntDir>..\bin-int\Debug_windows_Maya2020_x86_64\Maya\</IntDir>
+    <TargetName>vufRigMaster</TargetName>
+    <TargetExt>.mll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2022|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\bin\Debug_windows_Maya2022_x86_64\Maya\</OutDir>
+    <IntDir>..\bin-int\Debug_windows_Maya2022_x86_64\Maya\</IntDir>
     <TargetName>vufRigMaster</TargetName>
     <TargetExt>.mll</TargetExt>
   </PropertyGroup>
@@ -166,6 +199,13 @@
     <TargetName>vufRigMaster</TargetName>
     <TargetExt>.mll</TargetExt>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2022|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\Release_windows_Maya2022_x86_64\Maya\</OutDir>
+    <IntDir>..\bin-int\Release_windows_Maya2022_x86_64\Maya\</IntDir>
+    <TargetName>vufRigMaster</TargetName>
+    <TargetExt>.mll</TargetExt>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release vufApp19|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\bin\Release_windows_vufApp19_x86_64\Maya\</OutDir>
@@ -187,7 +227,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2018_x86_64\Lua;..\bin\Debug_windows_Maya2018_x86_64\Core;bin\Debug_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2018_x86_64\Lua;..\bin\Debug_windows_Maya2018_x86_64\Core;bin\Debug_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_76_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2018_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -208,7 +248,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2019_x86_64\Lua;..\bin\Debug_windows_Maya2019_x86_64\Core;bin\Debug_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2019_x86_64\Lua;..\bin\Debug_windows_Maya2019_x86_64\Core;bin\Debug_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_76_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2019_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PreBuildEvent>
@@ -233,11 +273,35 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2020_x86_64\Lua;..\bin\Debug_windows_Maya2020_x86_64\Core;bin\Debug_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2020_x86_64\Lua;..\bin\Debug_windows_Maya2020_x86_64\Core;bin\Debug_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;C:\local\boost_1_76_0_vs_14_1\lib64-msvc-14.1;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Debug_windows_Maya2020_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetDir)vufRigMaster.mll "C:/Program Files/Autodesk/Maya2020/bin/plug-ins/vufRigMaster.mll"</Command>
+      <Command>copy $(TargetDir)vufRigMaster.mll "C:/Program Files/Autodesk/Maya2020/bin/plug-ins/vufRigMaster.mll"
+copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2020/bin/Lua.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Maya2022|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;C:\Program Files\Autodesk\Maya2022\include;C:\Program Files\Autodesk\Maya2022\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Debug_windows_Maya2022_x86_64\Lua;..\bin\Debug_windows_Maya2022_x86_64\Core;bin\Debug_windows_Maya2022_x86_64\Lua;C:\Program Files\Autodesk\Maya2022\lib;C:\local\boost_1_76_0_vs_14_2\lib64-msvc-14.2;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>..\bin\Debug_windows_Maya2022_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(TargetDir)vufRigMaster.mll "C:/Program Files/Autodesk/Maya2022/bin/plug-ins/vufRigMaster.mll"
+copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug vufApp19|x64'">
@@ -277,7 +341,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2018_x86_64\Lua;..\bin\Release_windows_Maya2018_x86_64\Core;bin\Release_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2018_x86_64\Lua;..\bin\Release_windows_Maya2018_x86_64\Core;bin\Release_windows_Maya2018_x86_64\Lua;C:\Program Files\Autodesk\Maya2018\lib;C:\local\boost_1_76_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2018_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -303,7 +367,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2019_x86_64\Lua;..\bin\Release_windows_Maya2019_x86_64\Core;bin\Release_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_69_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2019_x86_64\Lua;..\bin\Release_windows_Maya2019_x86_64\Core;bin\Release_windows_Maya2019_x86_64\Lua;C:\Program Files\Autodesk\Maya2019\lib;C:\local\boost_1_76_0_vs_14_0\lib64-msvc-14.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2019_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PreBuildEvent>
@@ -333,11 +397,40 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2019/bin/Lua.dll"</Comma
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2020_x86_64\Lua;..\bin\Release_windows_Maya2020_x86_64\Core;bin\Release_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2020_x86_64\Lua;..\bin\Release_windows_Maya2020_x86_64\Core;bin\Release_windows_Maya2020_x86_64\Lua;C:\Program Files\Autodesk\Maya2020\lib;C:\local\boost_1_76_0_vs_14_1\lib64-msvc-14.1;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\bin\Release_windows_Maya2020_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetDir)vufRigMaster.mll "C:/Program Files/Autodesk/Maya2020/bin/plug-ins/vufRigMaster.mll"</Command>
+      <Command>copy $(TargetDir)vufRigMaster.mll "C:/Program Files/Autodesk/Maya2020/bin/plug-ins/vufRigMaster.mll"
+copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2020/bin/Lua.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Maya2022|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>VF_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Core\include;..\Lua\src;..\LuaWrapper\include;..\Math\include;include;C:\Program Files\Autodesk\Maya2022\include;C:\Program Files\Autodesk\Maya2022\include\qt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/MD %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaAnim.lib;OpenMayaRender.lib;OpenMayaUI.lib;Foundation.lib;Qt5Gui.lib;Qt5Core.lib;Qt5Widgets.lib;Lua.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\bin\Release_windows_Maya2022_x86_64\Lua;..\bin\Release_windows_Maya2022_x86_64\Core;bin\Release_windows_Maya2022_x86_64\Lua;C:\Program Files\Autodesk\Maya2022\lib;C:\local\boost_1_76_0_vs_14_2\lib64-msvc-14.2;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>..\bin\Release_windows_Maya2022_x86_64\Maya\vufRigMaster.lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(TargetDir)vufRigMaster.mll "C:/Program Files/Autodesk/Maya2022/bin/plug-ins/vufRigMaster.mll"
+copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release vufApp19|x64'">
