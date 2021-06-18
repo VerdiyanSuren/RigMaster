@@ -3,7 +3,6 @@
 #include <cmath>
 #include <vufMathInclude.h>
 
-#include <iostream>
 #include <sstream>
 #include <exception>
 #include <vector>
@@ -20,8 +19,7 @@ vufVectorArrayObject4<T>
 #ifndef vufVector4_kTol
 	#define vufVector4_kTol 1.0e-10
 #endif
-
-#define vufVector4_kTol 1.0e-10
+//#define vufVector4_kTol 1.0e-10
 namespace vufMath
 {
 	template<typename T>	class vufMatrix4;

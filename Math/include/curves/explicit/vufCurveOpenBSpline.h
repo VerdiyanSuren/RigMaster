@@ -3,8 +3,7 @@
 
 #include <typeinfo>
 #include <iostream>
-#include <curves/vufCurveExplicit.h>
-#include <vufLog.h>
+#include <curves/explicit/vufCurveExplicit.h>
 #include <curves/vufMathCurvesInclude.h>
 
 //#define VF_MATH_DEBUG_BSPLINE
@@ -14,13 +13,14 @@ namespace vufMath
 	class vufCurveOpenBSpline : public vufCurveExplicit<T, V>
 	{
 	private:
-	public:
 		vufCurveOpenBSpline() :vufCurveExplicit<T, V>()
 		{
 			//std::cout << "OpenBSpline constructor" << std::endl;
-			vufCurve<T, V>::m_degree = CURVE_DEGREE;
-			vufCurve<T, V>::m_close = false;
+			vufCurve<T, V>::m_has_degree	= true;
+			vufCurve<T, V>::m_degree		= CURVE_DEGREE;
+			vufCurve<T, V>::m_close			= false;
 		}
+	public:
 		virtual ~vufCurveOpenBSpline() {}
 		static  std::shared_ptr< vufCurveOpenBSpline >	create()
 		{
@@ -297,7 +297,7 @@ namespace vufMath
 			return true;
 		}
 		
-		inline V<T>				get_pos_at_i(T p_t)		const
+		inline V<T>			get_pos_at_i(T p_t)					const
 		{
 			if (p_t < 0.0)
 			{
@@ -320,7 +320,19 @@ namespace vufMath
 			}
 			return l_res;
 		}
-		inline V<T>				get_tangent_at_i(T p_t) const
+		inline V<T>			get_pos_at_domain_i(T p_t)		const
+		{			
+			V<T>	l_res;
+			int		l_node_id = 0;
+			int		l_interval_id = get_interval_index(p_t);
+			for (int l_dgr = 0; l_dgr < CURVE_DEGREE + 1; ++l_dgr)
+			{
+				l_node_id = l_interval_id + l_dgr;
+				l_res += vufCurveExplicit<T, V>::m_nodes_pos_v[l_node_id] * m_n_v[l_interval_id][l_node_id].eval(p_t);
+			}
+			return l_res;
+		}
+		inline V<T>			get_tangent_at_i(T p_t) const
 		{
 			if (p_t < 0.0)
 			{
@@ -343,11 +355,11 @@ namespace vufMath
 			}
 			return l_res;
 		}
-		inline V<T>				get_tangent_normalized_at_i(T p_t)	const
+		inline V<T>			get_tangent_normalized_at_i(T p_t)	const
 		{
 			return get_tangent_at_i(p_t).normalize_in_place();
 		}
-		inline V<T>				get_normal_at_i(T p_t)	const
+		inline V<T>			get_normal_at_i(T p_t)	const
 		{
 			if (p_t < 0.0)
 			{
@@ -373,7 +385,6 @@ namespace vufMath
 			}
 			return l_res.normalize_in_place();
 		}
-
 		T					get_closest_point_param_i(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001) const
 		{
 			T l_dist_prev, l_dist_next, l_closest_dist, l_closest_t = 0;
@@ -418,57 +429,149 @@ namespace vufMath
 		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
 		VF_MATH_CRV_GATHER_INFO_I_BODY;
 
+		virtual vufCurveType	get_curve_type()					const override
+		{
+			return vufCurveType::k_open_bspline;
+		}
+		virtual int				get_curve_category()				const override
+		{
+			return vufCurveCategory::k_bspline_category;
+		}
+
 		// inherited virtual methods
-		virtual bool			rebuild(uint32_t p_division_count,
+		virtual bool			rebuild(
 										std::vector<T>& p_uniform_to_curve_val_v,
 										std::vector<T>& p_curve_to_uniform_val_v,
-										std::vector<T>& p_curve_length_to_val_v) const override
+										std::vector<T>& p_curve_val_to_length_v,
+										uint32_t		p_division_count	= 10,
+										T				p_start				= 0 /*interval on which we need rebuild*/,
+										T				p_end				= 1) const override
 		{
-			uint32_t	l_total_div = get_interval_count_i() * p_division_count + 1;;
-			T			l_curve_length = 0;
-
-			if (p_uniform_to_curve_val_v.size() != l_total_div)
+			p_start = VF_CLAMP(0.0, 1.0, p_start);
+			p_end	= VF_CLAMP(0.0, 1.0, p_end);
+			if ( m_valid == false || abs(p_end - p_start) < vufCurve_kTol )
 			{
-				p_uniform_to_curve_val_v.resize(l_total_div);
-				p_curve_to_uniform_val_v.resize(l_total_div);
-				p_curve_length_to_val_v.resize(	l_total_div);
+				return false;
 			}
-			V<T> l_vec_prev = get_pos_at_i(0);
-			p_uniform_to_curve_val_v[0] = 0;
-			p_curve_to_uniform_val_v[0] = 0;
-			p_curve_length_to_val_v[0]	= 0;
-			// Compute curve length until sample point
-			for (uint64_t i = 1; i < l_total_div; ++i)
+			//if ( (p_start >= m_knot_v.front() && p_start <= m_knot_v.back()) && (p_end >= m_knot_v.front() &&  p_end <= m_knot_v.back()) )
+			uint32_t	l_total_interval_count	= p_division_count + 1;;
+			T			l_interval_length		= 0;
+			T			l_step					= (p_end - p_start) / (T)l_total_interval_count;
+			if (p_uniform_to_curve_val_v.size() != l_total_interval_count + 1)
 			{
-				T l_crv_val = ((T)i) / (T(l_total_div - 1));
-				V<T> l_vec = get_pos_at_i(l_crv_val);
-				p_curve_length_to_val_v[i] = p_curve_length_to_val_v[i - 1] + l_vec_prev.distance_to(l_vec);
+				p_uniform_to_curve_val_v.resize(l_total_interval_count + 1);
+				p_curve_to_uniform_val_v.resize(l_total_interval_count + 1);
+				p_curve_val_to_length_v.resize( l_total_interval_count + 1);
+			}
+			V<T> l_vec_prev = get_pos_at_i(p_start);
+			p_uniform_to_curve_val_v[0]		= p_start;
+			p_curve_to_uniform_val_v[0]		= p_start;
+			p_uniform_to_curve_val_v.back() = p_end;
+			p_curve_to_uniform_val_v.back() = p_end;
+			p_curve_val_to_length_v[0]		= 0;
+			// Compute curve length until sample point
+			for (uint64_t i = 1; i < l_total_interval_count + 1; ++i)
+			{
+				T l_crv_param				= p_start + ((T)i) * l_step;
+				V<T> l_vec					= get_pos_at_i(l_crv_param);
+				p_curve_val_to_length_v[i]	= p_curve_val_to_length_v[i - 1] + l_vec_prev.distance_to(l_vec);
 				l_vec_prev = l_vec;
 			}
-			l_curve_length = p_curve_length_to_val_v.back();
-			T l_u_1 = 0, l_u_2, l_t_1 = 0, l_t_2;
-			uint64_t l_ndx = 0;
-			T l_step = 1. / (T(l_total_div - 1));
-			T l_dnx = .0, l_tetta = .0;
-			for (uint64_t i = 1; i < l_total_div; ++i)
+			l_interval_length = p_curve_val_to_length_v.back();
+			if (l_interval_length < vufCurve_kTol)
 			{
-				l_u_2 = p_curve_length_to_val_v[i] / l_curve_length;
-				p_curve_to_uniform_val_v[i] = l_u_2;
-
-				l_t_2 = (T(i)) / (T(l_total_div - 1));
-
-				while (l_tetta <= l_u_2)
+				return false;
+			}
+			for (uint64_t i = 1; i < l_total_interval_count; ++i)
+			{
+				p_curve_to_uniform_val_v[i] = p_start + (p_end - p_start) * p_curve_val_to_length_v[i] / l_interval_length;
+			}
+			T l_t_1;
+			T l_t_2;
+			T l_w_1;
+			T l_w_2;
+			uint64_t l_ndx = 1;
+			// forward curve
+			if (l_step > 0)
+			{
+				for (uint64_t i = 1; i < l_total_interval_count; ++i)
 				{
-					p_uniform_to_curve_val_v[l_ndx] = (l_t_1 * (l_u_2 - l_tetta) + l_t_2 * (l_tetta - l_u_1)) / (l_u_2 - l_u_1);
-					l_ndx++;
-					l_dnx++;
-					l_tetta = l_dnx * l_step;
+					T l_uniform_param = p_start + ((T)i) * l_step;
+					while (l_uniform_param > p_curve_to_uniform_val_v[l_ndx])
+					{
+						l_ndx++;
+					}
+					l_t_1 = p_start + ((T)(l_ndx - 1)) * l_step;
+					l_t_2 = p_start + ((T)(l_ndx)) * l_step;
+					l_w_1 = (p_curve_to_uniform_val_v[l_ndx] - l_uniform_param) / (p_curve_to_uniform_val_v[l_ndx] - p_curve_to_uniform_val_v[l_ndx - 1]);
+					l_w_2 = 1. - l_w_1;
+
+					p_uniform_to_curve_val_v[i] = l_t_1 * l_w_1 + l_t_2 * l_w_2;
 				}
-				l_u_1 = l_u_2;
-				l_t_1 = l_t_2;
+				return true;
+			}
+			// if curve reversed
+			l_ndx = 1;
+			for (uint64_t i = 1; i < l_total_interval_count; ++i)
+			{
+				T l_uniform_param = p_start + ((T)i) * l_step;
+				while (l_uniform_param < p_curve_to_uniform_val_v[l_ndx])// differense beatween forward and reeverse is here
+				{
+					l_ndx++;
+				}
+				l_t_1 = p_start + ((T)(l_ndx - 1)) * l_step;
+				l_t_2 = p_start + ((T)(l_ndx)) * l_step;
+				l_w_1 = (p_curve_to_uniform_val_v[l_ndx] - l_uniform_param) / (p_curve_to_uniform_val_v[l_ndx] - p_curve_to_uniform_val_v[l_ndx - 1]);
+				l_w_2 = 1. - l_w_1;
+
+				p_uniform_to_curve_val_v[i] = l_t_1 * l_w_1 + l_t_2 * l_w_2;
 			}
 			return true;
 		}
+		virtual bool			rebuild_along_axis( const V<T>&		p_axis/*project curve on this axis*/,
+													std::vector<T>& p_uniform_to_curve_val_v,
+													std::vector<T>& p_curve_to_uniform_val_v,
+													std::vector<T>& p_curve_val_to_length_v,
+													uint32_t		p_division_count = 10,
+													T				p_start = 0 /*interval on which we need rebuild*/,
+													T				p_end = 1) const override
+					{
+						if (m_valid == false || abs(p_end - p_start) < vufCurve_kTol)
+						{
+							return false;
+						}
+						if ((p_start >= m_knot_v.front() && p_start <= m_knot_v.back()) && (p_end >= m_knot_v.front() && p_end <= m_knot_v.back()))
+						{
+							uint32_t	l_total_interval_count = p_division_count + 1;;
+							T			l_interval_length = 0;
+							T			l_step = (p_end - p_start) / (T)l_total_interval_count;
+							if (p_uniform_to_curve_val_v.size() != l_total_interval_count + 1)
+							{
+								p_uniform_to_curve_val_v.resize(l_total_interval_count + 1);
+								p_curve_to_uniform_val_v.resize(l_total_interval_count + 1);
+								p_curve_val_to_length_v.resize(l_total_interval_count + 1);
+							}
+							V<T> l_vec_prev = get_pos_at_domain_i(p_start);
+							l_vec_prev.make_parallel_to_in_place(p_axis);
+							p_uniform_to_curve_val_v[0] = p_start;
+							p_curve_to_uniform_val_v[0] = p_start;
+							p_uniform_to_curve_val_v.back() = p_end;
+							p_curve_to_uniform_val_v.back() = p_end;
+							p_curve_val_to_length_v[0] = 0;
+							// Compute curve length along axis until sample point
+							for (uint64_t i = 1; i < l_total_interval_count + 1; ++i)
+							{
+								T l_crv_param = p_start + ((T)i) * l_step;
+								V<T> l_vec = get_pos_at_domain_i(l_crv_param);
+								l_vec.make_parallel_to_in_place(p_axis);
+								p_curve_val_to_length_v[i] = p_curve_val_to_length_v[i - 1] + l_vec_prev.distance_to(l_vec);
+								l_vec_prev = l_vec;
+							}
+							l_interval_length = p_curve_val_to_length_v.back();
+						}
+						// To Do implement rebuild on extended domain
+						return false;
+					}
 
 		virtual T			get_interval_t_min(int p_interval_index) const override { return get_interval_t_min_i(p_interval_index); }
 		virtual T			get_interval_t_max(int p_interval_index) const override	{ return get_interval_t_max_i(p_interval_index); }
@@ -513,10 +616,33 @@ namespace vufMath
 			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index];
 		}
 		
-		virtual T			get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001)		const override
+		virtual V<T>			get_closest_point(const V<T>& p_point,
+			T p_start = 0,
+			T p_end = 1) const override
+		{
+			// To Do implement this
+			return V<T>();
+		}
+
+		virtual T			get_closest_point_param(const V<T>& p_point, 
+													T p_start = 0,
+													T p_end = 1,
+													uint32_t p_divisions = 10,
+													T p_percition = 0.00001)		const override
 		{
 			return get_closest_point_param_i(p_point, p_divisions, p_percition);
 		}
+		virtual T				get_param_by_vector_component(T	p_value,
+			uint32_t	p_component_index = 0/*x by default*/,
+			T			p_start = 0,
+			T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+			uint32_t	p_divisions = 10,
+			T			p_percition = vufCurve_kTol)	const override
+		{
+			// To Do implement this
+			return 0;
+		}
+		/*
 		virtual T			get_closest_point_param_on_interval(	const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const override
 		{
 			T l_dist_1 = get_pos_at(p_t_1).distance_to(p_point);
@@ -527,11 +653,7 @@ namespace vufMath
 															l_dist_1, l_dist_2, 
 															l_res_t, l_res_dist, p_percition);
 		}
-
-		virtual vufCurveType	get_type()											const override
-		{
-			return vufCurveType::k_open_bspline;
-		}
+		*/
 		
 		virtual V<T>		get_pos_at(T p_t)										const override
 		{

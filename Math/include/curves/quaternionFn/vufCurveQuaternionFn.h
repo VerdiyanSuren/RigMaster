@@ -107,6 +107,7 @@ namespace vufMath
 		{
 			uint32_t l_version	= VF_MATH_VERSION;
 			uint64_t l_size		= vufCurveQuaternionFn<T, V>::get_binary_size();
+
 			if (p_buff.size() < p_offset + l_size)
 			{
 				p_buff.resize(p_offset + l_size);

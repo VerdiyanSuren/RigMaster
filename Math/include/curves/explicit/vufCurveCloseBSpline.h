@@ -1,7 +1,7 @@
 #ifndef VF_MATH_CLOSE_BSPLINE_CRV_H
 #define VF_MATH_CLOSE_BSPLINE_CRV_H
 
-#include <curves/vufCurveExplicit.h>
+#include <curves/explicit/vufCurveExplicit.h>
 #include <vufNumericArrayObject.h>
 #include <vufLog.h>
 #include <cmath>
@@ -15,8 +15,9 @@ namespace vufMath
 	public:
 		vufCurveCloseBSpline() :vufCurveExplicit<T, V>()
 		{
-			vufCurve<T, V>::m_degree = CURVE_DEGREE;
-			vufCurve<T, V>::m_close = true;
+			vufCurve<T, V>::m_has_degree	= true;
+			vufCurve<T, V>::m_degree		= CURVE_DEGREE;
+			vufCurve<T, V>::m_close			= true;
 		}
 		virtual ~vufCurveCloseBSpline() {}
 		static	std::shared_ptr<vufCurveCloseBSpline> create()
@@ -325,10 +326,12 @@ namespace vufMath
 		VF_MATH_CRV_GATHER_INFO_I_BODY;
 
 		// inherited virtual methods
-		virtual bool			rebuild(uint32_t p_division_count,
-										std::vector<T>& p_uniform_to_curve_val_v,
+		virtual bool			rebuild(std::vector<T>& p_uniform_to_curve_val_v,
 										std::vector<T>& p_curve_to_uniform_val_v,
-										std::vector<T>& p_curve_length_to_val_v) const override
+										std::vector<T>& p_curve_val_to_length_v,
+										uint32_t		p_division_count = 10,
+										T				p_start = 0 /*interval on which we need rebuild*/,
+										T				p_end = 1) const override
 		{
 			uint32_t	l_total_div = get_interval_count_i() * p_division_count + 1;;
 			T			l_curve_length = 0;
@@ -337,28 +340,28 @@ namespace vufMath
 			{
 				p_uniform_to_curve_val_v.resize(l_total_div);
 				p_curve_to_uniform_val_v.resize(l_total_div);
-				p_curve_length_to_val_v.resize(l_total_div);
+				p_curve_val_to_length_v.resize(l_total_div);
 			}
 			V<T> l_vec_prev = get_pos_at_i(0);
 			p_uniform_to_curve_val_v[0] = 0;
 			p_curve_to_uniform_val_v[0] = 0;
-			p_curve_length_to_val_v[0] = 0;
+			p_curve_val_to_length_v[0] = 0;
 			// Compute curve length until sample point
 			for (uint64_t i = 1; i < l_total_div; ++i)
 			{
 				T l_crv_val = ((T)i) / (T(l_total_div - 1));
 				V<T> l_vec = get_pos_at_i(l_crv_val);
-				p_curve_length_to_val_v[i] = p_curve_length_to_val_v[i - 1] + l_vec_prev.distance_to(l_vec);
+				p_curve_val_to_length_v[i] = p_curve_val_to_length_v[i - 1] + l_vec_prev.distance_to(l_vec);
 				l_vec_prev = l_vec;
 			}
-			l_curve_length = p_curve_length_to_val_v.back();
+			l_curve_length = p_curve_val_to_length_v.back();
 			T l_u_1 = 0, l_u_2, l_t_1 = 0, l_t_2;
 			uint64_t l_ndx = 0;
 			T l_step = 1. / (T(l_total_div - 1));
 			T l_dnx = .0, l_tetta = .0;
 			for (uint64_t i = 1; i < l_total_div; ++i)
 			{
-				l_u_2 = p_curve_length_to_val_v[i] / l_curve_length;
+				l_u_2 = p_curve_val_to_length_v[i] / l_curve_length;
 				p_curve_to_uniform_val_v[i] = l_u_2;
 
 				l_t_2 = (T(i)) / (T(l_total_div - 1));
@@ -376,7 +379,17 @@ namespace vufMath
 			return true;
 		}
 
-
+		virtual bool			rebuild_along_axis(const V<T>& p_axis/*project curve on this axis*/,
+			std::vector<T>& p_uniform_to_curve_val_v,
+			std::vector<T>& p_curve_to_uniform_val_v,
+			std::vector<T>& p_curve_val_to_length_v,
+			uint32_t		p_division_count = 10,
+			T				p_start = 0 /*interval on which we need rebuild*/,
+			T				p_end = 1) const override
+		{
+			// Tp Do implement this
+			return false;
+		}
 		virtual T			get_interval_t_min(int p_interval_index) const override { return get_interval_t_min_i(p_interval_index); }
 		virtual T			get_interval_t_max(int p_interval_index) const override { return get_interval_t_max_i(p_interval_index); }
 		virtual int			get_interval_index(T p_t) const { return get_interval_index_i(p_t); }
@@ -425,10 +438,33 @@ namespace vufMath
 			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index];
 		}
 
-		virtual T			get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001)  const override
+		virtual V<T>			get_closest_point(const V<T>& p_point,
+			T p_start = 0,
+			T p_end = 1) const override
+		{
+			// To Do implement this
+			return 0;
+		}
+
+		virtual T			get_closest_point_param(const V<T>& p_point, 
+													T p_start = 0,
+													T p_end = 1 /*if p_start == p_end then interval is infinite*/, 
+													uint32_t p_divisions = 10, 
+													T p_percition = 0.00001)  const override
 		{
 			return get_closest_point_param_i(p_point, p_divisions, p_percition);
 		}
+		virtual T				get_param_by_vector_component(T	p_value,
+			uint32_t	p_component_index = 0/*x by default*/,
+			T			p_start = 0,
+			T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+			uint32_t	p_divisions = 10,
+			T			p_percition = vufCurve_kTol)	const  override
+		{
+			// To Do implement this
+			return 0;
+		}
+		/*
 		virtual T			get_closest_point_param_on_interval(const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const override
 		{
 			T l_dist_1 = get_pos_at(p_t_1).distance_to(p_point);
@@ -439,11 +475,15 @@ namespace vufMath
 															l_dist_1, l_dist_2,
 															l_res_t, l_res_dist, p_percition);
 		}
+		*/
 
-
-		virtual vufCurveType	get_type()											const override
+		virtual vufCurveType	get_curve_type()					const override
 		{
 			return vufCurveType::k_close_bspline;
+		}
+		virtual int				get_curve_category()				const override
+		{
+			return vufCurveCategory::k_bspline_category;
 		}
 
 		virtual V<T>		get_pos_at(T p_t)										const override

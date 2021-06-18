@@ -9,7 +9,10 @@ namespace vufMath
 	class vufCurveExplicit :public vufCurve<T, V>
 	{
 	public:
-		vufCurveExplicit() :vufCurve<T, V>(){}
+		vufCurveExplicit() :vufCurve<T, V>() 
+		{
+			vufCurve<T, V>::m_explicit = true;
+		}
 		virtual ~vufCurveExplicit() {}
 		bool	 is_weighted()  const { return m_knot_weighted; }
 		/** set and retrieve nodes count for control points of curves.

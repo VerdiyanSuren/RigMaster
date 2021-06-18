@@ -237,6 +237,7 @@ namespace vufMath
 			std::string l_str_offset;
 			VF_SET_PRECISION(l_ss, p_precision);
 			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+			l_ss << l_str_offset;
 			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_numeric_array_v);
 			return l_ss.str();
 		}

@@ -14,7 +14,7 @@ namespace vufRM
 		vufCurveLocator();
 		virtual ~vufCurveLocator();
 		virtual void postConstructor() override ;
-		virtual MStatus   		compute(const MPlug& plug, MDataBlock& data) override;
+		//virtual MStatus   		compute(const MPlug& plug, MDataBlock& data) override;
 
 		virtual void            draw(	M3dView& view, const MDagPath& path,
 										M3dView::DisplayStyle style,

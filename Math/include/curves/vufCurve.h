@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+
 #include <math/vufVector.h>
 #include <math/vufQuaternion.h>
 #include <serializer/vufTxtStdVectorSerializerFn.h>
@@ -12,6 +13,9 @@
 #define VF_MATH_CURVE_CREATOR_BODY(SHARED_CRV) \
 		SHARED_CRV->m_this = std::static_pointer_cast<vufCurve<T, V>>(SHARED_CRV);
 
+#ifndef vufCurve_kTol
+#define vufCurve_kTol 1.0e-10
+#endif
 namespace vufMath
 {
 #pragma region VF_POLINOM
@@ -414,6 +418,7 @@ namespace vufMath
 #pragma region VF_CURVE
 	
 	template <class T, template<typename> class V>				class vufCurveExplicit;
+	template <class T, template<typename> class V>				class vufCurveImplicit;
 
 	template <class T, template<typename> class V, uint32_t>	class vufCurveOpenBSpline;
 	template <class T, template<typename> class V, uint32_t>	class vufCurveCloseBSpline;
@@ -446,7 +451,16 @@ namespace vufMath
 		k_blend_curve				= 7,
 		k_slide_curve				= 8,
 	};
-
+	enum vufCurveCategory
+	{
+		k_none							= 0,
+		k_bspline_category				= VF_BIT(0),
+		k_bezier_category				= VF_BIT(1),
+		k_xspline_category				= VF_BIT(2),
+		k_math_category					= VF_BIT(3),
+		k_compound_category				= VF_BIT(4),
+		k_piece_line_category			= VF_BIT(5)
+	};
 	// we supopose that V<T> is vactor 2D or 3D of float or double 
 	template <	class T,
 				template<typename> class V>
@@ -467,14 +481,52 @@ namespace vufMath
 		bool		is_open()		const	{ return  m_close == false; }
 		bool		is_close()		const	{ return  m_close; }
 		
+		bool		is_in_category(vufCurveCategory p_category)
+		{
+			return get_category() & p_category;
+		}
 		// return -1 if length could be easily calculated. Actual for math curves
-		virtual T				get_length() const { return -1; }
-		virtual bool			rebuild(uint32_t p_division_count,
-										std::vector<T>& p_uniform_to_curve_val_v,
-										std::vector<T>& p_curve_to_uniform_val_v,
-										std::vector<T>& p_curve_length_to_val_v) const = 0;
-		//virtual int			get_interval_count() const = 0;
-		virtual vufCurveType	get_type()							const = 0;
+		virtual vufCurveType	get_curve_type()							const = 0;
+		virtual int				get_curve_category()						const = 0;
+		/* if curve can easily compute length then compute else use rebuild  */
+		virtual T				get_length(T p_start,T p_end) const 
+		{ 
+			return -1; 
+		}
+
+		virtual bool			rebuild(			std::vector<T>& p_uniform_to_curve_val_v,
+													std::vector<T>& p_curve_to_uniform_val_v,
+													std::vector<T>& p_curve_val_to_length_v,
+													uint32_t		p_divisions = 10,
+													T				p_start		= 0 /*interval on which we need rebuild*/,
+													T				p_end		= 1) const = 0;
+
+		virtual bool			rebuild_along_axis( const V<T>&		p_axis/*project curve on this axis*/,
+													std::vector<T>& p_uniform_to_curve_val_v,
+													std::vector<T>& p_curve_to_uniform_val_v,
+													std::vector<T>& p_curve_val_to_length_v,
+													uint32_t		p_division_count	= 10,
+													T				p_start				= 0 /*interval on which we need rebuild*/,
+													T				p_end				= 1) const = 0;
+		
+
+		virtual V<T>			get_closest_point(			const V<T>& p_point,
+															T p_start	= 0, 
+															T p_end		= 1 ) const = 0;
+
+
+		virtual T				get_closest_point_param(	const V<T>& p_point, 
+															T p_start				= 0, 
+															T p_end					= 1 /*if p_start == p_end then interval is infinite*/,
+															uint32_t p_divisions	= 10,
+															T p_percition = vufCurve_kTol) const = 0;
+
+		virtual T				get_param_by_vector_component(T	p_value, 
+																uint32_t	p_component_index	= 0/*x by default*/,
+																T			p_start				= 0,
+																T			p_end				= 1 /*if p_start == p_end then interval is infinite*/,
+																uint32_t	p_divisions			= 10,
+																T			p_percition			= vufCurve_kTol)	const = 0;
 		virtual V<T>			get_pos_at(T p_t)					const = 0;
 		virtual V<T>			get_tangent_at(T p_t)				const = 0;
 		virtual V<T>			get_tangent_normalized_at(T p_t)	const
@@ -491,8 +543,6 @@ namespace vufMath
 		}
 		//virtual V<T>			get_binormal(T p_t)			const = 0;
 		//virtual vufMatrix4<T> get_frenet_frame_at(T p_t)  const = 0;
-		virtual T	get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10,		T p_percition = 0.00001) const= 0;
-		virtual T	get_closest_point_param_on_interval( const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const = 0;
 		
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
@@ -549,7 +599,7 @@ namespace vufMath
 
 		// convert to explicit
 		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()		const { return nullptr; }
-		//virtual	std::shared_ptr< vufCurveImplicit<T, V>>		as_implicit_curve()		const { return nullptr; }
+		virtual	std::shared_ptr< vufCurveImplicit<T,V> >		as_implicit_curve()		const { return nullptr; }
 		// convert to open bspline
 		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const {	return nullptr;	}
 		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 2>>		as_open_bspline_di()	const { return nullptr; }

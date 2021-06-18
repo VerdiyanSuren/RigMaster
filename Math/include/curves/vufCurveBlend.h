@@ -90,18 +90,35 @@ namespace vufMath
 		void				set_weight(T p_val) { m_weight = p_val; }
 		T					get_weight() const { return m_weight; }
 
-		virtual bool			rebuild(uint32_t p_division_count,
-			std::vector<T>& p_uniform_to_curve_val_v,
-			std::vector<T>& p_curve_to_uniform_val_v,
-			std::vector<T>& p_curve_length_to_val_v) const
+		virtual bool			rebuild(std::vector<T>& p_uniform_to_curve_val_v,
+										std::vector<T>& p_curve_to_uniform_val_v,
+										std::vector<T>& p_curve_val_to_length_v,
+										uint32_t		p_divisions = 10,
+										T				p_start = 0 /*interval on which we need rebuild*/,
+										T				p_end = 1) const override
 		{
 			// To Do 
 			// Implement
 			return false;
 		}
-		virtual vufCurveType	get_type()					const override
+		virtual bool			rebuild_along_axis(const V<T>& p_axis/*project curve on this axis*/,
+			std::vector<T>& p_uniform_to_curve_val_v,
+			std::vector<T>& p_curve_to_uniform_val_v,
+			std::vector<T>& p_curve_val_to_length_v,
+			uint32_t		p_division_count = 10,
+			T				p_start = 0 /*interval on which we need rebuild*/,
+			T				p_end = 1) const override
+		{
+			// To Do implement this
+			return false;
+		}
+		virtual vufCurveType	get_curve_type()			const override
 		{
 			return vufCurveType::k_blend_curve;
+		}
+		virtual int				get_curve_category()		const override
+		{
+			return k_compound_category;
 		}
 		virtual V<T>			get_pos_at(T p_t)			const override
 		{
@@ -136,15 +153,41 @@ namespace vufMath
 			return V<T>();
 		}
 		/** set and get control point position*/
-		virtual T			get_closest_point_param(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001) const override
+		virtual V<T>			get_closest_point(const V<T>& p_point,
+												T p_start = 0,
+												T p_end = 1) const override
+											{
+												// To Do 
+												// implement this
+												return V<T>();
+											}
+		virtual T	get_closest_point_param(	const V<T>& p_point, 
+												T p_start = 0,
+												T p_end = 1 /*if p_start == p_end then interval is infinite*/, 
+												uint32_t p_divisions = 10, 
+												T p_percition = 0.00001) const override
+											{
+												return get_closest_point_param_i(p_point, p_divisions, p_percition);
+											}
+
+		virtual T				get_param_by_vector_component(T	p_value,
+			uint32_t	p_component_index = 0/*x by default*/,
+			T			p_start = 0,
+			T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+			uint32_t	p_divisions = 10,
+			T			p_percition = vufCurve_kTol)	const override
 		{
-			return get_closest_point_param_i(p_point, p_divisions, p_percition);
+			// To Do 
+			// Implement this
+			return 0;
 		}
+		/*
 		virtual T	get_closest_point_param_on_interval(const V<T>& p_point,T p_t_1, T p_t_2, T p_percition = 0.00001) const  override
 		{
 			return get_closest_point_param_on_interval_i(	p_point, 
 															p_t_1, p_t_1, p_percition);
 		}
+		*/
 		//virtual int			get_interval_count() const = 0;
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve<T, V>> get_copy() const override

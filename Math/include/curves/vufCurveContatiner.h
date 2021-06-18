@@ -3,8 +3,8 @@
 
 #include <curves/vufCurve.h>
 #include <math/vufQuaternion.h>
-#include <curves/vufCurveOpenBSpline.h>
-#include <curves/vufCurveCloseBSpline.h>
+#include <curves/explicit/vufCurveOpenBSpline.h>
+#include <curves/explicit/vufCurveCloseBSpline.h>
 #include <curves/vufCurveBlend.h>
 #include <curves/rebuildFn/vufCurveRebuildFn.h>
 
@@ -89,7 +89,7 @@ namespace vufMath
 		/// Return true if new curve has been allocated and assigned to container
 		bool								switch_curve( uint32_t p_degree, vufCurveType p_type)
 		{
-			if (m_curve_ptr == nullptr || m_curve_ptr->get_degree() != p_degree || m_curve_ptr->get_type() != p_type )
+			if (m_curve_ptr == nullptr || m_curve_ptr->get_degree() != p_degree || m_curve_ptr->get_curve_type() != p_type )
 			{
 				if (p_type == vufCurveType::k_none)
 				{
@@ -566,7 +566,7 @@ namespace vufMath
 			}
 			else
 			{
-				uint8_t l_type		= (uint8_t)m_curve_ptr->get_type();
+				uint8_t l_type		= (uint8_t)m_curve_ptr->get_curve_type();
 				uint32_t l_degree	= m_curve_ptr->get_degree();
 				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_type,		sizeof(l_type));
 				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_degree,	sizeof(l_degree));

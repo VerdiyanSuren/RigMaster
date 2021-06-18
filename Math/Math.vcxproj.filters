@@ -7,6 +7,12 @@
     <Filter Include="include\curves">
       <UniqueIdentifier>{B0529C46-9C20-904C-85B4-007371216CB1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\curves\explicit">
+      <UniqueIdentifier>{E1F2195B-4D2A-62F2-5634-C615C2EA88EB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\curves\implicit">
+      <UniqueIdentifier>{1AAA60BD-86E1-A854-8FEB-0C78FBA1CF4D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\curves\quaternionFn">
       <UniqueIdentifier>{1978056A-8585-3350-0E6C-2F3B7A78FF06}</UniqueIdentifier>
     </Filter>
@@ -36,6 +42,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\explicit\vufCurveCloseBSpline.h">
+      <Filter>include\curves\explicit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\explicit\vufCurveExplicit.h">
+      <Filter>include\curves\explicit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\explicit\vufCurveOpenBSpline.h">
+      <Filter>include\curves\explicit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\implicit\vufCurveImplicit.h">
+      <Filter>include\curves\implicit</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionBlendFn.h">
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
@@ -69,16 +87,7 @@
     <ClInclude Include="include\curves\vufCurveBlend.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurveCloseBSpline.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
     <ClInclude Include="include\curves\vufCurveContatiner.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveExplicit.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveOpenBSpline.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveSlide.h">

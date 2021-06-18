@@ -1,6 +1,6 @@
 #pragma once
 
-#include <curves/vufCurveOpenBSpline.h>
+#include <curves/explicit/vufCurveOpenBSpline.h>
 #include <curves/vufCurveContatiner.h>
 #include <curves/quaternionFn/vufCurveQuaternionCloseFn.h>
 #include <curves/scaleFn/vufCurveScaleCloseFn.h>
@@ -21,6 +21,9 @@ namespace vufMath
 			VF_LOG_INFO((vufStringUtils::string_padding(std::string("START_TESTS_FOR_TYPE_vufCurveBSplineTest<") + typeid(T).name() + ">")));
 
 			if (test_serialization(p_verbose) == false)	l_status = false;
+			if (test_rebuild(p_verbose) == false)		l_status = false;
+			if (test_rebuild_axis(p_verbose) == false)	l_status = false;
+
 			//if (test_math(p_verbose) == false)			l_status = false;;
 			if (l_status == true)
 			{
@@ -142,6 +145,149 @@ namespace vufMath
 			}
 
 			std::cout << "....Serialization Test Pass Successfully" << std::endl;
+			return true;
+		}
+		bool test_rebuild(bool p_verbos = false)
+		{
+			std::cout << "....Rebuild Test" << std::endl;
+			auto l_crv_1 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
+			l_crv_1->set_nodes_count(5);
+			for (int i = 0; i < 5; ++i)
+			{
+				l_crv_1->set_node_at(i, vufVector4<double>::random_vector());
+			}
+			std::vector<double> l_uniform_to_curve_val_v;
+			std::vector<double> l_curve_to_uniform_val_v;
+			std::vector<double> l_curve_val_to_length_v;
+			//test rebuild forwars
+			bool l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50, 0, 1);
+			if (l_rebuild_res == true)
+			{	
+				vufNumericArrayFn<double> l_arr_1(l_uniform_to_curve_val_v);
+				vufNumericArrayFn<double> l_arr_2(l_curve_to_uniform_val_v);
+				vufNumericArrayFn<double> l_arr_3(l_curve_val_to_length_v);
+				T l_length = l_crv_1->get_pos_at(l_uniform_to_curve_val_v[0]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[1]));
+				for (uint64_t i = 1; i < l_uniform_to_curve_val_v.size(); ++i)
+				{
+					T l_val = l_uniform_to_curve_val_v[i];
+					if (l_val < 0)
+					{
+						std::cout << "l_curve_val_to_length_v:..." << l_arr_3.to_string() << std::endl;
+						std::cout << "l_curve_to_uniform_val_v:.." << l_arr_2.to_string() << std::endl;
+						std::cout << "l_uniform_to_curve_val_v:.." << l_arr_1.to_string() << std::endl;
+						VF_LOG_ERR("Failed. Rebuild OpenBspline. unifored indices have negative values");
+						return false;
+					}
+					//std::cout << "index..." << i << "	";
+					//std::cout << l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i - 1])) << std::endl;
+					
+					if (abs(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i - 1])) - l_length) > 1./500.)
+					{
+						VF_LOG_ERR("Failed. Rebuild OpenBspline. lengths are too different");
+						return false;
+					}
+				}
+			}
+			else
+			{
+				VF_LOG_ERR("Failed. Rebuild OpenBspline");
+				return false;
+			}
+			// test rebuild reverse
+			l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50, 1, 0);
+			if (l_rebuild_res == true)
+			{
+				T l_length = l_crv_1->get_pos_at(l_uniform_to_curve_val_v[0]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[1]));
+				for (uint64_t i = 1; i < l_uniform_to_curve_val_v.size(); ++i)
+				{
+					T l_val = l_uniform_to_curve_val_v[i];
+					if (l_val < 0)
+					{
+						vufNumericArrayFn<double> l_arr_1(l_uniform_to_curve_val_v);
+						vufNumericArrayFn<double> l_arr_2(l_curve_to_uniform_val_v);
+						vufNumericArrayFn<double> l_arr_3(l_curve_val_to_length_v);
+						std::cout << "l_curve_val_to_length_v:..." << l_arr_3.to_string(3) << std::endl;
+						std::cout << "l_curve_to_uniform_val_v:.." << l_arr_2.to_string(3) << std::endl;
+						std::cout << "l_uniform_to_curve_val_v:.." << l_arr_1.to_string(3) << std::endl;
+						VF_LOG_ERR("Failed. Rebuild OpenBspline. unifored indices for reverse rebuild have negative values");
+						return false;
+					}
+					//std::cout << "index..." << i << "	";
+					//std::cout << l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i - 1])) << std::endl;
+					
+					if (abs(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i - 1])) - l_length) > 1. / 500.)
+					{
+						VF_LOG_ERR("Failed. Rebuild OpenBspline. lengths are too different");
+						return false;
+					}
+				}
+			}
+			else
+			{
+				VF_LOG_ERR("Failed. Rebuild OpenBSpline");
+				return false;
+			}
+			l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50, 2, -3);
+			if (l_rebuild_res == true)
+			{
+				T l_length = l_crv_1->get_pos_at(l_uniform_to_curve_val_v[0]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[1]));
+				for (uint64_t i = 1; i < l_uniform_to_curve_val_v.size(); ++i)
+				{
+					T l_val = l_uniform_to_curve_val_v[i];
+					if (l_val < 0)
+					{
+						vufNumericArrayFn<double> l_arr_1(l_uniform_to_curve_val_v);
+						vufNumericArrayFn<double> l_arr_2(l_curve_to_uniform_val_v);
+						vufNumericArrayFn<double> l_arr_3(l_curve_val_to_length_v);
+						std::cout << "l_curve_val_to_length_v:..." << l_arr_3.to_string(3) << std::endl;
+						std::cout << "l_curve_to_uniform_val_v:.." << l_arr_2.to_string(3) << std::endl;
+						std::cout << "l_uniform_to_curve_val_v:.." << l_arr_1.to_string(3) << std::endl;
+						VF_LOG_ERR("Failed. Rebuild OpenBspline. unifored indices for reverse rebuild have negative values");
+						return false;
+					}
+					//std::cout << "index..." << i << "	";
+					//std::cout << l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i - 1])) << std::endl;
+
+					if (abs(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[i - 1])) - l_length) > 1. / 500.)
+					{
+						VF_LOG_ERR("Failed. Rebuild OpenBspline. lengths are too different");
+						return false;
+					}
+				}
+			}
+			std::cout << "....Rebuild Test Pass Successfully" << std::endl;
+			return true;
+		}
+		bool test_rebuild_axis(bool p_verbose = false)
+		{
+			std::cout << "....Rebuild Axis Test" << std::endl;
+			auto l_crv_1 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
+			l_crv_1->set_nodes_count(5);
+			for (int i = 0; i < 5; ++i)
+			{
+				auto l_vec = vufVector4<double>::random_vector();
+				l_vec.x = ((T)i) * 0.2;
+				l_crv_1->set_node_at(i, l_vec);
+			}
+			std::vector<double> l_uniform_to_curve_val_v;
+			std::vector<double> l_curve_to_uniform_val_v;
+			std::vector<double> l_curve_val_to_length_v;
+			bool l_rebuild_res = l_crv_1->rebuild_along_axis(vufVector4<double>(1),l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50, 0, 1);
+			if (l_rebuild_res == true)
+			{
+				vufNumericArrayFn<double> l_arr_1(l_uniform_to_curve_val_v);
+				vufNumericArrayFn<double> l_arr_2(l_curve_to_uniform_val_v);
+				vufNumericArrayFn<double> l_arr_3(l_curve_val_to_length_v);
+				std::cout << "l_curve_val_to_length_v:..." << l_arr_3.to_string(3) << std::endl;
+				std::cout << "l_curve_to_uniform_val_v:.." << l_arr_2.to_string(3) << std::endl;
+				std::cout << "l_uniform_to_curve_val_v:.." << l_arr_1.to_string(3) << std::endl;
+			}
+			else
+			{
+				VF_LOG_ERR("Failed. Rebuild Along Axis OpenBSpline");
+				return false;
+			}
+			std::cout << "....Rebuild Axis Test Pass Successfully" << std::endl;
 			return true;
 		}
 	};
