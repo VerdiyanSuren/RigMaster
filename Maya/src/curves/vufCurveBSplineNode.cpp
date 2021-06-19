@@ -8,7 +8,7 @@
 #include <maya/MGlobal.h>
 
 #include <curves/vufCurveBSplineNode.h>
-#include <curves/vufCurveOpenBSpline.h>
+#include <curves/explicit/vufCurveOpenBSpline.h>
 #include <math/vufMatrix.h>
 #include <maya/MMatrix.h>
 #include <maya/MFnMatrixArrayData.h>

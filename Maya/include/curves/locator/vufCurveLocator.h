@@ -28,8 +28,15 @@ namespace vufRM
 		static	const MTypeId	g_id;
 		static	const MString   g_type_name;
 		static	const MString	g_drawDb_classification;
-
-		static	MObject			g_in_data_attr;
+		// attributes
+		static MObject g_color_start_attr;
+		static MObject g_color_end_attr;
+		static MObject g_draw_start_attr;
+		static MObject g_draw_end_attr;
+		static MObject g_draw_tangents_attr;
+		static MObject g_draw_normals_attr;
+		static MObject g_division_attr;
+		static MObject g_in_data_attr;
 	};
 	
 	class vufCurveLocatorDrawOverride : public MHWRender::MPxDrawOverride
@@ -63,7 +70,13 @@ namespace vufRM
 	public:
 		vufCurveLocatorData():MUserData(true) { /*std::cout << "MUserData Construcotr" << std::endl;*/ }
 		virtual ~vufCurveLocatorData() { /*std::cout << "MUserData Destructor" << std::endl;*/ }
-
+		MColor		m_color_start;
+		MColor		m_color_end;
+		double		m_start_param;
+		double		m_end_param;
+		bool		m_tangent;
+		bool		m_normal;
+		int			m_division;
 		std::shared_ptr<vufMath::vufCurveContainer_4d> m_curve_container_ptr = nullptr;
 	};	
 }

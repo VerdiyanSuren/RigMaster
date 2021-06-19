@@ -2,7 +2,7 @@
 #define VF_MATH_CRV_INCLUDE_H
 
 #define VF_MATH_CRV_GATHER_INFO_I_BODY																	\
-/** get information beatween point in space and point on curve. Return true if point is on curve */		\
+/** get information between point in space and point on curve. Return true if point is on curve */		\
 inline bool			gather_info_i( const V<T>& p_point, T p_curve_param, T& p_dist, T& p_dot ) const	\
 {																										\
 	V<T> l_dir = p_point - get_pos_at_i(p_curve_param);													\

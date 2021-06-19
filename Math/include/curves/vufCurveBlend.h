@@ -153,14 +153,16 @@ namespace vufMath
 			return V<T>();
 		}
 		/** set and get control point position*/
-		virtual V<T>			get_closest_point(const V<T>& p_point,
-												T p_start = 0,
-												T p_end = 1) const override
-											{
-												// To Do 
-												// implement this
-												return V<T>();
-											}
+		virtual V<T>			get_closest_point(	const V<T>& p_point,
+													T			p_start		= 0,
+													T			p_end		= 1,
+													uint32_t	p_divisions = 10,
+													T			p_percition = vufCurve_kTol) const override
+		{
+			// To Do 
+			// implement this
+			return V<T>();
+		}
 		virtual T	get_closest_point_param(	const V<T>& p_point, 
 												T p_start = 0,
 												T p_end = 1 /*if p_start == p_end then interval is infinite*/, 

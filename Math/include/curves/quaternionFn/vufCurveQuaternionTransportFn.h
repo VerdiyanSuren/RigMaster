@@ -149,7 +149,7 @@ namespace vufMath
 				m_tangent_v[i] = l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[i]);
 				V<T> l_cross = m_tangent_v[i - 1].get_cross(m_tangent_v[i]);
 				
-				if (l_cross.length2() < 0.00000001)
+				if (l_cross.length2() < 0.000001)
 				{
 					m_y_axis_v[i] = m_y_axis_v[i - 1];
 					continue;

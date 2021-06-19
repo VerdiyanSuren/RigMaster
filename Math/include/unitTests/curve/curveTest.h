@@ -266,9 +266,10 @@ namespace vufMath
 			for (int i = 0; i < 5; ++i)
 			{
 				auto l_vec = vufVector4<double>::random_vector();
-				l_vec.x = ((T)i) * 0.2;
+				l_vec.x = ((T)i) * 0.25;
 				l_crv_1->set_node_at(i, l_vec);
 			}
+			l_crv_1->set_node_at(1, vufVector4<double>(0.1,3.0));
 			std::vector<double> l_uniform_to_curve_val_v;
 			std::vector<double> l_curve_to_uniform_val_v;
 			std::vector<double> l_curve_val_to_length_v;
@@ -281,6 +282,11 @@ namespace vufMath
 				std::cout << "l_curve_val_to_length_v:..." << l_arr_3.to_string(3) << std::endl;
 				std::cout << "l_curve_to_uniform_val_v:.." << l_arr_2.to_string(3) << std::endl;
 				std::cout << "l_uniform_to_curve_val_v:.." << l_arr_1.to_string(3) << std::endl;
+				double l_step = 1. / (double)(l_uniform_to_curve_val_v.size()-1);
+				for (uint64_t i = 0; i < l_uniform_to_curve_val_v.size(); ++i)
+				{
+					std::cout << ((T)i) * l_step <<": " << l_crv_1->get_pos_at_i(l_uniform_to_curve_val_v[i]).x << std::endl;
+				}
 			}
 			else
 			{

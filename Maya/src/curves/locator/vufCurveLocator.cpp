@@ -3,9 +3,11 @@
 #include <data/vufMayaDataList.h>
 #include <curves/vufCurve.h>
 #include <curves/vufCurveContatiner.h>
+#include <curves/vufCurvesInclude.h>
 
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnTypedAttribute.h>
+#include <maya/MFnNumericAttribute.h>
 #include <maya/MHWGeometryUtilities.h>
 #include <maya/MPointArray.h>
 #include <maya/MGlobal.h>
@@ -13,6 +15,13 @@
 using namespace vufRM;
 using namespace vufMath;
 
+MObject vufCurveLocator::g_color_start_attr;
+MObject vufCurveLocator::g_color_end_attr;
+MObject vufCurveLocator::g_draw_start_attr;
+MObject vufCurveLocator::g_draw_end_attr;
+MObject vufCurveLocator::g_draw_tangents_attr;
+MObject vufCurveLocator::g_draw_normals_attr;
+MObject vufCurveLocator::g_division_attr;
 MObject	vufCurveLocator::g_in_data_attr;
 
 #pragma region QUAT_CURVE_LOCATOR
@@ -49,6 +58,33 @@ MStatus vufCurveLocator::initialize()
 {
 	MStatus l_status;
 	MFnTypedAttribute		l_typed_attr_fn;
+	MFnNumericAttribute		l_numeric_attr_fn;
+	// start draw
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_draw_start_attr, "startDrawAt", "sda", kDouble, 0.0);
+	l_numeric_attr_fn.setDefault(0.0);
+	// end draw
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_draw_end_attr, "endDrawAt", "eda", kDouble, 0.0);
+	l_numeric_attr_fn.setDefault(1.0);
+	// start color
+	g_color_start_attr = l_numeric_attr_fn.createColor("startColor", "sc", &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);	
+	CHECK_MSTATUS(l_numeric_attr_fn.setDefault(1.f,0.f,0.f));
+	CHECK_MSTATUS(l_numeric_attr_fn.setStorable(true));
+	// end color
+	g_color_end_attr = l_numeric_attr_fn.createColor("endColor", "ec", &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_numeric_attr_fn.setDefault(0.f, 1.f, 0.f));
+	CHECK_MSTATUS(l_numeric_attr_fn.setStorable(true));
+	// draw tangents
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_draw_tangents_attr, "tangents", "t", kBoolean, false);
+	l_numeric_attr_fn.setDefault(1.0);
+	// draw normals
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_draw_normals_attr, "normals", "n", kBoolean, false);
+	l_numeric_attr_fn.setDefault(false);
+	//division
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_division_attr, "division", "dvs", kInt, 50);
+	l_numeric_attr_fn.setMin(1);
+	l_numeric_attr_fn.setDefault(50);
 
 	g_in_data_attr = l_typed_attr_fn.create("inputCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -58,7 +94,16 @@ MStatus vufCurveLocator::initialize()
 	l_typed_attr_fn.setKeyable(true);
 	//l_typed_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete);
 	
-	l_status = addAttribute(g_in_data_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	// add atributes
+	l_status = addAttribute(g_color_start_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_color_end_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_draw_start_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_draw_end_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_draw_tangents_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_draw_normals_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_division_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_in_data_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+
 	return MS::kSuccess;
 }
 void vufCurveLocator::draw(	M3dView& p_view, const MDagPath& p_path,
@@ -70,8 +115,7 @@ void vufCurveLocator::draw(	M3dView& p_view, const MDagPath& p_path,
 #pragma endregion QUAT_CURVE_LOCATOR
 #pragma region QUAT_CURVE_LOCATOR_OVERRIDE
 //vufQuatLocatorDrawOverride::vufQuatLocatorDrawOverride(const MObject& obj): MHWRender::MPxDrawOverride(obj, vufQuatLocatorDrawOverride::draw)
-vufCurveLocatorDrawOverride::vufCurveLocatorDrawOverride(const MObject& obj) : MHWRender::MPxDrawOverride(obj, nullptr, true)
-{}
+vufCurveLocatorDrawOverride::vufCurveLocatorDrawOverride(const MObject& obj) : MHWRender::MPxDrawOverride(obj, nullptr, true) {}
 MHWRender::DrawAPI	vufCurveLocatorDrawOverride::supportedDrawAPIs() const
 {
 	return (MHWRender::kOpenGL | MHWRender::kDirectX11 | MHWRender::kOpenGLCoreProfile);
@@ -104,10 +148,11 @@ MUserData*			vufCurveLocatorDrawOverride::prepareForDraw(	const MDagPath& p_obj_
 	// Read Attributes in data attribute from node
 	MStatus l_status;
 	MObject l_this_node = p_obj_path.node();
+	// read data
 	MObject l_input_data_obj;
-	MPlug	p_data_plug( l_this_node, vufCurveLocator::g_in_data_attr);
-	
-	l_status = p_data_plug.getValue(l_input_data_obj);
+	MPlug	l_data_plug(		l_this_node, vufCurveLocator::g_in_data_attr);
+
+	l_status = l_data_plug.getValue(l_input_data_obj);
 	if (l_status != MS::kSuccess)
 	{
 		return nullptr;
@@ -121,6 +166,31 @@ MUserData*			vufCurveLocatorDrawOverride::prepareForDraw(	const MDagPath& p_obj_
 	}
 	auto l_data_ptr = l_in_data_wrap_ptr->get_data();
 	l_locator_data_ptr->m_curve_container_ptr = l_data_ptr == nullptr ? nullptr: l_data_ptr->m_internal_data;
+
+	// read other attibutes
+	MPlug	l_color_start_plug(	l_this_node, vufCurveLocator::g_color_start_attr);
+	MPlug	l_color_end_plug(	l_this_node, vufCurveLocator::g_color_end_attr);
+	MPlug	l_param_start_plug(	l_this_node, vufCurveLocator::g_draw_start_attr);
+	MPlug	l_param_end_plug(	l_this_node, vufCurveLocator::g_draw_end_attr);
+	MPlug	l_tangent_plug(		l_this_node, vufCurveLocator::g_draw_tangents_attr);
+	MPlug	l_normal_plug(		l_this_node, vufCurveLocator::g_draw_normals_attr);
+	MPlug	l_division_plug(	l_this_node, vufCurveLocator::g_division_attr);
+
+	l_color_start_plug.child(0).getValue(l_locator_data_ptr->m_color_start.r);
+	l_color_start_plug.child(1).getValue(l_locator_data_ptr->m_color_start.g);
+	l_color_start_plug.child(2).getValue(l_locator_data_ptr->m_color_start.b);
+
+	l_color_end_plug.child(0).getValue(l_locator_data_ptr->m_color_end.r);
+	l_color_end_plug.child(1).getValue(l_locator_data_ptr->m_color_end.g);
+	l_color_end_plug.child(2).getValue(l_locator_data_ptr->m_color_end.b);
+
+	l_param_start_plug.getValue(l_locator_data_ptr->m_start_param);
+	l_param_end_plug.getValue(	l_locator_data_ptr->m_end_param);
+	l_tangent_plug.getValue(	l_locator_data_ptr->m_tangent);
+	l_normal_plug.getValue(		l_locator_data_ptr->m_normal);
+	l_division_plug.getValue(	l_locator_data_ptr->m_division);
+
+
 	return p_old_data;
 }
 // All draw routinies are here
@@ -133,67 +203,61 @@ void				vufCurveLocatorDrawOverride::addUIDrawables(	const MDagPath&					p_obj_p
 	{
 		return;
 	}
-	vufCurveLocatorData* l_locator_data_ptr = (vufCurveLocatorData*)p_data;
-	if (l_locator_data_ptr->m_curve_container_ptr == nullptr)
+	vufCurveLocatorData* l_data = (vufCurveLocatorData*)p_data;
+	if (l_data->m_curve_container_ptr == nullptr)
 	{
 		return;
 	}
-	std::shared_ptr<vufMath::vufCurve_4d> l_curve_ptr = l_locator_data_ptr->m_curve_container_ptr->get_curve_ptr();
-	if (l_curve_ptr == nullptr || l_curve_ptr->is_valid() == false)
-	{
-		return;
-	}	
 	//p_draw_manager.beginDrawable();
 	p_draw_manager.beginDrawInXray();
 
 	p_draw_manager.setColor(MColor(1.0, .0, .0));
-	double	l_step = 1.0 / 100.;
-	vufVector_4d	l_start = l_locator_data_ptr->m_curve_container_ptr->get_pos_at(0.0 );
+	double	l_step = (l_data->m_end_param - l_data->m_start_param) / (double)l_data->m_division;
+	vufVector_4d	l_start = l_data->m_curve_container_ptr->get_pos_at(0.0 );
 	MPoint l_0(l_start.x, l_start.y, l_start.z);
 	MPoint l_1;
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i <= l_data->m_division; ++i)
 	{
-		auto l_pos		= l_locator_data_ptr->m_curve_container_ptr->get_pos_at(l_step * ((double)i));
-		auto l_tangent	= l_locator_data_ptr->m_curve_container_ptr->get_tangent_at(l_step * ((double)i));
-		auto l_normal	= l_locator_data_ptr->m_curve_container_ptr->get_normal_at(l_step * ((double)i));
-		auto l_quat = l_locator_data_ptr->m_curve_container_ptr->get_quaternion_at(l_step * ((double)i));
-		l_tangent.normalize_in_place();
-		l_normal.normalize_in_place();
-		auto l_binormal = l_tangent.get_cross(l_normal);
-		l_binormal.normalize_in_place();
-
-		vufMatrix_4d l_matr = vufMatrix_4d();
-		vufMatrix_4d l_matr_frame = vufMatrix_4d();
-		l_matr_frame.set_axis_x(l_tangent);
-		l_matr_frame.set_axis_y(l_normal);
-		l_matr_frame.set_axis_z(l_binormal);
-		//auto l_quat = l_matr.get_quaternion();
-		auto l_quat_frame = l_matr_frame.get_quaternion();
-		l_matr_frame.set_quaternion(l_quat_frame);
-		l_tangent	= l_matr_frame.get_axis_x_4();
-		l_normal	= l_matr_frame.get_axis_y_4();
-
-		l_matr.set_quaternion(l_quat);
-		auto l_t	= l_matr.get_axis_x_4();
-		auto l_n	= l_matr.get_axis_y_4();
+		auto l_pos		= l_data->m_curve_container_ptr->get_pos_at(		l_data->m_start_param + l_step * ((double)i));
+		//auto l_tangent	= l_data->m_curve_container_ptr->get_tangent_at(	l_data->m_start_param + l_step * ((double)i));
+		//auto l_normal = l_data->m_curve_container_ptr->get_normal_at(l_data->m_start_param + l_step * ((double)i));
+		auto l_quat		= l_data->m_curve_container_ptr->get_quaternion_at(	l_data->m_start_param + l_step * ((double)i));
+		
 		l_1 = l_0;
 		l_0.x = l_pos.x;
 		l_0.y = l_pos.y;
 		l_0.z = l_pos.z;
-
-		p_draw_manager.setColor(MColor( (float)i/100.f, 1.0f - (float)i / 100.0f, .0f));
+		float l_w_1 = (float)i / (float)l_data->m_division;
+		float l_w_2 = 1.0f - (float)i / (float)l_data->m_division;
+		p_draw_manager.setColor(l_data->m_color_start * l_w_1 + l_data->m_color_end * l_w_2);
 		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
 		p_draw_manager.line( l_0,l_1);
 		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
-
-		p_draw_manager.setColor(MColor(1.0f - (float)i / 100.0f, .0f, .0f));
-		p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_tangent))));
-		p_draw_manager.setColor(MColor(0.0f, .0f, 1.0f));
-		//p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_normal))));
-		p_draw_manager.setColor(MColor(0.0f, 1.0f - (float)i / 100.0f, .0f));
-		p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_n))));
 	}
-
+	if (l_data->m_tangent == true)
+	{
+		for (int i = 0; i <= l_data->m_division; ++i)
+		{
+			auto l_pos = l_data->m_curve_container_ptr->get_pos_at(			l_data->m_start_param + l_step * ((double)i));
+			auto l_tangent = l_data->m_curve_container_ptr->get_tangent_at(	l_data->m_start_param + l_step * ((double)i));
+			l_tangent.normalize_in_place();
+			p_draw_manager.setColor(MColor(1.0f, .0f, .0f));
+			p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_tangent))));
+		}
+	}
+	if (l_data->m_normal == true)
+	{
+		for (int i = 0; i <= l_data->m_division; ++i)
+		{
+			auto l_pos	= l_data->m_curve_container_ptr->get_pos_at(		l_data->m_start_param + l_step * ((double)i));
+			auto l_quat = l_data->m_curve_container_ptr->get_quaternion_at(	l_data->m_start_param + l_step * ((double)i));
+			vufMatrix_4d l_matr = vufMatrix_4d();
+			l_matr.set_quaternion(l_quat);
+			auto l_n = l_matr.get_axis_y_4();
+			p_draw_manager.setColor(MColor(0.0f, 1.0f, .0f));
+			p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_n))));
+		}
+	}
 	p_draw_manager.endDrawInXray();
 	//p_draw_manager.endDrawable();
 }

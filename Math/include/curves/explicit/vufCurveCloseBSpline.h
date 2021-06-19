@@ -280,7 +280,7 @@ namespace vufMath
 			}
 			return l_res;
 		}
-		T					get_closest_point_param_i(const V<T>& p_point, uint32_t p_divisions = 10, T p_percition = 0.00001) const
+		T					get_closest_point_param_i(const V<T>& p_point,T p_start, T p_end, uint32_t p_divisions = 10, T p_percition = vufCurve_kTol) const
 		{
 			T l_dist_prev, l_dist_next, l_closest_dist, l_closest_t = 0;
 			T l_dot_prev, l_dot_next;
@@ -390,6 +390,34 @@ namespace vufMath
 			// Tp Do implement this
 			return false;
 		}
+		
+		virtual V<T>		get_closest_point(	const V<T>& p_point,
+												T			p_start		= 0,
+												T			p_end		= 1,
+												uint32_t	p_divisions = 10,
+												T			p_percition = vufCurve_kTol) const override
+		{
+			return get_pos_at_i(get_closest_point_param(p_point, p_start, p_end, p_divisions, p_percition));
+		}
+
+		virtual T			get_closest_point_param(const V<T>& p_point, 
+													T p_start = 0,
+													T p_end = 1 /*if p_start == p_end then interval is infinite*/, 
+													uint32_t p_divisions = 10, 
+													T p_percition = vufCurve_kTol)  const override
+		{
+			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
+		}
+		virtual T				get_param_by_vector_component(T	p_value,
+			uint32_t	p_component_index = 0/*x by default*/,
+			T			p_start = 0,
+			T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+			uint32_t	p_divisions = 10,
+			T			p_percition = vufCurve_kTol)	const  override
+		{
+			// To Do implement this
+			return 0;
+		}
 		virtual T			get_interval_t_min(int p_interval_index) const override { return get_interval_t_min_i(p_interval_index); }
 		virtual T			get_interval_t_max(int p_interval_index) const override { return get_interval_t_max_i(p_interval_index); }
 		virtual int			get_interval_index(T p_t) const { return get_interval_index_i(p_t); }
@@ -438,32 +466,6 @@ namespace vufMath
 			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index];
 		}
 
-		virtual V<T>			get_closest_point(const V<T>& p_point,
-			T p_start = 0,
-			T p_end = 1) const override
-		{
-			// To Do implement this
-			return 0;
-		}
-
-		virtual T			get_closest_point_param(const V<T>& p_point, 
-													T p_start = 0,
-													T p_end = 1 /*if p_start == p_end then interval is infinite*/, 
-													uint32_t p_divisions = 10, 
-													T p_percition = 0.00001)  const override
-		{
-			return get_closest_point_param_i(p_point, p_divisions, p_percition);
-		}
-		virtual T				get_param_by_vector_component(T	p_value,
-			uint32_t	p_component_index = 0/*x by default*/,
-			T			p_start = 0,
-			T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
-			uint32_t	p_divisions = 10,
-			T			p_percition = vufCurve_kTol)	const  override
-		{
-			// To Do implement this
-			return 0;
-		}
 		/*
 		virtual T			get_closest_point_param_on_interval(const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const override
 		{
