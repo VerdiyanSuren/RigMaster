@@ -21,7 +21,7 @@ namespace vufMath
 			return l_ptr;
 		}
 		// close curve
-		vufQuaternion<T> get_quaternion_close_curve_at(const vufCurveContainer<T, V>& p_curve_container, T p_val) const
+		vufQuaternion<T> get_quaternion_close_curve_at_i(const vufCurveContainer<T, V>& p_curve_container, T p_val) const
 		{
 			auto l_crv_ptr = p_curve_container.get_curve_ptr();
 			p_val = p_val - std::floor(p_val);
@@ -50,10 +50,10 @@ namespace vufMath
 			}
 
 			// as open bspline
-			return get_quaternion_open_curve_at(p_curve_container, p_val);
+			return get_quaternion_open_curve_at_i(p_curve_container, p_val);
 		}
 		// open  curve
-		vufQuaternion<T> get_quaternion_open_curve_at(const vufCurveContainer<T, V>& p_curve_container, T p_val) const
+		vufQuaternion<T> get_quaternion_open_curve_at_i(const vufCurveContainer<T, V>& p_curve_container, T p_val) const
 		{
 			auto l_crv_ptr = p_curve_container.get_curve_ptr();
 			V<T> l_vec(1.0);
@@ -77,7 +77,7 @@ namespace vufMath
 			{
 				auto l_index_1 = i - 1;
 				auto l_index_2 = i;
-				if (p_val > m_quat_param_v[l_index_1] && p_val < m_quat_param_v[l_index_2])
+				if (p_val >= m_quat_param_v[l_index_1] && p_val <= m_quat_param_v[l_index_2])
 				{
 					T l_interval_length = m_quat_param_v[l_index_2] - m_quat_param_v[l_index_1];
 					if (l_interval_length <= VF_MATH_EPSILON)
@@ -95,19 +95,32 @@ namespace vufMath
 					//return l_res;
 				}
 			}
+			std::cout << "Failed\n";
 			return vufQuaternion<T>();
 		}
 		virtual vufCurveQuatFnType get_type() const override { return vufCurveQuatFnType::k_transport; }
-		virtual void	set_item_count(uint32_t p_count) override
+		virtual void	set_item_count(uint32_t p_divisions) override
 		{
-			if (m_tangent_v.size() != p_count)
+			if (m_tangent_v.size() != p_divisions + 1)
 			{
-				m_y_axis_v.resize(		p_count + 1);
-				m_tangent_v.resize(		p_count + 1);
-				m_quaternion_a_v.resize(p_count + 1);
-				m_quaternion_b_v.resize(p_count + 1);
-				m_quat_param_v.resize(	p_count + 1);
+				m_y_axis_v.resize(		p_divisions + 1);
+				m_tangent_v.resize(		p_divisions + 1);
+				m_quaternion_a_v.resize(p_divisions + 1);
+				m_quaternion_b_v.resize(p_divisions + 1);
+				m_quat_param_v.resize(	p_divisions + 1);
 			}
+			uint32_t	l_start		= 0;
+			uint32_t	l_end		= p_divisions + 1;
+			m_quat_param_v[0]		= 0;
+			m_quat_param_v.back()	= 1.;
+			T l_step = (m_quat_param_v.back() - m_quat_param_v[0]) / (T)(p_divisions);
+			for (uint32_t i = 1; i < p_divisions + 1; ++i)
+			{
+				m_quat_param_v[i] = m_quat_param_v[0] + l_step * (T)i;
+			}
+			//std::cout << "_______________________________________\n";
+			//vufMath::vufNumericArrayFn<double> l_arr(m_quat_param_v);
+			//std::cout << l_arr.to_string() << std::endl;
 		}
 		virtual void	set_item_at(uint32_t p_index,  const vufMatrix4<T>& p_matr) override
 		{			
@@ -116,10 +129,8 @@ namespace vufMath
 		}
 		virtual bool	compute_bind_params(const vufCurveContainer<T, V>& p_curve_container, uint32_t p_divisions = 10, T p_percition = 0.00001) override
 		{
+			//std::cout << "_______________________________________\n";
 			auto l_crv_ptr = p_curve_container.get_curve_ptr();
-			uint32_t l_start = 0, l_end = (uint32_t)m_quat_param_v.size();
-			m_quat_param_v[0] = 0;
-			m_quat_param_v.back() = 1.;
 			/*
 			if (l_crv_ptr->is_close() == false)
 			{
@@ -136,16 +147,13 @@ namespace vufMath
 			}
 			*/
 			//-----------------------------------
-			T l_step = (m_quat_param_v.back() - m_quat_param_v[0]) / (T)(l_end -1 - l_start);
 			// for first root param start
 			m_tangent_v[0] = l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[0]);
 			m_y_axis_v[0].make_ortho_to_in_place(m_tangent_v[0]);
 			m_y_axis_v[0].normalize_in_place();
 			//------------------------------------
-			for (uint32_t i = 1; i < l_end; ++i)
+			for (uint32_t i = 1; i < m_quat_param_v.size(); ++i)
 			{
-				m_quat_param_v[i] = m_quat_param_v[0] + l_step * (T)i;
-				//std::cout << m_quat_param_v[i] << std::endl;
 				m_tangent_v[i] = l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[i]);
 				V<T> l_cross = m_tangent_v[i - 1].get_cross(m_tangent_v[i]);
 				
@@ -164,10 +172,10 @@ namespace vufMath
 				{
 					m_y_axis_v[i] = -m_y_axis_v[i];
 				}
-				//std::cout << m_tangent_v[i].length() << " " << m_tangent_v[i-1].length() << " " << l_dot << " " << l_angle << " " << m_y_axis_v[i] << std::endl;
+				//std::cout << m_quat_param_v[i] <<" " << m_y_axis_v[i] << std::endl;
 			}
 			// convert to quaternion
-			for (uint32_t i = 0; i < l_end; ++i)
+			for (uint32_t i = 0; i < m_quat_param_v.size(); ++i)
 			{
 				V<T> l_z = m_tangent_v[i].get_cross(m_y_axis_v[i]);
 				l_z.normalize_in_place();
@@ -175,13 +183,13 @@ namespace vufMath
 				l_matr.set_axis_x(m_tangent_v[i]);
 				l_matr.set_axis_y(m_y_axis_v[i]);
 				l_matr.set_axis_z(l_z);
-				m_quaternion_a_v[i] = l_matr.get_quaternion();
+				m_quaternion_a_v[i] = l_matr.get_quaternion();				
 			}
 			return true;
 		}
 		virtual bool	match_quaternions(const vufCurveContainer<T, V>& p_curve_container) override
 		{
-			if (m_quat_param_v.size() == 0)
+			if (m_quat_param_v.size() < 2)
 			{
 				vufCurveQuaternionFn<T, V>::m_valid = false;
 				return false;
@@ -204,6 +212,11 @@ namespace vufMath
 				m_quaternion_b_v[l_index_2] = -m_quaternion_b_v[l_index_2];
 			}
 			vufCurveQuaternionFn<T, V>::m_valid = true;
+			//std::cout << "-----qiaternions ----\n";
+			//for (uint64_t i = 0; i < m_quaternion_a_v.size(); ++i)
+			//{
+			//	std::cout << m_quat_param_v[i] << " " << m_quaternion_a_v[i] << " " << m_quaternion_b_v[i] << std::endl;
+			//}
 			return true;
 		}
 
@@ -212,9 +225,9 @@ namespace vufMath
 			auto l_crv_ptr = p_curve_container.get_curve_ptr();
 			if (l_crv_ptr->is_close() == true)
 			{
-				return 	get_quaternion_close_curve_at(p_curve_container, p_val);
+				return 	get_quaternion_close_curve_at_i(p_curve_container, p_val);
 			}
-			return get_quaternion_open_curve_at(p_curve_container, p_val);
+			return get_quaternion_open_curve_at_i(p_curve_container, p_val);
 		}
 
 		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>> get_copy() const override
@@ -377,7 +390,7 @@ namespace vufMath
 		{
 			return vufCurveQuaternionFn<T, V>::decode_from_buff(p_buff, p_offset);
 		}
-	private:
+	//private:
 		std::vector <V<T>>				m_y_axis_v;			// y axices of nodes nodes array
 		std::vector< V<T>>				m_tangent_v;		// quaternion nodes 3d tangents array
 		std::vector< vufQuaternion<T>>	m_quaternion_a_v;	// each node has pair of quaternions ( a := my, b := next)

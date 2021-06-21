@@ -647,14 +647,14 @@ namespace vufMath
 			l_cntnr->set_rebuild_fn_ptr(l_rbld_1);
 			l_rbld_1->rebuild(*l_crv_o);
 			// init quaternions
-			l_quat_1->set_item_count(5);
+			l_quat_1->set_item_count_i(5);
 			for (int i = 0; i < 5; ++i)
 			{
 				vufMatrix4<double> l_matr = vufMatrix4<double>::random_matrix();
-				l_quat_1->set_item_at(i, l_matr);
+				l_quat_1->set_item_at_i(i, l_matr);
 			}
-			l_quat_1->compute_bind_params(*l_cntnr, 10);
-			l_quat_1->match_quaternions(*l_cntnr);
+			l_quat_1->sort_params_i();
+			l_quat_1->match_quaternions_i(*l_cntnr);
 			// to_binary form_binary
 			std::vector<char> l_buff;
 			uint64_t l_size		= l_quat_1->get_binary_size();
@@ -888,14 +888,14 @@ namespace vufMath
 			l_cntnr_1->rebuild();
 
 			// init quaternions
-			l_quat->set_item_count(5);
+			l_quat->set_item_count_i(5);
 			for (int i = 0; i < 5; ++i)
 			{
 				vufMatrix4<double> l_matr = vufMatrix4<double>::random_matrix();
-				l_quat->set_item_at(i, l_matr);
+				l_quat->set_item_at_i(i, l_matr);
 			}
-			l_quat->compute_bind_params(*l_cntnr_1, 10);
-			l_quat->match_quaternions(*l_cntnr_1);
+			l_quat->sort_params_i();
+			l_quat->match_quaternions_i(*l_cntnr_1);
 
 			l_cntnr_1->set_quaternion_fn_ptr(l_quat);
 
