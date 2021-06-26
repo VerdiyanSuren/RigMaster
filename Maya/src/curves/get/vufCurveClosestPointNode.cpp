@@ -1,5 +1,5 @@
 #include <data/vufMayaDataList.h>
-#include <curves/vufCurveClosestPointNode.h>
+#include <curves/get/vufCurveClosestPointNode.h>
 #include <vufMayaGlobalIncludes.h>
 #include <math/vufVector.h>
 

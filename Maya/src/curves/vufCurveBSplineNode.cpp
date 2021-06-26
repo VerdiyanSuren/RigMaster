@@ -142,8 +142,8 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		MMatrixArray l_matrix_array = l_in_data_fn.array(&l_status);
 
 		uint32_t l_transforms_sz = (uint32_t)l_matrix_array.length();		
-#pragma endregion		
-#pragma region HANDLE_CURVE		
+#pragma endregion
+#pragma region HANDLE_CURVE
 		//-------------------------------------------------------------------------------
 		// Handle Curve
 		bool	l_close			= p_data.inputValue(g_close_attr).asBool();
@@ -171,7 +171,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
-#pragma endregion		
+#pragma endregion
 #pragma region HANDLE_REBUILD
 		//------------------------------------------------------------------------------
 		// Handle rebuild fn 
@@ -214,7 +214,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		}
 
 #pragma endregion
-#pragma region HANDLE_QUATERNION		
+#pragma region HANDLE_QUATERNION
 		//------------------------------------------------------------------------------
 		// Handle quaternion
 		std::shared_ptr<vufCurveQuatData>	l_quaternion_store_data;
@@ -233,14 +233,14 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				l_qtr_ptr->set_pin_end(l_quat_pin_end);
 				l_qtr_ptr->set_pin_end_value(l_quat_pin_end_value);
 				l_qtr_ptr->set_offset(l_quat_offset_value);
-				l_qtr_ptr->set_item_count(l_transforms_sz);
+				l_qtr_ptr->set_item_count_i(l_transforms_sz);
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
 					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) &l_matrix_array[i];
-					l_qtr_ptr->set_item_at(i, *l_matr);
+					l_qtr_ptr->set_closest_item_at_i(i, *l_matr, l_crv_ptr);
 				}
-				l_qtr_ptr->compute_bind_params(l_container,10);
-				l_qtr_ptr->match_quaternions(l_container);
+				l_qtr_ptr->sort_params_i();
+				l_qtr_ptr->match_quaternions_i();
 
 				l_quaternion_store_data->m_internal_data = l_quaternion_ptr;
 				//VF_LOG_INFO(l_qtr_ptr->to_string());
@@ -248,7 +248,8 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		}
 		if (l_quat_mode == 1 /* just update quaternions values*/)
 		{
-			std::shared_ptr<vufCurveQuaternionFn_4d> l_qtr_ptr = l_quaternion_store_data->m_internal_data;
+			std::shared_ptr<vufCurveQuaternionFn_4d> l_quaternion_ptr = l_out_data->m_internal_data->get_quaternion_fn_ptr();
+			auto l_qtr_ptr = l_quaternion_ptr->as_closest_fn();
 			if (l_qtr_ptr != nullptr)
 			{
 
@@ -260,9 +261,9 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
 					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
-					l_qtr_ptr->set_item_at(i, *l_matr);
+					l_qtr_ptr->set_item_at_i(i, *l_matr, l_crv_ptr);
 				}
-				l_qtr_ptr->match_quaternions(l_container);
+				l_qtr_ptr->match_quaternions_i();
 			}
 		}
 		if (l_quat_mode == 2 /*delete quaternion fn*/)
@@ -343,4 +344,3 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	}
 	return MS::kUnknownParameter;
 }
-

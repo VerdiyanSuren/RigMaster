@@ -5,7 +5,7 @@
 #include <maya/MArrayDataHandle.h>
 #include <maya/MFnCompoundAttribute.h>
 
-#include <curves/vufCurveRebuildNode.h>
+#include <curves/rebuildFn/vufCurveRebuildNode.h>
 #include <data/vufMayaDataList.h>
 #include <vufMayaGlobalIncludes.h>
 

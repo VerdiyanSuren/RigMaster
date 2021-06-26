@@ -7,8 +7,20 @@
     <Filter Include="include\curves">
       <UniqueIdentifier>{B0529C46-9C20-904C-85B4-007371216CB1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\curves\get">
+      <UniqueIdentifier>{1FB4010D-0B98-C262-74F8-BCB560FBACE4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\curves\locator">
       <UniqueIdentifier>{13FE26F8-FFF7-4F4A-E864-E65AD4FDB5B6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\curves\rebuildFn">
+      <UniqueIdentifier>{1A2F1BFF-0654-6A7F-2F9F-4F0F1B23699D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\curves\rotateFn">
+      <UniqueIdentifier>{A24039AE-0E78-8145-1782-E5688338A83E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\curves\scaleFn">
+      <UniqueIdentifier>{DB51E2F6-C74B-0B49-B0B8-A1599C5171B5}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\data">
       <UniqueIdentifier>{B2CED969-9E31-690E-47B7-A1C433F93491}</UniqueIdentifier>
@@ -49,8 +61,20 @@
     <Filter Include="src\curves\data">
       <UniqueIdentifier>{DD133BA3-499F-A867-52B0-2B5CBEBA0468}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\curves\get">
+      <UniqueIdentifier>{43A128DE-2F6F-1CE4-1803-8D0A0470F848}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\curves\locator">
       <UniqueIdentifier>{37DD87AF-23C1-4805-8C21-435878243387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curves\rebuildFn">
+      <UniqueIdentifier>{3E673012-2AF6-B9DB-D314-CED6BF82CA81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curves\rotateFn">
+      <UniqueIdentifier>{4604B651-B265-935F-3BD3-D911A733CA1E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\curves\scaleFn">
+      <UniqueIdentifier>{FF3043AE-EB14-0404-5475-FE564078EE85}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\data">
       <UniqueIdentifier>{D6B02ECF-C27D-89DA-EB96-7782D7C2BE68}</UniqueIdentifier>
@@ -78,8 +102,29 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\get\vufCurveClosestPointNode.h">
+      <Filter>include\curves\get</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\get\vufCurveGetTransformNode.h">
+      <Filter>include\curves\get</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\locator\vufCurveLocator.h">
       <Filter>include\curves\locator</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildNode.h">
+      <Filter>include\curves\rebuildFn</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\rotateFn\vufCurveQuatCloseNode.h">
+      <Filter>include\curves\rotateFn</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\rotateFn\vufCurveQuatFrameNode.h">
+      <Filter>include\curves\rotateFn</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\rotateFn\vufCurveQuatParamNode.h">
+      <Filter>include\curves\rotateFn</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h">
+      <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveBSplineNode.h">
       <Filter>include\curves</Filter>
@@ -87,31 +132,10 @@
     <ClInclude Include="include\curves\vufCurveBlendNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurveClosestPointNode.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
     <ClInclude Include="include\curves\vufCurveFromMayaNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurveGetTransformNode.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
     <ClInclude Include="include\curves\vufCurveNullNode.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveQuatCloseNode.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveQuatFrameNode.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveQuatParamNode.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveRebuildData.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveRebuildNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveToMayaNode.h">
@@ -233,8 +257,29 @@
     <ClCompile Include="src\curves\data\vufCurveData.cpp">
       <Filter>src\curves\data</Filter>
     </ClCompile>
+    <ClCompile Include="src\curves\get\vufCurveClosestPointNode.cpp">
+      <Filter>src\curves\get</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\get\vufCurveGetTransformNode.cpp">
+      <Filter>src\curves\get</Filter>
+    </ClCompile>
     <ClCompile Include="src\curves\locator\vufCurveLocator.cpp">
       <Filter>src\curves\locator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\rebuildFn\vufCurveRebuildNode.cpp">
+      <Filter>src\curves\rebuildFn</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\rotateFn\vufCurveQuatCloseNode.cpp">
+      <Filter>src\curves\rotateFn</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\rotateFn\vufCurveQuatFrameNode.cpp">
+      <Filter>src\curves\rotateFn</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\rotateFn\vufCurveQuatParamNode.cpp">
+      <Filter>src\curves\rotateFn</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\scaleFn\vufCurveScaleFn.cpp">
+      <Filter>src\curves\scaleFn</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveBSplineNode.cpp">
       <Filter>src\curves</Filter>
@@ -242,28 +287,10 @@
     <ClCompile Include="src\curves\vufCurveBlendNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\vufCurveClosestPointNode.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
     <ClCompile Include="src\curves\vufCurveFromMayaNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\vufCurveGetTransformNode.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
     <ClCompile Include="src\curves\vufCurveNullNode.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
-    <ClCompile Include="src\curves\vufCurveQuatCloseNode.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
-    <ClCompile Include="src\curves\vufCurveQuatFrameNode.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
-    <ClCompile Include="src\curves\vufCurveQuatParamNode.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
-    <ClCompile Include="src\curves\vufCurveRebuildNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveToMayaNode.cpp">

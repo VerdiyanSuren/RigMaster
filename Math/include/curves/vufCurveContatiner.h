@@ -361,7 +361,7 @@ namespace vufMath
 			return false;
 		}
 		/* -> remap -> rebuild */
-		T	 get_curve_val_by_remaped(T p_val)		const
+		T		get_curve_val_by_remaped(T p_val)		const
 		{
 			T l_val = p_val;
 			/*
@@ -377,7 +377,7 @@ namespace vufMath
 
 			return l_val;
 		}
-		V<T> get_pos_at(T p_val)					const
+		V<T>	get_pos_at(T p_val)						const
 		{
 			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
 			{
@@ -386,16 +386,17 @@ namespace vufMath
 			}
 			return V<T>();
 		}
-		/// No rebild no remap
-		V<T> get_pos_at_by_curve_param(T p_val)		const
+		T		get_param_by_value(T p_value, uint32_t p_componenet_index, uint32_t p_componenet_index_return, T p_start, T p_end, uint32_t p_division, T p_percition = vufCurve_kTol)
 		{
 			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
 			{
-				return m_curve_ptr->get_pos_at(p_val);
+				//T l_new_val = get_curve_val_by_remaped(p_val);
+				T l_val =  m_curve_ptr->get_param_by_vector_component(p_value, p_componenet_index, p_start, p_end, p_division,  p_percition);
+				return m_curve_ptr->get_pos_at(l_val)[p_componenet_index_return];
 			}
-			return V<T>();
+			return 0.0;
 		}
-		V<T> get_tangent_at(T p_val)				const
+		V<T>	get_tangent_at(T p_val)					const
 		{
 			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
 			{
@@ -404,7 +405,7 @@ namespace vufMath
 			}
 			return V<T>();
 		}
-		V<T> get_normal_at(T p_val)					const
+		V<T>	get_normal_at(T p_val)					const
 		{
 			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
 			{
@@ -413,19 +414,7 @@ namespace vufMath
 			}
 			return V<T>();
 		}
-		vufQuaternion<T> get_quaternion_at(T p_val)	const
-		{
-			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
-			{
-				if (m_quaternion_fn != nullptr)
-				{
-					T l_new_val = get_curve_val_by_remaped(p_val);
-					return m_quaternion_fn->get_quaternion_at(*this, l_new_val);
-				}
-			}
-			return vufQuaternion<T>();
-		}
-		V<T> get_scale_at(T p_val)					const
+		V<T>	get_scale_at(T p_val)					const
 		{
 			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
 			{
@@ -436,6 +425,27 @@ namespace vufMath
 				}
 			}
 			return V<T>(1., 1., 1.);
+		}
+		vufQuaternion<T> get_quaternion_at(T p_val)	const
+		{
+			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
+			{
+				if (m_quaternion_fn != nullptr)
+				{
+					T l_new_val = get_curve_val_by_remaped(p_val);
+					return m_quaternion_fn->get_quaternion_at(*this, l_new_val,p_val);
+				}
+			}
+			return vufQuaternion<T>();
+		}
+		/// No rebild no remap
+		V<T> get_pos_at_by_curve_param(T p_val)		const
+		{
+			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
+			{
+				return m_curve_ptr->get_pos_at(p_val);
+			}
+			return V<T>();
 		}
 
 	private:

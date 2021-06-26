@@ -651,10 +651,10 @@ namespace vufMath
 			for (int i = 0; i < 5; ++i)
 			{
 				vufMatrix4<double> l_matr = vufMatrix4<double>::random_matrix();
-				l_quat_1->set_item_at_i(i, l_matr);
+				l_quat_1->set_item_at_i(i, l_matr, l_crv_o);
 			}
 			l_quat_1->sort_params_i();
-			l_quat_1->match_quaternions_i(*l_cntnr);
+			l_quat_1->match_quaternions_i();
 			// to_binary form_binary
 			std::vector<char> l_buff;
 			uint64_t l_size		= l_quat_1->get_binary_size();
@@ -892,10 +892,10 @@ namespace vufMath
 			for (int i = 0; i < 5; ++i)
 			{
 				vufMatrix4<double> l_matr = vufMatrix4<double>::random_matrix();
-				l_quat->set_item_at_i(i, l_matr);
+				l_quat->set_item_at_i(i, l_matr, l_crv);
 			}
 			l_quat->sort_params_i();
-			l_quat->match_quaternions_i(*l_cntnr_1);
+			l_quat->match_quaternions_i();
 
 			l_cntnr_1->set_quaternion_fn_ptr(l_quat);
 

@@ -21,9 +21,8 @@ namespace vufMath
 			return l_ptr;
 		}
 		// close curve
-		vufQuaternion<T> get_quaternion_close_curve_at_i(const vufCurveContainer<T, V>& p_curve_container, T p_val) const
-		{
-			auto l_crv_ptr = p_curve_container.get_curve_ptr();
+		vufQuaternion<T> get_quaternion_close_curve_at_i(const vufCurve<T, V>& p_curve, T p_val) const
+		{			
 			p_val = p_val - std::floor(p_val);
 			
 			auto l_index_1 = m_quat_indeces_v.front();
@@ -44,31 +43,30 @@ namespace vufMath
 				vufQuaternion<T> l_res = m_quaternion_a_v[l_index_2] * l_w_0 + m_quaternion_b_v[l_index_2] * l_w_1;
 				l_res.normalize_in_place();
 				//drop on axis
-				l_tng = l_crv_ptr->get_tangent_at(p_val);
+				l_tng = p_curve.get_tangent_at(p_val);
 				l_vec = l_res.rotate_vector_by_quaternion(l_vec);
 				return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
 			}
 			
 			// as open bspline
-			return get_quaternion_open_curve_at(p_curve_container, p_val);
+			return get_quaternion_open_curve_at_i(p_curve, p_val);
 		}
 		// open  curve
-		vufQuaternion<T> get_quaternion_open_curve_at_i(const vufCurveContainer<T, V>& p_curve_container, T p_val) const
+		vufQuaternion<T> get_quaternion_open_curve_at_i(const vufCurve<T, V>& p_curve, T p_val) const
 		{
-			auto l_crv_ptr = p_curve_container.get_curve_ptr();
 			V<T> l_vec(1.0);
 			V<T> l_tng;
 			vufQuaternion_d l_quat;
 			if (p_val <= 0)
 			{
-				l_tng = l_crv_ptr->get_tangent_at(0.);
+				l_tng = p_curve.get_tangent_at(0.);
 				l_quat = m_quaternion_a_v[m_quat_indeces_v.front()];
 				l_vec = l_quat.rotate_vector_by_quaternion(l_vec);
 				return l_quat.increment_quaternion_with_2vectors(l_vec, l_tng);
 			}
 			if (p_val >= 1.)
 			{
-				l_tng = l_crv_ptr->get_tangent_at(1.);
+				l_tng = p_curve.get_tangent_at(1.);
 				l_quat = m_quaternion_a_v[m_quat_indeces_v.back()];
 				l_vec = l_quat.rotate_vector_by_quaternion(l_vec);
 				return l_quat.increment_quaternion_with_2vectors(l_vec, l_tng);
@@ -77,7 +75,7 @@ namespace vufMath
 			{
 				auto l_index_1 = m_quat_indeces_v[i - 1];
 				auto l_index_2 = m_quat_indeces_v[i];
-				if (p_val => m_quat_param_v[l_index_1] && p_val =< m_quat_param_v[l_index_2])
+				if (p_val >= m_quat_param_v[l_index_1] && p_val <= m_quat_param_v[l_index_2])
 				{
 					T l_interval_length = m_quat_param_v[l_index_2] - m_quat_param_v[l_index_1];
 					if (l_interval_length <= VF_MATH_EPSILON)
@@ -89,7 +87,7 @@ namespace vufMath
 					vufQuaternion<T> l_res = m_quaternion_a_v[l_index_1] * l_w_0 + m_quaternion_b_v[l_index_1] * l_w_1;
 					l_res.normalize_in_place();
 					//drop on axis
-					l_tng = l_crv_ptr->get_tangent_at(p_val);
+					l_tng = p_curve.get_tangent_at(p_val);
 					l_vec = l_res.rotate_vector_by_quaternion(l_vec);
 					return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
 				}
@@ -117,28 +115,48 @@ namespace vufMath
 				{
 					m_quat_param_v[i] = ((T)i) * l_step;
 				}
+				//vufMath::vufNumericArrayFn<double> l_num_array(m_quat_param_v);
+				//VF_LOG_INFO(l_num_array.to_string().c_str());
 			}
 		}
 		// just update quaternion values
-		void	set_item_at_i(uint32_t p_index, const vufMatrix4<T>& p_matr)
+		bool	set_item_at_i(			uint32_t						p_index, 
+								const	vufMatrix4<T>&					p_matr, 
+								const	std::shared_ptr<vufCurve<T,V> > p_crv_ptr)
 		{
+			if (p_crv_ptr == nullptr || p_crv_ptr->is_valid() == false)
+			{
+				vufCurveQuaternionFn<T,V>::m_valid = false;
+				return false;
+			}
 			uint32_t l_ndx		= m_quat_indeces_v[p_index];
 			m_positon_v[l_ndx]	= V<T>(p_matr[3][0], p_matr[3][1], p_matr[3][2]);
 			m_y_axis_v[l_ndx]	= V<T>(p_matr[1][0], p_matr[1][1], p_matr[1][2]);
 			m_y_axis_v[l_ndx].normalize_in_place();
-			V<T> l_tangent		= l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[l_ndx]);
+			V<T> l_tangent		= p_crv_ptr->get_tangent_normalized_at(m_quat_param_v[l_ndx]);
 			m_y_axis_v[l_ndx].make_ortho_to_in_place(l_tangent);
 			m_y_axis_v[l_ndx].normalize_in_place();
+			V<T> l_z = l_tangent.get_cross(m_y_axis_v[l_ndx]);
+			l_z.normalize_in_place();
 			vufMatrix4<T> l_matr;
 			l_matr.set_axis_x(l_tangent);
 			l_matr.set_axis_y(m_y_axis_v[l_ndx]);
 			l_matr.set_axis_z(l_z);
 
-			m_quaternion_a_v[i] = l_matr.get_quaternion();
+			m_quaternion_a_v[l_ndx] = l_matr.get_quaternion();
+			return true;
 		}
 		// update quaternions and set curve value
-		void	set_item_at_i(uint32_t p_index, T p_param, const vufMatrix4<T>& p_matr)
+		bool	set_param_item_at_i(	uint32_t							p_index, 
+										T									p_param, 
+								const	vufMatrix4<T>&						p_matr, 
+								const	std::shared_ptr<vufCurve<T, V> >	p_crv_ptr)
 		{
+			if (p_crv_ptr == nullptr || p_crv_ptr->is_valid() == false)
+			{
+				vufCurveQuaternionFn<T, V>::m_valid = false;
+				return false;
+			}
 			uint32_t l_ndx			= m_quat_indeces_v[p_index];
 			m_quat_param_v[l_ndx]	= p_param;
 			m_positon_v[l_ndx]		= V<T>(p_matr[3][0], p_matr[3][1], p_matr[3][2]);
@@ -148,39 +166,70 @@ namespace vufMath
 			V<T> l_tangent = l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[l_ndx]);
 			m_y_axis_v[l_ndx].make_ortho_to_in_place(l_tangent);
 			m_y_axis_v[l_ndx].normalize_in_place();
+			V<T> l_z = l_tangent.get_cross(m_y_axis_v[l_ndx]);
+			l_z.normalize_in_place();
 			vufMatrix4<T> l_matr;
 			l_matr.set_axis_x(l_tangent);
 			l_matr.set_axis_y(m_y_axis_v[l_ndx]);
 			l_matr.set_axis_z(l_z);
 
-			m_quaternion_a_v[i] = l_matr.get_quaternion();
+			m_quaternion_a_v[l_ndx] = l_matr.get_quaternion();
 		}
 		// update quaternion and call closest point to update param 
-		void	set_item_at_i(			uint32_t					p_index, 
-								const	vufMatrix4<T>&				p_matr, 
-								const	vufCurveContainer<T, V>&	p_curve_container, 
-										uint32_t					p_divisions = 10, 
-										T p_percition = vufCurve_kTol)
-		{
+		bool	set_closest_item_at_i(	uint32_t								p_index, 
+										const	vufMatrix4<T>&					p_matr, 
+										const std::shared_ptr<vufCurve<T, V> >	p_crv_ptr,
+										uint32_t								p_divisions = 10, 
+										T										p_percition = vufCurve_kTol)
+		{			
+			if (p_crv_ptr == nullptr || p_crv_ptr->is_valid() == false)
+			{
+				vufCurveQuaternionFn<T, V>::m_valid = false;
+				return false;
+			}
 			uint32_t l_ndx		= m_quat_indeces_v[p_index];
 			m_positon_v[l_ndx]	= V<T>(p_matr[3][0], p_matr[3][1], p_matr[3][2]);
 			m_y_axis_v[l_ndx]	= V<T>(p_matr[1][0], p_matr[1][1],p_matr[1][2]);
 			m_y_axis_v[l_ndx].normalize_in_place();
 
-			m_quat_param_v[l_ndx]	= l_crv_ptr->get_closest_point_param(m_positon_v[l_ndx], p_divisions, p_percition);
-			V<T> l_tangent			= l_crv_ptr->get_tangent_normalized_at(m_quat_param_v[l_ndx]);
+			m_quat_param_v[l_ndx]	= p_crv_ptr->get_closest_point_param(m_positon_v[l_ndx], 0., 1. ,p_divisions, p_percition);
+			V<T> l_tangent			= p_crv_ptr->get_tangent_normalized_at(m_quat_param_v[l_ndx]);
 			m_y_axis_v[l_ndx].make_ortho_to_in_place(l_tangent);
 			m_y_axis_v[l_ndx].normalize_in_place();
+			V<T> l_z = l_tangent.get_cross(m_y_axis_v[l_ndx]);
+			l_z.normalize_in_place();
 			vufMatrix4<T> l_matr;
 			l_matr.set_axis_x(l_tangent);
 			l_matr.set_axis_y(m_y_axis_v[l_ndx]);
 			l_matr.set_axis_z(l_z);
 
-			m_quaternion_a_v[i] = l_matr.get_quaternion();
+			m_quaternion_a_v[l_ndx] = l_matr.get_quaternion();
+			return true;
 		}
-		bool	sort_params_i(bool p_pin_start = true, bool p_pin_end = true)
+		bool	sort_params_i()
 		{			
 			//--------------------------------
+			// pin params
+			if (m_pin_start == true)
+			{
+				for (uint32_t i = 0; i < (uint32_t)m_quat_indeces_v.size(); ++i)
+				{
+					if (m_quat_param_v[i] < m_pin_start_value)
+					{
+						m_quat_param_v[i] = m_pin_start_value;
+					}					
+				}
+			}
+			if (m_pin_end == true)
+			{
+				for (uint32_t i = 0; i < (uint32_t)m_quat_indeces_v.size(); ++i)
+				{
+					if (m_quat_param_v[i] > m_pin_end_value)
+					{
+						m_quat_param_v[i] = m_pin_end_value;
+					}
+				}
+			}
 			// Sort them by param
 			bool m_need_sort = true;
 			while (m_need_sort == true)
@@ -197,10 +246,21 @@ namespace vufMath
 						m_quat_indeces_v[i-1]	= l_index_2;
 					}
 				}
+			}	
+			if (m_pin_start == true)
+			{
+				m_quat_param_v[m_quat_indeces_v.front()] = m_pin_start_value;
 			}
+			if (m_pin_end == true)
+			{
+				m_quat_param_v[m_quat_indeces_v.back()] = m_pin_end_value;
+			}
+			//vufMath::vufNumericArrayFn<double> l_num_array(m_quat_param_v);
+			//VF_LOG_INFO(l_num_array.to_string().c_str());
+
 			return true;
 		}
-		bool	match_quaternions_i(const vufCurveContainer<T, V>& p_curve_container)
+		bool	match_quaternions_i()
 		{
 			if (m_quat_indeces_v.size() == 0)
 			{
@@ -227,26 +287,46 @@ namespace vufMath
 			vufCurveQuaternionFn<T, V>::m_valid = true;
 			return true;
 		}
-
-		virtual vufCurveQuatFnType	get_type() const override { return vufCurveQuatFnType::k_closest; }
-		virtual vufQuaternion<T>	get_quaternion_at(const vufCurveContainer<T, V>& p_curve_container, T p_val) const override
+		std::vector<T>& get_params()
 		{
-			auto l_crv_ptr = p_curve_container.get_curve_ptr();
-			if (l_crv_ptr->is_close() == true)
+			return m_quat_param_v;
+		}
+
+		bool	get_pin_start() const		{ return m_pin_start; }
+		void	set_pin_start(bool p_val)	{ m_pin_start = p_val; }
+		T		get_pin_start_value() const { return m_pin_start_value; }
+		void	set_pin_start_value(T p_val){ m_pin_start_value = p_val; }
+
+		bool	get_pin_end() const			{ return m_pin_end; }
+		void	set_pin_end(bool p_val)		{ m_pin_end = p_val; }
+		T		get_pin_end_value() const	{ return m_pin_end_value; }
+		void	set_pin_end_value(T p_val)	{ m_pin_end_value = p_val; }
+
+		T		get_offset() const			{ return m_offset; }
+		void	set_offset(T p_val)			{ m_offset = p_val; }
+
+		//virtuals
+		virtual vufCurveQuatFnType	get_type() const override { return vufCurveQuatFnType::k_closest; }
+		virtual vufQuaternion<T>	get_quaternion_at(const vufCurveContainer<T, V>& p_curve_container, T p_val, T p_rebuild_value) const override
+		{
+			auto l_curve = p_curve_container.get_curve_ptr();
+			if (l_curve->is_close() == true)
 			{
-				return 	get_quaternion_close_curve_at(p_curve_container, p_val);
+				return 	get_quaternion_close_curve_at_i(*l_curve, p_val);
 			}
-			return get_quaternion_open_curve_at(p_curve_container, p_val);
+			return get_quaternion_open_curve_at_i(*l_curve, p_val);
 		}
 
 		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>> get_copy() const override
 		{
 			auto l_ptr = create();
-			l_ptr->m_pin_start = vufCurveQuaternionFn<T, V>::m_pin_start;
-			//l_ptr->m_pin_start_value = vufCurveQuaternionFn<T, V>::m_pin_start_value;
-			l_ptr->m_pin_end = vufCurveQuaternionFn<T, V>::m_pin_end;
-			//l_ptr->m_pin_end_value = vufCurveQuaternionFn<T, V>::m_pin_end_value;
-			//l_ptr->m_offset = vufCurveQuaternionFn<T, V>::m_offset;
+
+			l_ptr->m_pin_start			= m_pin_start;
+			l_ptr->m_pin_start_value	= m_pin_start_value;
+			l_ptr->m_pin_end			= m_pin_end;
+			l_ptr->m_pin_end_value		= m_pin_end_value;
+			l_ptr->m_offset				= m_offset;
+
 			l_ptr->m_y_axis_v		= m_y_axis_v;
 			l_ptr->m_positon_v		= m_positon_v;
 			l_ptr->m_quaternion_a_v = m_quaternion_a_v;
@@ -270,7 +350,13 @@ namespace vufMath
 
 			l_ss << l_str_offset << "[ vufCurveQuaternionCloseFn < " << typeid(T).name() << ", " << typeid(V).name() << "> ]" << std::endl;
 			l_ss << vufCurveQuaternionFn<T, V>::to_string(-1, p_tab_count + 1);
-			
+
+			l_ss << l_str_offset << "pin start......." << m_pin_start << std::endl;
+			l_ss << l_str_offset << "pin start value." << m_pin_start_value << std::endl;
+			l_ss << l_str_offset << "pin end........." << m_pin_end << std::endl;
+			l_ss << l_str_offset << "pin end value..." << m_pin_end_value << std::endl;
+			l_ss << l_str_offset << "offset.........." << m_offset << std::endl;
+
 			l_ss << l_str_offset << "____y_axis: ";
 			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_y_axis_v);
 			l_ss << std::endl;
@@ -300,6 +386,12 @@ namespace vufMath
 		virtual uint64_t		get_binary_size()														const override
 		{
 			uint64_t l_size = vufCurveQuaternionFn<T, V>::get_binary_size();
+			l_size += sizeof(m_pin_start);
+			l_size += sizeof(m_pin_start_value);
+			l_size += sizeof(m_pin_end);
+			l_size += sizeof(m_pin_end_value);
+			l_size += sizeof(m_offset);
+
 			l_size += sizeof(l_size) + m_y_axis_v.size() * sizeof(V<T>);
 			l_size += sizeof(l_size) + m_positon_v.size() * sizeof(V<T>);
 			l_size += sizeof(l_size) + m_quaternion_a_v.size() * sizeof(vufQuaternion<T>);
@@ -317,6 +409,13 @@ namespace vufMath
 				p_buff.resize(p_offset + l_size);
 			}
 			p_offset = vufCurveQuaternionFn<T, V>::to_binary(p_buff, p_offset);
+			
+			std::memcpy(&p_buff[p_offset], &m_pin_start,		sizeof(m_pin_start));		p_offset += sizeof(m_pin_start);
+			std::memcpy(&p_buff[p_offset], &m_pin_start_value,	sizeof(m_pin_start_value));	p_offset += sizeof(m_pin_start_value);
+			std::memcpy(&p_buff[p_offset], &m_pin_end,			sizeof(m_pin_end));			p_offset += sizeof(m_pin_end);
+			std::memcpy(&p_buff[p_offset], &m_pin_end_value,	sizeof(m_pin_end_value));	p_offset += sizeof(m_pin_end_value);
+			std::memcpy(&p_buff[p_offset], &m_offset,			sizeof(m_offset));			p_offset += sizeof(m_offset);
+			
 			// m_y_axis_v
 			l_size = m_y_axis_v.size();
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
@@ -366,6 +465,13 @@ namespace vufMath
 		{
 			uint64_t l_size;
 			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff, p_version, p_offset);
+
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_start,		sizeof(m_pin_start));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_start_value,	sizeof(m_pin_start_value));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_end,			sizeof(m_pin_end));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_end_value,	sizeof(m_pin_end_value));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset,			sizeof(m_offset));
+			
 			// m_y_axis_v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));
 			m_y_axis_v.resize(l_size);
@@ -420,6 +526,12 @@ namespace vufMath
 			return vufCurveQuaternionFn<T, V>::decode_from_buff(p_buff, p_offset);
 		}
 	private:
+		bool	m_pin_start = false;
+		T		m_pin_start_value = 0.0;
+		bool	m_pin_end = false;
+		T		m_pin_end_value = 1.0;
+		T		m_offset = 0.;
+
 		std::vector <V<T>>				m_y_axis_v;			// y axices of nodes nodes array
 		std::vector< V<T>>				m_positon_v;		// quaternion nodes 3d position array
 		std::vector< vufQuaternion<T>>	m_quaternion_a_v;	// each node has pair of quaternions ( a := my, b := next)

@@ -1,15 +1,15 @@
-#ifndef VF_RM_CURVE_QUAT_CLOSE_NODE_H
-#define VF_RM_CURVE_QUAT_CLOSE_NODE_H
+#ifndef VF_RM_CURVE_QUAT_FRAME_NODE_H
+#define VF_RM_CURVE_QUAT_FRAME_NODE_H
 
 #include <maya/MPxNode.h>
 
 namespace vufRM
 {
-	class vufCurveQuatCloseNode :public MPxNode
+	class vufCurveQuatFrameNode :public MPxNode
 	{
 	public:
-		vufCurveQuatCloseNode();
-		virtual ~vufCurveQuatCloseNode() {}
+		vufCurveQuatFrameNode();
+		virtual ~vufCurveQuatFrameNode() {}
 
 		static  void* creator();
 		static  MStatus	initialize();
@@ -26,6 +26,8 @@ namespace vufRM
 		static MObject	g_quaternion_pin_end_attr;
 		static MObject	g_quaternion_pin_end_value_attr;
 		static MObject	g_quaternion_offset_attr;
+		static MObject	g_quaternion_fcurve_attr;
+		static MObject	g_quaternion_twist_attr;
 
 		static MObject	g_transfoms_attr;
 		static MObject	g_data_in_attr;
@@ -35,5 +37,4 @@ namespace vufRM
 		uint64_t		m_gen_id;
 	};
 }
-
-#endif // !VF_RM_CURVE_QUAT_CLOSE_NODE_H
+#endif !VF_RM_CURVE_QUAT_FRAME_NODE_H

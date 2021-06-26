@@ -22,14 +22,14 @@ namespace vufMath
 		}
 
 		virtual vufCurveQuatFnType get_type() const override { return vufCurveQuatFnType::k_blend; }
-		virtual void	set_item_count(uint32_t p_count) override	{}
-		virtual void	set_item_at(uint32_t p_index, const vufMatrix4<T>& p_matr) override {}
+		void	set_item_count(uint32_t p_count) {}
+		void	set_item_at(uint32_t p_index, const vufMatrix4<T>& p_matr)  {}
 		/// Compute or set influencer param on the curve
-		virtual bool	compute_bind_params(const vufCurveContainer<T, V>& p_curve_container, uint32_t p_division, T p_percition = 0.00001) override { return true; }
+		 bool	compute_bind_params(const vufCurveContainer<T, V>& p_curve_container, uint32_t p_division, T p_percition = vufCurve_kTol)  { return true; }
 		// Make quaternions non flopped
-		virtual bool	match_quaternions(const vufCurveContainer<T, V>& p_curve_container) override { return true; }
+		bool	match_quaternions(const vufCurveContainer<T, V>& p_curve_container) { return true; }
 
-		virtual vufQuaternion<T> get_quaternion_at(const vufCurveContainer<T, V>& p_curve_container, T p_val) const override
+		virtual vufQuaternion<T> get_quaternion_at(const vufCurveContainer<T, V>& p_curve_container, T p_val, T p_rebiuld_val) const override
 		{
 			//Change this when close curve will be implemented
 			auto	l_crv_ptr		= p_curve_container.get_curve_ptr();

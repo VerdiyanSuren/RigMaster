@@ -22,11 +22,11 @@
 #include <curves/vufCurveToMayaNode.h>
 #include <curves/vufCurveBSplineNode.h>
 #include <curves/vufCurveBlendNode.h>
-#include <curves/vufCurveQuatCloseNode.h>
-#include <curves/vufCurveQuatFrameNode.h>
+#include <curves/rotateFn/vufCurveQuatCloseNode.h>
+#include <curves/rotateFn/vufCurveQuatFrameNode.h>
 #include <curves/vufCurveNullNode.h>
-#include <curves/vufCurveGetTransformNode.h>
-#include <curves/vufCurveClosestPointNode.h>
+#include <curves/get/vufCurveGetTransformNode.h>
+#include <curves/get/vufCurveClosestPointNode.h>
 
 #include <vufMayaGlobalIncludes.h>
 #include <serializer/vufTxtSerializer.h>

@@ -457,18 +457,18 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\get\vufCurveClosestPointNode.h" />
+    <ClInclude Include="include\curves\get\vufCurveGetTransformNode.h" />
     <ClInclude Include="include\curves\locator\vufCurveLocator.h" />
+    <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildNode.h" />
+    <ClInclude Include="include\curves\rotateFn\vufCurveQuatCloseNode.h" />
+    <ClInclude Include="include\curves\rotateFn\vufCurveQuatFrameNode.h" />
+    <ClInclude Include="include\curves\rotateFn\vufCurveQuatParamNode.h" />
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h" />
     <ClInclude Include="include\curves\vufCurveBSplineNode.h" />
     <ClInclude Include="include\curves\vufCurveBlendNode.h" />
-    <ClInclude Include="include\curves\vufCurveClosestPointNode.h" />
     <ClInclude Include="include\curves\vufCurveFromMayaNode.h" />
-    <ClInclude Include="include\curves\vufCurveGetTransformNode.h" />
     <ClInclude Include="include\curves\vufCurveNullNode.h" />
-    <ClInclude Include="include\curves\vufCurveQuatCloseNode.h" />
-    <ClInclude Include="include\curves\vufCurveQuatFrameNode.h" />
-    <ClInclude Include="include\curves\vufCurveQuatParamNode.h" />
-    <ClInclude Include="include\curves\vufCurveRebuildData.h" />
-    <ClInclude Include="include\curves\vufCurveRebuildNode.h" />
     <ClInclude Include="include\curves\vufCurveToMayaNode.h" />
     <ClInclude Include="include\curves\vufCurvesInclude.h" />
     <ClInclude Include="include\data\vufData.h" />
@@ -510,17 +510,18 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
   <ItemGroup>
     <ClCompile Include="include\vufLogMaya.cpp" />
     <ClCompile Include="src\curves\data\vufCurveData.cpp" />
+    <ClCompile Include="src\curves\get\vufCurveClosestPointNode.cpp" />
+    <ClCompile Include="src\curves\get\vufCurveGetTransformNode.cpp" />
     <ClCompile Include="src\curves\locator\vufCurveLocator.cpp" />
+    <ClCompile Include="src\curves\rebuildFn\vufCurveRebuildNode.cpp" />
+    <ClCompile Include="src\curves\rotateFn\vufCurveQuatCloseNode.cpp" />
+    <ClCompile Include="src\curves\rotateFn\vufCurveQuatFrameNode.cpp" />
+    <ClCompile Include="src\curves\rotateFn\vufCurveQuatParamNode.cpp" />
+    <ClCompile Include="src\curves\scaleFn\vufCurveScaleFn.cpp" />
     <ClCompile Include="src\curves\vufCurveBSplineNode.cpp" />
     <ClCompile Include="src\curves\vufCurveBlendNode.cpp" />
-    <ClCompile Include="src\curves\vufCurveClosestPointNode.cpp" />
     <ClCompile Include="src\curves\vufCurveFromMayaNode.cpp" />
-    <ClCompile Include="src\curves\vufCurveGetTransformNode.cpp" />
     <ClCompile Include="src\curves\vufCurveNullNode.cpp" />
-    <ClCompile Include="src\curves\vufCurveQuatCloseNode.cpp" />
-    <ClCompile Include="src\curves\vufCurveQuatFrameNode.cpp" />
-    <ClCompile Include="src\curves\vufCurveQuatParamNode.cpp" />
-    <ClCompile Include="src\curves\vufCurveRebuildNode.cpp" />
     <ClCompile Include="src\curves\vufCurveToMayaNode.cpp" />
     <ClCompile Include="src\data\vufCurveQuatData.cpp" />
     <ClCompile Include="src\data\vufCurveRebuildData.cpp" />

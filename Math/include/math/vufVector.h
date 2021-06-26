@@ -266,7 +266,6 @@ namespace vufMath
 			return p_offset + l_read_size;
 		}
 
-
 		//static vufVector4<T> LinearInterpolation(const vufVector4<T>& v1, const vufVector4<T>& v2);
 		//----------------------------------
 		//operators

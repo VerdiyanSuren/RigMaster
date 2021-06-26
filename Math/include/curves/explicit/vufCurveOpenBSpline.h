@@ -626,7 +626,7 @@ namespace vufMath
 		{
 			return get_pos_at_i(get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition));
 		}
-		virtual T			get_closest_point_param(const V<T>& p_point, 
+		virtual T				get_closest_point_param(const V<T>& p_point, 
 													T p_start = 0,
 													T p_end = 1,
 													uint32_t p_divisions = 10,
@@ -634,15 +634,87 @@ namespace vufMath
 		{
 			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
 		}
-		virtual T				get_param_by_vector_component(	T	p_value,
+		virtual T				get_param_by_vector_component(	T			p_value,
 																uint32_t	p_component_index = 0/*x by default*/,
 																T			p_start = 0,
 																T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
 																uint32_t	p_divisions = 10,
 																T			p_percition = vufCurve_kTol)	const override
 		{
-			// To Do implement this
-			return 0;
+			// To avoid crush we increment p_division. Never divide by zero
+			p_divisions++;
+			T l_interval_step	= (p_end - p_start) / (T)p_divisions;
+			T l_res_param		= p_start;
+			T l_close_value		= get_pos_at_i(l_res_param)[p_component_index];
+			T l_err = abs(p_value - l_close_value);
+			if (l_err < p_percition)
+			{
+				return  l_res_param;
+			}
+
+			for (uint32_t i = 0; i < p_divisions; ++i)
+			{
+				T l_param_1 = ((T)i) * l_interval_step;
+				T l_param_2 = ((T)(i + 1)) * l_interval_step;
+				T l_param_21 = (l_param_1 + l_param_2) * 0.5;
+
+				T l_x_1		= get_pos_at_i(l_param_1)[p_component_index];
+				T l_x_2		= get_pos_at_i(l_param_2)[p_component_index];
+				T l_x_21	= get_pos_at_i(l_param_21)[p_component_index];
+
+				T l_err_1	= abs(l_x_1 - p_value);
+				T l_err_2	= abs(l_x_2 - p_value);
+				T l_err_21	= abs(l_x_21 - p_value);
+
+				if (l_err_1 < l_err)
+				{
+					l_err = l_err_1;
+					l_res_param = l_param_1;
+				}
+				if (l_err_2 < l_err)
+				{
+					l_err = l_err_2;
+					l_res_param = l_param_2;
+				}
+				if (l_err_21 < l_err)
+				{
+					l_err = l_err_21;
+					l_res_param = l_param_21;
+				}
+
+				if ((p_value < l_x_1 || p_value < l_x_21) || (l_x_2 < p_value || l_x_1 > p_value))
+				{
+					continue;
+				}
+
+				// check are these point satisfy
+				if ((l_x_1 < p_value || p_value < l_x_21) || (l_x_21 < p_value || p_value < l_x_1))
+				{
+					T l_param = get_param_by_vector_component(p_value, p_component_index, l_param_1, l_param_21, 0, p_percition);
+					T l_result = get_pos_at_i(l_param_1)[p_component_index];
+					T l_err_r = abs(l_result - p_value);
+					if (l_err_r < l_err)
+					{
+						l_err = l_err_r;
+						l_res_param = l_param;
+					}
+					continue;
+				}
+				if ((l_x_21 < p_value || p_value < l_x_2) || (l_x_2 < p_value || p_value < l_x_21))
+				{
+					T l_param = get_param_by_vector_component(p_value, p_component_index, l_param_21, l_param_2, 0, p_percition);
+					T l_result = get_pos_at_i(l_param_1)[p_component_index];
+					T l_err_r = abs(l_result - p_value);
+					if (l_err_r < l_err)
+					{
+						l_err = l_err_r;
+						l_res_param = l_param;
+					}
+					continue;
+				}
+
+			}
+			return l_res_param;
 		}
 
 		virtual T			get_interval_t_min(int p_interval_index) const override { return get_interval_t_min_i(p_interval_index); }

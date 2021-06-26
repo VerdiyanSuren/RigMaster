@@ -8,7 +8,7 @@
 #include <maya/MQuaternion.h>
 #include <maya/MEulerRotation.h>
 
-#include <curves/vufCurveGetTransformNode.h>
+#include <curves/get/vufCurveGetTransformNode.h>
 #include <math/vufMatrix.h>
 #include <math/vufQuaternion.h>
 #include <data/vufMayaDataList.h>

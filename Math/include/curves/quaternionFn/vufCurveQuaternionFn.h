@@ -8,7 +8,8 @@
 
 namespace vufMath
 {
-	template<class T, template<typename> class V>	class vufCurveContainer;
+	template <class T, template<typename> class V>	class vufCurve;
+	template <class T, template<typename> class V>	class vufCurveContainer;
 	template <class T, template<typename> class V>	class vufCurveQuaternionCloseFn;
 	template <class T, template<typename> class V>	class vufCurveQuaternionTransportFn;
 	template <class T, template<typename> class V>	class vufCurveQuaternionBlendFn;
@@ -47,38 +48,17 @@ namespace vufMath
 			return nullptr;
 		}
 		void			is_valid() const { return m_valid; }
-		/*
-		bool	get_pin_start() const { return m_pin_start; }
-		void	set_pin_start(bool p_val) { m_pin_start = p_val; }
-		T		get_pin_start_value() const { return m_pin_start_value; }
-		void	set_pin_start_value(T p_val) { m_pin_start_value = p_val; }
+		// main work horse
+		virtual vufQuaternion<T> get_quaternion_at(const vufCurveContainer<T, V>& p_curve_container, T p_val,T p_rebiuld_val) const = 0;
 
-		bool	get_pin_end() const { return m_pin_end; }
-		void	set_pin_end(bool p_val) { m_pin_end = p_val; }
-		T		get_pin_end_value() const { return m_pin_end_value; }
-		void	set_pin_end_value(T p_val) { m_pin_end_value = p_val; }
-
-		T		get_offset() const { return m_offset; }
-		void	set_offset(T p_val) { m_offset = p_val; }
-		*/
-
-		virtual vufCurveQuatFnType get_type() const = 0 { return vufCurveQuatFnType::k_none; }
-		/*
-		virtual void	set_item_count(uint32_t p_count) = 0;
-		virtual void	set_item_at(uint32_t p_index, const vufMatrix4<T>& p_qmatr) = 0;
-		/// Compute or set influencer param on the curve
-		virtual bool	compute_bind_params(const vufCurveContainer<T, V>& p_curve_container, uint32_t p_divisions = 10, T p_percition = 0.00001) = 0;
-		// Make quaternions non flipped
-		virtual bool	match_quaternions(const vufCurveContainer<T, V>& p_curve_container) = 0;
-		*/
-		virtual vufQuaternion<T> get_quaternion_at(const vufCurveContainer<T, V>& p_curve_container, T p_val) const = 0;
-
-		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>> get_copy() const = 0;
-
+		virtual vufCurveQuatFnType								get_type() const = 0 { return vufCurveQuatFnType::k_none; }
+		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>>	get_copy() const = 0;
+		// cast interface
 		virtual std::shared_ptr < vufCurveQuaternionCloseFn<T, V> >		as_closest_fn()		const { return nullptr; }
 		virtual std::shared_ptr < vufCurveQuaternionTransportFn<T, V> > as_tranport_fn()	const { return nullptr; }
 		virtual std::shared_ptr < vufCurveQuaternionBlendFn<T, V> >		as_blend_fn()		const { return nullptr; }
 
+		// serialization interface
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const = 0
 		{
 			std::stringstream l_ss;
@@ -86,22 +66,13 @@ namespace vufMath
 			VF_SET_PRECISION(l_ss, p_precision);
 			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
 			l_ss << l_str_offset << "valid..........." << m_valid << std::endl;
-			//l_ss << l_str_offset << "pin start......." << m_pin_start << std::endl;
-			//l_ss << l_str_offset << "pin start value." << m_pin_start_value << std::endl;
-			//l_ss << l_str_offset << "pin end........." << m_pin_end << std::endl;
-			//l_ss << l_str_offset << "pin end value..." << m_pin_end_value << std::endl;
-			//l_ss << l_str_offset << "offset.........." << m_offset << std::endl;
+
 			return l_ss.str();
 		}
 		virtual uint64_t		get_binary_size()														const = 0
 		{
 			uint64_t l_size = sizeof(uint32_t);
 			l_size += sizeof(m_valid);
-			//l_size += sizeof(m_pin_start);
-			//l_size += sizeof(m_pin_start_value);
-			//l_size += sizeof(m_pin_end);
-			//l_size += sizeof(m_pin_end_value);
-			//l_size += sizeof(m_offset);
 
 			return l_size;
 		}
@@ -116,11 +87,6 @@ namespace vufMath
 			}
 			std::memcpy(&p_buff[p_offset], &l_version,			sizeof(l_version));			p_offset += sizeof(l_version);
 			std::memcpy(&p_buff[p_offset], &m_valid,			sizeof(m_valid));			p_offset += sizeof(m_valid);
-			//std::memcpy(&p_buff[p_offset], &m_pin_start,		sizeof(m_pin_start));		p_offset += sizeof(m_pin_start);
-			//std::memcpy(&p_buff[p_offset], &m_pin_start_value,	sizeof(m_pin_start_value));	p_offset += sizeof(m_pin_start_value);
-			//std::memcpy(&p_buff[p_offset], &m_pin_end,			sizeof(m_pin_end));			p_offset += sizeof(m_pin_end);
-			//std::memcpy(&p_buff[p_offset], &m_pin_end_value,	sizeof(m_pin_end_value));	p_offset += sizeof(m_pin_end_value);
-			//std::memcpy(&p_buff[p_offset], &m_offset,			sizeof(m_offset));			p_offset += sizeof(m_offset);
 
 			return p_offset;
 		}
@@ -151,13 +117,6 @@ namespace vufMath
 		}
 
 	 protected:
-		/*
-		bool	m_pin_start = false;
-		T		m_pin_start_value = 0.0;
-		bool	m_pin_end = false;
-		T		m_pin_end_value = 1.0;
-		T		m_offset = 0;
-		*/
 
 		bool m_valid = false;
 		std::weak_ptr <vufCurveQuaternionFn<T, V> > m_this;
