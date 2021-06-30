@@ -464,11 +464,12 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatCloseNode.h" />
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatFrameNode.h" />
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatParamNode.h" />
-    <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h" />
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseFn.h" />
     <ClInclude Include="include\curves\vufCurveBSplineNode.h" />
     <ClInclude Include="include\curves\vufCurveBlendNode.h" />
     <ClInclude Include="include\curves\vufCurveFromMayaNode.h" />
     <ClInclude Include="include\curves\vufCurveNullNode.h" />
+    <ClInclude Include="include\curves\vufCurveSlideNode.h" />
     <ClInclude Include="include\curves\vufCurveToMayaNode.h" />
     <ClInclude Include="include\curves\vufCurvesInclude.h" />
     <ClInclude Include="include\data\vufData.h" />

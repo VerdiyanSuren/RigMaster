@@ -18,10 +18,6 @@ using namespace vufMath;
 MObject	vufCurveQuatFrameNode::g_quaternion_compound_attr;
 MObject	vufCurveQuatFrameNode::g_quaternion_division_attr;
 MObject	vufCurveQuatFrameNode::g_quaternion_mode_attr;
-MObject	vufCurveQuatFrameNode::g_quaternion_pin_start_attr;
-MObject	vufCurveQuatFrameNode::g_quaternion_pin_start_value_attr;
-MObject	vufCurveQuatFrameNode::g_quaternion_pin_end_attr;
-MObject	vufCurveQuatFrameNode::g_quaternion_pin_end_value_attr;
 MObject	vufCurveQuatFrameNode::g_quaternion_offset_attr;
 
 MObject	vufCurveQuatFrameNode::g_quaternion_fcurve_attr;
@@ -58,29 +54,20 @@ MStatus	vufCurveQuatFrameNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.setDefault(false));
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
 	/* Division for closest point*/
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_division_attr, "division", "div", kInt, 0);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_division_attr,	"division",			"div", kInt, 0);
 	l_numeric_attr_fn.setMin(1);
 	l_numeric_attr_fn.setDefault(10);
 	/* Pin Start Quaternion */
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_twist_attr,				"twistMultiplier",		"tm",	kDouble,	0.0);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_start_attr,			"rotationPinStart",		"rsp",	kBoolean,	false);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_start_value_attr,	"rotaionPinStartValue", "rsv",	kDouble,	0.0);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_end_attr,			"rotationPinEnd",		"rnp",	kBoolean,	false);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_end_value_attr,		"rotationPinEndValue",	"rnv",	kDouble,	1.0);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_offset_attr,			"rotationOffset",		"rof",	kDouble,	0.0);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_offset_attr,	"rotationOffset",	"rof",	kDouble,	0.0);
 
 	g_quaternion_compound_attr = l_compound_attr_fn.create("Rotation", "r", &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_division_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_mode_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_start_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_start_value_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_end_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_end_value_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_offset_attr));
 	l_status = addAttribute(g_quaternion_compound_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
-
+	// transform matrix
 	g_transfoms_attr = l_matr_attr_fn.create("xform", "xfr", MFnMatrixAttribute::kDouble,  &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setWritable(true);
@@ -89,6 +76,8 @@ MStatus	vufCurveQuatFrameNode::initialize()
 	l_typed_attr_fn.setKeyable(true);
 	l_status = addAttribute(g_transfoms_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_twist_attr,				"twistMultiplier",		"tm",	kDouble,	0.0);
+	l_status = addAttribute(g_quaternion_twist_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// in data
 	g_data_in_attr = l_typed_attr_fn.create("inCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -126,14 +115,11 @@ MStatus	vufCurveQuatFrameNode::initialize()
 	l_status = attributeAffects(g_quaternion_compound_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_quaternion_division_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_quaternion_mode_attr,				g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_pin_start_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_pin_start_value_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_pin_end_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_pin_end_value_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_quaternion_offset_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	l_status = attributeAffects(g_data_in_attr,						g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_transfoms_attr,					g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = attributeAffects(g_quaternion_twist_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_quaternion_fcurve_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	return MS::kSuccess;
@@ -170,7 +156,7 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_store_data->m_internal_data = vufCurveQuaternionFn_4d::create(vufCurveQuatFnType::k_transport);
 		}
 		std::shared_ptr<vufCurve< double, vufVector4> > l_fcurve_ptr = nullptr;
-		if (l_fcurve_data != nullptr && l_fcurve_data->m_internal_data == nullptr)
+		if (l_fcurve_data != nullptr && l_fcurve_data->m_internal_data != nullptr)
 		{
 			l_fcurve_ptr = l_fcurve_data->m_internal_data->get_curve_ptr();
 		}
@@ -192,12 +178,8 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		MMatrix l_matr					= p_data.inputValue(g_transfoms_attr).asMatrix();
 		int		l_division				= p_data.inputValue(g_quaternion_division_attr).asInt();
 		short	l_quat_mode				= p_data.inputValue(g_quaternion_mode_attr).asShort();
-		bool	l_quat_pin_start		= p_data.inputValue(g_quaternion_pin_start_attr).asBool();
-		double	l_quat_pin_start_value	= p_data.inputValue(g_quaternion_pin_start_value_attr).asDouble();
-		bool	l_quat_pin_end			= p_data.inputValue(g_quaternion_pin_end_attr).asBool();
-		double	l_quat_pin_end_value	= p_data.inputValue(g_quaternion_pin_end_value_attr).asBool();
-		double	l_quat_offset_value		= p_data.inputValue(g_quaternion_offset_attr).asBool();
-		double	l_quat_twist_value		= p_data.inputValue(g_quaternion_twist_attr).asBool();
+		double	l_quat_offset_value		= p_data.inputValue(g_quaternion_offset_attr).asDouble();
+		double	l_quat_twist_value		= p_data.inputValue(g_quaternion_twist_attr).asDouble();
 #pragma endregion
 		if (l_quat_mode == 2 /*delete quaternion fn*/)
 		{

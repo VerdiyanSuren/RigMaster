@@ -408,12 +408,12 @@ namespace vufMath
 		{
 			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
 		}
-		virtual T				get_param_by_vector_component(T	p_value,
-			uint32_t	p_component_index = 0/*x by default*/,
-			T			p_start = 0,
-			T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
-			uint32_t	p_divisions = 10,
-			T			p_percition = vufCurve_kTol)	const  override
+		virtual T			get_param_by_vector_component(	T	p_value,
+															uint32_t	p_component_index = 0/*x by default*/,
+															T			p_start = 0,
+															T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+															uint32_t	p_divisions = 10,
+															T			p_percition = vufCurve_kTol)	const  override
 		{
 			// To Do implement this
 			return 0;

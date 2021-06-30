@@ -21,10 +21,6 @@ namespace vufRM
 		static MObject	g_quaternion_compound_attr;
 		static MObject	g_quaternion_division_attr;
 		static MObject	g_quaternion_mode_attr;
-		static MObject	g_quaternion_pin_start_attr;
-		static MObject	g_quaternion_pin_start_value_attr;
-		static MObject	g_quaternion_pin_end_attr;
-		static MObject	g_quaternion_pin_end_value_attr;
 		static MObject	g_quaternion_offset_attr;
 		static MObject	g_quaternion_fcurve_attr;
 		static MObject	g_quaternion_twist_attr;

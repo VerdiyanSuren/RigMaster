@@ -123,7 +123,7 @@
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatParamNode.h">
       <Filter>include\curves\rotateFn</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h">
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseFn.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveBSplineNode.h">
@@ -136,6 +136,9 @@
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveNullNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\vufCurveSlideNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveToMayaNode.h">

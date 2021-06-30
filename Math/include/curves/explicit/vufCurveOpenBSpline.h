@@ -439,13 +439,13 @@ namespace vufMath
 		}
 
 		// inherited virtual methods
-		virtual bool			rebuild(
-										std::vector<T>& p_uniform_to_curve_val_v,
-										std::vector<T>& p_curve_to_uniform_val_v,
-										std::vector<T>& p_curve_val_to_length_v,
-										uint32_t		p_division_count	= 10,
-										T				p_start				= 0 /*interval on which we need rebuild*/,
-										T				p_end				= 1) const override
+		virtual bool		rebuild(
+									std::vector<T>& p_uniform_to_curve_val_v,
+									std::vector<T>& p_curve_to_uniform_val_v,
+									std::vector<T>& p_curve_val_to_length_v,
+									uint32_t		p_division_count	= 10,
+									T				p_start				= 0 /*interval on which we need rebuild*/,
+									T				p_end				= 1) const override
 		{
 			p_start = VF_CLAMP(0.0, 1.0, p_start);
 			p_end	= VF_CLAMP(0.0, 1.0, p_end);
@@ -528,13 +528,13 @@ namespace vufMath
 			}
 			return true;
 		}
-		virtual bool			rebuild_along_axis( const V<T>&		p_axis/*project curve on this axis*/,
-													std::vector<T>& p_uniform_to_curve_val_v,
-													std::vector<T>& p_curve_to_uniform_val_v,
-													std::vector<T>& p_curve_val_to_length_v,
-													uint32_t		p_division_count = 10,
-													T				p_start = 0 /*interval on which we need rebuild*/,
-													T				p_end = 1) const override
+		virtual bool		rebuild_along_axis( const V<T>&		p_axis/*project curve on this axis*/,
+												std::vector<T>& p_uniform_to_curve_val_v,
+												std::vector<T>& p_curve_to_uniform_val_v,
+												std::vector<T>& p_curve_val_to_length_v,
+												uint32_t		p_division_count = 10,
+												T				p_start = 0 /*interval on which we need rebuild*/,
+												T				p_end = 1) const override
 			{
 				p_start = VF_CLAMP(0.0, 1.0, p_start);
 				p_end	= VF_CLAMP(0.0, 1.0, p_end);
@@ -618,30 +618,30 @@ namespace vufMath
 				}
 				return true;
 			}
-		virtual V<T>			get_closest_point(	const V<T>& p_point,
-													T			p_start = 0,
-													T			p_end = 1,
-													uint32_t	p_divisions = 10,
-													T			p_percition = vufCurve_kTol) const override
+		virtual V<T>		get_closest_point(	const V<T>& p_point,
+												T			p_start = 0,
+												T			p_end = 1,
+												uint32_t	p_divisions = 10,
+												T			p_percition = vufCurve_kTol) const override
 		{
 			return get_pos_at_i(get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition));
 		}
-		virtual T				get_closest_point_param(const V<T>& p_point, 
-													T p_start = 0,
-													T p_end = 1,
-													uint32_t p_divisions = 10,
-													T p_percition = vufCurve_kTol)		const override
+		virtual T			get_closest_point_param(const V<T>& p_point, 
+												T p_start = 0,
+												T p_end = 1,
+												uint32_t p_divisions = 10,
+												T p_percition = vufCurve_kTol)		const override
 		{
 			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
 		}
-		virtual T				get_param_by_vector_component(	T			p_value,
-																uint32_t	p_component_index = 0/*x by default*/,
-																T			p_start = 0,
-																T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
-																uint32_t	p_divisions = 10,
-																T			p_percition = vufCurve_kTol)	const override
+		virtual T			get_param_by_vector_component(	T			p_value,
+															uint32_t	p_component_index = 0/*x by default*/,
+															T			p_start = 0,
+															T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+															uint32_t	p_divisions = 10,
+															T			p_percition = vufCurve_kTol)	const override
 		{
-			// To avoid crush we increment p_division. Never divide by zero
+			// To avoid crush we increment p_division. Never divide by zero.
 			p_divisions++;
 			T l_interval_step	= (p_end - p_start) / (T)p_divisions;
 			T l_res_param		= p_start;
@@ -654,8 +654,8 @@ namespace vufMath
 
 			for (uint32_t i = 0; i < p_divisions; ++i)
 			{
-				T l_param_1 = ((T)i) * l_interval_step;
-				T l_param_2 = ((T)(i + 1)) * l_interval_step;
+				T l_param_1 = p_start + ((T)i) * l_interval_step;
+				T l_param_2 = p_start + ((T)(i + 1)) * l_interval_step;
 				T l_param_21 = (l_param_1 + l_param_2) * 0.5;
 
 				T l_x_1		= get_pos_at_i(l_param_1)[p_component_index];
@@ -682,39 +682,50 @@ namespace vufMath
 					l_res_param = l_param_21;
 				}
 
-				if ((p_value < l_x_1 || p_value < l_x_21) || (l_x_2 < p_value || l_x_1 > p_value))
+				if (l_err < p_percition)
+				{
+					return l_res_param;
+				}
+
+				if ((p_value < l_x_1 && p_value < l_x_2) || (l_x_2 < p_value && l_x_1 < p_value))
 				{
 					continue;
 				}
-
 				// check are these point satisfy
-				if ((l_x_1 < p_value || p_value < l_x_21) || (l_x_21 < p_value || p_value < l_x_1))
+				if ((l_x_1 < p_value && p_value < l_x_21) || (l_x_21 < p_value && p_value < l_x_1))
 				{
-					T l_param = get_param_by_vector_component(p_value, p_component_index, l_param_1, l_param_21, 0, p_percition);
-					T l_result = get_pos_at_i(l_param_1)[p_component_index];
-					T l_err_r = abs(l_result - p_value);
-					if (l_err_r < l_err)
-					{
-						l_err = l_err_r;
-						l_res_param = l_param;
-					}
-					continue;
+					return get_param_by_vector_component_i(p_value, p_component_index, l_x_1, l_param_1, l_x_21, l_param_21, p_percition);
 				}
-				if ((l_x_21 < p_value || p_value < l_x_2) || (l_x_2 < p_value || p_value < l_x_21))
+				if ((l_x_21 < p_value && p_value < l_x_2) || (l_x_2 < p_value && p_value < l_x_21))
 				{
-					T l_param = get_param_by_vector_component(p_value, p_component_index, l_param_21, l_param_2, 0, p_percition);
-					T l_result = get_pos_at_i(l_param_1)[p_component_index];
-					T l_err_r = abs(l_result - p_value);
-					if (l_err_r < l_err)
-					{
-						l_err = l_err_r;
-						l_res_param = l_param;
-					}
-					continue;
+					return get_param_by_vector_component_i(p_value, p_component_index, l_x_21, l_param_21, l_x_2, l_param_2, p_percition);
 				}
-
 			}
 			return l_res_param;
+		}
+		T					get_param_by_vector_component_i(T			p_value,
+															uint32_t	p_component_index = 0/*x by default*/,
+															T			p_x_1 = 0,
+															T			p_t_1 = 0,
+															T			p_x_2 = 1,
+															T			p_t_2 = 1,
+															T			p_percition = vufCurve_kTol)	const
+		{
+			T l_middle_param = (p_t_1 + p_t_2) * 0.5;
+			T l_middle_value = get_pos_at_i(l_middle_param)[p_component_index];
+			if ( abs(l_middle_value - p_value) < p_percition )
+			{
+				return l_middle_param;
+			}
+			if ((p_x_1 < p_value && p_value < l_middle_value) || (l_middle_value < p_value && p_value < p_x_1))
+			{
+				return  get_param_by_vector_component_i(p_value, p_component_index, p_x_1, p_t_1, l_middle_value, l_middle_param, p_percition);
+			}
+			if ((l_middle_value < p_value && p_value < p_x_2) || (p_x_2 < p_value && p_value < l_middle_value))
+			{
+				return get_param_by_vector_component_i(p_value, p_component_index, l_middle_value, l_middle_param, p_x_2, p_t_2, p_percition);
+			}
+			return 0;
 		}
 
 		virtual T			get_interval_t_min(int p_interval_index) const override { return get_interval_t_min_i(p_interval_index); }
@@ -831,10 +842,6 @@ namespace vufMath
 			}
 			//------------------------------------------------------
 			p_offset = vufCurveExplicit<T, V>::to_binary(p_buff, p_offset);
-			if (p_offset == 0)
-			{
-				return 0;
-			}
 			return p_offset;
 		}
 		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version,  uint64_t p_offset = 0) override

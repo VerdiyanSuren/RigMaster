@@ -56,8 +56,8 @@ namespace vufMath
 		{
 			V<T> l_vec(1.0);
 			V<T> l_tng = p_curve.get_tangent_normalized_at(p_val);
-			p_rebuild_val = p_rebuild_val - (int)p_rebuild_val;
-			T l_angle = m_twist_fcurve == nullptr ? 0 : m_twist_fcurve->get_param_by_vector_component(p_rebuild_val, 0, 0, 1, 10);
+			//p_rebuild_val = p_rebuild_val - (int)p_rebuild_val;
+			T l_angle = m_twist_fcurve == nullptr ? 0 : m_twist_fcurve->get_pos_at( m_twist_fcurve->get_param_by_vector_component(p_rebuild_val, 0, 0, 1, 1) )[1];
 			vufQuaternion<T> l_mult_quat(l_angle * m_twist_multiplier, l_tng);
 			vufQuaternion<T> l_quat;
 			if (p_val <= 0)
@@ -65,14 +65,14 @@ namespace vufMath
 				l_tng = p_curve.get_tangent_at(0.);
 				l_quat = m_quaternion_a_v.front();
 				l_vec = l_quat.rotate_vector_by_quaternion(l_vec);
-				return l_mult_quat * l_quat.increment_quaternion_with_2vectors(l_vec, l_tng);
+				return  l_quat.increment_quaternion_with_2vectors(l_vec, l_tng) * l_mult_quat;
 			}
 			if (p_val >= 1.)
 			{
 				l_tng = p_curve.get_tangent_at(1.);
 				l_quat = m_quaternion_a_v.back();
 				l_vec = l_quat.rotate_vector_by_quaternion(l_vec);
-				return l_mult_quat * l_quat.increment_quaternion_with_2vectors(l_vec, l_tng);
+				return  l_quat.increment_quaternion_with_2vectors(l_vec, l_tng) * l_mult_quat;
 			}
 			for (uint64_t i = 1; i < m_quaternion_a_v.size(); ++i)
 			{
@@ -83,7 +83,7 @@ namespace vufMath
 					T l_interval_length = m_quat_param_v[l_index_2] - m_quat_param_v[l_index_1];
 					if (l_interval_length <= VF_MATH_EPSILON)
 					{
-						return l_mult_quat * m_quaternion_a_v[l_index_2];
+						return  m_quaternion_a_v[l_index_2] * l_mult_quat;
 					}
 					T l_w_1 = (p_val - m_quat_param_v[l_index_1]) / l_interval_length;
 					T l_w_0 = 1. - l_w_1;
@@ -92,7 +92,7 @@ namespace vufMath
 					//drop on axis
 					l_tng = p_curve.get_tangent_at(p_val);
 					l_vec = l_res.rotate_vector_by_quaternion(l_vec);
-					return l_mult_quat * l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
+					return  l_res.increment_quaternion_with_2vectors(l_vec, l_tng) * l_mult_quat;
 					//return l_res;
 				}
 			}

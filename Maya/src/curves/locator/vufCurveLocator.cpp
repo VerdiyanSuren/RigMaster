@@ -86,7 +86,7 @@ MStatus vufCurveLocator::initialize()
 	l_numeric_attr_fn.setMin(1);
 	l_numeric_attr_fn.setDefault(50);
 
-	g_in_data_attr = l_typed_attr_fn.create("inputCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_in_data_attr = l_typed_attr_fn.create("inCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setWritable(true);
 	l_typed_attr_fn.setStorable(true);
