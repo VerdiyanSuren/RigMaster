@@ -221,7 +221,7 @@ void				vufCurveLocatorDrawOverride::addUIDrawables(	const MDagPath&					p_obj_p
 		auto l_pos		= l_data->m_curve_container_ptr->get_pos_at(		l_data->m_start_param + l_step * ((double)i));
 		//auto l_tangent	= l_data->m_curve_container_ptr->get_tangent_at(	l_data->m_start_param + l_step * ((double)i));
 		//auto l_normal = l_data->m_curve_container_ptr->get_normal_at(l_data->m_start_param + l_step * ((double)i));
-		auto l_quat		= l_data->m_curve_container_ptr->get_quaternion_at(	l_data->m_start_param + l_step * ((double)i));
+		//auto l_quat		= l_data->m_curve_container_ptr->get_quaternion_at(	l_data->m_start_param + l_step * ((double)i));
 		
 		l_1 = l_0;
 		l_0.x = l_pos.x;
@@ -232,7 +232,7 @@ void				vufCurveLocatorDrawOverride::addUIDrawables(	const MDagPath&					p_obj_p
 		p_draw_manager.setColor(l_data->m_color_start * l_w_1 + l_data->m_color_end * l_w_2);
 		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
 		p_draw_manager.line( l_0,l_1);
-		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
+		//p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
 	}
 	if (l_data->m_tangent == true)
 	{

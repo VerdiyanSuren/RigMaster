@@ -1,0 +1,5 @@
+#ifndef VF_RM_CURVE_SWITCH_H
+#define VF_RM_CURVE_SWITCH_H
+
+
+#endif // ! VF_RM_CURVE_SWITCH_H

@@ -33,7 +33,7 @@ namespace vufMath
 				V<T> l_tng;
 				vufQuaternion_d l_quat;
 				// we have to handle special case when param is betwean last and first element
-				T l_interval_length = m_quat_param_v[l_index_1] - m_quat_param_v[l_index_2] + 1;
+				T l_interval_length = m_quat_param_v[l_index_1] - m_quat_param_v[l_index_2] + 1.;
 				if (p_val < m_quat_param_v[l_index_1])
 				{
 					p_val += 1;
@@ -189,7 +189,7 @@ namespace vufMath
 			}
 			uint32_t l_ndx		= m_quat_indeces_v[p_index];
 			m_positon_v[l_ndx]	= V<T>(p_matr[3][0], p_matr[3][1], p_matr[3][2]);
-			m_y_axis_v[l_ndx]	= V<T>(p_matr[1][0], p_matr[1][1],p_matr[1][2]);
+			m_y_axis_v[l_ndx]	= V<T>(p_matr[1][0], p_matr[1][1], p_matr[1][2]);
 			m_y_axis_v[l_ndx].normalize_in_place();
 
 			m_quat_param_v[l_ndx]	= p_crv_ptr->get_closest_point_param(m_positon_v[l_ndx], 0., 1. ,p_divisions, p_percition);
@@ -204,32 +204,11 @@ namespace vufMath
 			l_matr.set_axis_z(l_z);
 
 			m_quaternion_a_v[l_ndx] = l_matr.get_quaternion();
+			//std::cout << "index " << p_index << " param: " << m_quat_param_v[l_ndx] << std::endl;
 			return true;
 		}
 		bool	sort_params_i()
 		{			
-			//--------------------------------
-			// pin params
-			if (m_pin_start == true)
-			{
-				for (uint32_t i = 0; i < (uint32_t)m_quat_indeces_v.size(); ++i)
-				{
-					if (m_quat_param_v[i] < m_pin_start_value)
-					{
-						m_quat_param_v[i] = m_pin_start_value;
-					}					
-				}
-			}
-			if (m_pin_end == true)
-			{
-				for (uint32_t i = 0; i < (uint32_t)m_quat_indeces_v.size(); ++i)
-				{
-					if (m_quat_param_v[i] > m_pin_end_value)
-					{
-						m_quat_param_v[i] = m_pin_end_value;
-					}
-				}
-			}
 			// Sort them by param
 			bool m_need_sort = true;
 			while (m_need_sort == true)
@@ -247,16 +226,10 @@ namespace vufMath
 					}
 				}
 			}	
-			if (m_pin_start == true)
-			{
-				m_quat_param_v[m_quat_indeces_v.front()] = m_pin_start_value;
-			}
-			if (m_pin_end == true)
-			{
-				m_quat_param_v[m_quat_indeces_v.back()] = m_pin_end_value;
-			}
 			//vufMath::vufNumericArrayFn<double> l_num_array(m_quat_param_v);
 			//VF_LOG_INFO(l_num_array.to_string().c_str());
+			//vufMath::vufNumericArrayFn<uint32_t> l_ind_array(m_quat_indeces_v);
+			//VF_LOG_INFO(l_ind_array.to_string().c_str());
 
 			return true;
 		}

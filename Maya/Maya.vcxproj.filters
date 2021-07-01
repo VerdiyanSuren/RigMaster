@@ -141,6 +141,9 @@
     <ClInclude Include="include\curves\vufCurveSlideNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\vufCurveSwitch.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\vufCurveToMayaNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
@@ -294,6 +297,9 @@
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveNullNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveSwitch.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveToMayaNode.cpp">

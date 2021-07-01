@@ -212,7 +212,7 @@ MStatus	vufCurveGetTransformNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			//std::cout << "Compute: " << l_offset + l_pos_param <<std::endl;
 			auto l_pos = l_in_data->m_internal_data->get_pos_at(l_offset + l_pos_param);
 			auto l_qtr = l_in_data->m_internal_data->get_quaternion_at(l_offset + l_rot_param);
-std::cout << l_qtr << std::endl;
+//std::cout << l_qtr << std::endl;
 			auto l_scl = l_in_data->m_internal_data->get_scale_at(l_offset + l_scl_param);
 			//std::cout << "q: " << l_qtr << std::endl;
 			vufMatrix_4d l_matr;

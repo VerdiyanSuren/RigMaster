@@ -1,5 +1,6 @@
-#include <curves/rotateFn/vufCurveQuatFrameNode.h>
+//#include <curves/vufCurve.h>
 #include <curves/vufCurveContatiner.h>
+#include <curves/rotateFn/vufCurveQuatFrameNode.h>
 #include <curves/quaternionFn/vufCurveQuaternionTransportFn.h>
 #include <data/vufMayaDataList.h>
 #include <vufMayaGlobalIncludes.h>
@@ -7,10 +8,12 @@
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnEnumAttribute.h>
+#include <maya/MFnUnitAttribute.h>
 #include <maya/MFnCompoundAttribute.h>
 #include <maya/MFnMatrixAttribute.h>
 #include <maya/MFnMatrixArrayData.h>
 #include <maya/MMatrixArray.h>
+#include <maya/MAngle.h>
 
 using namespace vufRM;
 using namespace vufMath;
@@ -44,6 +47,7 @@ MStatus	vufCurveQuatFrameNode::initialize()
 	MFnNumericAttribute		l_numeric_attr_fn;
 	MFnEnumAttribute		l_enum_attr_fn;
 	MFnMatrixAttribute		l_matr_attr_fn;
+	MFnUnitAttribute		l_unit_attr_fn;
 	MFnCompoundAttribute	l_compound_attr_fn;
 
 	g_quaternion_mode_attr = l_enum_attr_fn.create("applyRotation", "ar", 0, &l_status);
@@ -75,8 +79,11 @@ MStatus	vufCurveQuatFrameNode::initialize()
 	l_typed_attr_fn.setHidden(false);
 	l_typed_attr_fn.setKeyable(true);
 	l_status = addAttribute(g_transfoms_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
-
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_twist_attr,				"twistMultiplier",		"tm",	kDouble,	0.0);
+	
+	g_quaternion_twist_attr = l_unit_attr_fn.create("twistMultiplier", "tm", MFnUnitAttribute::kAngle, 0.0, &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_unit_attr_fn.setStorable(true));
+	CHECK_MSTATUS(l_unit_attr_fn.setChannelBox(true));
 	l_status = addAttribute(g_quaternion_twist_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// in data
 	g_data_in_attr = l_typed_attr_fn.create("inCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
@@ -161,8 +168,6 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_fcurve_ptr = l_fcurve_data->m_internal_data->get_curve_ptr();
 		}
 
-
-
 		vufCurveContainer_4d& l_in_container = *(l_in_data->m_internal_data.get());
 		vufCurveContainer_4d& l_out_container = *(l_out_data->m_internal_data.get());
 		// copy pointers from in container to out except quat
@@ -179,7 +184,7 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		int		l_division				= p_data.inputValue(g_quaternion_division_attr).asInt();
 		short	l_quat_mode				= p_data.inputValue(g_quaternion_mode_attr).asShort();
 		double	l_quat_offset_value		= p_data.inputValue(g_quaternion_offset_attr).asDouble();
-		double	l_quat_twist_value		= p_data.inputValue(g_quaternion_twist_attr).asDouble();
+		double	l_quat_twist_value		= p_data.inputValue(g_quaternion_twist_attr).asAngle().asRadians();
 #pragma endregion
 		if (l_quat_mode == 2 /*delete quaternion fn*/)
 		{
@@ -189,7 +194,7 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			return MS::kSuccess;
 		}
 		//auto l_quat_ptr = l_store_data->m_internal_data->as_tranport_fn();
-		l_quat_ptr->set_division_i(l_division);
+		l_quat_ptr->set_division_i(l_division, l_crv_ptr);
 		l_quat_ptr->set_root_item_i(*( (vufMatrix4<double>*)(& l_matr) ));
 		l_quat_ptr->set_fcurve(l_fcurve_ptr);
 		l_quat_ptr->set_twist_multiplier(l_quat_twist_value);
@@ -202,7 +207,7 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		//l_quat_ptr->set_item_count(l_division);
 		//std::cout << l_matr << std::endl;
 		//l_quat_ptr->set_item_at(0, *((vufMatrix4<double>*)(&l_matr)) );
-		l_quat_ptr->compute_bind_params_i(l_crv_ptr, l_division);
+		l_quat_ptr->compute_bind_params_i(l_crv_ptr);
 		l_quat_ptr->match_quaternions_i(l_out_container);
 		p_data.setClean(g_data_store_attr);
 		p_data.setClean(g_data_out_attr);
