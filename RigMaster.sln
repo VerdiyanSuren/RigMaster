@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.31402.337
-MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core\Core.vcxproj", "{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW", "GLFW\GLFW.vcxproj", "{154B857C-0182-860D-AA6E-6C109684020F}"
@@ -16,9 +14,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Math", "Math\Math.vcxproj", "{AFF4887C-9B2B-8A0D-4418-7010302E060F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Maya", "Maya\Maya.vcxproj", "{4DF5887C-392C-8A0D-E218-7010CE2E060F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2EB4837C-1AEB-840D-C3D7-6A10AFED000F} = {2EB4837C-1AEB-840D-C3D7-6A10AFED000F}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenCL", "OpenCL\OpenCL.vcxproj", "{06864AC8-F227-759E-DBE2-88F2C723FCEE}"
 EndProject
@@ -221,8 +216,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {69D3263A-608D-4247-B94C-626259488983}
 	EndGlobalSection
 EndGlobal

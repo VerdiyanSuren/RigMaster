@@ -415,9 +415,11 @@
     <ClInclude Include="include\curves\explicit\vufCurveExplicit.h" />
     <ClInclude Include="include\curves\explicit\vufCurveOpenBSpline.h" />
     <ClInclude Include="include\curves\implicit\vufCurveImplicit.h" />
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternion2Ends.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionBlendFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionCloseFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionFn.h" />
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionParamsFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionTransportFn.h" />
     <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildFn.h" />
     <ClInclude Include="include\curves\remapFn\vufCurveRemapFn.h" />

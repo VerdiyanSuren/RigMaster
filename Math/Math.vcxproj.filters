@@ -54,6 +54,9 @@
     <ClInclude Include="include\curves\implicit\vufCurveImplicit.h">
       <Filter>include\curves\implicit</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternion2Ends.h">
+      <Filter>include\curves\quaternionFn</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionBlendFn.h">
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
@@ -61,6 +64,9 @@
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionFn.h">
+      <Filter>include\curves\quaternionFn</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionParamsFn.h">
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionTransportFn.h">

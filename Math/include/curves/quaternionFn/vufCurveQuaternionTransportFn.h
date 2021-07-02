@@ -1,5 +1,5 @@
-#ifndef VF_MATH_QUAT_TRANSPORT_FN
-#define VF_MATH_QUAT_TRANSPORT_FN
+#ifndef VF_MATH_QUAT_TRANSPORT_FN_H
+#define VF_MATH_QUAT_TRANSPORT_FN_H
 
 
 namespace vufMath
@@ -12,7 +12,6 @@ namespace vufMath
 	{
 	private:
 		vufCurveQuaternionTransportFn() :vufCurveQuaternionFn<T, V>() {}
-	public:
 	public:
 		/// creator
 		static std::shared_ptr<vufCurveQuaternionTransportFn<T, V>> create()
@@ -389,7 +388,7 @@ namespace vufMath
 
 		virtual std::shared_ptr < vufCurveQuaternionTransportFn<T, V> > as_tranport_fn() const override
 		{
-			return std::static_pointer_cast<vufCurveQuaternionTransportFn<T, V>> (vufCurveQuaternionTransportFn<T, V>::m_this.lock());
+			return std::static_pointer_cast<vufCurveQuaternionTransportFn<T, V>> (vufCurveQuaternionFn<T, V>::m_this.lock());
 		}
 
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const override
@@ -540,7 +539,7 @@ namespace vufMath
 		{
 			return vufCurveQuaternionFn<T, V>::decode_from_buff(p_buff, p_offset);
 		}
-	//private:
+	private:
 		std::vector <V<T>>					m_y_axis_v;			// y axices of nodes nodes array
 		std::vector< V<T>>					m_tangent_v;		// quaternion nodes 3d tangents array
 		std::vector< vufQuaternion<T>>		m_quaternion_a_v;	// each node has pair of quaternions ( a := my, b := next)
