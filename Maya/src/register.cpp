@@ -24,6 +24,7 @@
 #include <curves/vufCurveBlendNode.h>
 #include <curves/rotateFn/vufCurveQuatCloseNode.h>
 #include <curves/rotateFn/vufCurveQuatFrameNode.h>
+#include <curves/rotateFn/vufCurveQuat2EndsNode.h>
 #include <curves/vufCurveNullNode.h>
 #include <curves/get/vufCurveGetTransformNode.h>
 #include <curves/get/vufCurveClosestPointNode.h>
@@ -65,8 +66,9 @@ const MTypeId	vufCurveBlendNode::			g_id(0x298830);	const MString	vufCurveBlendN
 const MTypeId	vufCurveNullNode::			g_id(0x298930);	const MString	vufCurveNullNode::			g_type_name("vufCurveNull");
 const MTypeId	vufCurveGetTransformNode::	g_id(0x299030);	const MString	vufCurveGetTransformNode::	g_type_name("vufCurveGetXForm");
 const MTypeId	vufCurveClosestPointNode::	g_id(0x299130);	const MString	vufCurveClosestPointNode::	g_type_name("vufCurveClosestPoint");
-const MTypeId	vufCurveQuatCloseNode::		g_id(0x299230);	const MString	vufCurveQuatCloseNode::		g_type_name("vufCurveRotationClosest");
-const MTypeId	vufCurveQuatFrameNode::		g_id(0x299330);	const MString	vufCurveQuatFrameNode::		g_type_name("vufCurveRotationFrame");
+const MTypeId	vufCurveQuatCloseNode::		g_id(0x299230);	const MString	vufCurveQuatCloseNode::		g_type_name("vufCurveRotateClosest");
+const MTypeId	vufCurveQuatFrameNode::		g_id(0x299330);	const MString	vufCurveQuatFrameNode::		g_type_name("vufCurveRotateFrame");
+const MTypeId	vufCurveQuat2EndsNode::		g_id(0x299430);	const MString	vufCurveQuat2EndsNode::		g_type_name("vufCurveRotate2Ends");
 
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
@@ -108,6 +110,7 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufCurveClosestPointNode);
 	VF_REGISTER_NODE(vufCurveQuatCloseNode);
 	VF_REGISTER_NODE(vufCurveQuatFrameNode);
+	VF_REGISTER_NODE(vufCurveQuat2EndsNode);
 
 	VF_RM_REGISTER_LOCATOR(vufCurveLocator, l_plugin, l_status);
 	// register commands
@@ -145,6 +148,7 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufCurveClosestPointNode);
 	VF_DEREGISTER_NODE(vufCurveQuatCloseNode);
 	VF_DEREGISTER_NODE(vufCurveQuatFrameNode);
+	VF_DEREGISTER_NODE(vufCurveQuat2EndsNode);	
 
 	VF_DEREGISTER_DATA(mpxMayaLuaPortWrapper);
 	VF_DEREGISTER_DATA(mpxMayaLuaTxtWrapper);

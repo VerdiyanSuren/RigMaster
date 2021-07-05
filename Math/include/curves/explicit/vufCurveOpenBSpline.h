@@ -4,7 +4,7 @@
 #include <typeinfo>
 #include <iostream>
 #include <curves/explicit/vufCurveExplicit.h>
-#include <curves/vufMathCurvesInclude.h>
+#include <curves/vufCurvesInclude.h>
 
 //#define VF_MATH_DEBUG_BSPLINE
 namespace vufMath

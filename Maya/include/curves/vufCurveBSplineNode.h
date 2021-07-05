@@ -4,6 +4,8 @@
 #include <maya/MPxNode.h>
 #include <maya/MMatrixArray.h>
 #include <curves/vufCurvesInclude.h>
+#include <vufMayaGlobalIncludes.h>
+#include <curves/vufMayaCurvesInclude.h>
 
 namespace vufRM
 {

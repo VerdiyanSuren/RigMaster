@@ -9,9 +9,11 @@
 #include <curves/rebuildFn/vufCurveRebuildFn.h>
 
 #include <curves/quaternionFn/vufCurveQuaternionFn.h>
+
 #include <curves/quaternionFn/vufCurveQuaternionCloseFn.h>
 #include <curves/quaternionFn/vufCurveQuaternionTransportFn.h>
-#include <curves/quaternionFn/vufCurveQuaternion2Ends.h>
+#include <curves/quaternionFn/vufCurveQuaternion2EndsFn.h>
+#include <curves/quaternionFn/vufCurveQuaternionParamsFn.h>
 #include <curves/quaternionFn/vufCurveQuaternionBlendFn.h>
 
 #include <curves/scaleFn/vufCurveScaleFn.h>

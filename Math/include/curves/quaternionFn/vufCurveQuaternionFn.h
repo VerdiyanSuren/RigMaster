@@ -13,6 +13,7 @@ namespace vufMath
 	template <class T, template<typename> class V>	class vufCurveQuaternionCloseFn;
 	template <class T, template<typename> class V>	class vufCurveQuaternionTransportFn;
 	template <class T, template<typename> class V>	class vufCurveQuaternion2EndsFn;
+	template <class T, template<typename> class V>	class vufCurveQuaternionParamFn;
 	template <class T, template<typename> class V>	class vufCurveQuaternionBlendFn;
 
 #pragma region VF_CURVE_FN_BASE
@@ -23,7 +24,8 @@ namespace vufMath
 		k_closest	= 1,
 		k_transport = 2,
 		k_2_ends	= 3,
-		k_blend		= 4
+		k_param		= 4,
+		k_blend		= 5
 	};
 
 	// functions set to work with specific part 
@@ -47,6 +49,10 @@ namespace vufMath
 			{
 				return vufCurveQuaternion2EndsFn<T, V>::create();
 			}
+			if (p_type == vufCurveQuatFnType::k_param)
+			{
+				return vufCurveQuaternionParamFn<T, V>::create();
+			}
 			if (p_type == vufCurveQuatFnType::k_blend)
 			{
 				return vufCurveQuaternionBlendFn<T, V>::create();
@@ -61,8 +67,9 @@ namespace vufMath
 		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>>	get_copy() const = 0;
 		// cast interface
 		virtual std::shared_ptr < vufCurveQuaternionCloseFn<T, V> >		as_closest_fn()		const { return nullptr; }
-		virtual std::shared_ptr < vufCurveQuaternionTransportFn<T, V> > as_tranport_fn()	const { return nullptr; }
+		virtual std::shared_ptr < vufCurveQuaternionTransportFn<T, V> > as_transport_fn()	const { return nullptr; }
 		virtual std::shared_ptr < vufCurveQuaternion2EndsFn<T, V> >		as_2ends_fn()		const { return nullptr; }
+		virtual std::shared_ptr < vufCurveQuaternionParamFn<T, V> >		as_params_fn()		const { return nullptr; }
 		virtual std::shared_ptr < vufCurveQuaternionBlendFn<T, V> >		as_blend_fn()		const { return nullptr; }
 
 		// serialization interface

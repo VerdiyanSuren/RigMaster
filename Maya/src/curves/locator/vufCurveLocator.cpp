@@ -4,6 +4,7 @@
 #include <curves/vufCurve.h>
 #include <curves/vufCurveContatiner.h>
 #include <curves/vufCurvesInclude.h>
+#include <vufMayaGlobalIncludes.h>
 
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnTypedAttribute.h>

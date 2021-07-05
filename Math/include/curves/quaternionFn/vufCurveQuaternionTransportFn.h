@@ -1,6 +1,7 @@
 #ifndef VF_MATH_QUAT_TRANSPORT_FN_H
 #define VF_MATH_QUAT_TRANSPORT_FN_H
 
+#include <curves/quaternionFn/vufCurveQuaternionInclude.h>
 
 namespace vufMath
 {
@@ -186,6 +187,9 @@ namespace vufMath
 		{
 			//-----------------------------------
 			// for first root param start
+			VF_MATH_QUAT_TRANPORT_CHAIN_FORWARD(p_crv_ptr, m_tangent_v, m_quat_param_v, m_y_axis_v);
+			VF_MATH_QUAT_Y_AXIS_TO_QUATERNION(m_tangent_v, m_quaternion_a_v, m_y_axis_v);
+			/*
 			m_tangent_v[0] = p_crv_ptr->get_tangent_normalized_at(m_quat_param_v[0]);
 			m_y_axis_v[0].make_ortho_to_in_place(m_tangent_v[0]);
 			m_y_axis_v[0].normalize_in_place();
@@ -223,6 +227,7 @@ namespace vufMath
 				l_matr.set_axis_z(l_z);
 				m_quaternion_a_v[i] = l_matr.get_quaternion();
 			}
+			*/
 			return true;
 		}
 		bool						compute_bind_params_close_i(const std::shared_ptr<vufCurve<T, V> > p_crv_ptr)
@@ -231,6 +236,9 @@ namespace vufMath
 			// forward direction
 			//-----------------------------------
 			// for first root param start
+			VF_MATH_QUAT_TRANPORT_CHAIN_FORWARD(p_crv_ptr, m_tangent_v, m_quat_param_v, m_y_axis_v);
+			VF_MATH_QUAT_Y_AXIS_TO_QUATERNION(m_tangent_v, m_quaternion_a_v, m_y_axis_v);
+			/*
 			m_tangent_v[0] = p_crv_ptr->get_tangent_normalized_at(m_quat_param_v[0]);
 			m_y_axis_v[0].make_ortho_to_in_place(m_tangent_v[0]);
 			m_y_axis_v[0].normalize_in_place();
@@ -268,6 +276,7 @@ namespace vufMath
 				l_matr.set_axis_z(l_z);
 				m_quaternion_a_v[i] = l_matr.get_quaternion();
 			}
+			*/
 			//-----------------------------------------------------------------------
 			// reverse direction
 			V<T> l_tangent_prev = m_tangent_v[0];
@@ -376,7 +385,7 @@ namespace vufMath
 			return get_quaternion_open_curve_at_i(*l_crv_ptr, p_val, p_rebuild_val);
 		}
 
-		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>> get_copy() const override
+		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>> get_copy()						const override
 		{
 			auto l_ptr = create();
 			l_ptr->m_tangent_v		= m_tangent_v;
@@ -385,8 +394,7 @@ namespace vufMath
 			l_ptr->m_quat_param_v	= m_quat_param_v;
 			return l_ptr;
 		}
-
-		virtual std::shared_ptr < vufCurveQuaternionTransportFn<T, V> > as_tranport_fn() const override
+		virtual std::shared_ptr < vufCurveQuaternionTransportFn<T, V> > as_transport_fn()	const override
 		{
 			return std::static_pointer_cast<vufCurveQuaternionTransportFn<T, V>> (vufCurveQuaternionFn<T, V>::m_this.lock());
 		}

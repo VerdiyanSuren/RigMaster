@@ -114,6 +114,9 @@
     <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildNode.h">
       <Filter>include\curves\rebuildFn</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\rotateFn\vufCurveQuat2EndsNode.h">
+      <Filter>include\curves\rotateFn</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatCloseNode.h">
       <Filter>include\curves\rotateFn</Filter>
     </ClInclude>
@@ -147,7 +150,7 @@
     <ClInclude Include="include\curves\vufCurveToMayaNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurvesInclude.h">
+    <ClInclude Include="include\curves\vufMayaCurvesInclude.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\data\vufData.h">
@@ -274,6 +277,9 @@
     </ClCompile>
     <ClCompile Include="src\curves\rebuildFn\vufCurveRebuildNode.cpp">
       <Filter>src\curves\rebuildFn</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\rotateFn\vufCurveQuat2EndsNode.cpp">
+      <Filter>src\curves\rotateFn</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\rotateFn\vufCurveQuatCloseNode.cpp">
       <Filter>src\curves\rotateFn</Filter>

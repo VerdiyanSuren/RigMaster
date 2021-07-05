@@ -57,7 +57,7 @@ MStatus	vufCurveQuatFrameNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.addField("Disable", 2));
 	CHECK_MSTATUS(l_enum_attr_fn.setDefault(false));
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
-	/* Division for closest point*/
+	/* Division for quaternions sample*/
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_division_attr,	"division",			"div", kInt, 0);
 	l_numeric_attr_fn.setMin(1);
 	l_numeric_attr_fn.setDefault(10);
@@ -176,7 +176,7 @@ MStatus	vufCurveQuatFrameNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		l_out_container.set_scale_fn_ptr(l_in_container.get_scale_fn_ptr());
 		//l_out_container.set_remap_fn_ptr(l_in_container.get_remap_fn_ptr());
 
-		auto l_quat_ptr = l_store_data->m_internal_data->as_tranport_fn();
+		auto l_quat_ptr = l_store_data->m_internal_data->as_transport_fn();
 		auto l_crv_ptr = l_out_container.get_curve_ptr();
 		l_out_container.set_quaternion_fn_ptr(l_store_data->m_internal_data);
 #pragma region HANDLE_PARAMS

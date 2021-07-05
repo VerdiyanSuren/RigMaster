@@ -54,7 +54,7 @@
     <ClInclude Include="include\curves\implicit\vufCurveImplicit.h">
       <Filter>include\curves\implicit</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternion2Ends.h">
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternion2EndsFn.h">
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionBlendFn.h">
@@ -64,6 +64,9 @@
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionFn.h">
+      <Filter>include\curves\quaternionFn</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionInclude.h">
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionParamsFn.h">
@@ -99,7 +102,7 @@
     <ClInclude Include="include\curves\vufCurveSlide.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufMathCurvesInclude.h">
+    <ClInclude Include="include\curves\vufCurvesInclude.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\math\vufMatrix.h">

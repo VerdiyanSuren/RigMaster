@@ -461,6 +461,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClInclude Include="include\curves\get\vufCurveGetTransformNode.h" />
     <ClInclude Include="include\curves\locator\vufCurveLocator.h" />
     <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildNode.h" />
+    <ClInclude Include="include\curves\rotateFn\vufCurveQuat2EndsNode.h" />
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatCloseNode.h" />
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatFrameNode.h" />
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatParamNode.h" />
@@ -472,7 +473,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClInclude Include="include\curves\vufCurveSlideNode.h" />
     <ClInclude Include="include\curves\vufCurveSwitch.h" />
     <ClInclude Include="include\curves\vufCurveToMayaNode.h" />
-    <ClInclude Include="include\curves\vufCurvesInclude.h" />
+    <ClInclude Include="include\curves\vufMayaCurvesInclude.h" />
     <ClInclude Include="include\data\vufData.h" />
     <ClInclude Include="include\data\vufDataTemplate.h" />
     <ClInclude Include="include\data\vufMayaDataList.h" />
@@ -516,6 +517,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClCompile Include="src\curves\get\vufCurveGetTransformNode.cpp" />
     <ClCompile Include="src\curves\locator\vufCurveLocator.cpp" />
     <ClCompile Include="src\curves\rebuildFn\vufCurveRebuildNode.cpp" />
+    <ClCompile Include="src\curves\rotateFn\vufCurveQuat2EndsNode.cpp" />
     <ClCompile Include="src\curves\rotateFn\vufCurveQuatCloseNode.cpp" />
     <ClCompile Include="src\curves\rotateFn\vufCurveQuatFrameNode.cpp" />
     <ClCompile Include="src\curves\rotateFn\vufCurveQuatParamNode.cpp" />
