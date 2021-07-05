@@ -73,18 +73,11 @@ namespace vufMath
 		{
 			auto l_ptr = create();
 
-			l_ptr->m_pin_start = m_pin_start;
-			l_ptr->m_pin_start_value = m_pin_start_value;
-			l_ptr->m_pin_end = m_pin_end;
-			l_ptr->m_pin_end_value = m_pin_end_value;
-			l_ptr->m_offset = m_offset;
-
-			l_ptr->m_y_axis_v = m_y_axis_v;
-			l_ptr->m_positon_v = m_positon_v;
+			l_ptr->m_y_axis_v		= m_y_axis_v;
+			l_ptr->m_positon_v		= m_positon_v;
 			l_ptr->m_quaternion_a_v = m_quaternion_a_v;
 			l_ptr->m_quaternion_b_v = m_quaternion_b_v;
-			l_ptr->m_quat_param_v = m_quat_param_v;
-			l_ptr->m_quat_indeces_v = m_quat_indeces_v;
+			l_ptr->m_quat_param_v	= m_quat_param_v;
 			return l_ptr;
 		}
 
@@ -181,14 +174,7 @@ namespace vufMath
 			{
 				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_quat_param_v[0], l_size * sizeof(T));
 			}
-			// m_quat_indeces_v
-			l_size = m_quat_indeces_v.size();
-			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
-			if (l_size > 0)
-			{
-				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_quat_indeces_v[0], l_size * sizeof(uint32_t));
-			}
-
+			
 			return p_offset;
 		}
 		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)		override

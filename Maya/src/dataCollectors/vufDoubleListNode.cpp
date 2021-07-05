@@ -31,7 +31,7 @@ MStatus	vufDoubleListNode::initialize()
 	MFnNumericAttribute l_numeric_attr_fn;
 	//-------------------------------------------------------------------------------------------
 
-	g_double_in_attr = l_numeric_attr_fn.create("xForm", "xf", MFnNumericData::kDouble, 0, &l_status);
+	g_double_in_attr = l_numeric_attr_fn.create("value", "val", MFnNumericData::kDouble, 0, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_numeric_attr_fn.setWritable(true);
 	l_numeric_attr_fn.setStorable(true);

@@ -16,7 +16,8 @@ namespace vufRM
 
 		static const MTypeId	g_id;
 		static const MString	g_type_name;
-
+			
+		static MObject	g_enable_attr;
 		static MObject	g_doubles_attr;
 		static MObject	g_transfoms_attr;
 		static MObject	g_data_in_attr;
