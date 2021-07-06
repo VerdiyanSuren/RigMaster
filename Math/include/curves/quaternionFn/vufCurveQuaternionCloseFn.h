@@ -265,19 +265,6 @@ namespace vufMath
 			return m_quat_param_v;
 		}
 
-		bool	get_pin_start() const		{ return m_pin_start; }
-		void	set_pin_start(bool p_val)	{ m_pin_start = p_val; }
-		T		get_pin_start_value() const { return m_pin_start_value; }
-		void	set_pin_start_value(T p_val){ m_pin_start_value = p_val; }
-
-		bool	get_pin_end() const			{ return m_pin_end; }
-		void	set_pin_end(bool p_val)		{ m_pin_end = p_val; }
-		T		get_pin_end_value() const	{ return m_pin_end_value; }
-		void	set_pin_end_value(T p_val)	{ m_pin_end_value = p_val; }
-
-		T		get_offset() const			{ return m_offset; }
-		void	set_offset(T p_val)			{ m_offset = p_val; }
-
 		//virtuals
 		virtual vufCurveQuatFnType	get_type() const override { return vufCurveQuatFnType::k_closest; }
 		virtual vufQuaternion<T>	get_quaternion_at(const vufCurveContainer<T, V>& p_curve_container, T p_val, T p_rebuild_value) const override
@@ -293,12 +280,6 @@ namespace vufMath
 		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>> get_copy() const override
 		{
 			auto l_ptr = create();
-
-			l_ptr->m_pin_start			= m_pin_start;
-			l_ptr->m_pin_start_value	= m_pin_start_value;
-			l_ptr->m_pin_end			= m_pin_end;
-			l_ptr->m_pin_end_value		= m_pin_end_value;
-			l_ptr->m_offset				= m_offset;
 
 			l_ptr->m_y_axis_v		= m_y_axis_v;
 			l_ptr->m_positon_v		= m_positon_v;
@@ -323,12 +304,6 @@ namespace vufMath
 
 			l_ss << l_str_offset << "[ vufCurveQuaternionCloseFn < " << typeid(T).name() << ", " << typeid(V).name() << "> ]" << std::endl;
 			l_ss << vufCurveQuaternionFn<T, V>::to_string(-1, p_tab_count + 1);
-
-			l_ss << l_str_offset << "pin start......." << m_pin_start << std::endl;
-			l_ss << l_str_offset << "pin start value." << m_pin_start_value << std::endl;
-			l_ss << l_str_offset << "pin end........." << m_pin_end << std::endl;
-			l_ss << l_str_offset << "pin end value..." << m_pin_end_value << std::endl;
-			l_ss << l_str_offset << "offset.........." << m_offset << std::endl;
 
 			l_ss << l_str_offset << "____y_axis: ";
 			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_y_axis_v);
@@ -359,11 +334,6 @@ namespace vufMath
 		virtual uint64_t		get_binary_size()														const override
 		{
 			uint64_t l_size = vufCurveQuaternionFn<T, V>::get_binary_size();
-			l_size += sizeof(m_pin_start);
-			l_size += sizeof(m_pin_start_value);
-			l_size += sizeof(m_pin_end);
-			l_size += sizeof(m_pin_end_value);
-			l_size += sizeof(m_offset);
 
 			l_size += sizeof(l_size) + m_y_axis_v.size() * sizeof(V<T>);
 			l_size += sizeof(l_size) + m_positon_v.size() * sizeof(V<T>);
@@ -382,12 +352,6 @@ namespace vufMath
 				p_buff.resize(p_offset + l_size);
 			}
 			p_offset = vufCurveQuaternionFn<T, V>::to_binary(p_buff, p_offset);
-			
-			std::memcpy(&p_buff[p_offset], &m_pin_start,		sizeof(m_pin_start));		p_offset += sizeof(m_pin_start);
-			std::memcpy(&p_buff[p_offset], &m_pin_start_value,	sizeof(m_pin_start_value));	p_offset += sizeof(m_pin_start_value);
-			std::memcpy(&p_buff[p_offset], &m_pin_end,			sizeof(m_pin_end));			p_offset += sizeof(m_pin_end);
-			std::memcpy(&p_buff[p_offset], &m_pin_end_value,	sizeof(m_pin_end_value));	p_offset += sizeof(m_pin_end_value);
-			std::memcpy(&p_buff[p_offset], &m_offset,			sizeof(m_offset));			p_offset += sizeof(m_offset);
 			
 			// m_y_axis_v
 			l_size = m_y_axis_v.size();
@@ -439,12 +403,6 @@ namespace vufMath
 			uint64_t l_size;
 			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff, p_version, p_offset);
 
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_start,		sizeof(m_pin_start));
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_start_value,	sizeof(m_pin_start_value));
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_end,			sizeof(m_pin_end));
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_end_value,	sizeof(m_pin_end_value));
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset,			sizeof(m_offset));
-			
 			// m_y_axis_v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));
 			m_y_axis_v.resize(l_size);
@@ -499,12 +457,6 @@ namespace vufMath
 			return vufCurveQuaternionFn<T, V>::decode_from_buff(p_buff, p_offset);
 		}
 	private:
-		bool	m_pin_start = false;
-		T		m_pin_start_value = 0.0;
-		bool	m_pin_end = false;
-		T		m_pin_end_value = 1.0;
-		T		m_offset = 0.;
-
 		std::vector <V<T>>				m_y_axis_v;			// y axices of nodes nodes array
 		std::vector< V<T>>				m_positon_v;		// quaternion nodes 3d position array
 		std::vector< vufQuaternion<T>>	m_quaternion_a_v;	// each node has pair of quaternions ( a := my, b := next)

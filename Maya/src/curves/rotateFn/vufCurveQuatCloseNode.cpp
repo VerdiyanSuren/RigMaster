@@ -14,15 +14,8 @@
 using namespace vufRM;
 using namespace vufMath;
 
-MObject	vufCurveQuatCloseNode::g_quaternion_compound_attr;
 MObject	vufCurveQuatCloseNode::g_quaternion_division_attr;
 MObject	vufCurveQuatCloseNode::g_quaternion_mode_attr;
-MObject	vufCurveQuatCloseNode::g_quaternion_pin_start_attr;
-MObject	vufCurveQuatCloseNode::g_quaternion_pin_start_value_attr;
-MObject	vufCurveQuatCloseNode::g_quaternion_pin_end_attr;
-MObject	vufCurveQuatCloseNode::g_quaternion_pin_end_value_attr;
-MObject	vufCurveQuatCloseNode::g_quaternion_offset_attr;
-
 MObject	vufCurveQuatCloseNode::g_transfoms_attr;
 MObject	vufCurveQuatCloseNode::g_data_in_attr;
 MObject	vufCurveQuatCloseNode::g_data_out_attr;
@@ -51,27 +44,12 @@ MStatus	vufCurveQuatCloseNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.addField("Disable", 2));
 	CHECK_MSTATUS(l_enum_attr_fn.setDefault(false));
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
+	l_status = addAttribute(g_quaternion_mode_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	/* Division for closest point*/
 
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_division_attr, "division", "div", kInt, 10);
 	l_numeric_attr_fn.setMin(2);
-	/* Pin Start Quaternion */
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_start_attr,			"rotationPinStart",		"rsp", kBoolean, false);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_start_value_attr,	"rotaionPinStartValue", "rsv", kDouble, 0.0);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_end_attr,			"rotationPinEnd",		"rnp", kBoolean, false);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_end_value_attr,		"rotationPinEndValue",	"rnv", kDouble, 1.0);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_offset_attr,			"rotationOffset",		"rof", kDouble, 0.0);
-
-	g_quaternion_compound_attr = l_compound_attr_fn.create("Rotation", "r", &l_status);
-	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_division_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_mode_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_start_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_start_value_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_end_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_end_value_attr));
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_offset_attr));
-	l_status = addAttribute(g_quaternion_compound_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_quaternion_division_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 
 	g_transfoms_attr = l_typed_attr_fn.create("xformList", "xfr", MFnData::kMatrixArray, MObject::kNullObj, &l_status);
@@ -104,14 +82,8 @@ MStatus	vufCurveQuatCloseNode::initialize()
 	l_typed_attr_fn.setHidden(true);
 	l_status = addAttribute(g_data_store_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
-	l_status = attributeAffects(g_quaternion_compound_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_quaternion_division_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_quaternion_mode_attr,				g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_pin_start_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_pin_start_value_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_pin_end_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_pin_end_value_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_quaternion_offset_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	l_status = attributeAffects(g_data_in_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_transfoms_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -132,13 +104,7 @@ MStatus	vufCurveQuatCloseNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveWrapper,	vufCurveData,		p_data, g_data_out_attr,	l_out_data,		m_gen_id);
 		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveQuatWrapper, vufCurveQuatData,	p_data, g_data_store_attr,	l_store_data,	m_gen_id);
 		VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveData, p_data, g_data_in_attr, l_in_data);
-		//------------------------------------------------------------------------------
-		// reference check
-		auto l_data_owner_id = l_out_data->get_owner_id();
-		if (l_out_data->get_owner_id() != m_gen_id)
-		{
-			//To Do Copy data and make mine
-		}
+		//------------------------------------------------------------------------------		
 		l_out_data->set_owner_id(m_gen_id);
 		if (l_out_data->m_internal_data == nullptr)
 		{
@@ -189,11 +155,6 @@ if (l_transforms_sz < 2)
 #pragma region HANDLE_PARAMS
 		int		l_division				= p_data.inputValue(g_quaternion_division_attr).asInt();
 		short	l_quat_mode				= p_data.inputValue(g_quaternion_mode_attr).asShort();
-		bool	l_quat_pin_start		= p_data.inputValue(g_quaternion_pin_start_attr).asBool();
-		double	l_quat_pin_start_value	= p_data.inputValue(g_quaternion_pin_start_value_attr).asDouble();
-		bool	l_quat_pin_end			= p_data.inputValue(g_quaternion_pin_end_attr).asBool();
-		double	l_quat_pin_end_value	= p_data.inputValue(g_quaternion_pin_end_value_attr).asBool();
-		double	l_quat_offset_value		= p_data.inputValue(g_quaternion_offset_attr).asBool();
 #pragma endregion
 		if (l_quat_mode == 2 /*delete quaternion fn*/)
 		{
@@ -210,12 +171,6 @@ if (l_quat_ptr == nullptr)
 	p_data.setClean(g_data_out_attr);
 	return MS::kSuccess;
 }
-		l_quat_ptr->set_pin_start(l_quat_pin_start);
-		l_quat_ptr->set_pin_start_value(l_quat_pin_start_value);
-		l_quat_ptr->set_pin_end(l_quat_pin_end);
-		l_quat_ptr->set_pin_end_value(l_quat_pin_end_value);
-		l_quat_ptr->set_offset(l_quat_offset_value);
-
 		l_quat_ptr->set_item_count_i(l_transforms_sz);
 		if (l_quat_mode == 0 /* apply. always refresh */ )
 		{

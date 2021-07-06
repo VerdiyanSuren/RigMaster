@@ -228,11 +228,6 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			if (l_quaternion_ptr != nullptr)
 			{
 				auto l_qtr_ptr = l_quaternion_ptr->as_closest_fn();
-				l_qtr_ptr->set_pin_start(l_quat_pin_start);
-				l_qtr_ptr->set_pin_start_value(l_quat_pin_start_value);
-				l_qtr_ptr->set_pin_end(l_quat_pin_end);
-				l_qtr_ptr->set_pin_end_value(l_quat_pin_end_value);
-				l_qtr_ptr->set_offset(l_quat_offset_value);
 				l_qtr_ptr->set_item_count_i(l_transforms_sz);
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
@@ -252,12 +247,6 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			auto l_qtr_ptr = l_quaternion_ptr->as_closest_fn();
 			if (l_qtr_ptr != nullptr)
 			{
-
-				l_qtr_ptr->set_pin_start(l_quat_pin_start);
-				l_qtr_ptr->set_pin_start_value(l_quat_pin_start_value);
-				l_qtr_ptr->set_pin_end(l_quat_pin_end);
-				l_qtr_ptr->set_pin_end_value(l_quat_pin_end_value);
-				l_qtr_ptr->set_offset(l_quat_offset_value);
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
 					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];

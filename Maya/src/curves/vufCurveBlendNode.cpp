@@ -4,7 +4,7 @@
 #include <maya/MFnCompoundAttribute.h>
 
 #include <curves/vufCurveBlendNode.h>
-#include <curves/vufCurveBlend.h>
+#include <curves/implicit/vufCurveBlend.h>
 #include <data/vufMayaDataList.h>
 #include <vufMayaGlobalIncludes.h>
 

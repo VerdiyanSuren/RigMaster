@@ -31,6 +31,9 @@
     <Filter Include="include\mathUtils">
       <UniqueIdentifier>{336F58CE-9F85-5664-E8FC-E185545227EC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\noise">
+      <UniqueIdentifier>{361BD0A5-A2DB-4BDC-6B16-9559D79590B8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\unitTests">
       <UniqueIdentifier>{4BEBB63E-B701-B5D4-0079-40F66CCE855C}</UniqueIdentifier>
     </Filter>
@@ -51,7 +54,16 @@
     <ClInclude Include="include\curves\explicit\vufCurveOpenBSpline.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\implicit\vufCurveBlend.h">
+      <Filter>include\curves\implicit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\implicit\vufCurveCompose.h">
+      <Filter>include\curves\implicit</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\implicit\vufCurveImplicit.h">
+      <Filter>include\curves\implicit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\implicit\vufCurveSlide.h">
       <Filter>include\curves\implicit</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternion2EndsFn.h">
@@ -84,16 +96,19 @@
     <ClInclude Include="include\curves\scaleFn\vufCurveScale2EndsFn.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleBlendFn.h">
+      <Filter>include\curves\scaleFn</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseFn.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurve.h">
-      <Filter>include\curves</Filter>
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleParamFn.h">
+      <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurveBlend.h">
+    <ClInclude Include="include\curves\vufCurve.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveContatiner.h">
@@ -116,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="include\mathUtils\vufMathUtil.h">
       <Filter>include\mathUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\noise\vufPelinNoise.h">
+      <Filter>include\noise</Filter>
     </ClInclude>
     <ClInclude Include="include\unitTests\curve\curveTest.h">
       <Filter>include\unitTests\curve</Filter>

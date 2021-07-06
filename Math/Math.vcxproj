@@ -414,7 +414,10 @@
     <ClInclude Include="include\curves\explicit\vufCurveCloseBSpline.h" />
     <ClInclude Include="include\curves\explicit\vufCurveExplicit.h" />
     <ClInclude Include="include\curves\explicit\vufCurveOpenBSpline.h" />
+    <ClInclude Include="include\curves\implicit\vufCurveBlend.h" />
+    <ClInclude Include="include\curves\implicit\vufCurveCompose.h" />
     <ClInclude Include="include\curves\implicit\vufCurveImplicit.h" />
+    <ClInclude Include="include\curves\implicit\vufCurveSlide.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternion2EndsFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionBlendFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionCloseFn.h" />
@@ -425,10 +428,11 @@
     <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildFn.h" />
     <ClInclude Include="include\curves\remapFn\vufCurveRemapFn.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScale2EndsFn.h" />
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleBlendFn.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseFn.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h" />
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleParamFn.h" />
     <ClInclude Include="include\curves\vufCurve.h" />
-    <ClInclude Include="include\curves\vufCurveBlend.h" />
     <ClInclude Include="include\curves\vufCurveContatiner.h" />
     <ClInclude Include="include\curves\vufCurveSlide.h" />
     <ClInclude Include="include\curves\vufCurvesInclude.h" />
@@ -436,6 +440,7 @@
     <ClInclude Include="include\math\vufQuaternion.h" />
     <ClInclude Include="include\math\vufVector.h" />
     <ClInclude Include="include\mathUtils\vufMathUtil.h" />
+    <ClInclude Include="include\noise\vufPelinNoise.h" />
     <ClInclude Include="include\unitTests\curve\curveTest.h" />
     <ClInclude Include="include\unitTests\curve\polinomTest.h" />
     <ClInclude Include="include\unitTests\math\vufMatrix4Test.h" />

@@ -5,7 +5,7 @@
 #include <math/vufQuaternion.h>
 #include <curves/explicit/vufCurveOpenBSpline.h>
 #include <curves/explicit/vufCurveCloseBSpline.h>
-#include <curves/vufCurveBlend.h>
+#include <curves/implicit/vufCurveBlend.h>
 #include <curves/rebuildFn/vufCurveRebuildFn.h>
 
 #include <curves/quaternionFn/vufCurveQuaternionFn.h>

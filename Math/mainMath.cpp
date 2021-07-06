@@ -9,6 +9,7 @@
 #include <curves/vufCurveContatiner.h>
 #include <vufNumericArrayObject.h>
 #include <vufLog.h>
+#include <noise/vufPelinNoise.h>
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables
 VF_LOG_DEFINE_STD_LOGGER();
@@ -18,6 +19,9 @@ using namespace vufMath;
 
 int main()
 {
+	vufPelinNoise<double> l_noise;
+	auto a = l_noise.simplex_4d(0, 1, 2, 3);
+	auto b = l_noise.simplex_2d(0, 1);
 	//vuf::txtSerializer::init();
 	//vufTestAll().run(true);
 	//system("pause");

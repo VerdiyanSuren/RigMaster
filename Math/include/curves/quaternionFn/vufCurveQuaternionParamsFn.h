@@ -19,38 +19,121 @@ namespace vufMath
 			return l_ptr;
 		}
 		// close curve
-		vufQuaternion<T> get_quaternion_close_curve_at_i(const vufCurve<T, V>& p_curve, T p_val) const
+		vufQuaternion<T> get_quaternion_close_curve_at_i(const vufCurve<T, V>& p_curve, T p_val/*curve original value*/) const
 		{
 			return vufQuaternion<T>();
 		}
 		// open  curve
-		vufQuaternion<T> get_quaternion_open_curve_at_i(const vufCurve<T, V>& p_curve, T p_val) const
+		vufQuaternion<T> get_quaternion_open_curve_at_i(const vufCurve<T, V>& p_curve, T p_val/*curve original value*/) const
 		{
+			V<T> l_vec(1.0);
+			V<T> l_tng;
+			vufQuaternion_d l_quat;
+			if (p_val <= m_quat_param_v.front())
+			{
+				l_tng	= p_curve.get_tangent_normalized_at(p_val);
+				l_quat	= m_quaternion_a_v.front();
+				l_vec	= l_quat.rotate_vector_by_quaternion(l_vec);
+				return l_quat.increment_quaternion_with_2vectors(l_vec, l_tng);
+			}
+			if (p_val >= m_quat_param_v.back())
+			{
+				l_tng = p_curve.get_tangent_normalized_at(p_val);
+				l_quat = m_quaternion_a_v.back();
+				l_vec = l_quat.rotate_vector_by_quaternion(l_vec);
+				return l_quat.increment_quaternion_with_2vectors(l_vec, l_tng);
+			}
+			for (uint64_t i = 1; i < m_quaternion_a_v.size(); ++i)
+			{
+				if (p_val >= m_quat_param_v[i - 1] && p_val <= m_quat_param_v[i])
+				{
+					T l_interval_length = m_quat_param_v[i] - m_quat_param_v[i-1];
+					if (l_interval_length <= VF_MATH_EPSILON)
+					{
+						return m_quaternion_a_v[i];
+					}
+					T l_w_1 = (p_val - m_quat_param_v[i-1]) / l_interval_length;
+					T l_w_0 = 1. - l_w_1;
+					vufQuaternion<T> l_res = m_quaternion_a_v[i-1] * l_w_0 + m_quaternion_b_v[i-1] * l_w_1;
+					l_res.normalize_in_place();
+					//drop on axis
+					l_tng = p_curve.get_tangent_normalized_at(p_val);
+					l_vec = l_res.rotate_vector_by_quaternion(l_vec);
+					return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
+				}
+			}
 			return vufQuaternion<T>();
 		}
 
 		void	set_item_count_i(uint32_t p_count)
-		{			
+		{	
+			if (m_positon_v.size() != p_count)
+			{
+				m_y_axis_v.resize(p_count);
+				m_positon_v.resize(p_count);
+				m_quaternion_a_v.resize(p_count);
+				m_quaternion_b_v.resize(p_count);
+				m_quat_param_v.resize(p_count);
+				/*
+				T l_step = 1.0 / (T)(p_count - 1);
+				for (uint32_t i = 0; i < p_count; ++i)
+				{
+					m_quat_param_v[i] = ((T)i) * l_step;
+				}
+				*/
+			}
 		}
 		// just update quaternion values
 		bool	set_item_at_i(	uint32_t									p_index,
+								T											p_param,/*orginal curve param*/
 								const	vufMatrix4<T>&						p_matr,
 								const	std::shared_ptr<vufCurve<T, V> >	p_crv_ptr)
 		{
-			
-			return true;
-		}
-		// update quaternions and set curve value
-		bool	set_param_item_at_i(uint32_t									p_index,
-									T											p_param,
-									const	vufMatrix4<T>&						p_matr,
-									const	std::shared_ptr<vufCurve<T, V> >	p_crv_ptr)
-		{
+			if (p_crv_ptr == nullptr || p_crv_ptr->is_valid() == false)
+			{
+				vufCurveQuaternionFn<T, V>::m_valid = false;
+				return false;
+			}
+			m_quat_param_v[p_index] = p_param;
+			m_positon_v[p_index]	= V<T>(p_matr[3][0], p_matr[3][1], p_matr[3][2]);
+			m_y_axis_v[p_index]		= V<T>(p_matr[1][0], p_matr[1][1], p_matr[1][2]);
+			m_y_axis_v[p_index].normalize_in_place();
+			V<T> l_tangent			= p_crv_ptr->get_tangent_normalized_at(p_param);
+			m_y_axis_v[p_index].make_ortho_to_in_place(l_tangent);
+			m_y_axis_v[p_index].normalize_in_place();
+			V<T> l_z = l_tangent.get_cross(m_y_axis_v[p_index]);
+			l_z.normalize_in_place();
+			vufMatrix4<T> l_matr;
+			l_matr.set_axis_x(l_tangent);
+			l_matr.set_axis_y(m_y_axis_v[p_index]);
+			l_matr.set_axis_z(l_z);
+
+			m_quaternion_a_v[p_index] = l_matr.get_quaternion();
 			return true;
 		}
 		// update quaternion and call closest point to update param 
 		bool	match_quaternions_i()
-		{			
+		{
+			if (m_quat_param_v.size() == 0)
+			{
+				vufCurveQuaternionFn<T, V>::m_valid = false;
+				return false;
+			}
+			for (uint64_t i = 0; i < m_quat_param_v.size() - 1; ++i)
+			{
+				m_quaternion_b_v[i] = m_quaternion_a_v[i + 1];
+				if (m_quaternion_a_v[i].dot(m_quaternion_a_v[i + 1]) < 0.0)
+				{
+					m_quaternion_b_v[i] = -m_quaternion_b_v[i];
+				}
+			}
+			auto l_index_2 = m_quat_param_v.size() -1;
+			m_quaternion_b_v[l_index_2] = m_quaternion_a_v[0];
+			if (m_quaternion_a_v[l_index_2].dot(m_quaternion_a_v[0]) < .0)
+			{
+				m_quaternion_b_v[l_index_2] = -m_quaternion_b_v[l_index_2];
+			}
+			vufCurveQuaternionFn<T, V>::m_valid = true;
 			return true;
 		}
 		std::vector<T>& get_params()

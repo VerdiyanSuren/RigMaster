@@ -86,22 +86,10 @@ l_rbld_offset
 #pragma endregion
 #pragma region QUATERNIONS ROUTINES
 #define VF_RM_CRV_NODE_DECLARE_QUATERNIONS_ATTR()		\
-	static MObject	g_quaternion_compound_attr;			\
-	static MObject	g_quaternion_mode_attr;				\
-	static MObject	g_quaternion_pin_start_attr;		\
-	static MObject	g_quaternion_pin_start_value_attr;	\
-	static MObject	g_quaternion_pin_end_attr;			\
-	static MObject	g_quaternion_pin_end_value_attr;	\
-	static MObject	g_quaternion_offset_attr;
+	static MObject	g_quaternion_mode_attr;
 
 #define VF_RM_CRV_NODE_DEFINE_QUATERNIONS_ATTR(CLASS_NAME)	\
-	MObject	CLASS_NAME::g_quaternion_compound_attr;			\
-	MObject	CLASS_NAME::g_quaternion_mode_attr;				\
-	MObject	CLASS_NAME::g_quaternion_pin_start_attr;		\
-	MObject	CLASS_NAME::g_quaternion_pin_start_value_attr;	\
-	MObject	CLASS_NAME::g_quaternion_pin_end_attr;			\
-	MObject	CLASS_NAME::g_quaternion_pin_end_value_attr;	\
-	MObject	CLASS_NAME::g_quaternion_offset_attr;
+	MObject	CLASS_NAME::g_quaternion_mode_attr;
 
 #define VF_RM_CRV_NODE_INIT_QUATERNIONS_ATTR()																		\
 	/** Assume 	l_status l_enum_attr_fn l_compound_attr_fn	l_numeric_attr_fn is already declared*/					\
@@ -112,31 +100,10 @@ l_rbld_offset
 	CHECK_MSTATUS(l_enum_attr_fn.addField("Disable",	2));														\
 	CHECK_MSTATUS(l_enum_attr_fn.setDefault(false));																\
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));																\
-	/* Pin Start Quaternion */																						\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_start_attr,			"rotationPinStart",		"rsp", kBoolean, false);\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_start_value_attr,	"rotaionPinStartValue", "rsv", kDouble, 0.0);	\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_end_attr,			"rotationPinEnd",		"rnp", kBoolean, false);\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_pin_end_value_attr,		"rotationPinEndValue",	"rnv", kDouble, 1.0);	\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_quaternion_offset_attr,			"rotationOffset",		"rof", kDouble, 0.0);	\
-	/* Quaternion Compound */																						\
-	g_quaternion_compound_attr = l_compound_attr_fn.create("Rotation", "r", &l_status);								\
-	CHECK_MSTATUS_AND_RETURN_IT(l_status);																			\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_mode_attr));												\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_start_attr));										\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_start_value_attr));									\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_end_attr));											\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_pin_end_value_attr));									\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_quaternion_offset_attr));											\
-	l_status = addAttribute(g_quaternion_compound_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_quaternion_mode_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 #define VF_RM_CRV_NODE_QUATERNIONS_ATTR_AFFECT_TO(ATTR)																\
-	l_status = attributeAffects(g_quaternion_compound_attr,			ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_quaternion_mode_attr,				ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_quaternion_pin_start_attr,		ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_quaternion_pin_start_value_attr,	ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_quaternion_pin_end_attr,			ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_quaternion_pin_end_value_attr,	ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_quaternion_offset_attr,			ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	
+	l_status = attributeAffects(g_quaternion_mode_attr,				ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 /** We generate new variables
 l_quat_mode
@@ -147,12 +114,7 @@ l_quat_pin_end_value
 l_quat_offset_value
 */
 #define VF_RM_CRV_NODE_READ_QUATERNIONS_ATTR()															\
-	short	l_quat_mode				= p_data.inputValue(g_quaternion_mode_attr).asShort();				\
-	bool	l_quat_pin_start		= p_data.inputValue(g_quaternion_pin_start_attr).asBool();			\
-	double	l_quat_pin_start_value	= p_data.inputValue(g_quaternion_pin_start_value_attr).asDouble();	\
-	bool	l_quat_pin_end			= p_data.inputValue(g_quaternion_pin_end_attr).asBool();			\
-	double	l_quat_pin_end_value	= p_data.inputValue(g_quaternion_pin_end_value_attr).asBool();		\
-	double	l_quat_offset_value		= p_data.inputValue(g_quaternion_offset_attr).asBool();
+	short	l_quat_mode				= p_data.inputValue(g_quaternion_mode_attr).asShort();
 
 #pragma endregion
 #pragma region SCALE_ROUTINES

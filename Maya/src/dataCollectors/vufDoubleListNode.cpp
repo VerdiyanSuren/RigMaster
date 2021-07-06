@@ -31,13 +31,14 @@ MStatus	vufDoubleListNode::initialize()
 	MFnNumericAttribute l_numeric_attr_fn;
 	//-------------------------------------------------------------------------------------------
 
-	g_double_in_attr = l_numeric_attr_fn.create("value", "val", MFnNumericData::kDouble, 0, &l_status);
+	g_double_in_attr = l_numeric_attr_fn.create("value", "val", MFnNumericData::kDouble, -100, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_numeric_attr_fn.setWritable(true);
 	l_numeric_attr_fn.setStorable(true);
 	l_numeric_attr_fn.setHidden(false);
 	l_numeric_attr_fn.setKeyable(true);
-	l_numeric_attr_fn.setArray(true);
+	l_numeric_attr_fn.setArray(true); 
+	l_numeric_attr_fn.setChannelBox(true);
 	l_numeric_attr_fn.setUsesArrayDataBuilder(true);
 	l_numeric_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete);
 

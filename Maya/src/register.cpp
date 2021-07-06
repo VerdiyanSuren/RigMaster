@@ -102,7 +102,6 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufMatrixListNullNode);
 	VF_REGISTER_NODE(vufDoubleListNode);
 	VF_REGISTER_NODE(vufDoubleListNullNode);
-	
 
 	VF_REGISTER_NODE(vufFromMayaCurveNode);
 	VF_REGISTER_NODE(vufCurveToMayaNode);
