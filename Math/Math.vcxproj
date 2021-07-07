@@ -417,6 +417,7 @@
     <ClInclude Include="include\curves\implicit\vufCurveBlend.h" />
     <ClInclude Include="include\curves\implicit\vufCurveCompose.h" />
     <ClInclude Include="include\curves\implicit\vufCurveImplicit.h" />
+    <ClInclude Include="include\curves\implicit\vufCurveNoise.h" />
     <ClInclude Include="include\curves\implicit\vufCurveSlide.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternion2EndsFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionBlendFn.h" />

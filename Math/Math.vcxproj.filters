@@ -63,6 +63,9 @@
     <ClInclude Include="include\curves\implicit\vufCurveImplicit.h">
       <Filter>include\curves\implicit</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\implicit\vufCurveNoise.h">
+      <Filter>include\curves\implicit</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\implicit\vufCurveSlide.h">
       <Filter>include\curves\implicit</Filter>
     </ClInclude>

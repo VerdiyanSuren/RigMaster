@@ -22,6 +22,7 @@
 #include <curves/vufCurveToMayaNode.h>
 #include <curves/vufCurveBSplineNode.h>
 #include <curves/vufCurveBlendNode.h>
+#include <curves/vufCurveNoiseNode.h>
 #include <curves/rotateFn/vufCurveQuatCloseNode.h>
 #include <curves/rotateFn/vufCurveQuatFrameNode.h>
 #include <curves/rotateFn/vufCurveQuat2EndsNode.h>
@@ -65,6 +66,7 @@ const MTypeId	vufFromMayaCurveNode::		g_id(0x298530);	const MString	vufFromMayaC
 const MTypeId	vufCurveToMayaNode::		g_id(0x298630);	const MString	vufCurveToMayaNode::		g_type_name("vufCurveToMaya");
 const MTypeId	vufCurveBSplineNode::		g_id(0x298730);	const MString	vufCurveBSplineNode::		g_type_name("vufCurveBSpline");
 const MTypeId	vufCurveBlendNode::			g_id(0x298830);	const MString	vufCurveBlendNode::			g_type_name("vufCurveBlend");
+
 const MTypeId	vufCurveNullNode::			g_id(0x298930);	const MString	vufCurveNullNode::			g_type_name("vufCurveNull");
 const MTypeId	vufCurveGetTransformNode::	g_id(0x299030);	const MString	vufCurveGetTransformNode::	g_type_name("vufCurveGetXForm");
 const MTypeId	vufCurveClosestPointNode::	g_id(0x299130);	const MString	vufCurveClosestPointNode::	g_type_name("vufCurveClosestPoint");
@@ -73,6 +75,7 @@ const MTypeId	vufCurveQuatFrameNode::		g_id(0x299330);	const MString	vufCurveQua
 const MTypeId	vufCurveQuat2EndsNode::		g_id(0x299430);	const MString	vufCurveQuat2EndsNode::		g_type_name("vufCurveRotate2Ends");
 const MTypeId	vufCurveQuatParamNode::		g_id(0x299530);	const MString	vufCurveQuatParamNode::		g_type_name("vufCurveRotateParams");
 
+const MTypeId	vufCurveNoiseNode::			g_id(0x299630);	const MString	vufCurveNoiseNode::g_type_name("vufCurveNoise");
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
 VF_DEFINE_CUSTOM_LOGGER(vufLogMaya);
@@ -107,7 +110,8 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufCurveToMayaNode);
 	VF_REGISTER_NODE(vufCurveBSplineNode);
 	VF_REGISTER_NODE(vufCurveBlendNode);
-	VF_REGISTER_NODE(vufCurveNullNode);
+	VF_REGISTER_NODE(vufCurveBlendNode);
+	VF_REGISTER_NODE(vufCurveNoiseNode);
 	VF_REGISTER_NODE(vufCurveGetTransformNode);
 	VF_REGISTER_NODE(vufCurveClosestPointNode);
 	VF_REGISTER_NODE(vufCurveQuatCloseNode);
@@ -146,6 +150,7 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufCurveToMayaNode);
 	VF_DEREGISTER_NODE(vufCurveBSplineNode);
 	VF_DEREGISTER_NODE(vufCurveBlendNode);
+	VF_DEREGISTER_NODE(vufCurveNoiseNode);
 	VF_DEREGISTER_NODE(vufCurveNullNode);
 	VF_DEREGISTER_NODE(vufCurveGetTransformNode);
 	VF_DEREGISTER_NODE(vufCurveClosestPointNode);

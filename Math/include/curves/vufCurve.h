@@ -430,6 +430,8 @@ namespace vufMath
 
 	template <class T, template<typename> class V >				class vufCurveBlend;
 	template <class T, template<typename> class V >				class vufCurveSlide;
+	template <class T, template<typename> class V >				class vufCurveNoise;
+
 
 	/**
 	*  This is a base interface class  for all curves
@@ -450,6 +452,8 @@ namespace vufMath
 
 		k_blend_curve				= 7,
 		k_slide_curve				= 8,
+
+		k_noise_curve				= 9
 	};
 	enum vufCurveCategory
 	{
@@ -637,6 +641,7 @@ namespace vufMath
 
 		virtual std::shared_ptr<vufCurveBlend <T, V >>		as_curve_blend()	const { return nullptr; }
 		virtual std::shared_ptr<vufCurveSlide <T, V >>		as_curve_slide()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveNoise <T, V >>		as_curve_noise()	const { return nullptr; }
 
 	protected:
 		bool		m_valid			= false;	// if inherited curve is valid 

@@ -605,28 +605,14 @@ std::cout << "]" << std::endl;
 		{
 			return get_tangent_normalized_at_i(p_t);
 		}
+
 		virtual std::string	to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const override
 		{
 			std::stringstream l_ss;
 			std::string l_str_offset;
-			if (p_precision > 0)
-			{
-				if (p_precision > 64)
-				{
-					l_ss.precision(64);
-				}
-				else
-				{
-					l_ss.precision(p_precision);
-				}
-			}
-			if (p_tab_count > 0)
-			{
-				for (uint32_t i = 0; i < p_tab_count; ++i)
-				{
-					l_str_offset = l_str_offset + "____";
-				}
-			}
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+
 			l_ss << l_str_offset << "[ General Open BSpline: " << typeid(T).name() << ", " << typeid(V).name() << ", degree: " << CURVE_DEGREE << " ]" << std::endl;
 			l_ss << l_str_offset << l_str_offset << "Controls count: "	<< m_nodes_pos_v.size() << "]" << std::endl;
 			l_ss << l_str_offset << l_str_offset << "Nodes count: "		<< m_node_count << std::endl;

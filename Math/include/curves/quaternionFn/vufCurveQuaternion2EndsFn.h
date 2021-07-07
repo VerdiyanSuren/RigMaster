@@ -414,7 +414,7 @@ namespace vufMath
 			uint64_t l_size;
 			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff, p_version, p_offset);
 			// m_twist_multiplier
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_twist_start_mult, sizeof(m_twist_start_mult));
+			 
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_twist_end_mult,	sizeof(m_twist_end_mult));
 			// m_y_axis_v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));

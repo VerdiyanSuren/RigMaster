@@ -11,7 +11,7 @@ namespace vufMath
 		vufPelinNoise() {}
 		~vufPelinNoise() {}
 		
-		T simplex_2d(T xin, T yin)
+		static T simplex_2d(T xin, T yin)
 		{
 			// Noise contributions from the three corners
 			T n0, n1, n2;
@@ -89,7 +89,7 @@ namespace vufMath
 			//return 70.0 * (n0 + n1 + n2);
 		}
 
-		T simplex_4d(T x, T y, T z, T w)
+		static T simplex_4d(T x, T y, T z, T w)
 		{
 			// The skewing and unskewing factors are hairy again for the 4D case
 			T F4 = (sqrt(5.0) - 1.0) / 4.0;
@@ -216,11 +216,11 @@ namespace vufMath
 		static const int perm[512];
 		static const int permutation[];
 
-		inline T dot(const T g[], T x, T y)
+		static inline T dot(const T g[], T x, T y)
 		{
 			return g[0] * x + g[1] * y;
 		}
-		inline T dot(const T g[], T x, T y, T z, T w)
+		static inline T dot(const T g[], T x, T y, T z, T w)
 		{
 			return g[0] * x + g[1] * y + g[2] * z + g[3] * w;
 		}

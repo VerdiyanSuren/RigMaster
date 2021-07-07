@@ -6,6 +6,8 @@
 #include <curves/explicit/vufCurveOpenBSpline.h>
 #include <curves/explicit/vufCurveCloseBSpline.h>
 #include <curves/implicit/vufCurveBlend.h>
+#include <curves/implicit/vufCurveNoise.h>
+
 #include <curves/rebuildFn/vufCurveRebuildFn.h>
 
 #include <curves/quaternionFn/vufCurveQuaternionFn.h>
@@ -159,6 +161,11 @@ namespace vufMath
 				if (p_type == vufCurveType::k_blend_curve)
 				{
 					m_curve_ptr = vufCurveBlend<T, V>::create();
+					return true;
+				}
+				if (p_type == vufCurveType::k_noise_curve)
+				{
+					m_curve_ptr = vufCurveNoise<T, V>::create();
 					return true;
 				}
 				m_curve_ptr = nullptr;

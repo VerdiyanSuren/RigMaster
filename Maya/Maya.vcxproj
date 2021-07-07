@@ -469,6 +469,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClInclude Include="include\curves\vufCurveBSplineNode.h" />
     <ClInclude Include="include\curves\vufCurveBlendNode.h" />
     <ClInclude Include="include\curves\vufCurveFromMayaNode.h" />
+    <ClInclude Include="include\curves\vufCurveNoiseNode.h" />
     <ClInclude Include="include\curves\vufCurveNullNode.h" />
     <ClInclude Include="include\curves\vufCurveSlideNode.h" />
     <ClInclude Include="include\curves\vufCurveSwitch.h" />
@@ -525,6 +526,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClCompile Include="src\curves\vufCurveBSplineNode.cpp" />
     <ClCompile Include="src\curves\vufCurveBlendNode.cpp" />
     <ClCompile Include="src\curves\vufCurveFromMayaNode.cpp" />
+    <ClCompile Include="src\curves\vufCurveNoiseNode.cpp" />
     <ClCompile Include="src\curves\vufCurveNullNode.cpp" />
     <ClCompile Include="src\curves\vufCurveSwitch.cpp" />
     <ClCompile Include="src\curves\vufCurveToMayaNode.cpp" />

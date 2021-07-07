@@ -138,6 +138,9 @@
     <ClInclude Include="include\curves\vufCurveFromMayaNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\vufCurveNoiseNode.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\vufCurveNullNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
@@ -300,6 +303,9 @@
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveFromMayaNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufCurveNoiseNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveNullNode.cpp">
