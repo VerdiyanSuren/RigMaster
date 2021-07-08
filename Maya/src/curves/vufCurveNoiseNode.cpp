@@ -165,7 +165,7 @@ MStatus	vufCurveNoiseNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		}
 
 		vufCurveContainer_4d& l_in_container = *(l_in_data->m_internal_data.get());
-		vufCurveContainer_4d& l_out_container = *(l_out_data->m_internal_data.get());		
+		vufCurveContainer_4d& l_out_container = *(l_out_data->m_internal_data.get());
 		//l_out_container.set_curve_ptr(l_in_container.get_curve_ptr());
 		l_out_container.set_rebuild_fn_ptr(l_in_container.get_rebuild_fn_ptr());
 		l_out_container.set_scale_fn_ptr(l_in_container.get_scale_fn_ptr());

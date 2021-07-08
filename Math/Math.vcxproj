@@ -411,6 +411,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\explicit\vufCurveBezierClose.h" />
+    <ClInclude Include="include\curves\explicit\vufCurveBezierOpen.h" />
     <ClInclude Include="include\curves\explicit\vufCurveCloseBSpline.h" />
     <ClInclude Include="include\curves\explicit\vufCurveExplicit.h" />
     <ClInclude Include="include\curves\explicit\vufCurveOpenBSpline.h" />

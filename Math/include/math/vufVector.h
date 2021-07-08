@@ -703,8 +703,8 @@ namespace vufMath
 			l_vec.z = (T)(rand()) / (T)(RAND_MAX);
 			if (p_all_component == true)
 			{
-				l_vec.w = (T)(rand()) / (T)(RAND_MAX);				
-			}			
+				l_vec.w = (T)(rand()) / (T)(RAND_MAX);
+			}
 			return l_vec;
 		}
 
@@ -723,10 +723,10 @@ namespace vufMath
 
 		inline void post_constructor(T a = .0, T b = .0, T c = .0, T d = 1.) { x = a;	y = b;	z = c;	w = d; }
 		inline vufVector4<T>& set(T a = .0, T b = .0, T c = .0, T d = 1.)
-		{ 
-			x = a;	
-			y = b;	
-			z = c;	
+		{
+			x = a;
+			y = b;
+			z = c;
 			w = d;
 			return *this;
 		}
@@ -827,6 +827,17 @@ namespace vufMath
 			set(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
 			return *this;
 		}
+		inline vufVector4<T> get_mult_components(const vufVector4<T>& v) const
+		{
+			return vufVector4<T>(x * v.x, y * v.y, z * v.z);
+		}
+		inline vufVector4<T>& get_mult_components_in_place(const vufVector4<T>& v)
+		{
+			x *= v.x;
+			y *= v.y;
+			z *= v.z;
+			return *this;
+		}
 		vufVector4<T> as_linear_combination_of(vufVector4<T>& e1, vufVector4<T>& e2, vufVector4<T>& e3)
 		{
 			T det, detX, detY, detZ;
@@ -900,7 +911,6 @@ namespace vufMath
 			z -= v.z;
 			return *this;
 		}
-
 		inline vufVector4<T>& mult_in_place(T d)
 		{
 			x *= d;

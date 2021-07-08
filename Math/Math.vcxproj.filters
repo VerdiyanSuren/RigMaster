@@ -45,6 +45,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\explicit\vufCurveBezierClose.h">
+      <Filter>include\curves\explicit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\explicit\vufCurveBezierOpen.h">
+      <Filter>include\curves\explicit</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\explicit\vufCurveCloseBSpline.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>

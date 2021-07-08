@@ -22,9 +22,14 @@ namespace vufMath
 			vufCurve<T, V>::m_close = false;
 			vufCurve<T, V>::m_explicit = false;
 			vufCurve<T, V>::m_has_degree = false;
-			vufCurve<T, V>::m_valid = true;
+			vufCurve<T, V>::m_valid = false;
 		}
 	public:
+		enum
+		{
+			k_plus = 0,
+			k_mult = 1
+		};
 		virtual ~vufCurveCompose() {}
 		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveCompose);
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_compose_curve, k_compound_category);
@@ -159,18 +164,91 @@ namespace vufMath
 			return std::static_pointer_cast<vufCurveCompose<T, V>>(vufCurveCompose<T, V>::m_this.lock());
 		}
 
-		inline V<T>			get_pos_at_i(T p_t)		const
+		inline V<T>		get_pos_at_i(T p_t)		const
 		{
+			if (m_operator == k_plus)
+			{
+				return get_pos_at_plus_i(p_t);
+			}
+			if (m_operator == k_mult)
+			{
+				return get_pos_at_mult_i(p_t);
+			}
 			return V<T>();
 		}
-		inline V<T>			get_tangent_at_i(T p_t) const
-		{			
-			return V<T>();
+		inline V<T>		get_tangent_at_i(T p_t) const
+		{
+			V<T> l_res = (get_pos_at_i(p_t) - get_pos_at_i(p_t + 0.00001)) * 10000;
+			return l_res;
 		}
 
+		inline V<T>		get_pos_at_plus_i(T p_t) const
+		{
+			V<T> l_p_a = m_container_a_ptr == nullptr ? V<T>() : m_container_a_ptr->get_pos_at(p_t);
+			V<T> l_p_b = m_container_a_ptr == nullptr ? V<T>() : m_container_b_ptr->get_pos_at(p_t);
+			return (l_p_a.get_mult_components( m_weight_a) + l_p_b.get_mult_components(m_weight_b));
+		}
+		inline V<T>		get_pos_at_mult_i(T p_t) const
+		{
+			V<T> l_p_a = m_container_a_ptr == nullptr ? V<T>() : m_container_a_ptr->get_pos_at(p_t);
+			V<T> l_p_b = m_container_a_ptr == nullptr ? V<T>() : m_container_b_ptr->get_pos_at(p_t);
+			l_p_a.get_mult_components_in_place(m_weight_a); 
+			l_p_b.get_mult_components_in_place(m_weight_b);
+			return l_p_a.get_mult_components(l_p_b);
+		}
+
+
+		void set_container_a_i(std::shared_ptr< vufCurveContainer<T, V> > p_cntnr)
+		{
+			m_container_a_ptr = p_cntnr;
+			vufCurve<T, V>::m_valid = true;
+		}
+		void set_container_b_i(std::shared_ptr< vufCurveContainer<T, V> > p_cntnr)
+		{
+			m_container_b_ptr = p_cntnr;
+			vufCurve<T, V>::m_valid = false;
+		}
+		void set_operator_i(uint8_t p_type)
+		{
+			if (p_type != m_operator)
+			{
+				m_operator = p_type;
+			}
+		}
+		void set_weight_a_i(V<T> p_val)
+		{
+			m_weight_a = p_val;
+		}
+		void set_weight_b_i(V<T> p_val)
+		{
+			m_weight_b = p_val;
+		}
+
+
+		std::shared_ptr< vufCurveContainer<T, V> > get_container_a_i() const
+		{
+			return m_container_a_ptr;
+		}
+		std::shared_ptr< vufCurveContainer<T, V> > get_container_b_i() const
+		{
+			return m_container_b_ptr;
+		}
+		uint8_t get_operator_i() const 
+		{
+			return m_operator;
+		}
+		T get_weight_a_i() const
+		{
+			return m_weight_a;
+		}
+		T get_weight_b_i() const
+		{
+			return m_weight_b;
+		}
 	private:
-		V<T> m_weight_a = V<T>(0., 1., .0);
-		V<T> m_weight_b = V<T>(0., 1., .0);
+		V<T> m_weight_a		= V<T>(0., 1., .0);
+		V<T> m_weight_b		= V<T>(0., 1., .0);
+		uint8_t m_operator	= 0;
 
 		std::shared_ptr< vufCurveContainer<T, V> >	m_container_a_ptr = nullptr;
 		std::shared_ptr< vufCurveContainer<T, V> >	m_container_b_ptr = nullptr;

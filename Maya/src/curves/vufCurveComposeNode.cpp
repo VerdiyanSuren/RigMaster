@@ -4,6 +4,7 @@
 #include <maya/MTime.h>
 #include <maya/MGlobal.h>
 
+#include <curves/implicit/vufCurveCompose.h>
 #include <curves/vufCurveComposeNode.h>
 #include <vufMayaGlobalIncludes.h>
 #include <data/vufMayaDataList.h>
@@ -104,14 +105,27 @@ MStatus	vufCurveComposeNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		{
 			l_out_data->m_internal_data = vufCurveContainer_4d::create();
 		}
-		if (l_in_a_data == nullptr || l_in_a_data->m_internal_data == nullptr)
+		vufCurveContainer_4d& l_out_container = *(l_out_data->m_internal_data.get());
+		l_out_container.switch_curve(0, vufMath::vufCurveType::k_compose_curve);
+
+		auto l_crv = l_out_container.get_curve_ptr()->as_curve_compose();
+		l_crv->set_container_a_i(nullptr);
+		l_crv->set_container_b_i(nullptr);
+		if (l_in_a_data != nullptr && l_in_a_data->m_internal_data != nullptr)
 		{
-			MGlobal::displayError(name() + " inCurve is Null");
-			p_data.setClean(g_data_out_attr);
-			return MS::kSuccess;
+			l_crv->set_container_a_i(l_in_a_data->m_internal_data);
 		}
-
-
+		if (l_in_b_data != nullptr && l_in_b_data->m_internal_data != nullptr)
+		{
+			l_crv->set_container_b_i(l_in_b_data->m_internal_data);
+		}
+		
+		auto l_operator = p_data.inputValue(g_operator_attr).asShort();
+		l_crv->set_operator_i((uint8_t)l_operator);
+		l_crv->set_weight_a_i(p_data.inputValue(g_weight_a_attr).asDouble());
+		l_crv->set_weight_b_i(p_data.inputValue(g_weight_b_attr).asDouble());
+		
+		p_data.setClean(g_data_out_attr);
 		return MS::kSuccess;
 	}
 	return MS::kUnknownParameter;

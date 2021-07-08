@@ -22,12 +22,9 @@ namespace vufMath
 		}
 	public:
 		virtual ~vufCurveOpenBSpline() {}
-		static  std::shared_ptr< vufCurveOpenBSpline >	create()
-		{
-			std::shared_ptr< vufCurveOpenBSpline >  l_ptr = std::shared_ptr<vufCurveOpenBSpline>(new vufCurveOpenBSpline());
-			VF_MATH_CURVE_CREATOR_BODY(l_ptr);
-			return l_ptr;
-		}
+		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveOpenBSpline);
+		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_open_bspline, k_bspline_category);
+
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
@@ -428,15 +425,6 @@ namespace vufMath
 		// return true if point is on the curve
 		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
 		VF_MATH_CRV_GATHER_INFO_I_BODY;
-
-		virtual vufCurveType	get_curve_type()					const override
-		{
-			return vufCurveType::k_open_bspline;
-		}
-		virtual int				get_curve_category()				const override
-		{
-			return vufCurveCategory::k_bspline_category;
-		}
 
 		// inherited virtual methods
 		virtual bool		rebuild(
@@ -909,7 +897,6 @@ namespace vufMath
 		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_n_v;	// [time interval, node index] = basis function
 		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_dn_v;	// [time interval, node index] = basis derivative
 		//std::vector<T>		m_nodes_max_influence_t_v;
-		
 	};
 
 	//specializations
