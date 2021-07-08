@@ -1,7 +1,10 @@
 #ifndef VF_MATH_CRV_NOISE_H
 #define VF_MATH_CRV_NOISE_H
 #include <curves/vufCurve.h>
+#include <curves/vufCurvesInclude.h>
+#include <math/vufMatrix.h>
 #include <noise/vufPelinNoise.h>
+#include <memory>
 
 namespace vufMath
 {
@@ -18,15 +21,11 @@ namespace vufMath
 			vufCurve<T, V>::m_close = false;
 			vufCurve<T, V>::m_explicit = false;
 			vufCurve<T, V>::m_has_degree = false;
+			vufCurve<T, V>::m_valid = true;
 		}
 	public:
 		virtual ~vufCurveNoise() {}
-		static  std::shared_ptr< vufCurveNoise > create()
-		{
-			std::shared_ptr< vufCurveNoise >  l_ptr = std::shared_ptr<vufCurveNoise>(new vufCurveNoise());
-			VF_MATH_CURVE_CREATOR_BODY(l_ptr);
-			return l_ptr;
-		}
+		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveNoise);
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
 			std::shared_ptr< vufCurveNoise > l_ptr = vufCurveNoise::create();
@@ -47,15 +46,7 @@ namespace vufMath
 
 			return l_ptr;
 		}
-
-		virtual vufCurveType	get_curve_type()					const override
-		{
-			return vufCurveType::k_noise_curve;
-		}
-		virtual int				get_curve_category()				const override
-		{
-			return vufCurveCategory::k_math_category;
-		}
+		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_noise_curve, k_compound_category);
 
 		virtual V<T>		get_pos_at(T p_t)										const override
 		{
@@ -222,21 +213,71 @@ namespace vufMath
 		}
 
 		inline V<T>			get_pos_at_i(T p_t)		const
-		{			
-			V<T>	l_res;
+		{
+			if (m_container_ptr == nullptr)
+			{
+				V<T>	l_res;
+				l_res.x = m_noise.simplex_4d(p_t * m_scale_x + m_offset_x,
+					.0,
+					.0,
+					m_speed * m_time) * m_amount_x;
+				l_res.y = m_noise.simplex_4d(.0,
+					p_t * m_scale_y + m_offset_y,
+					.0,
+					m_speed * m_time) * m_amount_y;
+				l_res.z = m_noise.simplex_4d(.0,
+					.0,
+					p_t * m_scale_z + m_offset_z,
+					m_speed * m_time) * m_amount_z;
+				return l_res;
+			}
+			V<T>	l_res = m_container_ptr->get_pos_at(p_t);
 			
-			l_res.x = m_noise.simplex_4d( (p_t + m_offset_x)* m_scale_x,.0,								.0,								m_speed) * m_amount_x;
-			l_res.y = m_noise.simplex_4d(.0,							(p_t + m_offset_y)* m_scale_y,  .0,								m_speed) * m_amount_y;
-			l_res.z = m_noise.simplex_4d(.0,							.0,								(p_t + m_offset_z) * m_scale_z, m_speed) * m_amount_z;
+			T l_x = m_noise.simplex_4d( p_t * m_scale_x + m_offset_x,
+										.0,
+										.0,
+										m_speed * m_time) * m_amount_x;
+			T l_y = m_noise.simplex_4d(.0,
+										p_t * m_scale_y + m_offset_y,
+										.0,
+										m_speed * m_time) * m_amount_y;
+			T l_z = m_noise.simplex_4d(.0,
+										.0,
+										p_t  * m_scale_z + m_offset_z,
+										m_speed * m_time)  * m_amount_z;
+			
+			if (m_use_frame_scale == true)
+			{
+				V<T> l_scale = m_container_ptr->get_scale_at(p_t);
+				l_x *= l_scale.x;
+				l_y *= l_scale.y;
+				l_z *= l_scale.z;
+			}
+			if (m_use_frame_quat == true)
+			{
+				auto l_quat = m_container_ptr->get_quaternion_at(p_t);
+				vufMatrix_4d l_matr = vufMatrix_4d();
+				l_matr.set_quaternion(l_quat);
+				l_res += l_matr.get_axis_x_4() * l_x + 
+						 l_matr.get_axis_y_4() * l_y +
+						 l_matr.get_axis_z_4() * l_z;
+				return l_res;
+			}
+
+			l_res.x += l_x;
+			l_res.y += l_y;
+			l_res.z += l_z;
+
 			return l_res;
 		}
 		inline V<T>			get_tangent_at_i(T p_t) const
 		{
-			V<T>	l_res;
-			l_res = (get_pos_at_i(p_t) - get_pos_at_i(p_t + 0.00001)) * 10000;
+			//V<T>	l_res = m_container_ptr->get_tangent_at(p_t);
+			V<T> l_res = (get_pos_at_i(p_t) - get_pos_at_i(p_t + 0.00001)) * 10000;
 			return l_res;
 		}
-		inline bool get_use_quat_i()	const { return m__use_frame_quat; }
+
+		inline bool get_use_quat_i()	const { return m_use_frame_quat; }
 		inline bool get_use_scale_i()	const { return m_use_frame_scale; }
 		inline T get_time_i()		const { return m_time; }
 		inline T get_speed_i()		const { return m_speed; }
@@ -249,9 +290,9 @@ namespace vufMath
 		inline T get_offset_x_i()	const { return m_offset_x; }
 		inline T get_offset_y_i()	const { return m_offset_y; }
 		inline T get_offset_z_i()	const { return m_offset_z; }
-		inline std::shared_ptr< vufCurveContainer<T, V> > get_container() const { return m_container_ptr; }
+		inline std::shared_ptr< vufCurveContainer<T, V> > get_container_i() const { return m_container_ptr; }
 
-		inline void set_use_quat_i(bool p_val)	 { m__use_frame_quat = p_val; }
+		inline void set_use_quat_i(bool p_val)	 { m_use_frame_quat = p_val; }
 		inline void set_use_scale_i(bool p_val)	 { m_use_frame_scale = p_val; }
 		inline void set_time_i(T p_val)			 { m_time		= p_val; }
 		inline void set_speed_i(T p_val)		 { m_speed		= p_val; }
@@ -264,13 +305,13 @@ namespace vufMath
 		inline void set_offset_x_i(T p_val)		 { m_offset_x	= p_val; }
 		inline void set_offset_y_i(T p_val)		 { m_offset_y	= p_val; }
 		inline void set_offset_z_i(T p_val)		 { m_offset_z	= p_val; }
-		inline void set_container(std::shared_ptr< vufCurveContainer<T, V> > p_cntnr) 
+		inline void set_container_i(std::shared_ptr< vufCurveContainer<T, V> > p_cntnr) 
 		{ 
 			m_container_ptr = p_cntnr;
 		}
 
 	private:
-		bool m__use_frame_quat = false;
+		bool m_use_frame_quat = false;
 		bool m_use_frame_scale = false;
 		T m_time		= 0;
 		T m_speed		= 1;

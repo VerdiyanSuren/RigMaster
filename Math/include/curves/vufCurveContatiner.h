@@ -7,6 +7,7 @@
 #include <curves/explicit/vufCurveCloseBSpline.h>
 #include <curves/implicit/vufCurveBlend.h>
 #include <curves/implicit/vufCurveNoise.h>
+#include <curves/implicit/vufCurveCompose.h>
 
 #include <curves/rebuildFn/vufCurveRebuildFn.h>
 
@@ -168,6 +169,11 @@ namespace vufMath
 					m_curve_ptr = vufCurveNoise<T, V>::create();
 					return true;
 				}
+				if (p_type == vufCurveType::k_compose_curve)
+				{
+					m_curve_ptr = vufCurveCompose<T, V>::create();
+					return true;
+				}
 				m_curve_ptr = nullptr;
 				return true;
 			}
@@ -245,7 +251,6 @@ namespace vufMath
 			}
 			return false;
 		}
-
 
 		/// Assign given curve to container
 		void								set_curve_ptr(std::shared_ptr<vufCurve<T, V>> p_curve_ptr)

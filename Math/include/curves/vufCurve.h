@@ -10,8 +10,6 @@
 #include <serializer/vufTxtStdVectorSerializerFn.h>
 //#include <vufNumericArrayObject.h>
 
-#define VF_MATH_CURVE_CREATOR_BODY(SHARED_CRV) \
-		SHARED_CRV->m_this = std::static_pointer_cast<vufCurve<T, V>>(SHARED_CRV);
 
 #ifndef vufCurve_kTol
 #define vufCurve_kTol 1.0e-10
@@ -431,6 +429,7 @@ namespace vufMath
 	template <class T, template<typename> class V >				class vufCurveBlend;
 	template <class T, template<typename> class V >				class vufCurveSlide;
 	template <class T, template<typename> class V >				class vufCurveNoise;
+	template <class T, template<typename> class V >				class vufCurveCompose;
 
 
 	/**
@@ -453,7 +452,8 @@ namespace vufMath
 		k_blend_curve				= 7,
 		k_slide_curve				= 8,
 
-		k_noise_curve				= 9
+		k_noise_curve				= 9,
+		k_compose_curve				= 10
 	};
 	enum vufCurveCategory
 	{
@@ -642,6 +642,7 @@ namespace vufMath
 		virtual std::shared_ptr<vufCurveBlend <T, V >>		as_curve_blend()	const { return nullptr; }
 		virtual std::shared_ptr<vufCurveSlide <T, V >>		as_curve_slide()	const { return nullptr; }
 		virtual std::shared_ptr<vufCurveNoise <T, V >>		as_curve_noise()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCompose <T, V >>	as_curve_compose()	const { return nullptr; }
 
 	protected:
 		bool		m_valid			= false;	// if inherited curve is valid 

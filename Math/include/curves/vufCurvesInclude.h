@@ -1,6 +1,29 @@
 #ifndef VF_MATH_CRV_INCLUDE_H
 #define VF_MATH_CRV_INCLUDE_H
 
+#define VF_MATH_CURVE_CREATOR_BODY(SHARED_CRV) \
+		SHARED_CRV->m_this = std::static_pointer_cast<vufCurve<T, V>>(SHARED_CRV);
+
+#define VF_MATH_CURVE_DEFINE_CREATOR(CLASS_NAME)										\
+static  std::shared_ptr< CLASS_NAME > create()											\
+{																						\
+std::shared_ptr< CLASS_NAME >  l_ptr = std::shared_ptr<CLASS_NAME>(new CLASS_NAME());	\
+VF_MATH_CURVE_CREATOR_BODY(l_ptr);														\
+return l_ptr;																			\
+}
+
+#define VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(TYPE,CATEGORY)								\
+virtual vufCurveType	get_curve_type()					const override				\
+{																						\
+	return vufCurveType::TYPE;															\
+}																						\
+virtual int				get_curve_category()				const override				\
+{																						\
+	return vufCurveCategory::CATEGORY;													\
+}
+
+
+
 #define VF_MATH_CRV_GATHER_INFO_I_BODY																	\
 /** get information between point in space and point on curve. Return true if point is on curve */		\
 inline bool			gather_info_i( const V<T>& p_point, T p_curve_param, T& p_dist, T& p_dot ) const	\

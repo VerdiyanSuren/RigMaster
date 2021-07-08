@@ -23,6 +23,8 @@
 #include <curves/vufCurveBSplineNode.h>
 #include <curves/vufCurveBlendNode.h>
 #include <curves/vufCurveNoiseNode.h>
+#include <curves/vufCurveComposeNode.h>
+
 #include <curves/rotateFn/vufCurveQuatCloseNode.h>
 #include <curves/rotateFn/vufCurveQuatFrameNode.h>
 #include <curves/rotateFn/vufCurveQuat2EndsNode.h>
@@ -74,8 +76,8 @@ const MTypeId	vufCurveQuatCloseNode::		g_id(0x299230);	const MString	vufCurveQua
 const MTypeId	vufCurveQuatFrameNode::		g_id(0x299330);	const MString	vufCurveQuatFrameNode::		g_type_name("vufCurveRotateFrame");
 const MTypeId	vufCurveQuat2EndsNode::		g_id(0x299430);	const MString	vufCurveQuat2EndsNode::		g_type_name("vufCurveRotate2Ends");
 const MTypeId	vufCurveQuatParamNode::		g_id(0x299530);	const MString	vufCurveQuatParamNode::		g_type_name("vufCurveRotateParams");
-
-const MTypeId	vufCurveNoiseNode::			g_id(0x299630);	const MString	vufCurveNoiseNode::g_type_name("vufCurveNoise");
+const MTypeId	vufCurveNoiseNode::			g_id(0x299630);	const MString	vufCurveNoiseNode::			g_type_name("vufCurveNoise");
+const MTypeId	vufCurveComposeNode::		g_id(0x299730);	const MString	vufCurveComposeNode::		g_type_name("vufCurveCompose");
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
 VF_DEFINE_CUSTOM_LOGGER(vufLogMaya);
@@ -110,8 +112,11 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufCurveToMayaNode);
 	VF_REGISTER_NODE(vufCurveBSplineNode);
 	VF_REGISTER_NODE(vufCurveBlendNode);
-	VF_REGISTER_NODE(vufCurveBlendNode);
 	VF_REGISTER_NODE(vufCurveNoiseNode);
+	VF_REGISTER_NODE(vufCurveComposeNode);
+	VF_REGISTER_NODE(vufCurveNullNode);
+
+
 	VF_REGISTER_NODE(vufCurveGetTransformNode);
 	VF_REGISTER_NODE(vufCurveClosestPointNode);
 	VF_REGISTER_NODE(vufCurveQuatCloseNode);
@@ -151,7 +156,9 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufCurveBSplineNode);
 	VF_DEREGISTER_NODE(vufCurveBlendNode);
 	VF_DEREGISTER_NODE(vufCurveNoiseNode);
+	VF_DEREGISTER_NODE(vufCurveComposeNode);	
 	VF_DEREGISTER_NODE(vufCurveNullNode);
+
 	VF_DEREGISTER_NODE(vufCurveGetTransformNode);
 	VF_DEREGISTER_NODE(vufCurveClosestPointNode);
 	VF_DEREGISTER_NODE(vufCurveQuatCloseNode);
