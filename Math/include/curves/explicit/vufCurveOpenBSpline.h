@@ -298,7 +298,7 @@ namespace vufMath
 		{
 			if (p_t < 0.0)
 			{
-				return vufCurveExplicit<T,V>::m_nodes_pos_v[0] - get_tangent_at_i(0) * (-p_t);
+				return vufCurveExplicit<T,V>::m_nodes_pos_v[0] + get_tangent_at_i(0) * p_t;
 				//return	vufCurve<T, V>::m_nodes_pos_v[0] +
 				//		vufCurve<T, V>::m_nodes_pos_v[0] * m_dn_v[0][0].eval(0.0) * (-p_t);
 			}
@@ -721,7 +721,7 @@ namespace vufMath
 		virtual int			get_interval_index(T p_t) const							{ return get_interval_index_i(p_t); }
 		virtual uint32_t	get_interval_count() const override						{ return get_interval_count_i(); }
 
-		virtual void		set_nodes_count(uint32_t p_count) override
+		virtual bool		set_nodes_count(uint32_t p_count) override
 		{
 			// reserve elements from start and end
 			if (vufCurveExplicit<T, V>::m_nodes_pos_v.size() != p_count)
@@ -735,10 +735,10 @@ namespace vufMath
 			if (p_count < CURVE_DEGREE + 1)
 			{
 				vufCurve<T, V>::m_valid = false;
-				return;
+				return false;
 			}
 			vufCurve<T, V>::m_valid = true;
-			return;
+			return true;
 		}
 		virtual uint32_t	get_nodes_count() const override
 		{
@@ -784,10 +784,6 @@ namespace vufMath
 		virtual V<T>		get_tangent_normalized_at(T p_t)						const override
 		{
 			return get_tangent_normalized_at_i(p_t);
-		}
-		virtual V<T>		get_normal_at(T p_t)									const override
-		{
-			return get_normal_at_i(p_t);
 		}
 
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)	const override

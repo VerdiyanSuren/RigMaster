@@ -5,6 +5,8 @@
 #include <math/vufQuaternion.h>
 #include <curves/explicit/vufCurveOpenBSpline.h>
 #include <curves/explicit/vufCurveCloseBSpline.h>
+#include <curves/explicit/vufCurveBezierOpen.h>
+#include <curves/explicit/vufCurveBezierClose.h>
 #include <curves/implicit/vufCurveBlend.h>
 #include <curves/implicit/vufCurveNoise.h>
 #include <curves/implicit/vufCurveCompose.h>
@@ -158,6 +160,11 @@ namespace vufMath
 						m_curve_ptr = vufCurveCloseBSpline<T, V, 5>::create();
 						return true;
 					}
+				}
+				if (p_type == vufCurveType::k_open_bezier_piecewise)
+				{
+					m_curve_ptr = vufCurveOpenBezier<T, V>::create();
+					return true;
 				}
 				if (p_type == vufCurveType::k_blend_curve)
 				{

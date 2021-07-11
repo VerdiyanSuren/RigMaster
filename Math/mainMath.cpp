@@ -19,6 +19,13 @@ using namespace vufMath;
 
 int main()
 {
+	auto l_c = vufCurveOpenBezier<double, vufVector4,3>::create();
+	l_c->set_nodes_count(9);
+	l_c->get_pos_at(0.9);
+	system("pause");
+	return 0;
+
+
 	vufPelinNoise<double> l_noise;
 	auto a = l_noise.simplex_4d(0, 1, 2, 3);
 	auto b = l_noise.simplex_2d(0, 1);

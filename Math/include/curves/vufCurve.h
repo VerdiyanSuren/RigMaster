@@ -420,8 +420,8 @@ namespace vufMath
 
 	template <class T, template<typename> class V, uint32_t>	class vufCurveOpenBSpline;
 	template <class T, template<typename> class V, uint32_t>	class vufCurveCloseBSpline;
-	template <class T, template<typename> class V, uint32_t>	class vufOpenBezier;
-	template <class T, template<typename> class V, uint32_t>	class vufCloseBezier; 
+	template <class T, template<typename> class V, uint32_t>	class vufCurveOpenBezier;
+	template <class T, template<typename> class V, uint32_t>	class vufCurveCloseBezier;
 
 	template <class T, template<typename> class V>				class vufOpenXSpline;
 	template <class T, template<typename> class V>				class vufCloseXSpline;
@@ -541,14 +541,6 @@ namespace vufMath
 			// make abstract
 			return V<T>();
 		}
-		virtual V<T>			get_normal_at(T p_t)				const
-		{
-			// To Do 
-			// make abstract
-			return V<T>();
-		}
-		//virtual V<T>			get_binormal(T p_t)			const = 0;
-		//virtual vufMatrix4<T> get_frenet_frame_at(T p_t)  const = 0;
 		
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
@@ -621,18 +613,18 @@ namespace vufMath
 		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 5>>		as_close_bspline_penta()const { return nullptr; }
 
 		// convert to open bezier
-		virtual std::shared_ptr<vufOpenBezier <T, V, 1>>		as_open_bezier_mono()	const { return nullptr; }
-		virtual std::shared_ptr<vufOpenBezier <T, V, 2>>		as_open_bezier_di()		const { return nullptr; }
-		virtual std::shared_ptr<vufOpenBezier <T, V, 3>>		as_open_bezier_tri()	const { return nullptr; }
-		virtual std::shared_ptr<vufOpenBezier <T, V, 4>>		as_open_bezier_tetra()	const { return nullptr; }
-		virtual std::shared_ptr<vufOpenBezier <T, V, 5>>		as_open_bezier_penta()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 1>>		as_open_bezier_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 2>>		as_open_bezier_di()		const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 3>>		as_open_bezier_tri()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 4>>		as_open_bezier_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 5>>		as_open_bezier_penta()	const { return nullptr; }
 
 		// convert to close bezier
-		virtual std::shared_ptr<vufCloseBezier <T, V, 1>>		as_close_bezier_mono()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBezier <T, V, 2>>		as_close_bezier_di()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBezier <T, V, 3>>		as_close_bezier_tri()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBezier <T, V, 4>>		as_close_bezier_tetra()	const { return nullptr; }
-		virtual std::shared_ptr<vufCloseBezier <T, V, 5>>		as_close_bezier_penta()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 1>>		as_close_bezier_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 2>>		as_close_bezier_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 3>>		as_close_bezier_tri()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 4>>		as_close_bezier_tetra()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 5>>		as_close_bezier_penta()	const { return nullptr; }
 
 		// convert to open xspline
 		virtual std::shared_ptr<vufOpenXSpline  <T, V>>	as_open_xspline_4d()		const { return nullptr; }

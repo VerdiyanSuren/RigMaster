@@ -514,12 +514,12 @@ std::cout << "]" << std::endl;
 		virtual int			get_interval_index(T p_t) const { return get_interval_index_i(p_t); }
 		virtual uint32_t	get_interval_count() const override { return get_interval_count_i(); }
 
-		virtual void		set_nodes_count(uint32_t p_count) override
+		virtual bool		set_nodes_count(uint32_t p_count) override
 		{
 			if (p_count < CURVE_DEGREE + 1)
 			{
 				vufCurve<T, V>::m_valid = false;
-				return;
+				return false;
 			}
 			// reserve elements from start and end
 			m_node_count = p_count;
@@ -532,7 +532,7 @@ std::cout << "]" << std::endl;
 				//update_max_infuences_i();
 			}
 			vufCurve<T, V>::m_valid = true;
-			return;
+			return true;
 		}
 		virtual uint32_t	get_nodes_count() const override
 		{

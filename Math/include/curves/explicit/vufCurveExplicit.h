@@ -17,7 +17,7 @@ namespace vufMath
 		bool	 is_weighted()  const { return m_knot_weighted; }
 		/** set and retrieve nodes count for control points of curves.
 		called only for explicit curves*/
-		virtual void		set_nodes_count(uint32_t p_count)	= 0;
+		virtual bool		set_nodes_count(uint32_t p_count)	= 0;
 		virtual uint32_t	get_nodes_count()	const			= 0;
 		/** set and get control point position*/
 		virtual void		set_node_at(uint32_t p_index, const V<T>& p_vector) = 0;
