@@ -181,6 +181,26 @@ namespace vufMath
 					m_curve_ptr = vufCurveCompose<T, V>::create();
 					return true;
 				}
+				if (p_type == vufCurveType::k_open_bezier_piecewise)
+				{
+					if (p_degree == 1)
+					{
+						m_curve_ptr = vufCurveOpenBezier<T, V,1>::create();
+						return true;
+					}
+					if (p_degree == 2)
+					{
+						m_curve_ptr = vufCurveOpenBezier<T, V, 2>::create();
+						return true;
+					}
+					if (p_degree == 3)
+					{
+						m_curve_ptr = vufCurveOpenBezier<T, V, 3>::create();
+						return true;
+					}
+					m_curve_ptr = nullptr;
+					return true;
+				}
 				m_curve_ptr = nullptr;
 				return true;
 			}

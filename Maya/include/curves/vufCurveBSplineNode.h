@@ -1,5 +1,5 @@
-#ifndef VF_RM_QUAT_CRV_NODE_H
-#define VF_RM_QUAT_CRV_NODE_H
+#ifndef VF_RM_BSPLINE_CRV_NODE_H
+#define VF_RM_BSPLINE_CRV_NODE_H
 
 #include <maya/MPxNode.h>
 #include <maya/MMatrixArray.h>
@@ -60,4 +60,4 @@ namespace vufRM
 		uint64_t		m_gen_id;
 	};
 }
-#endif // !VF_RM_QUAT_CRV_NODE_H
+#endif // !VF_RM_BSPLINE_CRV_NODE_H

@@ -126,7 +126,6 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data, m_gen_id);
 		//VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
 		//------------------------------------------------------------------------------
-		l_out_data->set_owner_id(m_gen_id);
 		if (l_out_data->m_internal_data == nullptr)
 		{
 			l_out_data->m_internal_data = vufCurveContainer_4d::create();
@@ -140,7 +139,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		MFnMatrixArrayData l_in_data_fn(l_in_obj,&l_status);
 		MMatrixArray l_matrix_array = l_in_data_fn.array(&l_status);
 
-		uint32_t l_transforms_sz = (uint32_t)l_matrix_array.length();		
+		uint32_t l_transforms_sz = (uint32_t)l_matrix_array.length();
 #pragma endregion
 #pragma region HANDLE_CURVE
 		//-------------------------------------------------------------------------------
