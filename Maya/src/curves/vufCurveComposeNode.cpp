@@ -46,11 +46,17 @@ MStatus	vufCurveComposeNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.setDefault(1));
 	l_status = addAttribute(g_operator_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// weight a
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_weight_a_attr, "weightA", "wa", k3Double, 0.0);
+	//VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_weight_a_attr, "weightA", "wa", k3Double, 0.0);
+	g_weight_a_attr = l_numeric_attr_fn.create( "weightA", "wa", MFnNumericData::k3Double, 0.0, &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_numeric_attr_fn.setStorable(true));
 	l_numeric_attr_fn.setChannelBox(true);
 	l_status = addAttribute(g_weight_a_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// weight b
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_weight_b_attr, "weightB", "wb", k3Double, 0.0);
+	//VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_weight_b_attr, "weightB", "wb", k3Double, 0.0);
+	g_weight_b_attr = l_numeric_attr_fn.create("weightB", "wb", MFnNumericData::k3Double, 0.0, &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_numeric_attr_fn.setStorable(true));
 	l_numeric_attr_fn.setChannelBox(true);
 	l_status = addAttribute(g_weight_b_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// in curve a

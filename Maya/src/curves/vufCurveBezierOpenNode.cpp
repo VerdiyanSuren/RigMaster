@@ -59,7 +59,7 @@ MStatus	vufCurveBezierOpenNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.addField("2", 1));
 	CHECK_MSTATUS(l_enum_attr_fn.addField("3", 2));
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
-	CHECK_MSTATUS(l_enum_attr_fn.setDefault(3));
+	CHECK_MSTATUS(l_enum_attr_fn.setDefault(2));
 	g_curve_compound_attr = l_compound_attr_fn.create("curve", "crv", &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_degree_attr));
@@ -113,7 +113,7 @@ MStatus	vufCurveBezierOpenNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		uint32_t l_transforms_sz = (uint32_t)l_matrix_array.length();
 #pragma endregion
 		short	l_degree = p_data.inputValue(g_degree_attr).asShort();
-		l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_open_bezier_piecewise);
+		l_out_data->m_internal_data->switch_curve(l_degree + 1, vufMath::vufCurveType::k_open_bezier_piecewise);
 		auto l_crv_ptr = l_out_data->m_internal_data->get_curve_ptr()->as_explicit_curve();
 		if (l_crv_ptr == nullptr)
 		{

@@ -22,6 +22,7 @@
 #include <curves/vufCurveToMayaNode.h>
 #include <curves/vufCurveBSplineNode.h>
 #include <curves/vufCurveBlendNode.h>
+#include <curves/vufCurveBezierOpenNode.h>
 #include <curves/vufCurveNoiseNode.h>
 #include <curves/vufCurveComposeNode.h>
 
@@ -78,6 +79,7 @@ const MTypeId	vufCurveQuat2EndsNode::		g_id(0x299430);	const MString	vufCurveQua
 const MTypeId	vufCurveQuatParamNode::		g_id(0x299530);	const MString	vufCurveQuatParamNode::		g_type_name("vufCurveRotateParams");
 const MTypeId	vufCurveNoiseNode::			g_id(0x299630);	const MString	vufCurveNoiseNode::			g_type_name("vufCurveNoise");
 const MTypeId	vufCurveComposeNode::		g_id(0x299730);	const MString	vufCurveComposeNode::		g_type_name("vufCurveCompose");
+const MTypeId	vufCurveBezierOpenNode::	g_id(0x299830);	const MString	vufCurveBezierOpenNode::	g_type_name("vufCurveBezierOpen");
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
 VF_DEFINE_CUSTOM_LOGGER(vufLogMaya);
@@ -111,6 +113,7 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufFromMayaCurveNode);
 	VF_REGISTER_NODE(vufCurveToMayaNode);
 	VF_REGISTER_NODE(vufCurveBSplineNode);
+	VF_REGISTER_NODE(vufCurveBezierOpenNode);
 	VF_REGISTER_NODE(vufCurveBlendNode);
 	VF_REGISTER_NODE(vufCurveNoiseNode);
 	VF_REGISTER_NODE(vufCurveComposeNode);
@@ -154,6 +157,7 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufFromMayaCurveNode);
 	VF_DEREGISTER_NODE(vufCurveToMayaNode);
 	VF_DEREGISTER_NODE(vufCurveBSplineNode);
+	VF_DEREGISTER_NODE(vufCurveBezierOpenNode);
 	VF_DEREGISTER_NODE(vufCurveBlendNode);
 	VF_DEREGISTER_NODE(vufCurveNoiseNode);
 	VF_DEREGISTER_NODE(vufCurveComposeNode);	

@@ -224,6 +224,7 @@ namespace vufMath
 			std::cout << m_interval_count << std::endl;
 			std::cout << m_nodes_count << std::endl;
 
+			vufCurve<T, V>::m_valid = true;
 			return true;
 		}
 		inline T			get_interval_t_min_i(int p_interval_index) const
@@ -275,7 +276,9 @@ namespace vufMath
 		{
 			return m_nodes_pos_v[m_nodes_count - 1] - m_nodes_pos_v[m_nodes_count - 2];
 		}
-		uint32_t l_ndx = uint32_t(p_t / m_interval_length);
+		p_t /= m_interval_length;
+		uint32_t l_ndx = uint32_t(p_t);
+		p_t -= l_ndx;
 
 		return	m_nodes_pos_v[l_ndx + 1] - m_nodes_pos_v[l_ndx];
 	}
@@ -290,8 +293,9 @@ namespace vufMath
 		{
 			return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count - 1] + get_tangent_at_i(1) * (p_t - 1);
 		}
-		uint32_t l_ndx = uint32_t(p_t / m_interval_length);
-
+		p_t /= m_interval_length;
+		uint32_t l_ndx = uint32_t(p_t);
+		p_t -= l_ndx;
 		return	m_nodes_pos_v[l_ndx] * (1 - p_t) + m_nodes_pos_v[l_ndx + 1] * p_t;
 	}
 
@@ -307,7 +311,9 @@ namespace vufMath
 			return  m_nodes_pos_v[m_nodes_count-2] * (-2.0) + m_nodes_pos_v[m_nodes_count -1] * 2.0;
 
 		}
-		uint32_t l_ndx = 2 * uint32_t(p_t / m_interval_length);
+		p_t /= m_interval_length;
+		uint32_t l_ndx = 2 * uint32_t(p_t);
+		p_t -= uint32_t(p_t);
 		return m_nodes_pos_v[l_ndx] * 2.0 * (p_t - 1) + m_nodes_pos_v[l_ndx + 1] * (2.0 - 4.0 * p_t) + m_nodes_pos_v[l_ndx + 2] * 2.0 * p_t;
 	}
 	template<>
@@ -321,7 +327,9 @@ namespace vufMath
 		{
 			return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count-1] + get_tangent_at_i(1) * (p_t - 1);
 		}
-		uint32_t l_ndx =  2 * uint32_t(p_t / m_interval_length);
+		p_t /= m_interval_length;
+		uint32_t l_ndx = 2 * uint32_t(p_t);
+		p_t -= uint32_t(p_t);
 
 		return	m_nodes_pos_v[l_ndx] * (1 - p_t) * (1 - p_t) + 2.0 * m_nodes_pos_v[l_ndx + 1] * p_t * (1 - p_t) + m_nodes_pos_v[l_ndx + 2] * p_t * p_t;
 	}
@@ -338,7 +346,9 @@ namespace vufMath
 			return 3.0 * (m_nodes_pos_v[m_nodes_count - 1] - m_nodes_pos_v[m_nodes_count - 2]);
 
 		}
-		uint32_t l_ndx = 3 * uint32_t(p_t / m_interval_length);
+		p_t /= m_interval_length;
+		uint32_t l_ndx = 3 * uint32_t(p_t);
+		p_t -= uint32_t(p_t);
 
 		return 3.0 *(m_nodes_pos_v[l_ndx] * (p_t - 1) * (1 - p_t) +  m_nodes_pos_v[l_ndx + 1] * (1.0 - 4.0 * p_t + 3.0 * p_t * p_t) + 
 				m_nodes_pos_v[l_ndx + 2] * p_t * (2.0 - 3.0 * p_t) + m_nodes_pos_v[l_ndx + 3] * p_t * p_t );
@@ -354,7 +364,9 @@ namespace vufMath
 		{
 			return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count - 1] + get_tangent_at_i(1) * (p_t - 1);
 		}
-		uint32_t l_ndx = 3 * uint32_t(p_t / m_interval_length);
+		p_t /= m_interval_length;
+		uint32_t l_ndx = 3 * uint32_t(p_t);
+		p_t -= uint32_t(p_t);
 
 		return m_nodes_pos_v[l_ndx] * (1 - p_t) * (1 - p_t) * (1 - p_t) + 3.0 * m_nodes_pos_v[l_ndx + 1] * p_t * (1 - p_t) * (1 - p_t) +
 			3.0 * m_nodes_pos_v[l_ndx + 2] * p_t * p_t * (1 - p_t) + m_nodes_pos_v[l_ndx + 3] * p_t * p_t * p_t;

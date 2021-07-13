@@ -161,11 +161,6 @@ namespace vufMath
 						return true;
 					}
 				}
-				if (p_type == vufCurveType::k_open_bezier_piecewise)
-				{
-					m_curve_ptr = vufCurveOpenBezier<T, V>::create();
-					return true;
-				}
 				if (p_type == vufCurveType::k_blend_curve)
 				{
 					m_curve_ptr = vufCurveBlend<T, V>::create();
