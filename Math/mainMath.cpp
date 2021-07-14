@@ -22,6 +22,7 @@ int main()
 	auto l_c = vufCurveOpenBezier<double, vufVector4,3>::create();
 	l_c->set_nodes_count(9);
 	l_c->get_pos_at(0.9);
+	std::cout << l_c->to_string() << std::endl;
 	system("pause");
 	return 0;
 
