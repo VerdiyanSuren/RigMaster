@@ -73,21 +73,7 @@ namespace vufMath
 			return V<T>(1., 1., 1.);
 		}
 
-		virtual vufCurveScaleFnType get_type() const override { return vufCurveScaleFnType::k_closest_params; }
-		virtual void	log_me(int p_tab_count = 0) const override
-		{
-			std::string l_str_offset(p_tab_count * 4, '.');
-			VF_CONSOLE_SET_COLOR(VF_CONSOLE_COLOR_YELLOW, VF_CONSOLE_COLOR_BLACK);
-			std::cout << std::fixed;
-			std::cout << l_str_offset << "Pin_start: " << vufCurveScaleFn<T, V>::m_pin_start << std::endl;
-			std::cout << l_str_offset << "Pin_star_value: " << vufCurveScaleFn<T, V>::m_pin_start_value << std::endl;
-			std::cout << l_str_offset << "Pin_end: " << vufCurveScaleFn<T, V>::m_pin_end << std::endl;
-			std::cout << l_str_offset << "Pin_end value: " << vufCurveScaleFn<T, V>::m_pin_end_value << std::endl;
-
-			VF_CONSOLE_RESET_COLOR();
-		}
-		/// Set count of scale influencers
-		virtual void	set_item_count(uint32_t p_count) override
+		void	set_item_count_i(uint32_t p_count)
 		{
 			if (m_positon_v.size() != p_count)
 			{
@@ -102,32 +88,16 @@ namespace vufMath
 				}
 			}
 		}
-		/// Set influence scale value and position in the world. 
-		virtual void	set_item_at(uint32_t p_index, const V<T> p_pos, const V<T>& p_scale) override
+		void	set_item_at_i(uint32_t p_index, const V<T> p_pos, const V<T>& p_scale)
 		{
 			uint32_t l_ndx = m_scale_indeces_v[p_index];
 			m_positon_v[l_ndx] = p_pos;
 			m_scale_a_v[l_ndx] = p_scale;
 		}
-		/// Compute or set influencer scale params on the curve
-		virtual void	compute_bind_param(const vufCurveContainer<T, V>& p_curve_container, uint32_t p_division = 10, T p_percition = 0.00001) override
+		void	compute_bind_param_i(const vufCurveContainer<T, V>& p_curve_container, uint32_t p_division = 10, T p_percition = 0.00001)
 		{
 			auto l_crv_ptr = p_curve_container.get_curve_ptr();
 			uint32_t l_start = 0, l_end = (uint32_t)m_scale_param_v.size();
-
-			if (l_crv_ptr->is_close() == false)
-			{
-				if (vufCurveScaleFn<T, V>::m_pin_start == true)
-				{
-					m_scale_param_v[0] = vufCurveScaleFn<T, V>::m_pin_start_value;
-					++l_start;
-				}
-				if (vufCurveScaleFn<T, V>::m_pin_end == true)
-				{
-					m_scale_param_v.back() = vufCurveScaleFn<T, V>::m_pin_end_value;
-					--l_end;
-				}
-			}
 			
 			//--------------------------------
 			//  get curve params for each control by closest point
@@ -159,7 +129,7 @@ namespace vufMath
 			}
 			//return true;
 		}		
-		virtual bool	match_scales(const vufCurveContainer<T, V>& p_curve_container) override
+		bool	match_scales_i(const vufCurveContainer<T, V>& p_curve_container)
 		{
 			// Any time when scale values of contols are updated - call this method to update
 			for (uint64_t i = 0; i < m_scale_indeces_v.size() - 1; ++i)
@@ -174,6 +144,11 @@ namespace vufMath
 			m_scale_b_v[l_index_2] = m_scale_a_v[l_index_1];
 			return true;
 		}
+
+		virtual vufCurveScaleFnType get_type() const override { return vufCurveScaleFnType::k_closest_params; }
+		/// Set count of scale influencers
+		/// Set influence scale value and position in the world. 
+		/// Compute or set influencer scale params on the curve
 
 
 		/// get scale interpolated by curve 
@@ -190,11 +165,6 @@ namespace vufMath
 		virtual std::shared_ptr< vufCurveScaleFn<T, V>> get_copy() const override
 		{
 			auto l_ptr = create();
-			l_ptr->m_pin_start = vufCurveScaleFn<T, V>::m_pin_start;
-			l_ptr->m_pin_start_value = vufCurveScaleFn<T, V>::m_pin_start_value;
-			l_ptr->m_pin_end = vufCurveScaleFn<T, V>::m_pin_end;
-			l_ptr->m_pin_end_value = vufCurveScaleFn<T, V>::m_pin_end_value;
-			l_ptr->m_offset = vufCurveScaleFn<T, V>::m_offset;
 
 			l_ptr->m_positon_v = m_positon_v;
 			l_ptr->m_scale_a_v = m_scale_a_v;

@@ -23,6 +23,7 @@
 
 #include <curves/scaleFn/vufCurveScaleFn.h>
 #include <curves/scaleFn/vufCurveScaleCloseFn.h>
+#include <curves/scaleFn/vufCurveScaleParamFn.h>
 
 #include <curves/remapFn/vufCurveRemapFn.h>
 #include <math/vufQuaternion.h>
@@ -196,6 +197,27 @@ namespace vufMath
 					m_curve_ptr = nullptr;
 					return true;
 				}
+				if (p_type == vufCurveType::k_close_bezier_piecewise)
+				{
+					if (p_degree == 1)
+					{
+						m_curve_ptr = vufCurveCloseBezier<T, V, 1>::create();
+						return true;
+					}
+					if (p_degree == 2)
+					{
+						m_curve_ptr = vufCurveCloseBezier<T, V, 2>::create();
+						return true;
+					}
+					if (p_degree == 3)
+					{
+						m_curve_ptr = vufCurveCloseBezier<T, V, 3>::create();
+						return true;
+					}
+					m_curve_ptr = nullptr;
+					return true;
+				}
+
 				m_curve_ptr = nullptr;
 				return true;
 			}

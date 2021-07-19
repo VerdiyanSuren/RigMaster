@@ -9,11 +9,11 @@
 
 namespace vufRM
 {
-	class vufCurveBezierOpenNode : public MPxNode
+	class vufCurveBezierNode : public MPxNode
 	{
 	public:		
-		vufCurveBezierOpenNode();
-		virtual ~vufCurveBezierOpenNode() {}
+		vufCurveBezierNode();
+		virtual ~vufCurveBezierNode() {}
 
 		static  void* creator();
 		static  MStatus	initialize();
@@ -26,6 +26,7 @@ namespace vufRM
 
 		// Curve
 		static MObject	g_curve_compound_attr;
+		static MObject	g_close_attr;
 		static MObject	g_degree_attr;
 		static MObject	g_rebuild_store_attr;
 		static MObject	g_quaternion_store_attr;
@@ -40,6 +41,7 @@ namespace vufRM
 
 		static MObject	g_transfoms_attr;
 		static MObject	g_data_out_attr;
+		static MObject	g_params_out_attr;
 
 	private:
 		uint64_t		m_gen_id;

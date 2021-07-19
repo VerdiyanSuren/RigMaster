@@ -22,17 +22,17 @@ using namespace vufMath;
 MObject	vufCurveBSplineNode::g_curve_compound_attr;
 MObject	vufCurveBSplineNode::g_close_attr;
 MObject	vufCurveBSplineNode::g_degree_attr;
+MObject	vufCurveBSplineNode::g_closest_division_attr;
 MObject	vufCurveBSplineNode::g_rebuild_store_attr;
 MObject	vufCurveBSplineNode::g_quaternion_store_attr;
 MObject	vufCurveBSplineNode::g_scale_store_attr;
 //MObject	vufCurveBSplineNode::g_remap_store_attr;
-
 VF_RM_CRV_NODE_DEFINE_QUATERNIONS_ATTR(vufCurveBSplineNode);
 VF_RM_CRV_NODE_DEFINE_REBUILD_ATTR(vufCurveBSplineNode);
 VF_RM_CRV_NODE_DEFINE_SCALE_ATTR(vufCurveBSplineNode);
-
 MObject	vufCurveBSplineNode::g_transfoms_attr;
 MObject	vufCurveBSplineNode::g_data_out_attr;
+MObject	vufCurveBSplineNode::g_params_out_attr;
 
 vufCurveBSplineNode::vufCurveBSplineNode():MPxNode()
 {
@@ -61,14 +61,20 @@ MStatus	vufCurveBSplineNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.addField("4",	k_tetra));
 	CHECK_MSTATUS(l_enum_attr_fn.addField("5",	k_penta));
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
-	CHECK_MSTATUS(l_enum_attr_fn.setDefault(3));	
+	CHECK_MSTATUS(l_enum_attr_fn.setDefault(3));
+
 	// Close
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_close_attr, "close", "cls", kBoolean, false);
+
 	// Curve Compound
 	g_curve_compound_attr = l_compound_attr_fn.create("curve", "crv", &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_close_attr));
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_degree_attr));
+	l_status = addAttribute(g_curve_compound_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_closest_division_attr, "division", "div", kInt, 10);
+	l_status = addAttribute(g_closest_division_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 #pragma endregion
 	//------------------------------------------------------------------------------------------------
 	// QuaternionsFn
@@ -90,18 +96,26 @@ MStatus	vufCurveBSplineNode::initialize()
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setWritable(false);
+	// Out double attr
+	g_params_out_attr = l_typed_attr_fn.create("outDoubleList", "odl", MFnData::kDoubleArray, MObject::kNullObj, &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_typed_attr_fn.setStorable(true);
+	l_typed_attr_fn.setWritable(false);
+	l_status = addAttribute(g_params_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	//------------------------------------------------------------------------------------------------
 	// Add Attributes
-	l_status = addAttribute(g_curve_compound_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+
 	l_status = addAttribute(g_transfoms_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
-
 	//------------------------------------------------------------------------------------------------
 	//  Attributes Affects
+	l_status = attributeAffects(g_transfoms_attr, g_params_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	
+	l_status = attributeAffects(g_transfoms_attr,			g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_curve_compound_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-
-	l_status = attributeAffects(g_degree_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_close_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = attributeAffects(g_degree_attr,				g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = attributeAffects(g_close_attr,				g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = attributeAffects(g_closest_division_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	VF_RM_CRV_NODE_REBUILD_ATTR_AFFECT_TO(		g_data_out_attr);
 	VF_RM_CRV_NODE_QUATERNIONS_ATTR_AFFECT_TO(	g_data_out_attr);
@@ -111,13 +125,12 @@ MStatus	vufCurveBSplineNode::initialize()
 	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_quaternion_store_attr, "hRotation",	"hrt", mpxCurveQuatWrapper);
 	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_scale_store_attr,		"hScale",		"hsc", mpxCurveScaleWrapper);
 
-	l_status = attributeAffects(g_transfoms_attr, g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	return MS::kSuccess;
 }
 MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
-	if (p_plug == g_data_out_attr )
+	if (p_plug == g_data_out_attr || p_plug == g_params_out_attr)
 	{
 		MStatus l_status;
 		//------------------------------------------------------------------------------
@@ -146,6 +159,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		// Handle Curve
 		bool	l_close			= p_data.inputValue(g_close_attr).asBool();
 		short	l_degree		= p_data.inputValue(g_degree_attr).asShort();
+		int		l_cls_div		= p_data.inputValue(g_closest_division_attr).asInt();
 		bool	l_is_crv_new	= (l_close ==true) ? 
 			l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_close_bspline):
 			l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_open_bspline);
@@ -270,50 +284,38 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		if (l_scale_mode == 0 /* apply. always refresh*/)
 		{
 			l_out_data->m_internal_data->switch_scale_fn(vufCurveScaleFnType::k_closest_params);
-			
-			std::shared_ptr<vufCurveScaleFn_4d> l_scale_ptr = l_out_data->m_internal_data->get_scale_fn_ptr();
+			auto l_scale_ptr = l_out_data->m_internal_data->get_scale_fn_ptr()->as_scale_close_fn();
 			if (l_scale_ptr != nullptr)
 			{
-				l_scale_ptr->set_pin_start(l_scale_pin_start);
-				l_scale_ptr->set_pin_start_value(l_scale_pin_start_value);
-				l_scale_ptr->set_pin_end(l_scale_pin_end);
-				l_scale_ptr->set_pin_end_value(l_scale_pin_end_value);
-				l_scale_ptr->set_offset(l_scale_offset_value);
 				
-				l_scale_ptr->set_item_count(l_transforms_sz);
+				l_scale_ptr->set_item_count_i(l_transforms_sz);
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
 					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
 					vufVector_4d l_scl_vec(	l_matr->get_scale_x(),
 											l_matr->get_scale_y(),
 											l_matr->get_scale_z());
-					l_scale_ptr->set_item_at(i, l_matr->get_translation_4(), l_scl_vec);
+					l_scale_ptr->set_item_at_i(i, l_matr->get_translation_4(), l_scl_vec);
 				}
-				l_scale_ptr->compute_bind_param(l_container, 10);
-				l_scale_ptr->match_scales(l_container);
+				l_scale_ptr->compute_bind_param_i(l_container, 10);
+				l_scale_ptr->match_scales_i(l_container);
 				l_scale_store_data->m_internal_data = l_scale_ptr;
 			}
 		}
 		if (l_scale_mode == 1 /* just update scale fn */)
 		{
 			l_out_data->m_internal_data->switch_scale_fn(vufCurveScaleFnType::k_closest_params);
-			std::shared_ptr<vufCurveScaleFn_4d> l_scale_ptr = l_scale_store_data->m_internal_data;
+			auto l_scale_ptr = l_scale_store_data->m_internal_data->as_scale_close_fn();
 			if (l_scale_ptr != nullptr)
 			{
-				l_scale_ptr->set_pin_start(l_scale_pin_start);
-				l_scale_ptr->set_pin_start_value(l_scale_pin_start_value);
-				l_scale_ptr->set_pin_end(l_scale_pin_end);
-				l_scale_ptr->set_pin_end_value(l_scale_pin_end_value);
-				l_scale_ptr->set_offset(l_scale_offset_value);
-
-				l_scale_ptr->set_item_count(l_transforms_sz);
+				l_scale_ptr->set_item_count_i(l_transforms_sz);
 				for (uint32_t i = 0; i < l_transforms_sz; ++i)
 				{
 					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
 					vufVector_4d l_scl_vec(	l_matr->get_scale_x(),
 											l_matr->get_scale_y(),
 											l_matr->get_scale_z());
-					l_scale_ptr->set_item_at(i, l_matr->get_translation_4(), l_scl_vec);
+					l_scale_ptr->set_item_at_i(i, l_matr->get_translation_4(), l_scl_vec);
 				}
 			}
 		}

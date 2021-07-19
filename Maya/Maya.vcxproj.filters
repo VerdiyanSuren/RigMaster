@@ -126,16 +126,16 @@
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatParamNode.h">
       <Filter>include\curves\rotateFn</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseFn.h">
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseNode.h">
+      <Filter>include\curves\scaleFn</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleParamNode.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveBSplineNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\vufCurveBezierCloseNode.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveBezierOpenNode.h">
+    <ClInclude Include="include\curves\vufCurveBezierNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveBlendNode.h">
@@ -302,16 +302,16 @@
     <ClCompile Include="src\curves\rotateFn\vufCurveQuatParamNode.cpp">
       <Filter>src\curves\rotateFn</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\scaleFn\vufCurveScaleFn.cpp">
+    <ClCompile Include="src\curves\scaleFn\vufCurveScaleCloseNode.cpp">
+      <Filter>src\curves\scaleFn</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\scaleFn\vufCurveScaleParamNode.cpp">
       <Filter>src\curves\scaleFn</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveBSplineNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\vufCurveBezierCloseNode.cpp">
-      <Filter>src\curves</Filter>
-    </ClCompile>
-    <ClCompile Include="src\curves\vufCurveBezierOpenNode.cpp">
+    <ClCompile Include="src\curves\vufCurveBezierNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveBlendNode.cpp">

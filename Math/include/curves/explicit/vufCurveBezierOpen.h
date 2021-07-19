@@ -24,8 +24,8 @@ namespace vufMath
 		virtual ~vufCurveOpenBezier() {}
 		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveOpenBezier);
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_open_bezier_piecewise, k_bezier_category);
-		VF_MATH_CRV_REBUILD;
-		VF_MATH_CRV_REBUILD_ALONG_AXIS;
+		VF_MATH_CRV_REBUILD_CLAMPED;
+		VF_MATH_CRV_REBUILD_ALONG_AXIS_CLAMPED;
 
 		virtual V<T>			get_closest_point(	const V<T>& p_point,
 													T			p_start = 0,
@@ -68,7 +68,7 @@ namespace vufMath
 				vufCurveExplicit<T, V>::m_nodes_pos_v.resize(p_count);
 				return init_knot_vector_i();
 			}
-			return false;
+			return true;
 		}
 		virtual uint32_t	get_nodes_count() const override
 		{
@@ -200,7 +200,7 @@ namespace vufMath
 			{
 				m_knot_v[i] = (T(i + 1)) * m_interval_length;
 			}
-			vufNumericArrayFn<T> l_fn(m_knot_v);
+			//vufNumericArrayFn<T> l_fn(m_knot_v);
 			//std::cout << l_fn.to_string() << std::endl;
 			//std::cout << m_interval_length << std::endl;
 			//std::cout << m_interval_count << std::endl;
@@ -211,8 +211,7 @@ namespace vufMath
 		}
 		inline T			get_interval_t_min_i(int p_interval_index) const
 		{
-			return 0;
-			//return p_interval_index == 0 ? 0.0 :m_knot_v[l_knot_index -1];
+			return p_interval_index == 0 ? 0.0 : m_knot_v[p_interval_index - 1];
 		}
 		inline T			get_interval_t_max_i(int p_interval_index) const
 		{
@@ -220,8 +219,8 @@ namespace vufMath
 		}
 		inline int			get_interval_index_i(T p_t) const
 		{
-			if (p_t < 0.0) return 0;
-			if (p_t > 1.0) return m_interval_count - 1;
+			if (p_t <= 0.0) return 0;
+			if (p_t >= 1.0) return m_interval_count - 1;
 			return int(p_t / m_interval_length);
 		}
 		inline uint32_t		get_interval_count_i() const

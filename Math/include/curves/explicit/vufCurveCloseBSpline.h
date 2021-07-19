@@ -238,9 +238,10 @@ std::cout << "]" << std::endl;
 
 		inline V<T>			get_pos_at_i(T p_t)		const
 		{
+			p_t -= std::floor(p_t);
 			if (p_t < 0.0)
 			{
-				return vufCurveExplicit<T, V>::m_nodes_pos_v[0] - get_tangent_at_i(0) * (-p_t);
+				return vufCurveExplicit<T, V>::m_nodes_pos_v[0] + get_tangent_at_i(0) * (p_t);
 				//return	vufCurve<T, V>::m_nodes_pos_v[0] +
 				//		vufCurve<T, V>::m_nodes_pos_v[0] * m_dn_v[0][0].eval(0.0) * (-p_t);
 			}
@@ -592,8 +593,7 @@ std::cout << "]" << std::endl;
 		}
 
 		virtual V<T>		get_pos_at(T p_t)										const override
-		{
-			p_t -= std::floor(p_t);
+		{			
 			return get_pos_at_i(p_t);
 		}
 		virtual V<T>		get_tangent_at(T p_t)									const override

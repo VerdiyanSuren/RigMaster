@@ -155,7 +155,7 @@ namespace vufMath
 		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>> get_copy() const override
 		{
 			auto l_ptr = create();
-
+			l_ptr->m_valid			= m_valid;
 			l_ptr->m_y_axis_v		= m_y_axis_v;
 			l_ptr->m_positon_v		= m_positon_v;
 			l_ptr->m_quaternion_a_v = m_quaternion_a_v;

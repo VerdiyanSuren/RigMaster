@@ -19,10 +19,22 @@ using namespace vufMath;
 
 int main()
 {
-	auto l_c = vufCurveOpenBezier<double, vufVector4,3>::create();
-	l_c->set_nodes_count(9);
-	l_c->get_pos_at(0.9);
-	std::cout << l_c->to_string() << std::endl;
+	auto l_cc = vufCurveCloseBezier<double, vufVector4, 3>::create();
+	auto l_co = vufCurveOpenBezier<double, vufVector4,3>::create();
+	l_co->set_nodes_count(11);
+	l_cc->set_nodes_count(9);
+	std::cout << l_cc->get_interval_index_i(0) << std::endl;
+	std::cout << l_cc->get_interval_index_i(.5) << std::endl;
+	std::cout << l_cc->get_interval_index_i(.8) << std::endl;
+	std::cout << l_cc->get_interval_index_i(2) << std::endl;
+	for (int i = 0; i < 9; ++i)
+	{
+		l_cc->set_node_at(i, vufVector4<double>::random_vector());
+	}
+	//std::cout << l_cc->get_interval_t_min_i(3) << std::endl;
+
+	//l_c->get_pos_at(0.9);
+	//std::cout << l_c->to_string() << std::endl;
 	system("pause");
 	return 0;
 

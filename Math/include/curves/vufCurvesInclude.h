@@ -143,7 +143,7 @@ bool				get_closest_point_param_on_interval_i(	const V<T>& p_point,						\
 
 
 
-#define VF_MATH_CRV_REBUILD																				\
+#define VF_MATH_CRV_REBUILD_CLAMPED																		\
 virtual bool		rebuild(																			\
 								std::vector<T>& p_uniform_to_curve_val_v,								\
 								std::vector<T>& p_curve_to_uniform_val_v,								\
@@ -152,6 +152,8 @@ virtual bool		rebuild(																			\
 								T				p_start = 0 /*interval on which we need rebuild*/,		\
 								T				p_end = 1) const override								\
 	{																									\
+		p_start = VF_CLAMP(0.0, 1.0, p_start);															\
+		p_end = VF_CLAMP(0.0, 1.0, p_end);																\
 		if (m_valid == false || abs(p_end - p_start) < vufCurve_kTol)									\
 		{																								\
 			return false;																				\
@@ -231,7 +233,7 @@ virtual bool		rebuild(																			\
 		return true;																					\
 	}
 
-#define VF_MATH_CRV_REBUILD_ALONG_AXIS																	\
+#define VF_MATH_CRV_REBUILD_ALONG_AXIS_CLAMPED															\
 		virtual bool		rebuild_along_axis( const V<T>&		p_axis/*project curve on this axis*/,	\
 												std::vector<T>& p_uniform_to_curve_val_v,				\
 												std::vector<T>& p_curve_to_uniform_val_v,				\
@@ -240,6 +242,8 @@ virtual bool		rebuild(																			\
 												T				p_start = 0 /*interval on which we need rebuild*/,	\
 												T				p_end = 1) const override							\
 	{																									\
+		p_start = VF_CLAMP(0.0, 1.0, p_start);															\
+		p_end = VF_CLAMP(0.0, 1.0, p_end);																\
 		if (m_valid == false || abs(p_end - p_start) < vufCurve_kTol)									\
 		{																								\
 			return false;																				\

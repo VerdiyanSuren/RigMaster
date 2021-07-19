@@ -65,6 +65,7 @@ namespace vufMath
 
 		virtual vufCurveQuatFnType								get_type() const = 0 { return vufCurveQuatFnType::k_none; }
 		virtual std::shared_ptr< vufCurveQuaternionFn<T, V>>	get_copy() const = 0;
+		
 		// cast interface
 		virtual std::shared_ptr < vufCurveQuaternionCloseFn<T, V> >		as_closest_fn()		const { return nullptr; }
 		virtual std::shared_ptr < vufCurveQuaternionTransportFn<T, V> > as_transport_fn()	const { return nullptr; }
@@ -113,11 +114,6 @@ namespace vufMath
 			}
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, p_version,			sizeof(p_version));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_valid,			sizeof(m_valid));
-			//VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_start,		sizeof(m_pin_start));
-			//VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_start_value,	sizeof(m_pin_start_value));
-			//VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_end,			sizeof(m_pin_end));
-			//VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_pin_end_value,	sizeof(m_pin_end_value));
-			//VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset,			sizeof(m_offset));
 
 			return p_offset;
 		}

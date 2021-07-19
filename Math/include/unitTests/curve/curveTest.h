@@ -765,17 +765,17 @@ namespace vufMath
 				l_crv_c->set_node_at(i, vufVector4<T>::random_vector());
 				l_crv_o->set_node_at(i, vufVector4<T>::random_vector());
 			}
-			l_scl_1->set_item_count(5);
+			l_scl_1->set_item_count_i(5);
 			for (uint32_t i = 0; i < 5; ++i)
 			{
 				vufMatrix4<double> l_matr = vufMatrix4<double>::random_matrix();
 				vufVector_4d l_scl_vec(	l_matr.get_scale_x(),
 										l_matr.get_scale_y(),
 										l_matr.get_scale_z());
-				l_scl_1->set_item_at(i, l_matr.get_translation_4(), l_scl_vec);
+				l_scl_1->set_item_at_i(i, l_matr.get_translation_4(), l_scl_vec);
 			}
-			l_scl_1->compute_bind_param(*l_cntnr, 10);
-			l_scl_1->match_scales(*l_cntnr);
+			l_scl_1->compute_bind_param_i(*l_cntnr, 10);
+			l_scl_1->match_scales_i(*l_cntnr);
 			// to_binary from_binary
 			std::vector<char> l_buff;
 			uint64_t l_size		= l_scl_1->get_binary_size();
@@ -900,19 +900,19 @@ namespace vufMath
 			l_cntnr_1->set_quaternion_fn_ptr(l_quat);
 
 			// init scales
-			l_scl->set_item_count(5);
+			l_scl->set_item_count_i(5);
 			for (uint32_t i = 0; i < 5; ++i)
 			{
 				vufMatrix4<double> l_matr = vufMatrix4<double>::random_matrix();
 				vufVector_4d l_scl_vec(l_matr.get_scale_x(),
 					l_matr.get_scale_y(),
 					l_matr.get_scale_z());
-				l_scl->set_item_at(i, l_matr.get_translation_4(), l_scl_vec);
+				l_scl->set_item_at_i(i, l_matr.get_translation_4(), l_scl_vec);
 			}
-			l_scl->compute_bind_param(*l_cntnr_1, 10);
-			l_scl->match_scales(*l_cntnr_1);
-			l_scl->compute_bind_param(*l_cntnr_1, 10);
-			l_scl->match_scales(*l_cntnr_1);
+			l_scl->compute_bind_param_i(*l_cntnr_1, 10);
+			l_scl->match_scales_i(*l_cntnr_1);
+			l_scl->compute_bind_param_i(*l_cntnr_1, 10);
+			l_scl->match_scales_i(*l_cntnr_1);
 
 			l_cntnr_1->set_scale_fn_ptr(l_scl);
 
