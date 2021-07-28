@@ -440,6 +440,7 @@
     <ClInclude Include="include\curves\vufCurveSlide.h" />
     <ClInclude Include="include\curves\vufCurvesInclude.h" />
     <ClInclude Include="include\math\vufMatrix.h" />
+    <ClInclude Include="include\math\vufPolinom.h" />
     <ClInclude Include="include\math\vufQuaternion.h" />
     <ClInclude Include="include\math\vufVector.h" />
     <ClInclude Include="include\mathUtils\vufMathUtil.h" />

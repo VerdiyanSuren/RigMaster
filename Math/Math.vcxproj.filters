@@ -132,6 +132,9 @@
     <ClInclude Include="include\math\vufMatrix.h">
       <Filter>include\math</Filter>
     </ClInclude>
+    <ClInclude Include="include\math\vufPolinom.h">
+      <Filter>include\math</Filter>
+    </ClInclude>
     <ClInclude Include="include\math\vufQuaternion.h">
       <Filter>include\math</Filter>
     </ClInclude>

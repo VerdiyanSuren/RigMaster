@@ -481,6 +481,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClInclude Include="include\data\vufData.h" />
     <ClInclude Include="include\data\vufDataTemplate.h" />
     <ClInclude Include="include\data\vufMayaDataList.h" />
+    <ClInclude Include="include\dataCollectors\vufDataCollectorInclude.h" />
     <ClInclude Include="include\dataCollectors\vufDoubleListNode.h" />
     <ClInclude Include="include\dataCollectors\vufDoubleListNullNode.h" />
     <ClInclude Include="include\dataCollectors\vufMatrixListNode.h" />

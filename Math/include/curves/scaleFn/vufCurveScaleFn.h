@@ -46,8 +46,8 @@ namespace vufMath
 		virtual vufCurveScaleFnType						get_type() const = 0 { return vufCurveScaleFnType::k_none; }
 		virtual std::shared_ptr< vufCurveScaleFn<T, V>> get_copy() const = 0;
 		// cast interface
-		virtual std::shared_ptr < vufScaleCloseCurveFn<T, V> > as_scale_close_fn() const { return nullptr; }
-		virtual std::shared_ptr < vufCurveScaleParamFn<T, V> > as_scale_params_fn() const { return nullptr; }
+		virtual std::shared_ptr < vufScaleCloseCurveFn<T, V> > as_close_fn() const { return nullptr; }
+		virtual std::shared_ptr < vufCurveScaleParamFn<T, V> > as_params_fn() const { return nullptr; }
 
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const = 0
 		{

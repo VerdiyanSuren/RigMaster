@@ -682,9 +682,9 @@ std::cout << "]" << std::endl;
 		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 4>>	as_close_bspline_tetra()	const { return nullptr; }
 		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 5>>	as_close_bspline_penta()	const { return nullptr; }
 	private:
-		std::vector<T>												m_knot_v;
-		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_n_v;	// [time interval, node index] = basis function
-		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_dn_v;	// [time interval, node index] = basis derivative
+		std::vector<T>													m_knot_v;
+		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>		m_n_v;	// [time interval, node index] = basis function
+		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE-1>>>	m_dn_v;	// [time interval, node index] = basis derivative
 		uint32_t m_node_count = 0;
 		uint32_t m_indent_start = CURVE_DEGREE % 2 == 0 ? CURVE_DEGREE/2: (CURVE_DEGREE-1)/2;
 		uint32_t m_indent_end	= CURVE_DEGREE % 2 == 0 ? CURVE_DEGREE / 2 : 1 + (CURVE_DEGREE - 1) / 2;

@@ -76,9 +76,8 @@ namespace vufMath
 		}
 		void	set_item_count_i(uint32_t p_count)
 		{
-			if (m_positon_v.size() != p_count)
+			if (m_scale_param_v.size() != p_count)
 			{
-				m_positon_v.resize(p_count);
 				m_scale_a_v.resize(p_count);
 				m_scale_b_v.resize(p_count);
 				m_scale_param_v.resize(p_count);
@@ -91,21 +90,22 @@ namespace vufMath
 				*/
 			}
 		}
-		bool	set_item_at_i(	uint32_t									p_index,
-								T											p_param,/*orginal curve param*/
-								const	vufMatrix4<T>&						p_matr,
-								const	std::shared_ptr<vufCurve<T, V> >	p_crv_ptr)
+		bool	set_item_at_i(	uint32_t				p_index,
+								T						p_param,/*orginal curve param*/
+								const	vufMatrix4<T>&	p_matr)
 		{
-			if (p_crv_ptr == nullptr || p_crv_ptr->is_valid() == false)
-			{
-				vufCurveQuaternionFn<T, V>::m_valid = false;
-				return false;
-			}
 			m_scale_param_v[p_index]	= p_param;
-			m_positon_v[p_index]		= V<T>(p_matr[3][0], p_matr[3][1], p_matr[3][2]);
-			m_scale_a_v[p_index].x		= l_matr.get_scale_x();
-			m_scale_a_v[p_index].y		= l_matr.get_scale_y();
-			m_scale_a_v[p_index].z		= l_matr.get_scale_z();
+			m_scale_a_v[p_index].x		= p_matr.get_scale_x();
+			m_scale_a_v[p_index].y		= p_matr.get_scale_y();
+			m_scale_a_v[p_index].z		= p_matr.get_scale_z();
+			return true;
+		}
+		bool	set_item_at_i(uint32_t					p_index,
+								const	vufMatrix4<T>&	p_matr)
+		{
+			m_scale_a_v[p_index].x = p_matr.get_scale_x();
+			m_scale_a_v[p_index].y = p_matr.get_scale_y();
+			m_scale_a_v[p_index].z = p_matr.get_scale_z();
 			return true;
 		}
 		bool	match_scales_i()
@@ -146,13 +146,12 @@ namespace vufMath
 		{
 			auto l_ptr = create();
 			l_ptr->m_valid			= m_valid;
-			l_ptr->m_positon_v		= m_positon_v;
 			l_ptr->m_scale_a_v		= m_scale_a_v;
 			l_ptr->m_scale_b_v		= m_scale_b_v;
 			l_ptr->m_scale_param_v = m_scale_param_v;
 			return l_ptr;
 		}
-		virtual std::shared_ptr < vufCurveScaleParamFn<T, V> > as_scale_params_fn() const  override
+		virtual std::shared_ptr < vufCurveScaleParamFn<T, V> > as_params_fn() const  override
 		{ 
 			return std::static_pointer_cast<vufCurveScaleParamFn<T, V>> (vufCurveScaleFn<T, V>::m_this.lock());
 		}
@@ -166,10 +165,6 @@ namespace vufMath
 
 			l_ss << l_str_offset << "[ vufCurveScaleParamFn < " << typeid(T).name() << ", " << typeid(V).name() << "> ]" << std::endl;
 			l_ss << vufCurveScaleFn<T, V>::to_string(-1, p_tab_count + 1);
-
-			l_ss << l_str_offset << "____positon_v: ";
-			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_positon_v);
-			l_ss << std::endl;
 
 			l_ss << l_str_offset << "____scale_a: ";
 			VF_NUMERIC_ARRAY_TO_STRING(l_ss, m_scale_a_v);
@@ -189,7 +184,6 @@ namespace vufMath
 		{
 			uint64_t l_size = vufCurveScaleFn<T, V>::get_binary_size();
 
-			l_size += sizeof(l_size) + m_positon_v.size() * sizeof(V<T>);
 			l_size += sizeof(l_size) + m_scale_a_v.size() * sizeof(vufQuaternion<T>);
 			l_size += sizeof(l_size) + m_scale_b_v.size() * sizeof(vufQuaternion<T>);
 			l_size += sizeof(l_size) + m_scale_param_v.size() * sizeof(T);
@@ -205,13 +199,6 @@ namespace vufMath
 			}
 			p_offset = vufCurveScaleFn<T, V>::to_binary(p_buff, p_offset);
 
-			// m_positon_v
-			l_size = m_positon_v.size();
-			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
-			if (l_size > 0)
-			{
-				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_positon_v[0], l_size * sizeof(V<T>));
-			}
 			// m_scale_a_v
 			l_size = m_scale_a_v.size();
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_size, sizeof(l_size));
@@ -241,13 +228,6 @@ namespace vufMath
 			uint64_t l_size;
 			p_offset = vufCurveScaleFn<T, V>::from_binary(p_buff, p_version, p_offset);
 
-			// m_positon_v
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));
-			m_positon_v.resize(l_size);
-			if (l_size > 0)
-			{
-				VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_positon_v[0], l_size * sizeof(V<T>));
-			}
 			// m_quaternion_a_v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));
 			m_scale_a_v.resize(l_size);
@@ -282,7 +262,6 @@ namespace vufMath
 		}
 
 	private:
-		std::vector< V<T>>		m_positon_v;
 		std::vector< V<T>>		m_scale_a_v;
 		std::vector< V<T>>		m_scale_b_v;
 		std::vector<T>			m_scale_param_v; // parameter on curve

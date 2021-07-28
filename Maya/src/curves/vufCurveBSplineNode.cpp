@@ -6,6 +6,7 @@
 #include <maya/MFnCompoundAttribute.h>
 #include <maya/MFnMatrixArrayData.h>
 #include <maya/MMatrix.h>
+#include <maya/MDoubleArray.h>
 #include <maya/MGlobal.h>
 
 #include <curves/vufCurveBSplineNode.h>
@@ -14,6 +15,7 @@
 
 #include <data/vufMayaDataList.h>
 #include <vufMayaGlobalIncludes.h>
+#include <dataCollectors/vufDataCollectorInclude.h>
 
 using namespace vufRM;
 using namespace vufMath;
@@ -138,28 +140,29 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		std::shared_ptr<vufCurveData>	l_out_data;
 		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data, m_gen_id);
 		//VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
-		//------------------------------------------------------------------------------
 		if (l_out_data->m_internal_data == nullptr)
 		{
 			l_out_data->m_internal_data = vufCurveContainer_4d::create();
 		}
 		vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
-#pragma region HANDLE_INPUT_TRANSFORM_LIST
 		//------------------------------------------------------------------------------
 		// Handle input transform list data
-		MDataHandle l_input_data = p_data.inputValue(g_transfoms_attr);
-		MObject		l_in_obj = l_input_data.data();
-		MFnMatrixArrayData l_in_data_fn(l_in_obj,&l_status);
-		MMatrixArray l_matrix_array = l_in_data_fn.array(&l_status);
-
+		MMatrixArray l_matrix_array;
+		MDoubleArray l_double_array;
+		VF_RM_GET_MATRIX_ARRAY_FROM_IN(g_transfoms_attr, l_matrix_array);
 		uint32_t l_transforms_sz = (uint32_t)l_matrix_array.length();
-#pragma endregion
-#pragma region HANDLE_CURVE
-		//-------------------------------------------------------------------------------
-		// Handle Curve
+		l_double_array.setLength(l_transforms_sz);
+		//-----------------------------------------------------------------------------
+		// Read attributes
 		bool	l_close			= p_data.inputValue(g_close_attr).asBool();
 		short	l_degree		= p_data.inputValue(g_degree_attr).asShort();
 		int		l_cls_div		= p_data.inputValue(g_closest_division_attr).asInt();
+		short	l_quat_mode		= p_data.inputValue(g_quaternion_mode_attr).asShort();
+		short	l_scale_mode	= p_data.inputValue(g_scale_mode_attr).asShort();
+#pragma region HANDLE_CURVE
+		//-------------------------------------------------------------------------------
+		// Handle Curve
+		// To Do OPTIMISE THIS LATER
 		bool	l_is_crv_new	= (l_close ==true) ? 
 			l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_close_bspline):
 			l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_open_bspline);
@@ -167,6 +170,8 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		auto l_crv_ptr = l_out_data->m_internal_data->get_curve_ptr()->as_explicit_curve();
 		if (l_crv_ptr == nullptr)
 		{
+			MString l_msg = name() + ": Can't create curve";
+			VF_LOG_ERR(l_msg.asChar());
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
@@ -174,14 +179,130 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		for (uint32_t i = 0; i < l_transforms_sz; ++i)
 		{
 			vufMatrix4<double>* l_matr = (vufMatrix4<double>*)& l_matrix_array[i];
-			l_crv_ptr->set_node_at(i, l_matr->get_translation_4());
+			vufVector4<double> l_pos = l_matr->get_translation_4();
+			l_crv_ptr->set_node_at(i, l_pos);
 		}
-		// TO DO
-		// Check if curve is valid
 		if (l_crv_ptr->is_valid() == false)
 		{
+			MString l_msg = name() + ": Curve is invalid";
+			VF_LOG_ERR(l_msg.asChar());
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
+		}
+		if (l_quat_mode == 0 || l_scale_mode == 0)
+		{
+			for (uint32_t i = 0; i < l_transforms_sz; ++i)
+			{
+				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+				vufVector4<double> l_pos = l_matr->get_translation_4();
+				l_double_array[i] = l_crv_ptr->get_closest_point_param(l_pos, 0.0, 1.0, l_cls_div);
+			}
+		}
+#pragma endregion
+#pragma region HANDLE_QUATERNION
+		//------------------------------------------------------------------------------
+		// Handle quaternion
+		std::shared_ptr<vufCurveQuatData>	l_quaternion_store_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveQuatWrapper, vufCurveQuatData, p_data, g_quaternion_store_attr, l_quaternion_store_data, m_gen_id);
+		//VF_RM_CRV_NODE_READ_QUATERNIONS_ATTR();
+		if (l_quat_mode == 0 /* apply. always refresh*/)
+		{
+			l_out_data->m_internal_data->switch_quaternion_fn(vufCurveQuatFnType::k_param);
+			auto l_qtr_ptr = l_out_data->m_internal_data->get_quaternion_fn_ptr()->as_params_fn();
+			if (l_qtr_ptr == nullptr)
+			{
+				MString l_msg = name() + ": Failed to create rotation solver";
+				VF_LOG_ERR(l_msg.asChar());
+				p_data.setClean(g_data_out_attr);
+				return MS::kSuccess;
+			}
+			l_qtr_ptr->set_item_count_i(l_transforms_sz);
+			for (uint32_t i = 0; i < l_transforms_sz; ++i)
+			{
+				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) &l_matrix_array[i];
+				// set params and quaternions
+				l_qtr_ptr->set_item_at_i(i,l_double_array[i], *l_matr, l_crv_ptr);
+			}
+			l_qtr_ptr->match_quaternions_i();
+
+			l_quaternion_store_data->m_internal_data = l_qtr_ptr;
+			//VF_LOG_INFO(l_qtr_ptr->to_string());
+		}
+		if (l_quat_mode == 1 /* just update quaternions values*/)
+		{
+			auto l_quat_store_ptr = l_quaternion_store_data->m_internal_data;
+			if (l_quat_store_ptr != nullptr)
+			{
+				auto l_qtr_ptr = l_quat_store_ptr->as_params_fn();
+				if (l_qtr_ptr != nullptr)
+				{
+					for (uint32_t i = 0; i < l_transforms_sz; ++i)
+					{
+						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+						// update only quaterniions
+						l_qtr_ptr->set_item_at_i(i, *l_matr, l_crv_ptr);
+					}
+					l_qtr_ptr->match_quaternions_i();
+				}
+			}
+			l_out_data->m_internal_data->set_quaternion_fn_ptr(l_quat_store_ptr);
+		}
+		if (l_quat_mode == 2 /*delete quaternion fn*/)
+		{
+			l_out_data->m_internal_data->set_quaternion_fn_ptr(nullptr);
+			//l_quaternion_store_data->m_internal_data = nullptr;
+		}
+#pragma endregion
+#pragma region HANDLE_SCALE
+		//------------------------------------------------------------------------------
+		// Handle scale
+		std::shared_ptr<vufCurveScaleData>	l_scale_store_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveScaleWrapper, vufCurveScaleData, p_data, g_scale_store_attr, l_scale_store_data, m_gen_id);
+		//VF_RM_CRV_NODE_READ_SCALE_ATTR();
+
+		if (l_scale_mode == 0 /* apply. always refresh*/)
+		{
+			l_out_data->m_internal_data->switch_scale_fn(vufCurveScaleFnType::k_params);
+			auto l_scale_ptr = l_out_data->m_internal_data->get_scale_fn_ptr()->as_params_fn();
+			if (l_scale_ptr == nullptr)
+			{
+				MString l_msg = name() + ": Failed to create scale solver";
+				VF_LOG_ERR(l_msg.asChar());
+				p_data.setClean(g_data_out_attr);
+				return MS::kSuccess;
+			}
+			l_scale_ptr->set_item_count_i(l_transforms_sz);
+			for (uint32_t i = 0; i < l_transforms_sz; ++i)
+			{
+				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];	
+				l_scale_ptr->set_item_at_i(i, l_double_array[i], *l_matr);
+			}
+			l_scale_ptr->match_scales_i();
+			l_scale_store_data->m_internal_data = l_scale_ptr;
+		}
+		if (l_scale_mode == 1 /* just update scale fn */)
+		{
+			auto l_scale_store_ptr = l_scale_store_data->m_internal_data;
+			if (l_scale_store_ptr != nullptr)
+			{
+				auto l_scl_ptr = l_scale_store_ptr->as_params_fn();
+				if (l_scl_ptr != nullptr)
+				{
+					for (uint32_t i = 0; i < l_transforms_sz; ++i)
+					{
+						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+						// update only quaterniions
+						l_scl_ptr->set_item_at_i(i, *l_matr);
+					}
+					l_scl_ptr->match_scales_i();
+				}
+			}
+			l_out_data->m_internal_data->set_scale_fn_ptr(l_scale_store_ptr);
+		}
+		if (l_scale_mode == 2 /* delete scale fn */)
+		{
+			l_out_data->m_internal_data->set_scale_fn_ptr(nullptr);
+			//l_scale_store_data->m_internal_data = nullptr;
 		}
 #pragma endregion
 #pragma region HANDLE_REBUILD
@@ -218,112 +339,14 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				l_rbl_ptr->set_clamp_end_value(l_rbld_pin_end_value);
 				l_rbl_ptr->set_offset(l_rbld_offset);
 			}
+			l_out_data->m_internal_data->set_rebuild_fn_ptr(l_rbl_ptr);
 		}
 		if (l_rebuild_mode == 2 /* delete rebuild fn*/)
 		{
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(nullptr);
-			l_rebuild_store_data->m_internal_data = nullptr;
+			//l_rebuild_store_data->m_internal_data = nullptr;
 		}
 
-#pragma endregion
-#pragma region HANDLE_QUATERNION
-		//------------------------------------------------------------------------------
-		// Handle quaternion
-		std::shared_ptr<vufCurveQuatData>	l_quaternion_store_data;
-		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveQuatWrapper, vufCurveQuatData, p_data, g_quaternion_store_attr, l_quaternion_store_data, m_gen_id);
-		VF_RM_CRV_NODE_READ_QUATERNIONS_ATTR();
-
-		if (l_quat_mode == 0 /* apply. always refresh*/)
-		{
-			l_out_data->m_internal_data->switch_quaternion_fn(vufCurveQuatFnType::k_closest);
-			std::shared_ptr<vufCurveQuaternionFn_4d> l_quaternion_ptr = l_out_data->m_internal_data->get_quaternion_fn_ptr();
-			if (l_quaternion_ptr != nullptr)
-			{
-				auto l_qtr_ptr = l_quaternion_ptr->as_closest_fn();
-				l_qtr_ptr->set_item_count_i(l_transforms_sz);
-				for (uint32_t i = 0; i < l_transforms_sz; ++i)
-				{
-					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) &l_matrix_array[i];
-					l_qtr_ptr->set_closest_item_at_i(i, *l_matr, l_crv_ptr);
-				}
-				l_qtr_ptr->sort_params_i();
-				l_qtr_ptr->match_quaternions_i();
-
-				l_quaternion_store_data->m_internal_data = l_quaternion_ptr;
-				//VF_LOG_INFO(l_qtr_ptr->to_string());
-			}
-		}
-		if (l_quat_mode == 1 /* just update quaternions values*/)
-		{
-			std::shared_ptr<vufCurveQuaternionFn_4d> l_quaternion_ptr = l_out_data->m_internal_data->get_quaternion_fn_ptr();
-			auto l_qtr_ptr = l_quaternion_ptr->as_closest_fn();
-			if (l_qtr_ptr != nullptr)
-			{
-				for (uint32_t i = 0; i < l_transforms_sz; ++i)
-				{
-					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
-					l_qtr_ptr->set_item_at_i(i, *l_matr, l_crv_ptr);
-				}
-				l_qtr_ptr->match_quaternions_i();
-			}
-		}
-		if (l_quat_mode == 2 /*delete quaternion fn*/)
-		{
-			l_out_data->m_internal_data->set_quaternion_fn_ptr(nullptr);
-			l_quaternion_store_data->m_internal_data = nullptr;;
-
-		}
-#pragma endregion
-#pragma region HANDLE_SCALE
-		//------------------------------------------------------------------------------
-		// Handle scale
-		std::shared_ptr<vufCurveScaleData>	l_scale_store_data;
-		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveScaleWrapper, vufCurveScaleData, p_data, g_scale_store_attr, l_scale_store_data, m_gen_id);
-		VF_RM_CRV_NODE_READ_SCALE_ATTR();
-
-		if (l_scale_mode == 0 /* apply. always refresh*/)
-		{
-			l_out_data->m_internal_data->switch_scale_fn(vufCurveScaleFnType::k_closest_params);
-			auto l_scale_ptr = l_out_data->m_internal_data->get_scale_fn_ptr()->as_scale_close_fn();
-			if (l_scale_ptr != nullptr)
-			{
-				
-				l_scale_ptr->set_item_count_i(l_transforms_sz);
-				for (uint32_t i = 0; i < l_transforms_sz; ++i)
-				{
-					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
-					vufVector_4d l_scl_vec(	l_matr->get_scale_x(),
-											l_matr->get_scale_y(),
-											l_matr->get_scale_z());
-					l_scale_ptr->set_item_at_i(i, l_matr->get_translation_4(), l_scl_vec);
-				}
-				l_scale_ptr->compute_bind_param_i(l_container, 10);
-				l_scale_ptr->match_scales_i(l_container);
-				l_scale_store_data->m_internal_data = l_scale_ptr;
-			}
-		}
-		if (l_scale_mode == 1 /* just update scale fn */)
-		{
-			l_out_data->m_internal_data->switch_scale_fn(vufCurveScaleFnType::k_closest_params);
-			auto l_scale_ptr = l_scale_store_data->m_internal_data->as_scale_close_fn();
-			if (l_scale_ptr != nullptr)
-			{
-				l_scale_ptr->set_item_count_i(l_transforms_sz);
-				for (uint32_t i = 0; i < l_transforms_sz; ++i)
-				{
-					vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
-					vufVector_4d l_scl_vec(	l_matr->get_scale_x(),
-											l_matr->get_scale_y(),
-											l_matr->get_scale_z());
-					l_scale_ptr->set_item_at_i(i, l_matr->get_translation_4(), l_scl_vec);
-				}
-			}
-		}
-		if (l_scale_mode == 2 /* delete scale fn */)
-		{
-			l_out_data->m_internal_data->set_scale_fn_ptr(nullptr);
-			l_scale_store_data->m_internal_data = nullptr;
-		}
 #pragma endregion
 		p_data.setClean(g_rebuild_store_attr);
 		p_data.setClean(g_quaternion_store_attr);

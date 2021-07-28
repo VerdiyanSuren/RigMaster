@@ -162,21 +162,6 @@ namespace vufMath
 						return true;
 					}
 				}
-				if (p_type == vufCurveType::k_blend_curve)
-				{
-					m_curve_ptr = vufCurveBlend<T, V>::create();
-					return true;
-				}
-				if (p_type == vufCurveType::k_noise_curve)
-				{
-					m_curve_ptr = vufCurveNoise<T, V>::create();
-					return true;
-				}
-				if (p_type == vufCurveType::k_compose_curve)
-				{
-					m_curve_ptr = vufCurveCompose<T, V>::create();
-					return true;
-				}
 				if (p_type == vufCurveType::k_open_bezier_piecewise)
 				{
 					if (p_degree == 1)
@@ -215,6 +200,21 @@ namespace vufMath
 						return true;
 					}
 					m_curve_ptr = nullptr;
+					return true;
+				}
+				if (p_type == vufCurveType::k_blend_curve)
+				{
+					m_curve_ptr = vufCurveBlend<T, V>::create();
+					return true;
+				}
+				if (p_type == vufCurveType::k_noise_curve)
+				{
+					m_curve_ptr = vufCurveNoise<T, V>::create();
+					return true;
+				}
+				if (p_type == vufCurveType::k_compose_curve)
+				{
+					m_curve_ptr = vufCurveCompose<T, V>::create();
 					return true;
 				}
 

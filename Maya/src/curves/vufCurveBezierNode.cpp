@@ -7,6 +7,7 @@
 #include <maya/MFnMatrixArrayData.h>
 #include <maya/MMatrix.h>
 #include <maya/MMatrixArray.h>
+#include <maya/MDoubleArray.h>
 #include <maya/MGlobal.h>
 
 #include <curves/vufCurveBezierNode.h>
@@ -15,6 +16,7 @@
 
 #include <data/vufMayaDataList.h>
 #include <vufMayaGlobalIncludes.h>
+#include <dataCollectors/vufDataCollectorInclude.h>
 
 using namespace vufRM;
 using namespace vufMath;
@@ -33,6 +35,7 @@ VF_RM_CRV_NODE_DEFINE_SCALE_ATTR(vufCurveBezierNode);
 
 MObject	vufCurveBezierNode::g_transfoms_attr;
 MObject	vufCurveBezierNode::g_data_out_attr;
+MObject	vufCurveBezierNode::g_params_out_attr;
 
 vufCurveBezierNode::vufCurveBezierNode() :MPxNode()
 {
@@ -91,39 +94,52 @@ MStatus	vufCurveBezierNode::initialize()
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setWritable(false);
 	l_status = addAttribute(g_data_out_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	// Out double attr
+	g_params_out_attr = l_typed_attr_fn.create("outDoubleList", "odl", MFnData::kDoubleArray, MObject::kNullObj, &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_typed_attr_fn.setStorable(true);
+	l_typed_attr_fn.setWritable(false);
+	l_status = addAttribute(g_params_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	l_status = attributeAffects(g_curve_compound_attr,	g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_degree_attr,			g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_close_attr,			g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_transfoms_attr,		g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	VF_RM_CRV_NODE_REBUILD_ATTR_AFFECT_TO(g_data_out_attr);
+	VF_RM_CRV_NODE_QUATERNIONS_ATTR_AFFECT_TO(g_data_out_attr);
+	VF_RM_CRV_NODE_SCALE_ATTR_AFFECT_TO(g_data_out_attr);
+
+	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_rebuild_store_attr, "hRebuild", "hrb", mpxCurveRebuildWrapper);
+	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_quaternion_store_attr, "hRotation", "hrt", mpxCurveQuatWrapper);
+	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_scale_store_attr, "hScale", "hsc", mpxCurveScaleWrapper);
 
 	return MS::kSuccess;
 }
 MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
-	if (p_plug == g_data_out_attr)
+	if (p_plug == g_data_out_attr || p_plug == g_params_out_attr)
 	{
 		MStatus l_status;
+		//------------------------------------------------------------------------------
+		// handle out data
 		std::shared_ptr<vufCurveData>	l_out_data;
 		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data, m_gen_id);
-		//------------------------------------------------------------------------------
-		if (l_out_data->m_internal_data == nullptr)
+		if (l_out_data->m_internal_data == nullptr )
 		{
 			l_out_data->m_internal_data = vufCurveContainer_4d::create();
 		}
 		vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
 		//------------------------------------------------------------------------------
-#pragma region HANDLE_INPUT_TRANSFORM_LIST
-	// Handle input transform list data
-		MDataHandle l_input_data = p_data.inputValue(g_transfoms_attr);
-		MObject		l_in_obj = l_input_data.data();
-		MFnMatrixArrayData l_in_data_fn(l_in_obj, &l_status);
-		MMatrixArray l_matrix_array = l_in_data_fn.array(&l_status);
-
+		// Handle input transform list data
+		MMatrixArray	l_matrix_array;
+		MDoubleArray	l_double_array;
+		VF_RM_GET_MATRIX_ARRAY_FROM_IN(g_transfoms_attr, l_matrix_array);
 		uint32_t l_transforms_sz = (uint32_t)l_matrix_array.length();
-#pragma endregion
+		//-----------------------------------------------------------------------------
+		// Read attributes
 		bool	l_close		= p_data.inputValue(g_close_attr).asBool();
 		short	l_degree	= p_data.inputValue(g_degree_attr).asShort() + 1;
+#pragma region HANDLE_CURVE
 		bool	l_is_crv_new = (l_close == true) ?
 			l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_close_bezier_piecewise) :
 			l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_open_bezier_piecewise);
@@ -131,6 +147,8 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		auto l_crv_ptr = l_out_data->m_internal_data->get_curve_ptr()->as_explicit_curve();
 		if (l_crv_ptr == nullptr)
 		{
+			MString l_msg = name() + ": Can't create curve";
+			VF_LOG_ERR(l_msg.asChar());
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
@@ -140,6 +158,14 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
 			l_crv_ptr->set_node_at(i, l_matr->get_translation_4());
 		}
+		if (l_crv_ptr->is_valid() == false)
+		{
+			MString l_msg = name() + ": Curve is invalid";
+			VF_LOG_ERR(l_msg.asChar());
+			p_data.setClean(g_data_out_attr);
+			return MS::kSuccess;
+		}
+#pragma endregion
 		p_data.setClean(g_data_out_attr);
 		return MS::kSuccess;
 	}

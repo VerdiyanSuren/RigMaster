@@ -172,7 +172,7 @@ namespace vufMath
 			l_ptr->m_scale_param_v = m_scale_param_v;
 			return l_ptr;
 		}
-		virtual std::shared_ptr < vufScaleCloseCurveFn<T, V> > as_scale_close_fn() const
+		virtual std::shared_ptr < vufScaleCloseCurveFn<T, V> > as_close_fn() const
 		{
 			return std::static_pointer_cast<vufScaleCloseCurveFn<T, V>> (vufCurveScaleFn<T, V>::m_this.lock());
 		}

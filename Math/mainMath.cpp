@@ -8,6 +8,7 @@
 #include <curves/explicit/vufCurveCloseBSpline.h>
 #include <curves/vufCurveContatiner.h>
 #include <vufNumericArrayObject.h>
+#include <math/vufPolinom.h>
 #include <vufLog.h>
 #include <noise/vufPelinNoise.h>
 
@@ -19,6 +20,37 @@ using namespace vufMath;
 
 int main()
 {
+	vufPolinomCoeff<double, 3> l_p1;
+	l_p1.a[0] = -10;
+	l_p1.a[1] = 11;
+	l_p1.a[2] = 21;
+	l_p1.a[3] = 31;
+	std::cout << l_p1.to_string() << std::endl;
+	vufPolinomCoeff<double, 5> l_p2;
+	l_p2.a[0] = -11;
+	l_p2.a[1] = 11;
+	l_p2.a[2] = 11;
+	l_p2.a[3] = 12;
+	l_p2.a[4] = 13;
+	l_p2.a[5] = 33;
+	vufPolinomCoeff<double, 2> l_res;
+	vufPolinomCoeff<double, 2> l_remainder;
+	std::cout << l_p2.to_string() << std::endl;
+
+	//auto l_p3 = l_p1.mult(l_p2);
+	//std::cout << l_p3.to_string() << std::endl;
+	
+	l_p2.div(l_p1, l_res, l_remainder);
+	std::cout << " P1:    " << l_p2.to_string() << std::endl;
+	std::cout << " P2:    " << l_p1.to_string() << std::endl;
+	std::cout << " RES:   " << l_res.to_string() << std::endl;
+	std::cout << " REM:   " << l_remainder.to_string() << std::endl;
+	std::cout << " CHECK: " <<(l_res.mult(l_p1).add(l_remainder).to_string()) << std::endl;
+	system("pause");
+	return 0;
+	
+	
+	
 	auto l_cc = vufCurveCloseBezier<double, vufVector4, 3>::create();
 	auto l_co = vufCurveOpenBezier<double, vufVector4,3>::create();
 	l_co->set_nodes_count(11);

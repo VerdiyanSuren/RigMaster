@@ -111,6 +111,32 @@ namespace vufMath
 			m_quaternion_a_v[p_index] = l_matr.get_quaternion();
 			return true;
 		}
+		bool	set_item_at_i(	uint32_t									p_index,
+								const	vufMatrix4<T>&						p_matr,
+								const	std::shared_ptr<vufCurve<T, V> >	p_crv_ptr)
+		{
+			if (p_crv_ptr == nullptr || p_crv_ptr->is_valid() == false)
+			{
+				vufCurveQuaternionFn<T, V>::m_valid = false;
+				return false;
+			}
+			m_positon_v[p_index] = V<T>(p_matr[3][0], p_matr[3][1], p_matr[3][2]);
+			m_y_axis_v[p_index] = V<T>(p_matr[1][0], p_matr[1][1], p_matr[1][2]);
+			m_y_axis_v[p_index].normalize_in_place();
+			V<T> l_tangent = p_crv_ptr->get_tangent_normalized_at(m_quat_param_v[p_index]);
+			m_y_axis_v[p_index].make_ortho_to_in_place(l_tangent);
+			m_y_axis_v[p_index].normalize_in_place();
+			V<T> l_z = l_tangent.get_cross(m_y_axis_v[p_index]);
+			l_z.normalize_in_place();
+			vufMatrix4<T> l_matr;
+			l_matr.set_axis_x(l_tangent);
+			l_matr.set_axis_y(m_y_axis_v[p_index]);
+			l_matr.set_axis_z(l_z);
+
+			m_quaternion_a_v[p_index] = l_matr.get_quaternion();
+			return true;
+		}
+
 		// update quaternion and call closest point to update param 
 		bool	match_quaternions_i()
 		{

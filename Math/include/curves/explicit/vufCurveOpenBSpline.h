@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include <iostream>
 #include <curves/explicit/vufCurveExplicit.h>
+#include <math/vufPolinom.h>
 #include <curves/vufCurvesInclude.h>
 
 //#define VF_MATH_DEBUG_BSPLINE
@@ -382,6 +383,37 @@ namespace vufMath
 			}
 			return l_res.normalize_in_place();
 		}
+		/*
+		T					get_closest_point_param_i(const V<T>& p_point, T p_start, T p_end, uint32_t p_divisions = 10, T p_percition = vufCurve_kTol) const
+		{
+			// To aviod divide by zero
+			p_divisions++;
+			T l_delta = (p_end - p_start) / (T)p_divisions;
+
+			V<T> l_posA = get_pos_at_i(p_start);
+			V<T> l_tngA = get_tangent_at_i(p_start);
+			T l_dotA	= l_tng_prev.dot( l_pos_prev - p_point );
+			T l_lngthA = (l_pos_prev - p_point).length2();
+			
+			T l_lngth_min = l_lngthA;
+			T l_param_min = p_start;
+			for (uint32_t i = 1; i < p_divisions; ++i)
+			{
+				T l_param	= l_delta * (T)i;
+				V<T> l_pos	= get_pos_at_i(l_param);
+				V<T> l_tng	= get_tangent_at_i(l_param);
+				T l_dotB	= l_tng.dot(l_pos - p_point);;
+				if (l_dotA * l_dotB > vufCurve_kTol)
+				{
+					continue;
+				}
+			}
+			while ()
+			{
+
+			}
+		}
+		*/
 		T					get_closest_point_param_i(const V<T>& p_point, T p_start, T p_end, uint32_t p_divisions = 10, T p_percition = vufCurve_kTol) const
 		{
 			T l_dist_prev, l_dist_next, l_closest_dist, l_closest_t = p_start;
@@ -889,9 +921,9 @@ namespace vufMath
 		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const override { return nullptr; }
 
 	private:
-		std::vector<T>												m_knot_v;
-		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_n_v;	// [time interval, node index] = basis function
-		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>	m_dn_v;	// [time interval, node index] = basis derivative
+		std::vector<T>													m_knot_v;
+		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>		m_n_v;	// [time interval, node index] = basis function
+		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE-1>>>	m_dn_v;	// [time interval, node index] = basis derivative
 		//std::vector<T>		m_nodes_max_influence_t_v;
 	};
 
