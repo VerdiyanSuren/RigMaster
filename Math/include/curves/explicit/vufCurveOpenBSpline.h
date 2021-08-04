@@ -388,29 +388,44 @@ namespace vufMath
 		{
 			// To aviod divide by zero
 			p_divisions++;
-			T l_delta = (p_end - p_start) / (T)p_divisions;
-
+			T l_delta	= (p_end - p_start) / (T)p_divisions;
+			T l_paramA = p_start;
 			V<T> l_posA = get_pos_at_i(p_start);
 			V<T> l_tngA = get_tangent_at_i(p_start);
-			T l_dotA	= l_tng_prev.dot( l_pos_prev - p_point );
-			T l_lngthA = (l_pos_prev - p_point).length2();
+			T l_dotA	= l_tngA.dot( l_pos_prev - p_point );
+			T l_lngthA = (l_posA - p_point).length2();
 			
 			T l_lngth_min = l_lngthA;
 			T l_param_min = p_start;
-			for (uint32_t i = 1; i < p_divisions; ++i)
+			for (uint32_t i = 1; i < p_divisions + 1; ++i)
 			{
-				T l_param	= l_delta * (T)i;
-				V<T> l_pos	= get_pos_at_i(l_param);
-				V<T> l_tng	= get_tangent_at_i(l_param);
-				T l_dotB	= l_tng.dot(l_pos - p_point);;
+				T l_paramB	= l_delta * (T)i;
+				V<T> l_posB	= get_pos_at_i(l_paramB);
+				V<T> l_tngB	= get_tangent_at_i(l_paramB);
+				T l_dotB	= l_tngB.dot(l_posB - p_point);
+
+				while ( l_dotA * l_dotB < -vufCurve_kTol )
+				{
+					T l_paramC = (l_paramA + l_paramB) * 0.5;
+					V<T> l_posC = get_pos_at_i(l_paramC);
+					V<T> l_tngC = get_tangent_at_i(l_paramC);
+					T l_dotC = l_tngC.dot(l_posC - p_point);
+					if (l_dotC * l_dotA < -vufCurve_kTol)
+					{
+						l_dotB = l_dotC;
+						l_paramB = l_paramC;
+						continue;
+					}
+					l_dotA = l_dotC;
+					l_paramA = l_paramC;
+				}
 				if (l_dotA * l_dotB > vufCurve_kTol)
 				{
+					l_posA = l_posB;
+					l_tngA = l_tngB;
+					l_paramA = l_paramB;
 					continue;
 				}
-			}
-			while ()
-			{
-
 			}
 		}
 		*/

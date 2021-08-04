@@ -20,20 +20,51 @@ using namespace vufMath;
 
 int main()
 {
+	vufPolinomCoeff<double, 2> l_k2;
+	vufPolinomCoeff<double, 1> l_k1;
+	vufPolinomCoeff<double, 0> l_k0;
 	vufPolinomCoeff<double, 3> l_p1;
-	l_p1.a[0] = -10;
-	l_p1.a[1] = 11;
-	l_p1.a[2] = 21;
-	l_p1.a[3] = 31;
+	l_p1.a[0] = -1;
+	l_p1.a[1] = 1;
+	l_p1.a[2] = 5;
+	l_p1.a[3] = -3;
+	int l_a = sturm_chain_3d<double>(l_p1, l_k2, l_k1, l_k0);
 	std::cout << l_p1.to_string() << std::endl;
-	vufPolinomCoeff<double, 5> l_p2;
+	std::cout << l_k2.to_string() << std::endl;
+	std::cout << l_k1.to_string() << std::endl;
+	std::cout << l_k0.to_string() << std::endl;
+	double l_start = -1;
+	double l_end = 2;
+	std::cout << "root_count: " << sturm_root_count_3d<double>(l_p1, l_k2, l_k1, l_k0, -1, 2) <<std::endl;
+	sturm_isolate_root_3d<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end);
+	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
+	std::cout << "root_count: " << sturm_root_count_3d<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
+	l_start = l_end;
+	l_end = 2;
+	sturm_isolate_root_3d<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end);
+	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
+	std::cout << "root_count: " << sturm_root_count_3d<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
+	l_start = l_end;
+	l_end = 2;
+	sturm_isolate_root_3d<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end);
+	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
+	std::cout << "root_count: " << sturm_root_count_3d<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
+	
+	l_start = 5;
+	l_end = 6;
+	sturm_isolate_root_3d<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end);
+	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
+	std::cout << "root_count: " << sturm_root_count_3d<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
+	system("pause");
+	return 0;
+	vufPolinomCoeff<double, 4> l_p2;
 	l_p2.a[0] = -11;
 	l_p2.a[1] = 11;
 	l_p2.a[2] = 11;
 	l_p2.a[3] = 12;
 	l_p2.a[4] = 13;
-	l_p2.a[5] = 33;
-	vufPolinomCoeff<double, 2> l_res;
+	//l_p2.a[5] = 33;
+	vufPolinomCoeff<double, 1> l_res;
 	vufPolinomCoeff<double, 2> l_remainder;
 	std::cout << l_p2.to_string() << std::endl;
 

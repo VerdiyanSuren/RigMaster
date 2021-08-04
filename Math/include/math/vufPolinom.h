@@ -35,9 +35,9 @@ namespace vufMath
 		/// get max non zero coeficient degree
 		uint32_t get_degree() const
 		{
-			for (uint32_t i = MAX_POLYNOM_DEGREE; i > 0 + 1; --i)
+			for (uint32_t i = MAX_POLYNOM_DEGREE; i > 0; --i)
 			{
-				if (a[i] != 0)
+				if (std::abs(a[i]) > VF_MATH_EPSILON)
 				{
 					return i;
 				}
@@ -60,9 +60,9 @@ namespace vufMath
 		}
 		/// divide one polinom by other
 		template<typename T, uint32_t OTHER_DEGREE>
-		bool div(const vufPolinomCoeff<T, OTHER_DEGREE>& p_divider,
-			vufPolinomCoeff<T, MAX_POLYNOM_DEGREE - OTHER_DEGREE>& p_res,
-			vufPolinomCoeff<T, OTHER_DEGREE - 1>& p_reminder)
+		bool div(	const	vufPolinomCoeff<T, OTHER_DEGREE>&						p_divider,
+							vufPolinomCoeff<T, MAX_POLYNOM_DEGREE - OTHER_DEGREE>&	p_res,
+							vufPolinomCoeff<T, OTHER_DEGREE - 1>&					p_reminder) const
 		{
 			//std::cout << "-------------------------------------------\n";
 			vufPolinomCoeff l_temp;
@@ -83,7 +83,7 @@ namespace vufMath
 			while (true)
 			{
 				l_main_degree = l_temp.get_degree();
-
+				//std::cout << l_temp << std::endl;
 				if (l_main_degree < l_divider_degree)
 				{
 					//std::cout << "-------------------------------------------\n";
@@ -571,6 +571,90 @@ namespace vufMath
 		}
 		return l_MAX_t;
 	}
+	
+
+#pragma region Sturm Chain Degree 3
+	template<typename T>
+	int sturm_chain_3d(	const	vufPolinomCoeff<T, 3>& p_p3,
+								vufPolinomCoeff<T, 2>& p_p2,
+								vufPolinomCoeff<T, 1>& p_p1,
+								vufPolinomCoeff<T, 0>& p_p0 )
+	{
+		vufPolinomCoeff<T, 1> l_p2;
+		vufPolinomCoeff<T, 1> l_p1;
+		p_p2 = p_p3.get_derivative();
+		p_p3.div(p_p2, l_p2, p_p1); 
+		p_p1 = -p_p1;
+		if (p_p1.get_degree() == 0) return 3;
+		p_p2.div(p_p1, l_p1, p_p0);
+		p_p0 = -p_p0;
+		return 4;
+	}
+	template<typename T>
+	int sturm_sign_changed_3d(	const	vufPolinomCoeff<T, 3>& p_p3,
+								const	vufPolinomCoeff<T, 2>& p_p2,
+								const	vufPolinomCoeff<T, 1>& p_p1,
+								const	vufPolinomCoeff<T, 0>& p_p0,
+								T p_t)
+	{
+		int l_root_count = 0;
+		int l_sign_3 = VF_SIGN(p_p3.eval(p_t));
+		int l_sign_2 = VF_SIGN(p_p2.eval(p_t));
+		int l_sign_1 = VF_SIGN(p_p1.eval(p_t));
+		int l_sign_0 = VF_SIGN(p_p0.eval(p_t));
+		int l_sign_start_changed = 0;
+		if (l_sign_3 * l_sign_2 < 0.0)  l_sign_start_changed++;
+		if (l_sign_2 * l_sign_1 < 0.0)  l_sign_start_changed++;
+		if (l_sign_1 * l_sign_0 < 0.0)  l_sign_start_changed++;
+		//std::cout << "signes: " << l_sign_3 << " " << l_sign_2 << " " << l_sign_1 << " " << l_sign_0 << " " << l_sign_start_changed << std::endl;
+		return l_sign_start_changed;
+	}
+	template<typename T>
+	int sturm_root_count_3d(const	vufPolinomCoeff<T, 3>& p_p3,
+							const	vufPolinomCoeff<T, 2>& p_p2,
+							const	vufPolinomCoeff<T, 1>& p_p1,
+							const	vufPolinomCoeff<T, 0>& p_p0,
+							T p_start, T p_end)
+	{
+		int l_sign_start	= sturm_sign_changed_3d<T>(p_p3, p_p2, p_p1, p_p0, p_start);
+		int l_sign_end		= sturm_sign_changed_3d<T>(p_p3, p_p2, p_p1, p_p0, p_end);
+		return std::abs(l_sign_start - l_sign_end);
+	}
+	template<typename T>
+	bool sturm_isolate_root_3d(const	vufPolinomCoeff<T, 3>& p_p3,
+							const	vufPolinomCoeff<T, 2>& p_p2,
+							const	vufPolinomCoeff<T, 1>& p_p1,
+							const	vufPolinomCoeff<T, 0>& p_p0,
+							T& p_start, T& p_end)
+	{	
+		//if (std::abs(p_p3.eval(p_end)) < VF_MATH_EPSILON) return p_end;
+		int l_sign_start	= sturm_sign_changed_3d<double>(p_p3, p_p2, p_p1, p_p0, p_start);
+		int l_sign_end		= sturm_sign_changed_3d<double>(p_p3, p_p2, p_p1, p_p0, p_end);
+		int l_root_count	= std::abs(l_sign_start - l_sign_end);		
+		T l_temp = p_start;
+		if (l_root_count == 0)	return false;
+		while (l_root_count > 1)
+		{
+			l_temp = (p_start + p_end)*0.5;
+			//if (std::abs(p_p3.eval(l_temp)) < VF_MATH_EPSILON) return l_temp;
+			//std::cout << l_temp << std::endl;
+			int l_sign = sturm_sign_changed_3d<double>(p_p3, p_p2, p_p1, p_p0, l_temp);
+			//std::cout << l_root_count << " " << l_temp <<  std::endl;
+			if (std::abs(l_sign_start - l_sign) == 0)
+			{
+				p_start = l_temp;
+				l_sign_start = l_sign;
+				l_root_count = std::abs(l_sign_start - l_sign_end);
+				continue;
+			}			
+			p_end = l_temp;
+			l_sign_end = l_sign;
+			l_root_count = std::abs(l_sign_start - l_sign_end);
+		}
+		return true;
+	}
+#pragma endregion
+
 
 }
 #endif //!VF_MATH_POLINOM_H
