@@ -73,6 +73,7 @@ namespace vufMath
 				return false;
 			}
 			uint32_t l_mult_degree = l_main_degree - l_divider_degree;
+			p_res *= 0;
 			p_res.a[l_mult_degree] = a[l_main_degree] / p_divider.a[l_divider_degree];
 			l_temp = sub(p_res.mult(p_divider));
 			//std::cout << "1:l_mult_degree " << l_mult_degree << std::endl;
@@ -693,7 +694,7 @@ namespace vufMath
 								vufPolinomCoeff<T, 0>& p_p0)
 	{
 		vufPolinomCoeff<T, 1> l_res;
-		vufPolinomCoeff<T, 1> l_p1;
+		
 		p_p3 = p_p4.get_derivative();
 		p_p4.div(p_p3, l_res, p_p2); p_p2 = -p_p2; if (p_p2.get_degree() == 0) return 2;
 		p_p3.div(p_p2, l_res, p_p1); p_p1 = -p_p1; if (p_p1.get_degree() == 0) return 3;
@@ -771,7 +772,7 @@ namespace vufMath
 	template<>
 	int32_t vufPolinomCoeff<double, 4>::find_root_on_interval(double p_start, double p_end, std::vector<double>& p_res, double p_precision)
 	{
-		if (p_res.size() < 4) p_res.resize(3);
+		if (p_res.size() < 4) p_res.resize(4);
 		vufPolinomCoeff<double, 3> l_p3;
 		vufPolinomCoeff<double, 2> l_p2;
 		vufPolinomCoeff<double, 1> l_p1;
@@ -815,7 +816,7 @@ namespace vufMath
 		vufPolinomCoeff<T, 1> l_res;
 		vufPolinomCoeff<T, 1> l_p1;
 		p_p4 = p_p5.get_derivative();
-		p_p5.div(p_p4, l_res, p_p3); p_p3 = -p_p3; if (p_p2.get_degree() == 0) return 2;
+		p_p5.div(p_p4, l_res, p_p3); p_p3 = -p_p3; if (p_p3.get_degree() == 0) return 2;
 		p_p4.div(p_p3, l_res, p_p2); p_p2 = -p_p2; if (p_p2.get_degree() == 0) return 3;
 		p_p3.div(p_p2, l_res, p_p1); p_p1 = -p_p1; if (p_p1.get_degree() == 0) return 4;
 		p_p2.div(p_p1, l_res, p_p0); p_p0 = -p_p0; if (p_p0.get_degree() == 0) return 5;
@@ -843,7 +844,7 @@ namespace vufMath
 		if (l_sign_3 * l_sign_2 < 0.0)  l_sign_start_changed++;
 		if (l_sign_2 * l_sign_1 < 0.0)  l_sign_start_changed++;
 		if (l_sign_1 * l_sign_0 < 0.0)  l_sign_start_changed++;
-		//std::cout << "signes: " << l_sign_3 << " " << l_sign_2 << " " << l_sign_1 << " " << l_sign_0 << " " << l_sign_start_changed << std::endl;
+		//std::cout << "pt: " << p_t << " signes: " << l_sign_5 << l_sign_4 << l_sign_3 << " " << l_sign_2 << " " << l_sign_1 << " " << l_sign_0 << " " << l_sign_start_changed << std::endl;
 		return l_sign_start_changed;
 	}
 	template<typename T>
@@ -897,7 +898,7 @@ namespace vufMath
 	template<>
 	int32_t vufPolinomCoeff<double, 5>::find_root_on_interval(double p_start, double p_end, std::vector<double>& p_res, double p_precision)
 	{
-		if (p_res.size() < 4) p_res.resize(4);
+		if (p_res.size() < 5) p_res.resize(5);
 		vufPolinomCoeff<double, 4> l_p4;
 		vufPolinomCoeff<double, 3> l_p3;
 		vufPolinomCoeff<double, 2> l_p2;
@@ -931,6 +932,7 @@ namespace vufMath
 	}
 #pragma endregion
 #pragma region Sturm Chain Degree 6
+
 #pragma endregion
 #pragma region Sturm Chain Degree 7
 #pragma endregion

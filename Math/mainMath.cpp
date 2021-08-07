@@ -20,46 +20,54 @@ using namespace vufMath;
 
 int main()
 {
+	vufPolinomCoeff<double, 4> l_k4;
+	vufPolinomCoeff<double, 3> l_k3;
 	vufPolinomCoeff<double, 2> l_k2;
 	vufPolinomCoeff<double, 1> l_k1;
 	vufPolinomCoeff<double, 0> l_k0;
-	vufPolinomCoeff<double, 3> l_p1;
+	vufPolinomCoeff<double, 5> l_p1;
 	l_p1.a[0] = -1;
-	l_p1.a[1] = 1;
-	l_p1.a[2] = 5;
-	l_p1.a[3] = -3;
-	int l_a = sturm_chain_3<double>(l_p1, l_k2, l_k1, l_k0);
+	l_p1.a[1] = 2;
+	l_p1.a[2] = 4;
+	l_p1.a[3] = 1;
+	l_p1.a[4] = -1;
+	l_p1.a[5] = -1;
+	int l_a = sturm_chain_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0);
 	std::cout << l_p1.to_string() << std::endl;
+	std::cout << l_k4.to_string() << std::endl;
+	std::cout << l_k3.to_string() << std::endl;
 	std::cout << l_k2.to_string() << std::endl;
 	std::cout << l_k1.to_string() << std::endl;
 	std::cout << l_k0.to_string() << std::endl;
-	double l_start = -1;
-	double l_end = 2;
-	std::cout << "root_count: " << sturm_root_count_3<double>(l_p1, l_k2, l_k1, l_k0, -1, 2) <<std::endl;
-	sturm_isolate_root_3<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end);
+	std::cout << l_a << " " << l_k4.eval(-2) << " " << l_k3.eval(-2) << std::endl;
+	double l_start = -2;
+	double l_end = 3;
+	std::cout << "root_count: " << sturm_root_count_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end) <<std::endl;
+	sturm_isolate_root_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end);
 	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
-	std::cout << "root_count: " << sturm_root_count_3<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
+	std::cout << "root_count: " << sturm_root_count_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
 	l_start = l_end;
-	l_end = 2;
-	sturm_isolate_root_3<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end);
+	l_end = 3;
+	sturm_isolate_root_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end);
 	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
-	std::cout << "root_count: " << sturm_root_count_3<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
+	std::cout << "root_count: " << sturm_root_count_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
 	l_start = l_end;
-	l_end = 2;
-	sturm_isolate_root_3<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end);
+	l_end = 3;
+	sturm_isolate_root_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end);
 	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
-	std::cout << "root_count: " << sturm_root_count_3<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
+	std::cout << "root_count: " << sturm_root_count_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
 	
 	l_start = 5;
 	l_end = 6;
-	sturm_isolate_root_3<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end);
+	sturm_isolate_root_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end);
 	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
-	std::cout << "root_count: " << sturm_root_count_3<double>(l_p1, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
+	std::cout << "root_count: " << sturm_root_count_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
 	
 	std::vector<double> l_arr;
-	l_p1.find_root_on_interval(-1, 2, l_arr);
+	std::cout << "solved: " << l_p1.find_root_on_interval(-2, 3, l_arr) << std::endl;
 	vufNumericArrayFn<double> l_fn(l_arr);
 	std::cout << l_fn.to_string() << std::endl;
+	
 	
 	system("pause");
 	return 0;
@@ -76,13 +84,14 @@ int main()
 
 	//auto l_p3 = l_p1.mult(l_p2);
 	//std::cout << l_p3.to_string() << std::endl;
-	
+	/*
 	l_p2.div(l_p1, l_res, l_remainder);
 	std::cout << " P1:    " << l_p2.to_string() << std::endl;
 	std::cout << " P2:    " << l_p1.to_string() << std::endl;
 	std::cout << " RES:   " << l_res.to_string() << std::endl;
 	std::cout << " REM:   " << l_remainder.to_string() << std::endl;
 	std::cout << " CHECK: " <<(l_res.mult(l_p1).add(l_remainder).to_string()) << std::endl;
+	*/
 	system("pause");
 	return 0;
 	
