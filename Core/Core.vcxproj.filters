@@ -39,6 +39,9 @@
     <ClInclude Include="include\coreUtils\vufStringUtils.h">
       <Filter>include\coreUtils</Filter>
     </ClInclude>
+    <ClInclude Include="include\coreUtils\vufTimer.h">
+      <Filter>include\coreUtils</Filter>
+    </ClInclude>
     <ClInclude Include="include\serializer\vufTxtSerializer.h">
       <Filter>include\serializer</Filter>
     </ClInclude>
@@ -66,6 +69,9 @@
       <Filter>src\coreUtils</Filter>
     </ClCompile>
     <ClCompile Include="src\coreUtils\vufStringUtils.cpp">
+      <Filter>src\coreUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\coreUtils\vufTimer.cpp">
       <Filter>src\coreUtils</Filter>
     </ClCompile>
     <ClCompile Include="src\mainConsole.cpp">

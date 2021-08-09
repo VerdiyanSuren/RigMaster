@@ -12,12 +12,15 @@
 #include <vufLog.h>
 #include <noise/vufPelinNoise.h>
 
+
+#include <chrono>
+#include <coreUtils/vufTimer.h>
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables
 VF_LOG_DEFINE_STD_LOGGER();
 
 using namespace vuf;
 using namespace vufMath;
-
+using namespace std::literals::chrono_literals;
 int main()
 {
 	vufPolinomCoeff<double, 4> l_k4;
@@ -63,8 +66,19 @@ int main()
 	std::cout << "isolate: " << l_start << " " << l_end << std::endl;
 	std::cout << "root_count: " << sturm_root_count_5<double>(l_p1, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
 	
-	std::vector<double> l_arr;
-	std::cout << "solved: " << l_p1.find_root_on_interval(-2, 3, l_arr) << std::endl;
+
+	std::vector<double> l_arr(5);
+	int l_root_count;
+//auto l_st = std::chrono::high_resolution_clock::now();
+	{
+		vuf::vufTimer l_timer("Root finding ");
+		l_root_count = l_p1.find_root_on_interval(-2, 3, l_arr);
+		//auto l_ed = std::chrono::high_resolution_clock::now();
+		//std::chrono::duration<float> l_d = l_ed - l_st;
+		//std::cout << std::fixed <<	(l_d.count()*1000.0f) << "ms" << std::endl;
+	}
+	std::cout << "solved: " << l_root_count << std::endl;
+	
 	vufNumericArrayFn<double> l_fn(l_arr);
 	std::cout << l_fn.to_string() << std::endl;
 	

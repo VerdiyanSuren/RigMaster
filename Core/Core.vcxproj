@@ -408,6 +408,7 @@
     <ClInclude Include="include\coreItems\vufTreeJsonObject.h" />
     <ClInclude Include="include\coreUtils\vufFileUtils.h" />
     <ClInclude Include="include\coreUtils\vufStringUtils.h" />
+    <ClInclude Include="include\coreUtils\vufTimer.h" />
     <ClInclude Include="include\serializer\vufTxtSerializer.h" />
     <ClInclude Include="include\serializer\vufTxtStdVectorSerializerFn.h" />
     <ClInclude Include="include\unitTestCore\serializer\vufTxtSeriaslizerUT.h" />
@@ -419,6 +420,7 @@
     <ClCompile Include="src\coreItems\vufTreeJsonObject.cpp" />
     <ClCompile Include="src\coreUtils\vufFileUtils.cpp" />
     <ClCompile Include="src\coreUtils\vufStringUtils.cpp" />
+    <ClCompile Include="src\coreUtils\vufTimer.cpp" />
     <ClCompile Include="src\mainConsole.cpp" />
     <ClCompile Include="src\vufStdLog.cpp" />
   </ItemGroup>
