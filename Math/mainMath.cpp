@@ -11,7 +11,7 @@
 #include <math/vufPolinom.h>
 #include <vufLog.h>
 #include <noise/vufPelinNoise.h>
-
+#include <unitTests/polinoms/vufPolinomTest.h>
 
 #include <chrono>
 #include <coreUtils/vufTimer.h>
@@ -23,6 +23,8 @@ using namespace vufMath;
 using namespace std::literals::chrono_literals;
 int main()
 {
+	//vufPolinomTest<double>().run();
+	
 	vufPolinomCoeff<double, 8> l_k8;
 	vufPolinomCoeff<double, 7> l_k7;
 	vufPolinomCoeff<double, 6> l_k6;
@@ -95,50 +97,51 @@ int main()
 	vufNumericArrayFn<double> l_fn(l_arr);
 	std::cout << l_fn.to_string() << std::endl;
 	system("pause");
-	return 0;
+	//return 0;	
+	
+	//system("pause");
+	//return 0;
 	
 	
 	
-	vufPolinomCoeff<double, 4> l_p2;
-	l_p2.a[0] = -11;
-	l_p2.a[1] = 11;
-	l_p2.a[2] = 11;
-	l_p2.a[3] = 12;
-	l_p2.a[4] = 13;
-	//l_p2.a[5] = 33;
-	vufPolinomCoeff<double, 1> l_res;
-	vufPolinomCoeff<double, 2> l_remainder;
-	std::cout << l_p2.to_string() << std::endl;
-
-	//auto l_p3 = l_p1.mult(l_p2);
-	//std::cout << l_p3.to_string() << std::endl;
-	/*
-	l_p2.div(l_p1, l_res, l_remainder);
-	std::cout << " P1:    " << l_p2.to_string() << std::endl;
-	std::cout << " P2:    " << l_p1.to_string() << std::endl;
-	std::cout << " RES:   " << l_res.to_string() << std::endl;
-	std::cout << " REM:   " << l_remainder.to_string() << std::endl;
-	std::cout << " CHECK: " <<(l_res.mult(l_p1).add(l_remainder).to_string()) << std::endl;
-	*/
-	system("pause");
-	return 0;
-	
-	
-	
+	auto l_cn = vufCurveContainer<double, vufVector4>::create();
 	auto l_cc = vufCurveCloseBezier<double, vufVector4, 3>::create();
-	auto l_co = vufCurveOpenBezier<double, vufVector4,3>::create();
+	//auto l_co = vufCurveOpenBezier<double, vufVector4,1>::create();
+	auto l_co = vufCurveOpenBSpline<double, vufVector4, 5>::create();
+	l_cn->set_curve_ptr(l_co);
 	l_co->set_nodes_count(11);
-	l_cc->set_nodes_count(9);
-	std::cout << l_cc->get_interval_index_i(0) << std::endl;
-	std::cout << l_cc->get_interval_index_i(.5) << std::endl;
-	std::cout << l_cc->get_interval_index_i(.8) << std::endl;
-	std::cout << l_cc->get_interval_index_i(2) << std::endl;
-	for (int i = 0; i < 9; ++i)
+	l_cc->set_nodes_count(11);
+	//std::cout << l_cc->get_interval_index_i(0) << std::endl;
+	//std::cout << l_cc->get_interval_index_i(.5) << std::endl;
+	//std::cout << l_cc->get_interval_index_i(.8) << std::endl;
+	//std::cout << l_cc->get_interval_index_i(2) << std::endl;
+	for (int i = 0; i < 11; ++i)
 	{
 		l_cc->set_node_at(i, vufVector4<double>::random_vector());
+		l_co->set_node_at(i, vufVector4<double>::random_vector());
 	}
+	{
+		vuf::vufTimer l_timer("closest point");
+		auto p = l_co->get_closest_point(vufVector4<double>(1, 1, 1));
+	}
+	vufVector4<double> l_pos;
+	{		vuf::vufTimer l_timer("get pos");
+		for (int i = 0; i < 1000; ++i)
+		{
+			double t = (double)i * 0.001;
+			l_pos += l_cn->get_pos_at(t);
+		}
+	}
+	std::cout << l_pos.to_string() << std::endl;
 	//std::cout << l_cc->get_interval_t_min_i(3) << std::endl;
-
+	{		
+		vuf::vufTimer l_timer("get pos native ");
+		for (int i = 0; i < 1000; ++i)
+		{
+			double t = (double)i * 0.001;
+			l_pos += l_co->get_pos_at_i(t);
+		}
+	}
 	//l_c->get_pos_at(0.9);
 	//std::cout << l_c->to_string() << std::endl;
 	system("pause");

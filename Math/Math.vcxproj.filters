@@ -43,6 +43,9 @@
     <Filter Include="include\unitTests\math">
       <UniqueIdentifier>{24A344BF-109D-6D11-F909-0422E5A2D37D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\unitTests\polinoms">
+      <UniqueIdentifier>{2B728531-1782-3102-803B-96206C6A209B}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\curves\explicit\vufCurveBezierClose.h">
@@ -173,6 +176,9 @@
     </ClInclude>
     <ClInclude Include="include\unitTests\math\vufVectorObjectArrayTest.h">
       <Filter>include\unitTests\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unitTests\polinoms\vufPolinomTest.h">
+      <Filter>include\unitTests\polinoms</Filter>
     </ClInclude>
     <ClInclude Include="include\unitTests\vufTestAll.h">
       <Filter>include\unitTests</Filter>

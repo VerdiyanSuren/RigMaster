@@ -191,12 +191,16 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		}
 		if (l_quat_mode == 0 || l_scale_mode == 0)
 		{
+			std::cout << "[ ";
 			for (uint32_t i = 0; i < l_transforms_sz; ++i)
 			{
 				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
 				vufVector4<double> l_pos = l_matr->get_translation_4();
 				l_double_array[i] = l_crv_ptr->get_closest_point_param(l_pos, 0.0, 1.0, l_cls_div);
+				std::cout << l_double_array[i] << " ";
 			}
+			std::cout << "]\n";
+
 		}
 #pragma endregion
 #pragma region HANDLE_QUATERNION

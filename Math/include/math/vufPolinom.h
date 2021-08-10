@@ -23,6 +23,13 @@ namespace vufMath
 				a[i] = p_other.a[i];
 			}
 		}
+		void set(const T* p_arr)
+		{
+			for (int i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				a[i] = p_arr[i];
+			}
+		}
 		static vufPolinomCoeff<T, MAX_POLYNOM_DEGREE> random_polinom()
 		{
 			vufPolinomCoeff<T, MAX_POLYNOM_DEGREE> l_polinom;
@@ -64,10 +71,37 @@ namespace vufMath
 							vufPolinomCoeff&						p_res,
 							vufPolinomCoeff<T, REMINDER_DEGREE>&		p_reminder) const
 		{
+			vufPolinomCoeff l_temp(*this);
+			uint32_t l_main_degree		= l_temp.get_degree();
+			uint32_t l_divider_degree	= p_divider.get_degree();
+			p_res *= 0;
+			if (l_divider_degree == 0 && (VF_ABS(a[0])) < VF_MATH_EPSILON) return false;// we do not want to divide by zero
+			
+			for (int l_cur_degree = l_main_degree; l_cur_degree >= (int)l_divider_degree; --l_cur_degree)
+			{
+				uint32_t l_mult_degree = l_cur_degree - l_divider_degree;
+				p_res.a[l_mult_degree] = l_temp.a[l_cur_degree] / p_divider.a[l_divider_degree];
+				l_temp.a[l_cur_degree] = 0;
+				for (int j = l_cur_degree - 1; j >= (int)l_mult_degree; --j)
+				{
+					l_temp.a[j] -= p_divider.a[j- l_mult_degree]* p_res.a[l_mult_degree];
+				}
+				l_main_degree = l_temp.get_degree();
+			}
+			l_temp.to_other_degree(p_reminder);
+			//std::cout << "------------------------------------------------------------------\n";
+			//std::cout << "1:THIS   "	<< to_string() << std::endl;
+			//std::cout << "1:DIVIDER "	<< p_divider.to_string() << std::endl;
+			//std::cout << "1:RES   "		<< p_res.to_string() << std::endl;
+			//std::cout << "1:REM   "		<< l_temp.to_string() << std::endl;
+			//std::cout << "1:CHECK " << (p_divider.mult(p_res).add(l_temp)).to_string() << std::endl << std::endl;
+			return true;
 			//std::cout << "-------------------------------------------\n";
+			/*
 			vufPolinomCoeff l_temp;
 			uint32_t l_main_degree		= get_degree();
 			uint32_t l_divider_degree	= p_divider.get_degree();
+			if (l_divider_degree == 0 && (VF_ABS(a[0])) < VF_MATH_EPSILON) return false;// we do not want to divide by zero
 			if (l_main_degree < l_divider_degree)
 			{
 				return false;
@@ -76,6 +110,7 @@ namespace vufMath
 			p_res *= 0;
 			p_res.a[l_mult_degree] = a[l_main_degree] / p_divider.a[l_divider_degree];
 			l_temp = sub(p_res.mult(p_divider));
+			l_temp.a[l_main_degree] = 0;
 			//std::cout << "------------------------------------------------------------------\n";
 			//std::cout << "1:l_mult_degree " << l_mult_degree << std::endl;
 			//std::cout << "1:THIS   " << to_string() << std::endl;
@@ -98,6 +133,7 @@ namespace vufMath
 				//std::cout << "2:l_mult_degree " << l_mult_degree << std::endl;
 				p_res.a[l_mult_degree] = l_temp.a[l_main_degree] / p_divider.a[l_divider_degree];
 				l_temp = sub(p_res.mult(p_divider));
+				for(int i = l_main_degree; i < MAX_POLYNOM_DEGREE +1; ++i)		l_temp.a[i] = 0;
 				//std::cout << "2:THIS   " << to_string() << std::endl;
 				//std::cout << "2:RES   " << p_res.to_string() << std::endl;
 				//std::cout << "2:REM  " << l_temp.to_string() << std::endl;
@@ -107,6 +143,7 @@ namespace vufMath
 			l_temp.to_other_degree(p_reminder);
 			//std::cout << "-------------------------------------------\n";
 			return true;
+			*/
 		}
 
 		template<typename T, uint32_t OTHER_DEGREE>
@@ -140,7 +177,8 @@ namespace vufMath
 		vufPolinomCoeff < T, MAX_POLYNOM_DEGREE> add(const vufPolinomCoeff<T, OTHER_DEGREE>& p_other) const
 		{
 			vufPolinomCoeff l_res(*this);
-			for (uint32_t i = 0; i < OTHER_DEGREE + 1; ++i)
+			uint32_t l_dim = VF_MIN(OTHER_DEGREE, MAX_POLYNOM_DEGREE);
+			for (uint32_t i = 0; i < l_dim + 1; ++i)
 			{
 				l_res.a[i] = a[i] + p_other.a[i];
 			}
@@ -234,22 +272,24 @@ namespace vufMath
 		}
 		T eval(T t) const
 		{
+			/*
+			T l_sum = 0;
+			for (int i = MAX_POLYNOM_DEGREE; i > 0; --i)
+			{
+				l_sum += a[i]; 
+				l_sum *= t;
+			}
+			l_sum += a[0];
+			return l_sum;
+			*/			
 			T l_sum = a[0];
 			T l_t = t;
 			for (int i = 1; i < MAX_POLYNOM_DEGREE + 1; ++i)
 			{
 				l_sum += a[i] * l_t;
 				l_t *= t;
-			}
-			return l_sum;
-			/*
-			T l_sum = 0;
-			for (int i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
-			{
-				l_sum += a[i] * pow(t, i);
-			}
-			return l_sum;
-			*/
+			}			
+			return l_sum;			
 		}
 
 		vufPolinomCoeff<T, MAX_POLYNOM_DEGREE - 1> get_derivative() const

@@ -7,7 +7,7 @@
 #include <math/vufPolinom.h>
 #include <curves/vufCurvesInclude.h>
 
-#include <limits>
+//#include <limits>
 //#define VF_MATH_DEBUG_BSPLINE
 namespace vufMath
 {
@@ -312,11 +312,22 @@ namespace vufMath
 			V<T>	l_res;
 			int		l_node_id = 0;
 			int		l_interval_id = get_interval_index_i(p_t);
+			
 			for (int l_dgr = 0; l_dgr < CURVE_DEGREE + 1; ++l_dgr)
 			{
 				l_node_id = l_interval_id + l_dgr;
 				l_res += vufCurveExplicit<T, V>::m_nodes_pos_v[l_node_id] * m_n_v[l_interval_id][l_node_id].eval(p_t);
 			}
+			/*
+			vufPolinomCoeff<T, CURVE_DEGREE> l_px, l_py, l_pz;
+			for (int l_dgr = 0; l_dgr < CURVE_DEGREE + 1; ++l_dgr)
+			{
+				l_node_id = l_interval_id + l_dgr;
+				l_px += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<T, V>::m_nodes_pos_v[l_node_id].x;
+				l_py += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<T, V>::m_nodes_pos_v[l_node_id].y;
+				l_pz += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<T, V>::m_nodes_pos_v[l_node_id].z;
+			}
+			*/
 			return l_res;
 		}
 		inline V<T>			get_pos_at_domain_i(T p_t)		const
@@ -970,12 +981,18 @@ namespace vufMath
 		return std::static_pointer_cast<vufCurveOpenBSpline<double, vufVector4, 5>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 
-
+#pragma region CLOSEST_POINT_SPECIFIACATION
 	template<>
 	double		vufCurveOpenBSpline <double, vufVector4, 1>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
 	{
-		double l_dist_min = std::numeric_limits<double>::max();
-		double l_param = 0.0;
+		double l_dist_min = (get_pos_at(p_start) - p_point).length2();//std::numeric_limits<double>::max();
+		double l_param = p_start;
+		double l_temp_dist = (get_pos_at(p_end) - p_point).length2();
+		if (l_temp_dist < l_dist_min)
+		{
+			l_dist_min = l_temp_dist;
+			l_param = p_end;
+		}
 		uint32_t l_cnt = get_interval_count_i();
 		for (uint32_t l_interval_id = 0; l_interval_id < l_cnt; ++l_interval_id)
 		{
@@ -984,9 +1001,9 @@ namespace vufMath
 			vufPolinomCoeff<double, 1> l_p;
 			double l_min = get_interval_t_min_i(l_interval_id);
 			double l_max = get_interval_t_max_i(l_interval_id);
+			double p_arr[1];
 			for (uint32_t l_dgr = 0; l_dgr < 2; ++l_dgr)
 			{
-				double p_arr[1];
 				uint32_t l_node_id = l_interval_id + l_dgr;
 				l_px1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
 				l_py1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
@@ -996,8 +1013,8 @@ namespace vufMath
 				l_tz1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
 			}
 			l_px1.a[0] -= p_point.x;
-			l_py1.a[1] -= p_point.y;
-			l_pz1.a[2] -= p_point.z;
+			l_py1.a[0] -= p_point.y;
+			l_pz1.a[0] -= p_point.z;
 			l_p = l_px1.mult(l_tx1) + l_py1.mult(l_ty1) + l_pz1.mult(l_tz1);
 				
 			auto l_solve_count = l_p.find_root_on_interval(l_min, l_max, p_arr, p_percition);
@@ -1007,11 +1024,211 @@ namespace vufMath
 			{
 				l_dist_min = l_dist;
 				l_param = p_arr[0];
-			}			
+			}		
 		}
-		return 0;
+		return l_param;
+	}
+	template<>
+	double		vufCurveOpenBSpline <double, vufVector4, 2>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
+	{
+		double l_dist_min = (get_pos_at(p_start) - p_point).length2();//std::numeric_limits<double>::max();
+		double l_param = p_start;
+		double l_temp_dist = (get_pos_at(p_end) - p_point).length2();
+		if (l_temp_dist < l_dist_min)
+		{
+			l_dist_min = l_temp_dist;
+			l_param = p_end;
+		}
+		uint32_t l_cnt = get_interval_count_i();
+		for (uint32_t l_interval_id = 0; l_interval_id < l_cnt; ++l_interval_id)
+		{
+			vufPolinomCoeff<double, 2> l_px1, l_py1, l_pz1;
+			vufPolinomCoeff<double, 1> l_tx1, l_ty1, l_tz1;
+			vufPolinomCoeff<double, 3> l_p;
+			double l_min = get_interval_t_min_i(l_interval_id);
+			double l_max = get_interval_t_max_i(l_interval_id);
+			double p_arr[3];
+			for (uint32_t l_dgr = 0; l_dgr < 3; ++l_dgr)
+			{
+				uint32_t l_node_id = l_interval_id + l_dgr;
+				l_px1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
+				l_py1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
+				l_pz1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
+				l_tx1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
+				l_ty1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
+				l_tz1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
+			}
+			l_px1.a[0] -= p_point.x;
+			l_py1.a[0] -= p_point.y;
+			l_pz1.a[0] -= p_point.z;
+			l_p = l_px1.mult(l_tx1) + l_py1.mult(l_ty1) + l_pz1.mult(l_tz1);
+			//std::cout << l_p.to_string() << std::endl;
+			auto l_solve_count = l_p.find_root_on_interval(l_min, l_max, p_arr, p_percition);
+			if (l_solve_count == 0) continue;
+			for (int i = 0; i < l_solve_count; ++i)
+			{
+				double l_dist = (get_pos_at_i(p_arr[i]) - p_point).length2();
+				if (l_dist < l_dist_min)
+				{
+					l_dist_min = l_dist;
+					l_param = p_arr[i];
+				}
+			}
+		}
+		return l_param;
+	}
+	template<>
+	double		vufCurveOpenBSpline <double, vufVector4, 3>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
+	{
+		double l_dist_min = (get_pos_at(p_start) - p_point).length2();//std::numeric_limits<double>::max();
+		double l_param = p_start;
+		double l_temp_dist = (get_pos_at(p_end) - p_point).length2();
+		if (l_temp_dist < l_dist_min)
+		{
+			l_dist_min = l_temp_dist;
+			l_param = p_end;
+		}
+
+		uint32_t l_cnt = get_interval_count_i();
+		for (uint32_t l_interval_id = 0; l_interval_id < l_cnt; ++l_interval_id)
+		{
+			vufPolinomCoeff<double, 3> l_px1, l_py1, l_pz1;
+			vufPolinomCoeff<double, 2> l_tx1, l_ty1, l_tz1;
+			vufPolinomCoeff<double, 5> l_p; // polinom for (p-p(t)).dot(tangent(t))
+			double l_min = get_interval_t_min_i(l_interval_id);
+			double l_max = get_interval_t_max_i(l_interval_id);
+			double p_arr[3];
+			for (uint32_t l_dgr = 0; l_dgr < 4; ++l_dgr)
+			{
+				uint32_t l_node_id = l_interval_id + l_dgr;
+				l_px1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
+				l_py1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
+				l_pz1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
+				l_tx1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
+				l_ty1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
+				l_tz1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
+			}
+			l_px1.a[0] -= p_point.x;
+			l_py1.a[0] -= p_point.y;
+			l_pz1.a[0] -= p_point.z;
+			l_p = l_px1.mult(l_tx1) + l_py1.mult(l_ty1) + l_pz1.mult(l_tz1);
+			//std::cout << l_p.to_string() << std::endl;
+			auto l_solve_count = l_p.find_root_on_interval(l_min, l_max, p_arr, p_percition);
+			if (l_solve_count == 0) continue;
+			for (int i = 0; i < l_solve_count; ++i)
+			{
+				double l_dist = (get_pos_at_i(p_arr[i]) - p_point).length2();
+				if (l_dist < l_dist_min)
+				{
+					l_dist_min = l_dist;
+					l_param = p_arr[i];
+				}
+			}
+		}
+		return l_param;
+	}
+	template<>
+	double		vufCurveOpenBSpline <double, vufVector4, 4>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
+	{
+		double l_dist_min = (get_pos_at(p_start) - p_point).length2();//std::numeric_limits<double>::max();
+		double l_param = p_start;
+		double l_temp_dist = (get_pos_at(p_end) - p_point).length2();
+		if (l_temp_dist < l_dist_min)
+		{
+			l_dist_min = l_temp_dist;
+			l_param = p_end;
+		}
+
+		uint32_t l_cnt = get_interval_count_i();
+		for (uint32_t l_interval_id = 0; l_interval_id < l_cnt; ++l_interval_id)
+		{
+			vufPolinomCoeff<double, 4> l_px1, l_py1, l_pz1;
+			vufPolinomCoeff<double, 3> l_tx1, l_ty1, l_tz1;
+			vufPolinomCoeff<double, 7> l_p; // polinom for (p-p(t)).dot(tangent(t))
+			double l_min = get_interval_t_min_i(l_interval_id);
+			double l_max = get_interval_t_max_i(l_interval_id);
+			double p_arr[3];
+			for (uint32_t l_dgr = 0; l_dgr < 4; ++l_dgr)
+			{
+				uint32_t l_node_id = l_interval_id + l_dgr;
+				l_px1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
+				l_py1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
+				l_pz1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
+				l_tx1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
+				l_ty1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
+				l_tz1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
+			}
+			l_px1.a[0] -= p_point.x;
+			l_py1.a[0] -= p_point.y;
+			l_pz1.a[0] -= p_point.z;
+			l_p = l_px1.mult(l_tx1) + l_py1.mult(l_ty1) + l_pz1.mult(l_tz1);
+			//std::cout << l_p.to_string() << std::endl;
+			auto l_solve_count = l_p.find_root_on_interval(l_min, l_max, p_arr, p_percition);
+			if (l_solve_count == 0) continue;
+			for (int i = 0; i < l_solve_count; ++i)
+			{
+				double l_dist = (get_pos_at_i(p_arr[i]) - p_point).length2();
+				if (l_dist < l_dist_min)
+				{
+					l_dist_min = l_dist;
+					l_param = p_arr[i];
+				}
+			}
+		}
+		return l_param;
+	}
+	template<>
+	double		vufCurveOpenBSpline <double, vufVector4, 5>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
+	{
+		double l_dist_min = (get_pos_at(p_start) - p_point).length2();//std::numeric_limits<double>::max();
+		double l_param = p_start;
+		double l_temp_dist = (get_pos_at(p_end) - p_point).length2();
+		if (l_temp_dist < l_dist_min)
+		{
+			l_dist_min = l_temp_dist;
+			l_param = p_end;
+		}
+
+		uint32_t l_cnt = get_interval_count_i();
+		for (uint32_t l_interval_id = 0; l_interval_id < l_cnt; ++l_interval_id)
+		{
+			vufPolinomCoeff<double, 5> l_px1, l_py1, l_pz1;
+			vufPolinomCoeff<double, 4> l_tx1, l_ty1, l_tz1;
+			vufPolinomCoeff<double, 9> l_p; // polinom for (p-p(t)).dot(tangent(t))
+			double l_min = get_interval_t_min_i(l_interval_id);
+			double l_max = get_interval_t_max_i(l_interval_id);
+			double p_arr[3];
+			for (uint32_t l_dgr = 0; l_dgr < 4; ++l_dgr)
+			{
+				uint32_t l_node_id = l_interval_id + l_dgr;
+				l_px1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
+				l_py1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
+				l_pz1 += m_n_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
+				l_tx1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].x;
+				l_ty1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].y;
+				l_tz1 += m_dn_v[l_interval_id][l_node_id] * vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[l_node_id].z;
+			}
+			l_px1.a[0] -= p_point.x;
+			l_py1.a[0] -= p_point.y;
+			l_pz1.a[0] -= p_point.z;
+			l_p = l_px1.mult(l_tx1) + l_py1.mult(l_ty1) + l_pz1.mult(l_tz1);
+			//std::cout << l_p.to_string() << std::endl;
+			auto l_solve_count = l_p.find_root_on_interval(l_min, l_max, p_arr, p_percition);
+			if (l_solve_count == 0) continue;
+			for (int i = 0; i < l_solve_count; ++i)
+			{
+				double l_dist = (get_pos_at_i(p_arr[i]) - p_point).length2();
+				if (l_dist < l_dist_min)
+				{
+					l_dist_min = l_dist;
+					l_param = p_arr[i];
+				}
+			}
+		}
+		return l_param;
 	}
 
+#pragma endregion
 #pragma region USING
 	using vufOpenBSpline_2f = vufCurveOpenBSpline<float,  vufVector2>;
 	using vufOpenBSpline_2d = vufCurveOpenBSpline<double, vufVector2>;

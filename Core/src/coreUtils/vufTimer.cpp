@@ -25,7 +25,7 @@ void vufTimer::show_time()
 	auto l_start	= std::chrono::time_point_cast<std::chrono::microseconds>(m_start).time_since_epoch().count();
 	auto l_end		= std::chrono::time_point_cast<std::chrono::microseconds>(m_end).time_since_epoch().count();
 	auto l_us = l_end - l_start;
-	//std::cout << "duration " << l_duration << "us " <<( (double)l_duration *0.001) << "ms" << std::endl;
+	//std::cout << "duration " << l_us << "us " <<( (double)l_us *0.001) << "ms" << std::endl;
 	//return;
 	uint64_t l_ms		=	l_us /1000;
 	uint64_t l_sec		= l_ms >1000. ? uint64_t(l_ms * 0.001):0;
