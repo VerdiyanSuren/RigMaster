@@ -7,6 +7,7 @@
 #include <math/vufPolinom.h>
 #include <curves/vufCurvesInclude.h>
 
+#include <coreUtils\vufTimer.h>
 //#include <limits>
 //#define VF_MATH_DEBUG_BSPLINE
 namespace vufMath
@@ -1080,6 +1081,7 @@ namespace vufMath
 	template<>
 	double		vufCurveOpenBSpline <double, vufVector4, 3>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
 	{
+		vuf::vufTimer l_timer("Closest Point ");
 		double l_dist_min = (get_pos_at(p_start) - p_point).length2();//std::numeric_limits<double>::max();
 		double l_param = p_start;
 		double l_temp_dist = (get_pos_at(p_end) - p_point).length2();
@@ -1097,6 +1099,12 @@ namespace vufMath
 			vufPolinomCoeff<double, 5> l_p; // polinom for (p-p(t)).dot(tangent(t))
 			double l_min = get_interval_t_min_i(l_interval_id);
 			double l_max = get_interval_t_max_i(l_interval_id);
+			l_temp_dist = (get_pos_at(l_max) - p_point).length2();
+			if (l_temp_dist < l_dist_min)
+			{
+				l_dist_min = l_temp_dist;
+				l_param = l_max;
+			}
 			double p_arr[3];
 			for (uint32_t l_dgr = 0; l_dgr < 4; ++l_dgr)
 			{
@@ -1115,6 +1123,7 @@ namespace vufMath
 			//std::cout << l_p.to_string() << std::endl;
 			auto l_solve_count = l_p.find_root_on_interval(l_min, l_max, p_arr, p_percition);
 			if (l_solve_count == 0) continue;
+			//std::cout << "	finded interval: " << l_interval_id << " " << l_min << " " << l_max << " " << l_solve_count << std::endl;
 			for (int i = 0; i < l_solve_count; ++i)
 			{
 				double l_dist = (get_pos_at_i(p_arr[i]) - p_point).length2();
@@ -1125,6 +1134,7 @@ namespace vufMath
 				}
 			}
 		}
+		//std::cout << " param: " << l_param << std::endl;
 		return l_param;
 	}
 	template<>
