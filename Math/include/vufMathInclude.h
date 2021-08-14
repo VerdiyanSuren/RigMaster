@@ -16,7 +16,7 @@
 #define VF_CLAMP( l_min, l_max, a)	a > l_max ? l_max : (a < l_min ? l_min : a)
 #define VF_MAX(   a, b )		a > b ? a : b
 #define VF_MIN(   a, b)			a < b ? a : b
-#define VF_SIGN(  a )			a > 0 ? 1 : ( a == 0 ? 0 : -1 )
+#define VF_SIGN(  a )			a > 0 ? 1 : (a < 0 ? -1: 0)
 #define VF_BIT(a)				(1 << a)
 #define VF_ABS(a)				a < 0 ? -a:a
 #define VF_FLOOR(x)				x > 0 ? (int)x:(int)x -1;

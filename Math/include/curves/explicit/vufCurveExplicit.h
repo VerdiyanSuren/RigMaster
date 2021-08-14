@@ -33,7 +33,8 @@ namespace vufMath
 			//std::cout << "------------------------------------- EXPLICIT::get_binary_size()--------------------- " << std::endl;
 			uint64_t l_array_size = m_nodes_pos_v.size();
 			uint64_t l_size = 0;
-			l_size += vufCurve < T, V>::get_binary_size(); 
+			l_size += vufCurve < T, V>::get_binary_size();
+			l_size += sizeof(m_pos_offset);
 			l_size += sizeof(m_knot_weighted);
 			l_size += sizeof(l_array_size);
 			l_size += m_nodes_pos_v.size() * sizeof(V<T>);
@@ -51,7 +52,7 @@ namespace vufMath
 			}
 			uint64_t l_array_size = m_nodes_pos_v.size();
 			p_offset = vufCurve < T, V>::to_binary(p_buff, p_offset);
-
+			std::memcpy(&p_buff[p_offset], &m_pos_offset,			sizeof(m_pos_offset));					p_offset += sizeof(m_pos_offset);
 			std::memcpy(&p_buff[p_offset], &m_knot_weighted,		sizeof(m_knot_weighted));				p_offset += sizeof(m_knot_weighted);
 			std::memcpy(&p_buff[p_offset], &l_array_size,			sizeof(l_array_size));					p_offset += sizeof(l_array_size);
 			std::memcpy(&p_buff[p_offset], m_nodes_pos_v.data(),	m_nodes_pos_v.size() * sizeof(V<T>));	p_offset += m_nodes_pos_v.size() * sizeof(V<T>);
@@ -67,6 +68,12 @@ namespace vufMath
 				return 0;
 			}
 			uint64_t l_array_size;
+			if (p_buff.size() < p_offset + sizeof(m_pos_offset))
+			{
+				return 0;
+			}
+			std::memcpy(&m_pos_offset, &p_buff[p_offset], sizeof(m_pos_offset));					p_offset += sizeof(m_pos_offset);
+
 			if (p_buff.size() < p_offset + sizeof(m_knot_weighted))
 			{
 				return 0;
@@ -96,6 +103,7 @@ namespace vufMath
 	protected:
 		bool				m_knot_weighted = false;
 		std::vector<V<T>>	m_nodes_pos_v;
+		V<T>				m_pos_offset;
 	};
 }
 #endif // !VF_MATH_CRV_EXPLCT_H
