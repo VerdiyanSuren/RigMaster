@@ -6,7 +6,8 @@
 #include <curves/explicit/vufCurveExplicit.h>
 #include <curves/vufCurvesInclude.h>
 #include <vufNumericArrayObject.h>
-
+#include <math/vufPolinom.h>
+#include <coreUtils\vufTimer.h>
 namespace vufMath
 {
 	template <class T, template<typename> class V, uint32_t CURVE_DEGREE = 2>
@@ -76,7 +77,11 @@ namespace vufMath
 		}
 		virtual void		set_node_at(uint32_t p_index, const V<T>& p_vector) override
 		{
-			vufCurveExplicit<T, V>::m_nodes_pos_v[p_index] = p_vector;
+			if (p_index == 0)
+			{
+				vufCurveExplicit<T, V>::m_pos_offset = p_vector;
+			}
+			vufCurveExplicit<T, V>::m_nodes_pos_v[p_index] = p_vector - vufCurveExplicit<T, V>::m_pos_offset;
 		}
 		virtual V<T>		get_node_at(uint32_t p_index) const override
 		{
@@ -109,6 +114,7 @@ namespace vufMath
 			l_ptr->m_valid = vufCurve<T, V>::m_valid;
 
 			l_ptr->m_nodes_pos_v = vufCurveExplicit<T, V>::m_nodes_pos_v;
+			l_ptr->m_pos_offset = vufCurveExplicit<T, V>::m_pos_offset;
 			l_ptr->m_knot_v = m_knot_v;
 			return l_ptr;
 		}
@@ -201,7 +207,7 @@ namespace vufMath
 				m_knot_v[i] = (T(i + 1)) * m_interval_length;
 			}
 			//vufNumericArrayFn<T> l_fn(m_knot_v);
-			//std::cout << l_fn.to_string() << std::endl;
+			//std::cout << "Knot Vector " <<  l_fn.to_string() << std::endl;
 			//std::cout << m_interval_length << std::endl;
 			//std::cout << m_interval_count << std::endl;
 			//std::cout << m_nodes_count << std::endl;
@@ -211,6 +217,7 @@ namespace vufMath
 		}
 		inline T			get_interval_t_min_i(int p_interval_index) const
 		{
+			//return (T)p_interval_index * m_interval_length;
 			return p_interval_index == 0 ? 0.0 : m_knot_v[p_interval_index - 1];
 		}
 		inline T			get_interval_t_max_i(int p_interval_index) const
@@ -231,6 +238,12 @@ namespace vufMath
 		{
 			return V<T>();
 		}
+		// for closest point to minimize numerical errors
+		inline V<T>			get_pos_no_offset_i(T p_t)		const
+		{
+			return V<T>();
+		}
+
 		inline V<T>			get_tangent_at_i(T p_t) const
 		{			
 			return V<T>();
@@ -240,6 +253,9 @@ namespace vufMath
 			return get_tangent_at_i(p_t).normalize_in_place();
 		}
 
+		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 1>>		as_open_bezier_mono()	const override { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 2>>		as_open_bezier_di()		const override { return nullptr; }
+		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 3>>		as_open_bezier_tri()	const override { return nullptr; }
 	private:
 		std::vector<T>		m_knot_v;
 		T					m_interval_length	= 0;
@@ -247,6 +263,22 @@ namespace vufMath
 		uint32_t			m_nodes_count		= 0;
 	};
 	//specializations
+	template<>
+	std::shared_ptr<vufCurveOpenBezier <double, vufVector4, 1>>		vufCurveOpenBezier <double, vufVector4, 1>::as_open_bezier_mono()	const
+	{
+		return std::static_pointer_cast<vufCurveOpenBezier<double, vufVector4, 1>>(vufCurve<double, vufVector4>::m_this.lock());
+	}
+	template<>
+	std::shared_ptr<vufCurveOpenBezier <double, vufVector4, 2>>		vufCurveOpenBezier <double, vufVector4, 2>::as_open_bezier_di()		const
+	{
+		return std::static_pointer_cast<vufCurveOpenBezier<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
+	}
+	template<>
+	std::shared_ptr<vufCurveOpenBezier <double, vufVector4, 3>>		vufCurveOpenBezier <double, vufVector4, 3>::as_open_bezier_tri()	const
+	{
+		return std::static_pointer_cast<vufCurveOpenBezier<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
+	}
+
 	template<>
 	vufVector4<double> vufCurveOpenBezier<double, vufVector4, 1>::get_tangent_at_i(double p_t)	const
 	{
@@ -269,7 +301,25 @@ namespace vufMath
 	{
 		if (p_t <= 0)
 		{
-			return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[0] + get_tangent_at_i(0) * p_t;
+			return vufCurveExplicit<double, vufVector4>::m_pos_offset + get_tangent_at_i(0) * p_t;
+			//return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[0] + get_tangent_at_i(0) * p_t;
+		}
+		if (p_t >= 1.0)
+		{
+			return vufCurveExplicit<double, vufVector4 > ::m_pos_offset + vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count - 1] + get_tangent_at_i(1) * (p_t - 1);
+			//return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count - 1] + get_tangent_at_i(1) * (p_t - 1);
+		}
+		p_t /= m_interval_length;
+		uint32_t l_ndx = uint32_t(p_t);
+		p_t -= l_ndx;
+		return	vufCurveExplicit<double, vufVector4 > ::m_pos_offset + m_nodes_pos_v[l_ndx] * (1 - p_t) + m_nodes_pos_v[l_ndx + 1] * p_t;
+	}
+	// for closest point to minimize numerical errors
+	vufVector4<double>			vufCurveOpenBezier<double,vufVector4, 1>::get_pos_no_offset_i(double p_t)		const
+	{
+		if (p_t <= 0.0)
+		{
+			return get_tangent_at_i(0) * p_t;
 		}
 		if (p_t >= 1.0)
 		{
@@ -291,7 +341,6 @@ namespace vufMath
 		if (p_t >= 1.0)
 		{
 			return  m_nodes_pos_v[m_nodes_count-2] * (-2.0) + m_nodes_pos_v[m_nodes_count -1] * 2.0;
-
 		}
 		p_t /= m_interval_length;
 		uint32_t l_ndx = 2 * uint32_t(p_t);
@@ -303,17 +352,20 @@ namespace vufMath
 	{
 		if (p_t <= 0)
 		{
-			return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[0] + get_tangent_at_i(0) * p_t;
+			return vufCurveExplicit<double, vufVector4>::m_pos_offset + get_tangent_at_i(0) * p_t;
+			//return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[0] + get_tangent_at_i(0) * p_t;
 		}
 		if (p_t >= 1.0)
 		{
-			return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count-1] + get_tangent_at_i(1) * (p_t - 1);
+			return vufCurveExplicit<double, vufVector4 > ::m_pos_offset + vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count - 1] + get_tangent_at_i(1) * (p_t - 1);
+			//return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count-1] + get_tangent_at_i(1) * (p_t - 1);
 		}
 		p_t /= m_interval_length;
 		uint32_t l_ndx = 2 * uint32_t(p_t);
 		p_t -= uint32_t(p_t);
 
-		return	m_nodes_pos_v[l_ndx] * (1 - p_t) * (1 - p_t) + 2.0 * m_nodes_pos_v[l_ndx + 1] * p_t * (1 - p_t) + m_nodes_pos_v[l_ndx + 2] * p_t * p_t;
+		return	vufCurveExplicit<double, vufVector4 > ::m_pos_offset +  
+			m_nodes_pos_v[l_ndx] * (1 - p_t) * (1 - p_t) + 2.0 * m_nodes_pos_v[l_ndx + 1] * p_t * (1 - p_t) + m_nodes_pos_v[l_ndx + 2] * p_t * p_t;
 	}
 
 	template<>
@@ -340,18 +392,48 @@ namespace vufMath
 	{
 		if (p_t <= 0)
 		{
-			return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[0] + get_tangent_at_i(0) * p_t;
+			return vufCurveExplicit<double, vufVector4>::m_pos_offset + get_tangent_at_i(0) * p_t;
+			//return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[0] + get_tangent_at_i(0) * p_t;
 		}
 		if (p_t >= 1.0)
 		{
-			return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count - 1] + get_tangent_at_i(1) * (p_t - 1);
+			return vufCurveExplicit<double, vufVector4 > ::m_pos_offset + vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count - 1] + get_tangent_at_i(1) * (p_t - 1);
+			//return vufCurveExplicit<double, vufVector4>::m_nodes_pos_v[m_nodes_count - 1] + get_tangent_at_i(1) * (p_t - 1);
 		}
 		p_t /= m_interval_length;
 		uint32_t l_ndx = 3 * uint32_t(p_t);
 		p_t -= uint32_t(p_t);
 
-		return m_nodes_pos_v[l_ndx] * (1 - p_t) * (1 - p_t) * (1 - p_t) + 3.0 * m_nodes_pos_v[l_ndx + 1] * p_t * (1 - p_t) * (1 - p_t) +
-			3.0 * m_nodes_pos_v[l_ndx + 2] * p_t * p_t * (1 - p_t) + m_nodes_pos_v[l_ndx + 3] * p_t * p_t * p_t;
+		return vufCurveExplicit<double, vufVector4 > ::m_pos_offset + 
+			m_nodes_pos_v[l_ndx] * (1 - p_t) * (1 - p_t) * (1 - p_t) + 
+			3.0 * m_nodes_pos_v[l_ndx + 1] * p_t * (1 - p_t) * (1 - p_t) +
+			3.0 * m_nodes_pos_v[l_ndx + 2] * p_t * p_t * (1 - p_t) +
+			m_nodes_pos_v[l_ndx + 3] * p_t * p_t * p_t;
 	}
+
+#pragma region CLOSEST_POINTS
+	template<>
+	double		vufCurveOpenBezier <double, vufVector4, 1>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
+	{
+		auto l_point = p_point - vufCurveExplicit<double, vufVector4>::m_pos_offset;
+		double l_dist_min = (get_pos_no_offset_i(p_start) - l_point).length2();//std::numeric_limits<double>::max();
+		double l_param = p_start;
+		double l_temp_dist = (get_pos_no_offset_i(p_end) - l_point).length2();
+		if (l_temp_dist < l_dist_min)
+		{
+			l_dist_min = l_temp_dist;
+			l_param = p_end;
+		}
+		uint32_t l_cnt = get_interval_count_i();
+		for (uint32_t l_interval_id = 0; l_interval_id < l_cnt; ++l_interval_id)
+		{
+			vufPolinomCoeff<double, 1> l_px1, l_py1, l_pz1;
+			vufPolinomCoeff<double, 0> l_tx1, l_ty1, l_tz1;
+			vufPolinomCoeff<double, 1> l_p;			
+		}
+		return l_param;
+	}
+
+#pragma endregion
 }
 #endif // !VF_MATH_OPEN_BEZER_OPN_CRV_H

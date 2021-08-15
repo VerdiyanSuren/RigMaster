@@ -23,46 +23,6 @@ using namespace vufMath;
 using namespace std::literals::chrono_literals;
 int main()
 {
-	vufPolinomCoeff<double, 5> l_k5;
-	vufPolinomCoeff<double, 4> l_k4;
-	vufPolinomCoeff<double, 3> l_k3;
-	vufPolinomCoeff<double, 2> l_k2;
-	vufPolinomCoeff<double, 1> l_k1;
-	vufPolinomCoeff<double, 0> l_k0;
-	l_k5.a[0] = -180679.04380774602759629487991333;
-	l_k5.a[1] = 2002344.7110469420440495014190674;
-	l_k5.a[2] = -8787032.7894134316593408584594727;
-	l_k5.a[3] = 19033044.608012489974498748779297;
-	l_k5.a[4] = -20309651.258549917489290237426758;
-	l_k5.a[5] = 8530053.5285909660160541534423828;
-	int l_order = sturm_chain_5<double>(l_k5, l_k4, l_k3, l_k2, l_k1, l_k0);
-	std::cout << l_order << std::endl;
-	std::cout << l_k5.to_string(32) << std::endl;
-	std::cout << l_k4.to_string(32) << std::endl;
-	std::cout << l_k3.to_string(32) << std::endl;
-	std::cout << l_k2.to_string(32) << std::endl;
-	std::cout << l_k1.to_string(32) << std::endl;
-	std::cout << l_k0.to_string(32) << std::endl;
-	double l_start = 0.4285714285714285476380780437466455623507499694824218750000000000;
-	double l_end = 0.5714285714285713968507707249955274164676666259765625000000000000;
-	//std::cout << "root_count: " << sturm_root_count_5<double>(l_k5, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end) << std::endl;
-	std::cout.precision(64);
-	//std::cout << std::fixed << " values on ends: " << l_k5.eval(l_start) << " " <<  l_k5.eval(l_end) << std::endl;
-	std::cout << sturm_sign_changed_5<double>(l_k5, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_order) << std::endl;
-	std::cout << sturm_sign_changed_5<double>(l_k5, l_k4, l_k3, l_k2, l_k1, l_k0, l_end, l_order) << std::endl;
-	double l_arr[5];
-	auto l_root_count = l_k5.find_root_on_interval(l_start, l_end, l_arr);
-	std::cout << "root_count " << l_root_count << std::endl;
-	std::cout << "roots :";
-	for (int i = 0; i < l_root_count; ++i)
-	{
-		std::cout << l_arr[i] << " ";
-	}
-	std::cout << std::endl;
-	//std::cout << "isolate root: " << sturm_isolate_root_5<double>(l_k5, l_k4, l_k3, l_k2, l_k1, l_k0, l_start, l_end, l_order) << std::endl;
-	system("pause");
-	return 0;
-	//vufPolinomTest<double>().run();
 	/*
 	vufPolinomCoeff<double, 8> l_k8;
 	vufPolinomCoeff<double, 7> l_k7;
@@ -144,24 +104,28 @@ int main()
 	
 	
 	auto l_cn = vufCurveContainer<double, vufVector4>::create();
-	auto l_cc = vufCurveCloseBezier<double, vufVector4, 3>::create();
+	auto l_cobz = vufCurveOpenBezier<double, vufVector4, 1>::create();
 	//auto l_co = vufCurveOpenBezier<double, vufVector4,1>::create();
-	auto l_co = vufCurveOpenBSpline<double, vufVector4, 5>::create();
+	auto l_co = vufCurveOpenBSpline<double, vufVector4, 3>::create();
 	l_cn->set_curve_ptr(l_co);
+	l_cobz->set_nodes_count(11);
 	l_co->set_nodes_count(11);
-	l_cc->set_nodes_count(11);
 	//std::cout << l_cc->get_interval_index_i(0) << std::endl;
 	//std::cout << l_cc->get_interval_index_i(.5) << std::endl;
 	//std::cout << l_cc->get_interval_index_i(.8) << std::endl;
 	//std::cout << l_cc->get_interval_index_i(2) << std::endl;
 	for (int i = 0; i < 11; ++i)
 	{
-		l_cc->set_node_at(i, vufVector4<double>::random_vector());
+		l_cobz->set_node_at(i, vufVector4<double>::random_vector());
 		l_co->set_node_at(i, vufVector4<double>::random_vector());
 	}
 	{
-		vuf::vufTimer l_timer("closest point");
+		vuf::vufTimer l_timer("closest point bspline");
 		auto p = l_co->get_closest_point(vufVector4<double>(1, 1, 1));
+	}
+	{
+		vuf::vufTimer l_timer("closest point bezier");
+		auto p = l_cobz->get_closest_point(vufVector4<double>(1, 1, 1));
 	}
 	vufVector4<double> l_pos;
 	{		vuf::vufTimer l_timer("get pos");

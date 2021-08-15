@@ -68,6 +68,7 @@ namespace vufMath
 				return 0;
 			}
 			uint64_t l_array_size;
+			
 			if (p_buff.size() < p_offset + sizeof(m_pos_offset))
 			{
 				return 0;

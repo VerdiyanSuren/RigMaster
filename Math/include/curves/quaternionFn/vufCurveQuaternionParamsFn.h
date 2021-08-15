@@ -21,11 +21,38 @@ namespace vufMath
 		// close curve
 		vufQuaternion<T> get_quaternion_close_curve_at_i(const vufCurve<T, V>& p_curve, T p_val/*curve original value*/) const
 		{
-			return vufQuaternion<T>();
+			p_val -= std::floor(p_val);
+			V<T> l_vec(1.0);
+			V<T> l_tng;
+			vufQuaternion_d l_quat;			
+			auto l_param_1 = m_quat_param_v.front();
+			auto l_param_2 = m_quat_param_v.back();
+			if (p_val < l_param_1 || p_val > l_param_2)
+			{
+				V<T> l_vec(1.0);
+				V<T> l_tng;
+				vufQuaternion_d l_quat;
+				// we have to handle special case when param is betwean last and first element
+				T l_interval_length = l_param_1 - l_param_2 + 1.;
+				if (p_val < l_param_1)
+				{
+					p_val += 1;
+				}
+				T l_w_1 = (p_val - l_param_2) / l_interval_length;
+				T l_w_0 = 1. - l_w_1;
+				vufQuaternion<T> l_res = m_quaternion_a_v.back() * l_w_0 + m_quaternion_b_v.back() * l_w_1;
+				l_res.normalize_in_place();
+				//drop on axis
+				l_tng = p_curve.get_tangent_normalized_at(p_val);
+				l_vec = l_res.rotate_vector_by_quaternion(l_vec);
+				return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
+			}
+			return get_quaternion_open_curve_at_i(p_curve, p_val);
 		}
 		// open  curve
 		vufQuaternion<T> get_quaternion_open_curve_at_i(const vufCurve<T, V>& p_curve, T p_val/*curve original value*/) const
 		{
+			p_val -= std::floor(p_val);
 			V<T> l_vec(1.0);
 			V<T> l_tng;
 			vufQuaternion_d l_quat;
@@ -346,5 +373,4 @@ namespace vufMath
 		std::vector<T>					m_quat_param_v;		// parameter on curve
 	};
 }
-
 #endif // !VF_MATH_QUAT_PARAM_FN_H

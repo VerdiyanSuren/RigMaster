@@ -60,10 +60,10 @@ MStatus	vufCurveBSplineNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.addField("1",	k_linear));
 	CHECK_MSTATUS(l_enum_attr_fn.addField("2",	k_quadratic));
 	CHECK_MSTATUS(l_enum_attr_fn.addField("3",  k_cubic));
-	CHECK_MSTATUS(l_enum_attr_fn.addField("4",	k_tetra));
-	CHECK_MSTATUS(l_enum_attr_fn.addField("5",	k_penta));
+	//CHECK_MSTATUS(l_enum_attr_fn.addField("4",	k_tetra));
+	//CHECK_MSTATUS(l_enum_attr_fn.addField("5",	k_penta));
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
-	CHECK_MSTATUS(l_enum_attr_fn.setDefault(3));
+	CHECK_MSTATUS(l_enum_attr_fn.setDefault(2));
 
 	// Close
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_close_attr, "close", "cls", kBoolean, false);
@@ -117,7 +117,6 @@ MStatus	vufCurveBSplineNode::initialize()
 	l_status = attributeAffects(g_curve_compound_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_degree_attr,				g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_close_attr,				g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = attributeAffects(g_closest_division_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	VF_RM_CRV_NODE_REBUILD_ATTR_AFFECT_TO(		g_data_out_attr);
 	VF_RM_CRV_NODE_QUATERNIONS_ATTR_AFFECT_TO(	g_data_out_attr);
@@ -134,6 +133,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr || p_plug == g_params_out_attr)
 	{
+		vuf::vufTimer l_timer("Bspline curve node compute");
 		MStatus l_status;
 		//------------------------------------------------------------------------------
 		// handle out data
@@ -156,7 +156,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		// Read attributes
 		bool	l_close			= p_data.inputValue(g_close_attr).asBool();
 		short	l_degree		= p_data.inputValue(g_degree_attr).asShort();
-		int		l_cls_div		= p_data.inputValue(g_closest_division_attr).asInt();
+		//int		l_cls_div		= p_data.inputValue(g_closest_division_attr).asInt();
 		short	l_quat_mode		= p_data.inputValue(g_quaternion_mode_attr).asShort();
 		short	l_scale_mode	= p_data.inputValue(g_scale_mode_attr).asShort();
 #pragma region HANDLE_CURVE
@@ -170,7 +170,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		auto l_crv_ptr = l_out_data->m_internal_data->get_curve_ptr()->as_explicit_curve();
 		if (l_crv_ptr == nullptr)
 		{
-			MString l_msg = name() + ": Can't create curve";
+			MString l_msg = name() + ": Can't  create bspline curve";
 			VF_LOG_ERR(l_msg.asChar());
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
@@ -197,10 +197,9 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				//std::cout << i << ": " << std::endl;
 				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
 				vufVector4<double> l_pos = l_matr->get_translation_4();
-				l_double_array[i] = l_crv_ptr->get_closest_point_param(l_pos, 0.0, 1.0, l_cls_div);
+				l_double_array[i] = l_crv_ptr->get_closest_point_param(l_pos, 0.0, 1.0, 10);
 				//std::cout << l_double_array[i] << " ";
 			}
-
 		}
 #pragma endregion
 #pragma region HANDLE_QUATERNION
