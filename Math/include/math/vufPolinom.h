@@ -23,7 +23,14 @@ namespace vufMath
 				a[i] = p_other.a[i];
 			}
 		}
-		void set(const T* p_arr)
+		vufPolinomCoeff(const T* p_arr)
+		{
+			for (int i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				a[i] = p_arr[i];
+			}
+		}
+		void set(const T *p_arr)
 		{
 			for (int i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
 			{
