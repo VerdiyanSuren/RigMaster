@@ -3,7 +3,6 @@
 
 
 #include <maya/MPxNode.h>
-#include <vufMayaGlobalIncludes.h>
 #include <curves/vufMayaCurvesInclude.h>
 #include <vufMayaGlobalIncludes.h>
 

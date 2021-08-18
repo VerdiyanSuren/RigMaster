@@ -10,7 +10,7 @@ namespace vufRM
 	class vufCurveSwitch : public MPxNode
 	{
 	public:
-		vufCurveSwitch() :MPxNode() {}
+		vufCurveSwitch();
 		virtual ~vufCurveSwitch() {}
 
 		static  void* creator();
@@ -24,6 +24,8 @@ namespace vufRM
 		static MObject	g_choose_attr;
 		static MObject	g_data_in_attr;
 		static MObject	g_data_out_attr;
+	private:
+		uint64_t		m_gen_id;
 	};
-
+}
 #endif // ! VF_RM_CURVE_SWITCH_H

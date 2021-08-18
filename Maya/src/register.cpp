@@ -25,6 +25,7 @@
 #include <curves/vufCurveBezierNode.h>
 #include <curves/vufCurveNoiseNode.h>
 #include <curves/vufCurveComposeNode.h>
+#include <curves/vufCurveSwitch.h>
 
 #include <curves/rotateFn/vufCurveQuatCloseNode.h>
 #include <curves/rotateFn/vufCurveQuatFrameNode.h>
@@ -80,6 +81,7 @@ const MTypeId	vufCurveQuatParamNode::		g_id(0x299530);	const MString	vufCurveQua
 const MTypeId	vufCurveNoiseNode::			g_id(0x299630);	const MString	vufCurveNoiseNode::			g_type_name("vufCurveNoise");
 const MTypeId	vufCurveComposeNode::		g_id(0x299730);	const MString	vufCurveComposeNode::		g_type_name("vufCurveCompose");
 const MTypeId	vufCurveBezierNode::		g_id(0x299830);	const MString	vufCurveBezierNode::		g_type_name("vufCurveBezier");
+const MTypeId	vufCurveSwitch::			g_id(0x299930);	const MString	vufCurveSwitch::			g_type_name("vufCurveSwitch");
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
 VF_DEFINE_CUSTOM_LOGGER(vufLogMaya);
@@ -118,6 +120,7 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufCurveNoiseNode);
 	VF_REGISTER_NODE(vufCurveComposeNode);
 	VF_REGISTER_NODE(vufCurveNullNode);
+	VF_REGISTER_NODE(vufCurveSwitch);
 
 
 	VF_REGISTER_NODE(vufCurveGetTransformNode);
@@ -160,8 +163,9 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufCurveBezierNode);
 	VF_DEREGISTER_NODE(vufCurveBlendNode);
 	VF_DEREGISTER_NODE(vufCurveNoiseNode);
-	VF_DEREGISTER_NODE(vufCurveComposeNode);	
+	VF_DEREGISTER_NODE(vufCurveComposeNode);
 	VF_DEREGISTER_NODE(vufCurveNullNode);
+	VF_DEREGISTER_NODE(vufCurveSwitch);
 
 	VF_DEREGISTER_NODE(vufCurveGetTransformNode);
 	VF_DEREGISTER_NODE(vufCurveClosestPointNode);
