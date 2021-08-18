@@ -457,7 +457,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\curves\get\vufCurveClosestPointNode.h" />
+    <ClInclude Include="include\curves\get\vufCurveClosestParamNode.h" />
+    <ClInclude Include="include\curves\get\vufCurveComponentParam.h" />
     <ClInclude Include="include\curves\get\vufCurveGetTransformNode.h" />
     <ClInclude Include="include\curves\locator\vufCurveLocator.h" />
     <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildNode.h" />
@@ -518,7 +519,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
   <ItemGroup>
     <ClCompile Include="include\vufLogMaya.cpp" />
     <ClCompile Include="src\curves\data\vufCurveData.cpp" />
-    <ClCompile Include="src\curves\get\vufCurveClosestPointNode.cpp" />
+    <ClCompile Include="src\curves\get\vufCurveClosestParamNode.cpp" />
+    <ClCompile Include="src\curves\get\vufCurveComponentParam.cpp" />
     <ClCompile Include="src\curves\get\vufCurveGetTransformNode.cpp" />
     <ClCompile Include="src\curves\locator\vufCurveLocator.cpp" />
     <ClCompile Include="src\curves\rebuildFn\vufCurveRebuildNode.cpp" />

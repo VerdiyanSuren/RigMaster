@@ -102,7 +102,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\curves\get\vufCurveClosestPointNode.h">
+    <ClInclude Include="include\curves\get\vufCurveClosestParamNode.h">
+      <Filter>include\curves\get</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\get\vufCurveComponentParam.h">
       <Filter>include\curves\get</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\get\vufCurveGetTransformNode.h">
@@ -281,7 +284,10 @@
     <ClCompile Include="src\curves\data\vufCurveData.cpp">
       <Filter>src\curves\data</Filter>
     </ClCompile>
-    <ClCompile Include="src\curves\get\vufCurveClosestPointNode.cpp">
+    <ClCompile Include="src\curves\get\vufCurveClosestParamNode.cpp">
+      <Filter>src\curves\get</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\get\vufCurveComponentParam.cpp">
       <Filter>src\curves\get</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\get\vufCurveGetTransformNode.cpp">

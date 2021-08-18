@@ -31,7 +31,8 @@ MStatus	vufCurveSwitch::initialize()
 	MFnTypedAttribute		l_typed_attr_fn;
 	MFnNumericAttribute		l_numeric_attr_fn;
 
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_choose_attr, "index", "ndx", kInt, false);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_choose_attr, "index", "ndx", kInt, 0);
+	l_numeric_attr_fn.setMin(0);
 	l_numeric_attr_fn.setChannelBox(true);
 	l_status = addAttribute(g_choose_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// in curve
@@ -63,6 +64,7 @@ MStatus	vufCurveSwitch::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
 	{
+		vuf::vufTimer l_timer("Curve Switch node compute");
 		MStatus l_status;
 		//------------------------------------------------------------------------------
 		// switch index
@@ -93,7 +95,7 @@ MStatus	vufCurveSwitch::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_container.set_quaternion_fn_ptr(	nullptr);
 			l_container.set_scale_fn_ptr(		nullptr);
 			l_container.set_rebuild_fn_ptr(		nullptr);
-			//l_container.set_remap_fn_ptr(		nullptr);
+			l_container.set_remap_fn_ptr(		nullptr);
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
@@ -103,7 +105,7 @@ MStatus	vufCurveSwitch::compute(const MPlug& p_plug, MDataBlock& p_data)
 		l_container.set_quaternion_fn_ptr(	l_in_container.get_quaternion_fn_ptr());
 		l_container.set_scale_fn_ptr(		l_in_container.get_scale_fn_ptr());
 		l_container.set_rebuild_fn_ptr(		l_in_container.get_rebuild_fn_ptr());
-		//l_container.set_remap_fn_ptr(		l_in_container.get_remap_fn_ptr());
+		l_container.set_remap_fn_ptr(		l_in_container.get_remap_fn_ptr());
 
 		p_data.setClean(g_data_out_attr);
 		return MS::kSuccess;

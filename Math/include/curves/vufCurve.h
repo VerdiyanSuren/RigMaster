@@ -130,7 +130,7 @@ namespace vufMath
 															uint32_t p_divisions	= 10,
 															T p_percition = vufCurve_kTol) const = 0;
 
-		virtual T				get_param_by_vector_component(	T	p_value, 
+		virtual T				get_param_by_vector_component(	T			p_value, 
 																uint32_t	p_component_index	= 0/*x by default*/,
 																T			p_start				= 0,
 																T			p_end				= 1 /*if p_start == p_end then interval is infinite*/,

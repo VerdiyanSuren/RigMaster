@@ -39,7 +39,6 @@ namespace vufMath
 	template <class T, template<typename> class V >	class vufCurveBlend;
 	//template <class T, template<typename> class V>	class vufCurveFn;
 
-	template <class T>	class vufRemapCurveFn;		/* Fn Set to Remap Curve parameter */
 	template <class T, template<typename> class V>	class vufCurveRebuildFn;	/* Fn Set to rebuild curve */
 	template <class T, template<typename> class V>	class vufCurveQuaternionFn; /* Fn Set to Interpolaete Quaternions along curve */
 	template <class T, template<typename> class V>	class vufCurveScaleFn;		/* Fn Set to Scale Curve parameter */
@@ -377,11 +376,11 @@ namespace vufMath
 
 
 		// Remap
-		void									set_remap_fn_ptr(std::shared_ptr<vufRemapCurveFn<T>> p_remap_ptr)
+		void									set_remap_fn_ptr(std::shared_ptr<vufCurveRemapFn<T>> p_remap_ptr)
 		{
 			m_remap_fn = p_remap_ptr;
 		}
-		std::shared_ptr<vufRemapCurveFn<T>>		get_remap_fn_ptr()
+		std::shared_ptr<vufCurveRemapFn<T>>		get_remap_fn_ptr()
 		{
 			return m_remap_fn;
 		}
@@ -433,7 +432,15 @@ namespace vufMath
 			{
 				l_val = m_rebuild_fn->get_curve_val_by_rebuilded(l_val);
 			}
-
+			return l_val;
+		}
+		T		get_remaped_by_curve_value(T p_val) const
+		{
+			T l_val = p_val;
+			if (m_rebuild_fn != nullptr)
+			{
+				l_val = m_rebuild_fn->get_rebuilded_val_by_curve(l_val);
+			}
 			return l_val;
 		}
 		V<T>	get_pos_at(T p_val)						const
@@ -484,6 +491,31 @@ namespace vufMath
 				}
 			}
 			return V<T>(1., 1., 1.);
+		}
+		T		get_closest_param(V<T> p_point, T p_start = 0,T p_end = 1, uint32_t p_divisions = 10,T p_percition = vufCurve_kTol)	const
+		{
+			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
+			{				
+				T l_curve_param = m_curve_ptr->get_closest_point_param(p_point, p_start, p_end, p_divisions, p_percition);
+				return l_curve_param;
+				return get_remaped_by_curve_value(l_curve_param);
+			}
+			return 0;
+		}
+		T		get_param_by_vector_component(	T			p_value,
+												uint32_t	p_component_index = 0/*x by default*/,
+												T			p_start = 0,
+												T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+												uint32_t	p_divisions = 10,
+												T			p_percition = vufCurve_kTol)
+		{
+			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
+			{
+				T l_curve_param = m_curve_ptr->get_param_by_vector_component(p_value, p_component_index, p_start, p_end, p_divisions, p_percition);
+				return l_curve_param;
+				return get_remaped_by_curve_value(l_curve_param);
+			}
+			return 0;
 		}
 		vufQuaternion<T> get_quaternion_at(T p_val)	const
 		{
