@@ -85,9 +85,10 @@ namespace vufMath
 		uint32_t	get_degree()	const	{ return m_degree; }
 		bool		is_explicit()	const	{ return m_explicit; }
 		/** suportes open and close */
-		bool		is_open()		const	{ return  m_close == false; }
-		bool		is_close()		const	{ return  m_close; }
-		
+		bool		is_open()			const	{ return  m_close == false; }
+		bool		is_close()			const	{ return  m_close; }
+		T			get_domain_min()	const	{ return m_domain_min; }
+		T			get_domain_max()	const	{ return m_domain_max; }
 		bool		is_in_category(vufCurveCategory p_category)
 		{
 			return get_category() & p_category;
@@ -155,7 +156,9 @@ namespace vufMath
 					sizeof(m_has_degree) + 
 					sizeof(m_degree) + 
 					sizeof(m_explicit) + 
-					sizeof(m_close);
+					sizeof(m_close) + 
+					sizeof(m_domain_min) +
+					sizeof(m_domain_max);
 		}
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
 		{
@@ -172,6 +175,8 @@ namespace vufMath
 			std::memcpy(&p_buff[p_offset], &m_degree,		sizeof(m_degree));		p_offset += sizeof(m_degree);
 			std::memcpy(&p_buff[p_offset], &m_explicit,		sizeof(m_explicit));	p_offset += sizeof(m_explicit);
 			std::memcpy(&p_buff[p_offset], &m_close,		sizeof(m_close));		p_offset += sizeof(m_close);
+			std::memcpy(&p_buff[p_offset], &m_domain_min,	sizeof(m_domain_min));	p_offset += sizeof(m_domain_min);
+			std::memcpy(&p_buff[p_offset], &m_domain_max,	sizeof(m_domain_max));	p_offset += sizeof(m_domain_max);
 			return p_offset;
 		}
 		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0) = 0
@@ -186,6 +191,8 @@ namespace vufMath
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_degree,		sizeof(m_degree));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_explicit,		sizeof(m_explicit));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_close,		sizeof(m_close));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_domain_min,	sizeof(m_domain_min));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_domain_max,	sizeof(m_domain_max));
 
 			return p_offset;
 		}
@@ -219,15 +226,15 @@ namespace vufMath
 		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 1>>		as_open_bezier_mono()	const { return nullptr; }
 		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 2>>		as_open_bezier_di()		const { return nullptr; }
 		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 3>>		as_open_bezier_tri()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 4>>		as_open_bezier_tetra()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 5>>		as_open_bezier_penta()	const { return nullptr; }
+		//virtual std::shared_ptr<vufCurveOpenBezier <T, V, 4>>		as_open_bezier_tetra()	const { return nullptr; }
+		//virtual std::shared_ptr<vufCurveOpenBezier <T, V, 5>>		as_open_bezier_penta()	const { return nullptr; }
 
 		// convert to close bezier
 		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 1>>		as_close_bezier_mono()	const { return nullptr; }
 		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 2>>		as_close_bezier_di()	const { return nullptr; }
 		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 3>>		as_close_bezier_tri()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 4>>		as_close_bezier_tetra()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 5>>		as_close_bezier_penta()	const { return nullptr; }
+		//virtual std::shared_ptr<vufCurveCloseBezier <T, V, 4>>		as_close_bezier_tetra()	const { return nullptr; }
+		//virtual std::shared_ptr<vufCurveCloseBezier <T, V, 5>>		as_close_bezier_penta()	const { return nullptr; }
 
 		// convert to open xspline
 		virtual std::shared_ptr<vufOpenXSpline  <T, V>>	as_open_xspline_4d()		const { return nullptr; }
@@ -245,7 +252,8 @@ namespace vufMath
 		uint32_t	m_degree		= 0;		// degree of curve. 0 if therre is n't degree
 		bool		m_explicit		= true;		// has control pointas or not
 		bool		m_close			= false;	//
-
+		T			m_domain_min	= 0.0;
+		T			m_domain_max	= 1.0;
 		std::weak_ptr<vufCurve> m_this = std::weak_ptr<vufCurve>();
 	};
 #pragma endregion VF_CURVE

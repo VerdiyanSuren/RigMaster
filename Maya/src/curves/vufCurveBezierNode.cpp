@@ -144,7 +144,7 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		bool	l_close		= p_data.inputValue(g_close_attr).asBool();
 		short	l_degree	= p_data.inputValue(g_degree_attr).asShort() + 1;		
 		short	l_quat_mode = p_data.inputValue(g_quaternion_mode_attr).asShort();
-		short	l_scale_mode = p_data.inputValue(g_scale_mode_attr).asShort();
+		short	l_scale_mode = p_data.inputValue(g_scale_mode_attr).asShort();		
 #pragma region HANDLE_CURVE
 		bool	l_is_crv_new = (l_close == true) ?
 			l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_close_bezier_piecewise) :
@@ -171,16 +171,24 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
-		l_double_array.setLength(l_crv_ptr->get_nodes_count());
+		// controls count for rotate and scale
+		// ignore tangents
+		uint32_t l_controls_count = l_close? l_crv_ptr->get_interval_count(): (l_crv_ptr->get_interval_count() + 1);
+		std::cout << "l_controls_count " << l_controls_count << std::endl;
+		l_double_array.setLength(l_controls_count);
 		if (l_quat_mode == 0 || l_scale_mode == 0)
 		{
-			//std::cout << "-------------------------------" << std::endl;
-			for (uint32_t i = 0; i < l_crv_ptr->get_nodes_count(); ++i)
+			std::cout << "----------Bezier-------------" << std::endl;
+			std::cout << std::fixed;
+			std::cout << "[ ";
+			for (uint32_t i = 0; i < l_controls_count;++i)
 			{
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i * l_degree];
 				vufVector4<double> l_pos = l_matr->get_translation_4();
 				l_double_array[i] = l_crv_ptr->get_closest_point_param(l_pos, 0.0, 1.0, 10);
+				std::cout << i <<":" << l_double_array[i * l_degree] << ", ";
 			}
+			std::cout << " ]" << std::endl;
 		}
 #pragma endregion
 #pragma region HANDLE_QUATERNION
@@ -200,13 +208,14 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				p_data.setClean(g_data_out_attr);
 				return MS::kSuccess;
 			}
-			l_qtr_ptr->set_item_count_i(l_transforms_sz);
-			for (uint32_t i = 0; i < l_transforms_sz; ++i)
+			l_qtr_ptr->set_item_count_i(l_controls_count);
+			for (uint32_t i = 0; i < l_controls_count; ++i) 
 			{
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i * l_degree];
 				// set params and quaternions
 				l_qtr_ptr->set_item_at_i(i, l_double_array[i], *l_matr, l_crv_ptr);
 			}
+			//l_qtr_ptr->sort_params_i();
 			l_qtr_ptr->match_quaternions_i();
 
 			l_quaternion_store_data->m_internal_data = l_qtr_ptr;
@@ -220,9 +229,9 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				auto l_qtr_ptr = l_quat_store_ptr->as_params_fn();
 				if (l_qtr_ptr != nullptr)
 				{
-					for (uint32_t i = 0; i < l_transforms_sz; ++i)
+					for (uint32_t i = 0; i < l_controls_count; ++i) 
 					{
-						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i *l_degree];
 						// update only quaterniions
 						l_qtr_ptr->set_item_at_i(i, *l_matr, l_crv_ptr);
 					}
@@ -255,10 +264,10 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				p_data.setClean(g_data_out_attr);
 				return MS::kSuccess;
 			}
-			l_scale_ptr->set_item_count_i(l_transforms_sz);
-			for (uint32_t i = 0; i < l_transforms_sz; ++i)
+			l_scale_ptr->set_item_count_i(l_controls_count);
+			for (uint32_t i = 0; i < l_controls_count; ++i)
 			{
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i * l_degree];
 				l_scale_ptr->set_item_at_i(i, l_double_array[i], *l_matr);
 			}
 			l_scale_ptr->match_scales_i();
@@ -272,9 +281,9 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				auto l_scl_ptr = l_scale_store_ptr->as_params_fn();
 				if (l_scl_ptr != nullptr)
 				{
-					for (uint32_t i = 0; i < l_transforms_sz; ++i)
+					for (uint32_t i = 0; i < l_controls_count; ++i)
 					{
-						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
+						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i * l_degree];
 						// update only quaterniions
 						l_scl_ptr->set_item_at_i(i, *l_matr);
 					}

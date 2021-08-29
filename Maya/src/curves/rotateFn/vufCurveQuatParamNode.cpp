@@ -185,6 +185,7 @@ MStatus	vufCurveQuatParamNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_quat_ptr->set_item_at_i(i, l_val, *l_matr, l_crv_ptr );
 		}
 		//VF_LOG_INFO( l_quat_ptr->to_string());
+		l_quat_ptr->sort_params_i();
 		l_quat_ptr->match_quaternions_i();
 
 		p_data.setClean(g_data_out_attr);

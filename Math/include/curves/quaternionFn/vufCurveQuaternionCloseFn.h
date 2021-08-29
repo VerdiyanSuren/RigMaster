@@ -43,7 +43,7 @@ namespace vufMath
 				vufQuaternion<T> l_res = m_quaternion_a_v[l_index_2] * l_w_0 + m_quaternion_b_v[l_index_2] * l_w_1;
 				l_res.normalize_in_place();
 				//drop on axis
-				l_tng = p_curve.get_tangent_at(p_val);
+				l_tng = p_curve.get_tangent_normalized_at(p_val);
 				l_vec = l_res.rotate_vector_by_quaternion(l_vec);
 				return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
 			}
@@ -115,8 +115,6 @@ namespace vufMath
 				{
 					m_quat_param_v[i] = ((T)i) * l_step;
 				}
-				//vufMath::vufNumericArrayFn<double> l_num_array(m_quat_param_v);
-				//VF_LOG_INFO(l_num_array.to_string().c_str());
 			}
 		}
 		// just update quaternion values
@@ -216,21 +214,16 @@ namespace vufMath
 				m_need_sort = false;
 				for (uint32_t i = 1; i < (uint32_t)m_quat_indeces_v.size(); ++i)
 				{
-					auto l_index_1 = m_quat_indeces_v[i-1];
+					auto l_index_1 = m_quat_indeces_v[i - 1];
 					auto l_index_2 = m_quat_indeces_v[i];
 					if (m_quat_param_v[l_index_1] > m_quat_param_v[l_index_2])
 					{
 						m_need_sort = true;
-						m_quat_indeces_v[i]		= l_index_1;
-						m_quat_indeces_v[i-1]	= l_index_2;
+						m_quat_indeces_v[i] = l_index_1;
+						m_quat_indeces_v[i - 1] = l_index_2;
 					}
 				}
-			}	
-			//vufMath::vufNumericArrayFn<double> l_num_array(m_quat_param_v);
-			//VF_LOG_INFO(l_num_array.to_string().c_str());
-			//vufMath::vufNumericArrayFn<uint32_t> l_ind_array(m_quat_indeces_v);
-			//VF_LOG_INFO(l_ind_array.to_string().c_str());
-
+			}
 			return true;
 		}
 		bool	match_quaternions_i()
@@ -438,7 +431,7 @@ namespace vufMath
 			{
 				VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_quat_param_v[0], l_size * sizeof(T));
 			}
-			// m_quat_param_v
+			// m_quat_param_indeces?v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));
 			m_quat_indeces_v.resize(l_size);
 			if (l_size > 0)

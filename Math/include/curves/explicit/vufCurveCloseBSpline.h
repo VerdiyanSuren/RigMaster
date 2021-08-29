@@ -600,7 +600,7 @@ std::cout << "]" << std::endl;
 		}
 		virtual V<T>		get_node_at(uint32_t p_index) const
 		{
-			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index + m_indent_start];
+			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index + m_indent_start] + m_pos_offset;
 		}
 
 		/*
