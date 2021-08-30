@@ -10,10 +10,10 @@
 namespace vufMath
 {
 	template <class T, template<typename> class V, uint32_t CURVE_DEGREE = 2>
-	class vufCurveCloseBezier : public vufCurveExplicit<T, V>
+	class vufCurveBezierClose : public vufCurveExplicit<T, V>
 	{
 	private:
-		vufCurveCloseBezier() :vufCurveExplicit<T, V>()
+		vufCurveBezierClose() :vufCurveExplicit<T, V>()
 		{
 			//std::cout << "OpenBSpline constructor" << std::endl;
 			vufCurve<T, V>::m_has_degree = true;
@@ -21,11 +21,10 @@ namespace vufMath
 			vufCurve<T, V>::m_close = true;
 		}
 	public:
-		virtual ~vufCurveCloseBezier() {}
-		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveCloseBezier);
+		virtual ~vufCurveBezierClose() {}
+		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveBezierClose);
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_close_bezier_piecewise, k_bezier_category);
-		VF_MATH_CRV_REBUILD_CLAMPED;
-		VF_MATH_CRV_REBUILD_ALONG_AXIS_CLAMPED;
+		VF_MATH_CRV_REBUILD_CLAMPED;	
 
 		virtual V<T>			get_closest_point(const V<T>& p_point,
 			T			p_start = 0,
@@ -45,78 +44,26 @@ namespace vufMath
 		}
 		VF_MATH_GET_PARAM_COMPONENT;
 
-		virtual V<T>			get_pos_at(T p_t)					const override
+		virtual V<T>		get_pos_at(T p_t)					const override
 		{
 			return get_pos_at_i(p_t);
 		}
-		virtual V<T>			get_tangent_at(T p_t)				const override
+		virtual V<T>		get_tangent_at(T p_t)				const override
 		{
 			return get_tangent_at_i(p_t);
 		}
-		virtual V<T>			get_tangent_normalized_at(T p_t)	const override
+		virtual V<T>		get_tangent_normalized_at(T p_t)	const override
 		{
 			return get_tangent_at_i(p_t).normalize_in_place();
 		}
-
-
-		virtual bool		set_nodes_count(uint32_t p_count) override
-		{
-			// reserve elements from start and end
-			if (vufCurveExplicit<T, V>::m_nodes_pos_v.size() != p_count + 1)
-			{
-				vufCurveExplicit<T, V>::m_nodes_pos_v.resize(p_count + 1);
-				return init_knot_vector_i(p_count);
-			}
-			return true;
-		}
-		virtual uint32_t	get_nodes_count() const override
-		{
-			return m_nodes_count;
-		}
-		virtual void		set_node_at(uint32_t p_index, const V<T>& p_vector) override
-		{
-			if (p_index == 0)
-			{
-				vufCurveExplicit<T, V>::m_pos_offset = p_vector;
-				vufCurveExplicit<T, V>::m_nodes_pos_v[m_nodes_count - 1] = V<T>(0,0,0);
-				vufCurveExplicit<T, V>::m_nodes_pos_v[0] = V<T>(0,0,0);
-				return;
-			}
-			if (p_index == m_nodes_count - 1)
-			{
-				return;
-			}
-			vufCurveExplicit<T, V>::m_nodes_pos_v[p_index] = p_vector - m_pos_offset;
-		}
-		virtual V<T>		get_node_at(uint32_t p_index) const override
-		{
-			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index] + m_pos_offset;
-		}
-		virtual T			get_interval_t_min(int p_interval_index) const override
-		{
-			return get_interval_t_min_i(p_interval_index);
-		}
-		virtual T			get_interval_t_max(int p_interval_index) const override
-		{
-			return get_interval_t_max_i(p_interval_index);
-		}
-		virtual int			get_interval_index(T p_t) const override 
-		{ 
-			return get_interval_index_i(p_t);
-		}
-		virtual uint32_t	get_interval_count() const override 
-		{ 
-			return m_interval_count;
-		}
-
-
+		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
-			std::shared_ptr< vufCurveCloseBezier > l_ptr = vufCurveCloseBezier::create();
+			std::shared_ptr< vufCurveBezierClose > l_ptr = vufCurveBezierClose::create();
 
 			l_ptr->m_degree = vufCurve<T, V>::m_degree;
-			l_ptr->m_close	= vufCurve<T, V>::m_close;
-			l_ptr->m_valid	= vufCurve<T, V>::m_valid;
+			l_ptr->m_close = vufCurve<T, V>::m_close;
+			l_ptr->m_valid = vufCurve<T, V>::m_valid;
 
 			l_ptr->m_nodes_pos_v = vufCurveExplicit<T, V>::m_nodes_pos_v;
 			l_ptr->m_knot_v = m_knot_v;
@@ -187,15 +134,64 @@ namespace vufMath
 		{
 			return vufCurve<T, V>::decode_from_buff(p_buff, p_offset);
 		}
+		
+		// virtual casts
+		virtual std::shared_ptr<vufCurveBezierClose <T, V, 1>>		as_close_bezier_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBezierClose <T, V, 2>>		as_close_bezier_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBezierClose <T, V, 3>>		as_close_bezier_tri()	const { return nullptr; }
 
-		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
-		VF_MATH_CRV_GATHER_INFO_I_BODY;
-		VF_MATH_CRV_GET_CLOSEST_PARAM_I;
-
-		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 1>>		as_close_bezier_mono()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 2>>		as_close_bezier_di()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 3>>		as_close_bezier_tri()	const { return nullptr; }
-
+		// inherited methods from vufCurveExplicit
+		virtual bool		set_nodes_count(uint32_t p_count) override
+		{
+			// reserve elements from start and end
+			if (vufCurveExplicit<T, V>::m_nodes_pos_v.size() != p_count + 1)
+			{
+				vufCurveExplicit<T, V>::m_nodes_pos_v.resize(p_count + 1);
+				return init_knot_vector_i(p_count);
+			}
+			return true;
+		}
+		virtual uint32_t	get_nodes_count() const override
+		{
+			return m_nodes_count;
+		}
+		virtual void		set_node_at(uint32_t p_index, const V<T>& p_vector) override
+		{
+			if (p_index == 0)
+			{
+				vufCurveExplicit<T, V>::m_pos_offset = p_vector;
+				vufCurveExplicit<T, V>::m_nodes_pos_v[m_nodes_count - 1] = V<T>(0,0,0);
+				vufCurveExplicit<T, V>::m_nodes_pos_v[0] = V<T>(0,0,0);
+				return;
+			}
+			if (p_index == m_nodes_count - 1)
+			{
+				return;
+			}
+			vufCurveExplicit<T, V>::m_nodes_pos_v[p_index] = p_vector - m_pos_offset;
+		}
+		virtual V<T>		get_node_at(uint32_t p_index) const override
+		{
+			return vufCurveExplicit<T, V>::m_nodes_pos_v[p_index] + m_pos_offset;
+		}
+		virtual T			get_interval_t_min(int p_interval_index) const override
+		{
+			return get_interval_t_min_i(p_interval_index);
+		}
+		virtual T			get_interval_t_max(int p_interval_index) const override
+		{
+			return get_interval_t_max_i(p_interval_index);
+		}
+		virtual int			get_interval_index(T p_t) const override 
+		{ 
+			return get_interval_index_i(p_t);
+		}
+		virtual uint32_t	get_interval_count() const override 
+		{ 
+			return m_interval_count;
+		}
+		
+	private:
 		bool				init_knot_vector_i(uint32_t p_sz)
 		{
 			if (p_sz < 2 * CURVE_DEGREE)
@@ -258,6 +254,10 @@ namespace vufMath
 			return get_tangent_at_i(p_t).normalize_in_place();
 		}
 
+		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
+		VF_MATH_CRV_GATHER_INFO_I_BODY;
+		VF_MATH_CRV_GET_CLOSEST_PARAM_I;
+	
 	private:
 		std::vector<T>		m_knot_v;
 		T					m_interval_length = 0;
@@ -273,43 +273,43 @@ namespace vufMath
 #pragma region STATIC VARIABLES SPECIALIZATION
 		//  curve degree 1
 	template<>
-	double vufCurveCloseBezier <double, vufVector4, 1>::g_arr[2][2] = { {1, -1}, {0, 1} };
+	double vufCurveBezierClose <double, vufVector4, 1>::g_arr[2][2] = { {1, -1}, {0, 1} };
 	template<>
-	double vufCurveCloseBezier <double, vufVector4, 1>::g_darr[2][1] = { {-1}, {1} };
+	double vufCurveBezierClose <double, vufVector4, 1>::g_darr[2][1] = { {-1}, {1} };
 	template <>
-	vufPolinomCoeff<double, 1> vufCurveCloseBezier <double, vufVector4, 1>::g_basis[] = { vufPolinomCoeff<double,1>(g_arr[0]),
+	vufPolinomCoeff<double, 1> vufCurveBezierClose <double, vufVector4, 1>::g_basis[] = { vufPolinomCoeff<double,1>(g_arr[0]),
 																						 vufPolinomCoeff<double,1>(g_arr[1]) };
 	template <>
-	vufPolinomCoeff<double, 0> vufCurveCloseBezier <double, vufVector4, 1>::g_dbasis[] = { vufPolinomCoeff<double,0>(g_darr[0]),
+	vufPolinomCoeff<double, 0> vufCurveBezierClose <double, vufVector4, 1>::g_dbasis[] = { vufPolinomCoeff<double,0>(g_darr[0]),
 																						  vufPolinomCoeff<double,0>(g_darr[1]) };
 
 	// curve degree 2
 	template<>
-	double vufCurveCloseBezier <double, vufVector4, 2>::g_arr[3][3] = { {1, -2, 1}, {0, 2, -2}, {0,0,1} };
+	double vufCurveBezierClose <double, vufVector4, 2>::g_arr[3][3] = { {1, -2, 1}, {0, 2, -2}, {0,0,1} };
 	template<>
-	double vufCurveCloseBezier <double, vufVector4, 2>::g_darr[3][2] = { {-2, 2}, {2,-4}, {0,2} };
+	double vufCurveBezierClose <double, vufVector4, 2>::g_darr[3][2] = { {-2, 2}, {2,-4}, {0,2} };
 	template <>
-	vufPolinomCoeff<double, 2> vufCurveCloseBezier <double, vufVector4, 2>::g_basis[] = { vufPolinomCoeff<double,2>(vufCurveCloseBezier <double, vufVector4, 2>::g_arr[0]),
-																						 vufPolinomCoeff<double,2>(vufCurveCloseBezier <double, vufVector4, 2>::g_arr[1]),
-																						 vufPolinomCoeff<double,2>(vufCurveCloseBezier <double, vufVector4, 2>::g_arr[2]) };
+	vufPolinomCoeff<double, 2> vufCurveBezierClose <double, vufVector4, 2>::g_basis[] = { vufPolinomCoeff<double,2>(vufCurveBezierClose <double, vufVector4, 2>::g_arr[0]),
+																						 vufPolinomCoeff<double,2>(vufCurveBezierClose <double, vufVector4, 2>::g_arr[1]),
+																						 vufPolinomCoeff<double,2>(vufCurveBezierClose <double, vufVector4, 2>::g_arr[2]) };
 	template <>
-	vufPolinomCoeff<double, 1> vufCurveCloseBezier <double, vufVector4, 2>::g_dbasis[] = { vufPolinomCoeff<double,1>(g_darr[0]),
+	vufPolinomCoeff<double, 1> vufCurveBezierClose <double, vufVector4, 2>::g_dbasis[] = { vufPolinomCoeff<double,1>(g_darr[0]),
 																						  vufPolinomCoeff<double,1>(g_darr[1]),
 																						  vufPolinomCoeff<double,1>(g_darr[2]) };
 
 
 	// curve degree 3
 	template<>
-	double vufCurveCloseBezier <double, vufVector4, 3>::g_arr[4][4] = { {1, -3, 3, -1}, {0, 3, -6, 3}, {0,0,3,-3},{0,0,0,1} };
+	double vufCurveBezierClose <double, vufVector4, 3>::g_arr[4][4] = { {1, -3, 3, -1}, {0, 3, -6, 3}, {0,0,3,-3},{0,0,0,1} };
 	template<>
-	double vufCurveCloseBezier <double, vufVector4, 3>::g_darr[4][3] = { {-3, 6,-3}, {3,-12,9}, {0,6,-9},{0,0,3} };
+	double vufCurveBezierClose <double, vufVector4, 3>::g_darr[4][3] = { {-3, 6,-3}, {3,-12,9}, {0,6,-9},{0,0,3} };
 	template <>
-	vufPolinomCoeff<double, 3> vufCurveCloseBezier <double, vufVector4, 3>::g_basis[] = { vufPolinomCoeff<double,3>(vufCurveCloseBezier <double, vufVector4, 3>::g_arr[0]),
-																						 vufPolinomCoeff<double,3>(vufCurveCloseBezier <double, vufVector4, 3>::g_arr[1]),
-																						 vufPolinomCoeff<double,3>(vufCurveCloseBezier <double, vufVector4, 3>::g_arr[2]),
-																						 vufPolinomCoeff<double,3>(vufCurveCloseBezier <double, vufVector4, 3>::g_arr[3]) };
+	vufPolinomCoeff<double, 3> vufCurveBezierClose <double, vufVector4, 3>::g_basis[] = { vufPolinomCoeff<double,3>(vufCurveBezierClose <double, vufVector4, 3>::g_arr[0]),
+																						 vufPolinomCoeff<double,3>(vufCurveBezierClose <double, vufVector4, 3>::g_arr[1]),
+																						 vufPolinomCoeff<double,3>(vufCurveBezierClose <double, vufVector4, 3>::g_arr[2]),
+																						 vufPolinomCoeff<double,3>(vufCurveBezierClose <double, vufVector4, 3>::g_arr[3]) };
 	template <>
-	vufPolinomCoeff<double, 2> vufCurveCloseBezier <double, vufVector4, 3>::g_dbasis[] = { vufPolinomCoeff<double,2>(g_darr[0]),
+	vufPolinomCoeff<double, 2> vufCurveBezierClose <double, vufVector4, 3>::g_dbasis[] = { vufPolinomCoeff<double,2>(g_darr[0]),
 																						  vufPolinomCoeff<double,2>(g_darr[1]),
 																						  vufPolinomCoeff<double,2>(g_darr[2]),
 																						  vufPolinomCoeff<double,2>(g_darr[3]) };
@@ -317,25 +317,25 @@ namespace vufMath
 #pragma endregion
 #pragma region CAST SPECIALIZATION
 	template<>
-	std::shared_ptr<vufCurveCloseBezier <double, vufVector4, 1>>		vufCurveCloseBezier <double, vufVector4, 1>::as_close_bezier_mono()	const
+	std::shared_ptr<vufCurveBezierClose <double, vufVector4, 1>>		vufCurveBezierClose <double, vufVector4, 1>::as_close_bezier_mono()	const
 	{
-		return std::static_pointer_cast<vufCurveCloseBezier<double, vufVector4, 1>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveBezierClose<double, vufVector4, 1>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufCurveCloseBezier <double, vufVector4, 2>>		vufCurveCloseBezier <double, vufVector4, 2>::as_close_bezier_di()		const
+	std::shared_ptr<vufCurveBezierClose <double, vufVector4, 2>>		vufCurveBezierClose <double, vufVector4, 2>::as_close_bezier_di()		const
 	{
-		return std::static_pointer_cast<vufCurveCloseBezier<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveBezierClose<double, vufVector4, 2>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 	template<>
-	std::shared_ptr<vufCurveCloseBezier <double, vufVector4, 3>>		vufCurveCloseBezier <double, vufVector4, 3>::as_close_bezier_tri()	const
+	std::shared_ptr<vufCurveBezierClose <double, vufVector4, 3>>		vufCurveBezierClose <double, vufVector4, 3>::as_close_bezier_tri()	const
 	{
-		return std::static_pointer_cast<vufCurveCloseBezier<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
+		return std::static_pointer_cast<vufCurveBezierClose<double, vufVector4, 3>>(vufCurve<double, vufVector4>::m_this.lock());
 	}
 
 #pragma endregion
 #pragma region POSITION AND TANGENTS SPECIALIZATIONS
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 1>::get_tangent_at_i(double p_t)	const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 1>::get_tangent_at_i(double p_t)	const
 	{
 		p_t -= std::floor(p_t);
 		if (p_t <= 0)
@@ -353,7 +353,7 @@ namespace vufMath
 		return	m_nodes_pos_v[l_ndx + 1] - m_nodes_pos_v[l_ndx];
 	}
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 1>::get_pos_at_i(double p_t)	const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 1>::get_pos_at_i(double p_t)	const
 	{
 		p_t -= std::floor(p_t);
 		if (p_t <= 0)
@@ -373,7 +373,7 @@ namespace vufMath
 	}
 	// for closest point to minimize numerical errors
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 1>::get_pos_no_offset_i(double p_t)		const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 1>::get_pos_no_offset_i(double p_t)		const
 	{
 		p_t -= std::floor(p_t);
 		if (p_t <= 0.0)
@@ -394,7 +394,7 @@ namespace vufMath
 
 
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 2>::get_tangent_at_i(double p_t) const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 2>::get_tangent_at_i(double p_t) const
 	{
 		p_t -= std::floor(p_t);
 		if (p_t <= 0)
@@ -412,7 +412,7 @@ namespace vufMath
 		return m_nodes_pos_v[l_ndx] * 2.0 * (p_t - 1) + m_nodes_pos_v[l_ndx + 1] * (2.0 - 4.0 * p_t) + m_nodes_pos_v[l_ndx + 2] * 2.0 * p_t;
 	}
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 2>::get_pos_at_i(double p_t)	const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 2>::get_pos_at_i(double p_t)	const
 	{
 		p_t -= std::floor(p_t);
 		if (p_t <= 0)
@@ -433,7 +433,7 @@ namespace vufMath
 		return	m_nodes_pos_v[l_ndx] * (1 - p_t) * (1 - p_t) + 2.0 * m_nodes_pos_v[l_ndx + 1] * p_t * (1 - p_t) + m_nodes_pos_v[l_ndx + 2] * p_t * p_t;
 	}
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 2>::get_pos_no_offset_i(double p_t)	const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 2>::get_pos_no_offset_i(double p_t)	const
 	{
 		p_t -= std::floor(p_t);
 		if (p_t <= 0)
@@ -458,7 +458,7 @@ namespace vufMath
 
 
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 3>::get_tangent_at_i(double p_t)	const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 3>::get_tangent_at_i(double p_t)	const
 	{
 		if (p_t <= 0)
 		{
@@ -476,7 +476,7 @@ namespace vufMath
 			m_nodes_pos_v[l_ndx + 2] * p_t * (2.0 - 3.0 * p_t) + m_nodes_pos_v[l_ndx + 3] * p_t * p_t);
 	}
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 3>::get_pos_at_i(double p_t)	const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 3>::get_pos_at_i(double p_t)	const
 	{
 		if (p_t <= 0)
 		{
@@ -494,7 +494,7 @@ namespace vufMath
 			3.0 * m_nodes_pos_v[l_ndx + 2] * p_t * p_t * (1 - p_t) + m_nodes_pos_v[l_ndx + 3] * p_t * p_t * p_t;
 	}
 	template<>
-	vufVector4<double> vufCurveCloseBezier<double, vufVector4, 3>::get_pos_no_offset_i(double p_t)	const
+	vufVector4<double> vufCurveBezierClose<double, vufVector4, 3>::get_pos_no_offset_i(double p_t)	const
 	{
 		p_t -= std::floor(p_t);
 		if (p_t <= 0)
@@ -523,7 +523,7 @@ namespace vufMath
 #pragma endregion
 #pragma region CLOSEST_POINTS
 	template<>
-	double		vufCurveCloseBezier <double, vufVector4, 1>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
+	double		vufCurveBezierClose <double, vufVector4, 1>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
 	{
 		p_start = VF_CLAMP(0, 1, p_start);
 		p_end	= VF_CLAMP(0, 1, p_end);
@@ -587,7 +587,7 @@ namespace vufMath
 		return l_param;
 	}
 	template<>
-	double		vufCurveCloseBezier <double, vufVector4, 2>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
+	double		vufCurveBezierClose <double, vufVector4, 2>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
 	{
 		auto	l_point = p_point - m_pos_offset;
 		double	l_dist_min = (get_pos_no_offset_i(p_start) - l_point).length2();//std::numeric_limits<double>::max();
@@ -692,7 +692,7 @@ namespace vufMath
 		return l_param;
 	}
 	template<>
-	double		vufCurveCloseBezier <double, vufVector4, 3>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
+	double		vufCurveBezierClose <double, vufVector4, 3>::get_closest_point_param_i(const vufVector4<double>& p_point, double p_start, double p_end, uint32_t p_divisions, double p_percition) const
 	{
 		auto l_point = p_point - m_pos_offset;
 		double l_dist_min = (get_pos_no_offset_i(p_start) - l_point).length2();//std::numeric_limits<double>::max();

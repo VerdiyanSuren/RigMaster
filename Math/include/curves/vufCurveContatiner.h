@@ -3,8 +3,8 @@
 
 #include <curves/vufCurve.h>
 #include <math/vufQuaternion.h>
-#include <curves/explicit/vufCurveOpenBSpline.h>
-#include <curves/explicit/vufCurveCloseBSpline.h>
+#include <curves/explicit/vufCurveBSplineOpen.h>
+#include <curves/explicit/vufCurveBSplineClose.h>
 #include <curves/explicit/vufCurveBezierOpen.h>
 #include <curves/explicit/vufCurveBezierClose.h>
 #include <curves/implicit/vufCurveBlend.h>
@@ -102,104 +102,88 @@ namespace vufMath
 				if (p_type == vufCurveType::k_none)
 				{
 					m_curve_ptr = nullptr;
-					return true;
+					return false;
 				}
 				// handle open b spline
 				if (p_type == vufCurveType::k_open_bspline)
 				{
 					if (p_degree == 1)
 					{
-						m_curve_ptr = vufCurveOpenBSpline<T, V, 1>::create();
+						m_curve_ptr = vufCurveBSplineOpen<T, V, 1>::create();
 						return true;
 					}
 					if (p_degree == 2)
 					{
-						m_curve_ptr = vufCurveOpenBSpline<T, V,2>::create();
+						m_curve_ptr = vufCurveBSplineOpen<T, V,2>::create();
 						return true;
 					}
 					if (p_degree == 3)
 					{
-						m_curve_ptr = vufCurveOpenBSpline<T, V,3>::create();
+						m_curve_ptr = vufCurveBSplineOpen<T, V,3>::create();
 						return true;
 					}
-					if (p_degree == 4)
-					{
-						m_curve_ptr = vufCurveOpenBSpline<T, V, 4>::create();
-						return true;
-					}
-					if (p_degree == 5)
-					{
-						m_curve_ptr = vufCurveOpenBSpline<T, V, 5>::create();
-						return true;
-					}
+					m_curve_ptr = nullptr;
+					return false;
 				}
 				if (p_type == vufCurveType::k_close_bspline)
 				{
 					if (p_degree == 1)
 					{
-						m_curve_ptr = vufCurveCloseBSpline<T, V, 1>::create();
+						m_curve_ptr = vufCurveBSplineClose<T, V, 1>::create();
 						return true;
 					}
 					if (p_degree == 2)
 					{
-						m_curve_ptr = vufCurveCloseBSpline<T, V, 2>::create();
+						m_curve_ptr = vufCurveBSplineClose<T, V, 2>::create();
 						return true;
 					}
 					if (p_degree == 3)
 					{
-						m_curve_ptr = vufCurveCloseBSpline<T, V, 3>::create();
+						m_curve_ptr = vufCurveBSplineClose<T, V, 3>::create();
 						return true;
 					}
-					if (p_degree == 4)
-					{
-						m_curve_ptr = vufCurveCloseBSpline<T, V, 4>::create();
-						return true;
-					}
-					if (p_degree == 5)
-					{
-						m_curve_ptr = vufCurveCloseBSpline<T, V, 5>::create();
-						return true;
-					}
+					m_curve_ptr = nullptr;
+					return false;
 				}
 				if (p_type == vufCurveType::k_open_bezier_piecewise)
 				{
 					if (p_degree == 1)
 					{
-						m_curve_ptr = vufCurveOpenBezier<T, V,1>::create();
+						m_curve_ptr = vufCurveBezierOpen<T, V,1>::create();
 						return true;
 					}
 					if (p_degree == 2)
 					{
-						m_curve_ptr = vufCurveOpenBezier<T, V, 2>::create();
+						m_curve_ptr = vufCurveBezierOpen<T, V, 2>::create();
 						return true;
 					}
 					if (p_degree == 3)
 					{
-						m_curve_ptr = vufCurveOpenBezier<T, V, 3>::create();
+						m_curve_ptr = vufCurveBezierOpen<T, V, 3>::create();
 						return true;
 					}
 					m_curve_ptr = nullptr;
-					return true;
+					return false;
 				}
 				if (p_type == vufCurveType::k_close_bezier_piecewise)
 				{
 					if (p_degree == 1)
 					{
-						m_curve_ptr = vufCurveCloseBezier<T, V, 1>::create();
+						m_curve_ptr = vufCurveBezierClose<T, V, 1>::create();
 						return true;
 					}
 					if (p_degree == 2)
 					{
-						m_curve_ptr = vufCurveCloseBezier<T, V, 2>::create();
+						m_curve_ptr = vufCurveBezierClose<T, V, 2>::create();
 						return true;
 					}
 					if (p_degree == 3)
 					{
-						m_curve_ptr = vufCurveCloseBezier<T, V, 3>::create();
+						m_curve_ptr = vufCurveBezierClose<T, V, 3>::create();
 						return true;
 					}
 					m_curve_ptr = nullptr;
-					return true;
+					return false;
 				}
 				if (p_type == vufCurveType::k_blend_curve)
 				{
@@ -216,10 +200,8 @@ namespace vufMath
 					m_curve_ptr = vufCurveCompose<T, V>::create();
 					return true;
 				}
-
-				m_curve_ptr = nullptr;
-				return true;
 			}
+			m_curve_ptr = nullptr;
 			return false;
 		}
 		/// Return true if new rebuild has fn been created and assigned to container 

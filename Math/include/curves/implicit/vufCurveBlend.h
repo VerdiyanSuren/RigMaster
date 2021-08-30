@@ -22,12 +22,25 @@ namespace vufMath
 		}
 	public:
 		virtual ~vufCurveBlend() {}
-		static  std::shared_ptr< vufCurveBlend > create()
+		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveBlend);
+		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_blend_curve, k_compound_category);
+		// inherited virtual methods from vufCurve class
+		virtual bool			rebuild(std::vector<T>& p_uniform_to_curve_val_v,
+										std::vector<T>& p_curve_to_uniform_val_v,
+										std::vector<T>& p_curve_val_to_length_v,
+										uint32_t		p_divisions = 10,
+										T				p_start = 0 /*interval on which we need rebuild*/,
+										T				p_end = 1) const override
 		{
-			std::shared_ptr< vufCurveBlend >  l_ptr = std::shared_ptr<vufCurveBlend>(new vufCurveBlend());
-			VF_MATH_CURVE_CREATOR_BODY(l_ptr);
-			return l_ptr;
+			// To Do 
+			// Implement
+			if (m_valid == false || abs(p_end - p_start) < vufCurve_kTol)
+			{
+				return false;
+			}
+			return false;
 		}
+
 		// non-virtual methods
 		inline  T	get_closest_point_param_i(const V<T>& p_point, T p_start_param, T p_percition = 0.00001) const
 		{
@@ -90,28 +103,6 @@ namespace vufMath
 		void				set_weight(T p_val) { m_weight = p_val; }
 		T					get_weight() const { return m_weight; }
 
-		virtual bool			rebuild(std::vector<T>& p_uniform_to_curve_val_v,
-										std::vector<T>& p_curve_to_uniform_val_v,
-										std::vector<T>& p_curve_val_to_length_v,
-										uint32_t		p_divisions = 10,
-										T				p_start = 0 /*interval on which we need rebuild*/,
-										T				p_end = 1) const override
-		{
-			// To Do 
-			// Implement
-			return false;
-		}
-		virtual bool			rebuild_along_axis(const V<T>& p_axis/*project curve on this axis*/,
-			std::vector<T>& p_uniform_to_curve_val_v,
-			std::vector<T>& p_curve_to_uniform_val_v,
-			std::vector<T>& p_curve_val_to_length_v,
-			uint32_t		p_division_count = 10,
-			T				p_start = 0 /*interval on which we need rebuild*/,
-			T				p_end = 1) const override
-		{
-			// To Do implement this
-			return false;
-		}
 		virtual vufCurveType	get_curve_type()			const override
 		{
 			return vufCurveType::k_blend_curve;
@@ -172,12 +163,12 @@ namespace vufMath
 												return get_closest_point_param_i(p_point, p_divisions, p_percition);
 											}
 
-		virtual T				get_param_by_vector_component(T	p_value,
-			uint32_t	p_component_index = 0/*x by default*/,
-			T			p_start = 0,
-			T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
-			uint32_t	p_divisions = 10,
-			T			p_percition = vufCurve_kTol)	const override
+		virtual T				get_param_by_vector_component(	T			p_value,
+																uint32_t	p_component_index = 0/*x by default*/,
+																T			p_start = 0,
+																T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+																uint32_t	p_divisions = 10,
+																T			p_percition = vufCurve_kTol)	const override
 		{
 			// To Do 
 			// Implement this
@@ -250,8 +241,9 @@ namespace vufMath
 			return std::static_pointer_cast<vufCurveBlend<T, V>>(vufCurve<T, V>::m_this.lock());
 		}
 	private:
-		std::shared_ptr< vufCurveContainer<T, V> >	m_first_container_ptr  = nullptr;
-		std::shared_ptr< vufCurveContainer<T, V> >	m_second_container_ptr = nullptr;
+		std::shared_ptr< vufCurveContainer<T, V> >	m_first_container_ptr	= nullptr;
+		std::shared_ptr< vufCurveContainer<T, V> >	m_second_container_ptr	= nullptr;
+		std::shared_ptr< vufCurveContainer<T, V> >	m_blend_func_ptr		= nullptr;
 		T											m_weight = 0;
 	};	
 

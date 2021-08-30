@@ -167,16 +167,6 @@ namespace vufMath
 		{
 			return true;
 		}
-		virtual bool			rebuild_along_axis(const V<T>&		p_axis/*project curve on this axis*/,
-													std::vector<T>& p_uniform_to_curve_val_v,
-													std::vector<T>& p_curve_to_uniform_val_v,
-													std::vector<T>& p_curve_val_to_length_v,
-													uint32_t		p_division_count = 10,
-													T				p_start = 0 /*interval on which we need rebuild*/,
-													T				p_end = 1) const override
-		{
-			return true;
-		}
 
 		virtual V<T>			get_closest_point(const V<T>&	p_point,
 													T			p_start = 0,
@@ -186,7 +176,6 @@ namespace vufMath
 		{
 			return V<T>();
 		}
-
 
 		virtual T				get_closest_point_param(const V<T>& p_point,
 														T				p_start = 0,

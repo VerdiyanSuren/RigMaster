@@ -21,13 +21,10 @@ namespace vufMath
 	template <class T, template<typename> class V>				class vufCurveExplicit;
 	template <class T, template<typename> class V>				class vufCurveImplicit;
 
-	template <class T, template<typename> class V, uint32_t>	class vufCurveOpenBSpline;
-	template <class T, template<typename> class V, uint32_t>	class vufCurveCloseBSpline;
-	template <class T, template<typename> class V, uint32_t>	class vufCurveOpenBezier;
-	template <class T, template<typename> class V, uint32_t>	class vufCurveCloseBezier;
-
-	template <class T, template<typename> class V>				class vufOpenXSpline;
-	template <class T, template<typename> class V>				class vufCloseXSpline;
+	template <class T, template<typename> class V, uint32_t>	class vufCurveBSplineOpen;
+	template <class T, template<typename> class V, uint32_t>	class vufCurveBSplineClose;
+	template <class T, template<typename> class V, uint32_t>	class vufCurveBezierOpen;
+	template <class T, template<typename> class V, uint32_t>	class vufCurveBezierClose;
 
 	template <class T, template<typename> class V >				class vufCurveBlend;
 	template <class T, template<typename> class V >				class vufCurveSlide;
@@ -96,7 +93,7 @@ namespace vufMath
 		// return -1 if length could be easily calculated. Actual for math curves
 		virtual vufCurveType	get_curve_type()							const = 0;
 		virtual int				get_curve_category()						const = 0;
-		/* if curve can easily compute length then compute else use rebuild  */
+		/* if curve can easily compute length then compute else return -1  */
 		virtual T				get_length(T p_start,T p_end) const 
 		{ 
 			return -1; 
@@ -108,15 +105,6 @@ namespace vufMath
 													uint32_t		p_divisions = 10,
 													T				p_start		= 0 /*interval on which we need rebuild*/,
 													T				p_end		= 1) const = 0;
-
-		virtual bool			rebuild_along_axis( const V<T>&		p_axis/*project curve on this axis*/,
-													std::vector<T>& p_uniform_to_curve_val_v,
-													std::vector<T>& p_curve_to_uniform_val_v,
-													std::vector<T>& p_curve_val_to_length_v,
-													uint32_t		p_division_count	= 10,
-													T				p_start				= 0 /*interval on which we need rebuild*/,
-													T				p_end				= 1) const = 0;
-		
 
 		virtual V<T>			get_closest_point(			const V<T>& p_point,
 															T			p_start		= 0, 
@@ -147,9 +135,9 @@ namespace vufMath
 		}
 		
 		/// Get copy of this curve.	Original curve is unchenged
-		virtual std::shared_ptr<vufCurve> get_copy() const = 0;
-		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;
-		virtual uint64_t		get_binary_size() const = 0
+		virtual std::shared_ptr<vufCurve>	get_copy() const = 0;
+		virtual std::string					to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;
+		virtual uint64_t					get_binary_size() const = 0
 		{
 			return  sizeof(uint32_t) +	//version
 					sizeof(m_valid) + 
@@ -160,7 +148,7 @@ namespace vufMath
 					sizeof(m_domain_min) +
 					sizeof(m_domain_max);
 		}
-		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
+		virtual uint64_t					to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
 		{
 			// resize if needed
 			uint32_t l_version = VF_MATH_VERSION;
@@ -179,7 +167,7 @@ namespace vufMath
 			std::memcpy(&p_buff[p_offset], &m_domain_max,	sizeof(m_domain_max));	p_offset += sizeof(m_domain_max);
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0) = 0
+		virtual uint64_t					from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0) = 0
 		{
 			if (p_buff.size() < p_offset + vufCurve<T, V>::get_binary_size())
 			{
@@ -196,49 +184,37 @@ namespace vufMath
 
 			return p_offset;
 		}
-		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
+		virtual uint64_t					encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
 		{
 			VF_ENCODE_FOR_BASE();
 		}
-		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
+		virtual uint64_t					decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
 		{			
 			VF_DECODE_FOR_BASE();
 		}
 
 		// convert to explicit
-		virtual	std::shared_ptr< vufCurveExplicit<T,V> >		as_explicit_curve()		const { return nullptr; }
-		virtual	std::shared_ptr< vufCurveImplicit<T,V> >		as_implicit_curve()		const { return nullptr; }
+		virtual	std::shared_ptr< vufCurveExplicit<T,V> >			as_explicit_curve()		const { return nullptr; }
+		virtual	std::shared_ptr< vufCurveImplicit<T,V> >			as_implicit_curve()		const { return nullptr; }
 		// convert to open bspline
-		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 1>>		as_open_bspline_mono()	const {	return nullptr;	}
-		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 2>>		as_open_bspline_di()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 3>>		as_open_bspline_tri()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 4>>		as_open_bspline_tetra()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveOpenBSpline <T, V, 5>>		as_open_bspline_penta()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBSplineOpen <T, V, 1>>		as_open_bspline_mono()	const {	return nullptr;	}
+		virtual std::shared_ptr<vufCurveBSplineOpen <T, V, 2>>		as_open_bspline_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBSplineOpen <T, V, 3>>		as_open_bspline_tri()	const { return nullptr; }
 
 		// convert to close bspline
-		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 1>>		as_close_bspline_mono()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 2>>		as_close_bspline_di()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 3>>		as_close_bspline_tri()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 4>>		as_close_bspline_tetra()const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBSpline <T, V, 5>>		as_close_bspline_penta()const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBSplineClose <T, V, 1>>		as_close_bspline_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBSplineClose <T, V, 2>>		as_close_bspline_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBSplineClose <T, V, 3>>		as_close_bspline_tri()	const { return nullptr; }
 
 		// convert to open bezier
-		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 1>>		as_open_bezier_mono()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 2>>		as_open_bezier_di()		const { return nullptr; }
-		virtual std::shared_ptr<vufCurveOpenBezier <T, V, 3>>		as_open_bezier_tri()	const { return nullptr; }
-		//virtual std::shared_ptr<vufCurveOpenBezier <T, V, 4>>		as_open_bezier_tetra()	const { return nullptr; }
-		//virtual std::shared_ptr<vufCurveOpenBezier <T, V, 5>>		as_open_bezier_penta()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBezierOpen <T, V, 1>>		as_open_bezier_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBezierOpen <T, V, 2>>		as_open_bezier_di()		const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBezierOpen <T, V, 3>>		as_open_bezier_tri()	const { return nullptr; }
 
 		// convert to close bezier
-		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 1>>		as_close_bezier_mono()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 2>>		as_close_bezier_di()	const { return nullptr; }
-		virtual std::shared_ptr<vufCurveCloseBezier <T, V, 3>>		as_close_bezier_tri()	const { return nullptr; }
-		//virtual std::shared_ptr<vufCurveCloseBezier <T, V, 4>>		as_close_bezier_tetra()	const { return nullptr; }
-		//virtual std::shared_ptr<vufCurveCloseBezier <T, V, 5>>		as_close_bezier_penta()	const { return nullptr; }
-
-		// convert to open xspline
-		virtual std::shared_ptr<vufOpenXSpline  <T, V>>	as_open_xspline_4d()		const { return nullptr; }
-		virtual std::shared_ptr<vufCloseXSpline <T, V>>	as_close_xspline_4d()		const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBezierClose <T, V, 1>>		as_close_bezier_mono()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBezierClose <T, V, 2>>		as_close_bezier_di()	const { return nullptr; }
+		virtual std::shared_ptr<vufCurveBezierClose <T, V, 3>>		as_close_bezier_tri()	const { return nullptr; }
 
 
 		virtual std::shared_ptr<vufCurveBlend <T, V >>		as_curve_blend()	const { return nullptr; }
@@ -254,6 +230,7 @@ namespace vufMath
 		bool		m_close			= false;	//
 		T			m_domain_min	= 0.0;
 		T			m_domain_max	= 1.0;
+
 		std::weak_ptr<vufCurve> m_this = std::weak_ptr<vufCurve>();
 	};
 #pragma endregion VF_CURVE

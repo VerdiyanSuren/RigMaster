@@ -4,8 +4,8 @@
 #include <unitTests/curve/curveTest.h>
 //#include <curves/vufCurveContatiner.h>
 #include <mathUtils/vufMathUtil.h>
-#include <curves/explicit/vufCurveOpenBSpline.h>
-#include <curves/explicit/vufCurveCloseBSpline.h>
+#include <curves/explicit/vufCurveBSplineOpen.h>
+#include <curves/explicit/vufCurveBSplineClose.h>
 #include <curves/vufCurveContatiner.h>
 #include <vufNumericArrayObject.h>
 #include <math/vufPolinom.h>
@@ -104,9 +104,9 @@ int main()
 	
 	
 	auto l_cn = vufCurveContainer<double, vufVector4>::create();
-	auto l_cobz = vufCurveOpenBezier<double, vufVector4, 1>::create();
+	auto l_cobz = vufCurveBezierOpen<double, vufVector4, 1>::create();
 	//auto l_co = vufCurveOpenBezier<double, vufVector4,1>::create();
-	auto l_co = vufCurveOpenBSpline<double, vufVector4, 3>::create();
+	auto l_co = vufCurveBSplineOpen<double, vufVector4, 3>::create();
 	l_cn->set_curve_ptr(l_co);
 	l_cobz->set_nodes_count(11);
 	l_co->set_nodes_count(11);
@@ -142,7 +142,7 @@ int main()
 		for (int i = 0; i < 1000; ++i)
 		{
 			double t = (double)i * 0.001;
-			l_pos += l_co->get_pos_at_i(t);
+			l_pos += l_co->get_pos_at(t);
 		}
 	}
 	//l_c->get_pos_at(0.9);
@@ -159,14 +159,13 @@ int main()
 	//system("pause");
 	vufCurveOpenBSplineTest<double> l_crv_test;
 	l_crv_test.test_rebuild(true);
-	l_crv_test.test_rebuild_axis(true);
 	system("pause");
 	return 0;
 	auto l_cntnr = vufCurveContainer<double, vufVector4>::create();
-	auto l_crv_1 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
-	auto l_crv_2 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
-	auto l_crv_cls_1 = vufCurveCloseBSpline<double, vufVector4, 4>::create();
-	auto l_crv_cls_2 = vufCurveCloseBSpline<double, vufVector4, 4>::create();
+	auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
+	auto l_crv_2 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
+	auto l_crv_cls_1 = vufCurveBSplineClose<double, vufVector4, 4>::create();
+	auto l_crv_cls_2 = vufCurveBSplineClose<double, vufVector4, 4>::create();
 
 	l_crv_1->set_nodes_count(10);
 	l_crv_cls_1->set_nodes_count(10);

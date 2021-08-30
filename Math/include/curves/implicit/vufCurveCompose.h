@@ -27,8 +27,9 @@ namespace vufMath
 	public:
 		enum
 		{
-			k_plus = 0,
-			k_mult = 1
+			k_plus	= 0,
+			k_minus = 1,
+			k_mult	= 2
 		};
 		virtual ~vufCurveCompose() {}
 		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveCompose);
@@ -117,16 +118,6 @@ namespace vufMath
 										uint32_t					p_divisions = 10,
 										T							p_start = 0 /*interval on which we need rebuild*/,
 										T							p_end = 1) const override
-		{
-			return true;
-		}
-		virtual bool			rebuild_along_axis(const V<T>&		p_axis/*project curve on this axis*/,
-													std::vector<T>& p_uniform_to_curve_val_v,
-													std::vector<T>& p_curve_to_uniform_val_v,
-													std::vector<T>& p_curve_val_to_length_v,
-													uint32_t		p_division_count = 10,
-													T				p_start = 0 /*interval on which we need rebuild*/,
-													T				p_end = 1) const override
 		{
 			return true;
 		}

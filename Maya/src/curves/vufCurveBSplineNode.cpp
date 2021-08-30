@@ -10,7 +10,7 @@
 #include <maya/MGlobal.h>
 
 #include <curves/vufCurveBSplineNode.h>
-#include <curves/explicit/vufCurveOpenBSpline.h>
+#include <curves/explicit/vufCurveBSplineOpen.h>
 #include <math/vufMatrix.h>
 
 #include <data/vufMayaDataList.h>

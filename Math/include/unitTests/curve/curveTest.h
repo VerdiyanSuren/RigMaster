@@ -1,6 +1,6 @@
 #pragma once
 
-#include <curves/explicit/vufCurveOpenBSpline.h>
+#include <curves/explicit/vufCurveBSplineOpen.h>
 #include <curves/vufCurveContatiner.h>
 #include <curves/quaternionFn/vufCurveQuaternionCloseFn.h>
 #include <curves/scaleFn/vufCurveScaleCloseFn.h>
@@ -22,7 +22,6 @@ namespace vufMath
 
 			if (test_serialization(p_verbose) == false)	l_status = false;
 			if (test_rebuild(p_verbose) == false)		l_status = false;
-			if (test_rebuild_axis(p_verbose) == false)	l_status = false;
 
 			//if (test_math(p_verbose) == false)			l_status = false;;
 			if (l_status == true)
@@ -39,8 +38,8 @@ namespace vufMath
 		{
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
-			auto l_crv_1 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
-			auto l_crv_2 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
+			auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
+			auto l_crv_2 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
 			l_crv_1->set_nodes_count(4);
 			if (l_crv_1->is_valid() != false)
 			{
@@ -150,7 +149,7 @@ namespace vufMath
 		bool test_rebuild(bool p_verbos = false)
 		{
 			std::cout << "....Rebuild Test" << std::endl;
-			auto l_crv_1 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
+			auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
 			l_crv_1->set_nodes_count(5);
 			for (int i = 0; i < 5; ++i)
 			{
@@ -258,44 +257,6 @@ namespace vufMath
 			std::cout << "....Rebuild Test Pass Successfully" << std::endl;
 			return true;
 		}
-		bool test_rebuild_axis(bool p_verbose = false)
-		{
-			std::cout << "....Rebuild Axis Test" << std::endl;
-			auto l_crv_1 = vufCurveOpenBSpline<double, vufVector4, 4>::create();
-			l_crv_1->set_nodes_count(5);
-			for (int i = 0; i < 5; ++i)
-			{
-				auto l_vec = vufVector4<double>::random_vector();
-				l_vec.x = ((T)i) * 0.25;
-				l_crv_1->set_node_at(i, l_vec);
-			}
-			l_crv_1->set_node_at(1, vufVector4<double>(0.1,3.0));
-			std::vector<double> l_uniform_to_curve_val_v;
-			std::vector<double> l_curve_to_uniform_val_v;
-			std::vector<double> l_curve_val_to_length_v;
-			bool l_rebuild_res = l_crv_1->rebuild_along_axis(vufVector4<double>(1),l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50, 0, 1);
-			if (l_rebuild_res == true)
-			{
-				vufNumericArrayFn<double> l_arr_1(l_uniform_to_curve_val_v);
-				vufNumericArrayFn<double> l_arr_2(l_curve_to_uniform_val_v);
-				vufNumericArrayFn<double> l_arr_3(l_curve_val_to_length_v);
-				std::cout << "l_curve_val_to_length_v:..." << l_arr_3.to_string(3) << std::endl;
-				std::cout << "l_curve_to_uniform_val_v:.." << l_arr_2.to_string(3) << std::endl;
-				std::cout << "l_uniform_to_curve_val_v:.." << l_arr_1.to_string(3) << std::endl;
-				double l_step = 1. / (double)(l_uniform_to_curve_val_v.size()-1);
-				for (uint64_t i = 0; i < l_uniform_to_curve_val_v.size(); ++i)
-				{
-					std::cout << ((T)i) * l_step <<": " << l_crv_1->get_pos_at_i(l_uniform_to_curve_val_v[i]).x << std::endl;
-				}
-			}
-			else
-			{
-				VF_LOG_ERR("Failed. Rebuild Along Axis OpenBSpline");
-				return false;
-			}
-			std::cout << "....Rebuild Axis Test Pass Successfully" << std::endl;
-			return true;
-		}
 	};
 #pragma endregion OPEN_BSPLINE
 #pragma region CLOSE_BSPLINE
@@ -325,8 +286,8 @@ namespace vufMath
 		{
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
-			auto l_crv_1 = vufCurveCloseBSpline<double, vufVector4, 4>::create();
-			auto l_crv_2 = vufCurveCloseBSpline<double, vufVector4, 4>::create();
+			auto l_crv_1 = vufCurveBSplineClose<double, vufVector4, 4>::create();
+			auto l_crv_2 = vufCurveBSplineClose<double, vufVector4, 4>::create();
 			l_crv_1->set_nodes_count(4);
 			if (l_crv_1->is_valid() != false)
 			{
@@ -445,8 +406,8 @@ namespace vufMath
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
 			auto l_cntnr	= vufCurveContainer<T, vufVector4>::create();
-			auto l_crv_c	= vufCurveCloseBSpline<T, vufVector4, 4>::create();
-			auto l_crv_o	= vufCurveOpenBSpline<T, vufVector4, 4>::create();
+			auto l_crv_c	= vufCurveBSplineClose<T, vufVector4, 4>::create();
+			auto l_crv_o	= vufCurveBSplineOpen<T, vufVector4, 4>::create();
 			auto l_rbld_1	= vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_rbld_2	= vufCurveRebuildUniformFn<T, vufVector4>::create();
 			// init curves
@@ -629,8 +590,8 @@ namespace vufMath
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
 			auto l_cntnr = vufCurveContainer<T, vufVector4>::create();
-			auto l_crv_c = vufCurveCloseBSpline<T, vufVector4, 4>::create();
-			auto l_crv_o = vufCurveOpenBSpline<T, vufVector4, 4>::create();
+			auto l_crv_c = vufCurveBSplineClose<T, vufVector4, 4>::create();
+			auto l_crv_o = vufCurveBSplineOpen<T, vufVector4, 4>::create();
 			auto l_rbld_1 = vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_rbld_2 = vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_quat_1 = vufCurveQuaternionCloseFn<T, vufVector4>::create();
@@ -746,8 +707,8 @@ namespace vufMath
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
 			auto l_cntnr = vufCurveContainer<T, vufVector4>::create();
-			auto l_crv_c = vufCurveCloseBSpline<T, vufVector4, 4>::create();
-			auto l_crv_o = vufCurveOpenBSpline<T, vufVector4, 4>::create();
+			auto l_crv_c = vufCurveBSplineClose<T, vufVector4, 4>::create();
+			auto l_crv_o = vufCurveBSplineOpen<T, vufVector4, 4>::create();
 			auto l_rbld_1 = vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_rbld_2 = vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_quat_1 = vufCurveQuaternionCloseFn<T, vufVector4>::create();
@@ -870,7 +831,7 @@ namespace vufMath
 			uint32_t l_version;
 			auto l_cntnr_1	= vufCurveContainer<T, vufVector4>::create();
 			auto l_cntnr_2	= vufCurveContainer<T, vufVector4>::create();
-			auto l_crv		= vufCurveCloseBSpline<T, vufVector4, 4>::create();
+			auto l_crv		= vufCurveBSplineClose<T, vufVector4, 4>::create();
 			auto l_rbld		= vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_quat		= vufCurveQuaternionCloseFn<T, vufVector4>::create();
 			auto l_scl		= vufScaleCloseCurveFn<T, vufVector4>::create();

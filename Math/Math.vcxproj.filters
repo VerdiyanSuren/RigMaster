@@ -54,13 +54,13 @@
     <ClInclude Include="include\curves\explicit\vufCurveBezierOpen.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\explicit\vufCurveCloseBSpline.h">
+    <ClInclude Include="include\curves\explicit\vufCurveBSplineClose.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\explicit\vufCurveExplicit.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\explicit\vufCurveOpenBSpline.h">
+    <ClInclude Include="include\curves\explicit\vufCurveBSplineOpen.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\implicit\vufCurveBlend.h">
