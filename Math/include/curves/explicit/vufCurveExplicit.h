@@ -101,6 +101,13 @@ namespace vufMath
 		{ 
 			return std::static_pointer_cast<vufCurveExplicit<T, V>>(vufCurve<T,V>::m_this.lock());
 		}
+		void		copy_members_from_i(std::shared_ptr<vufCurveExplicit> p_crv)
+		{
+			vufCurve<T, V>::copy_members_from_i(p_crv);
+			m_knot_weighted = p_crv->m_knot_weighted;
+			m_nodes_pos_v	= p_crv->m_nodes_pos_v;
+			m_pos_offset	= p_crv->m_pos_offset;
+		}
 	protected:
 		bool				m_knot_weighted = false;
 		std::vector<V<T>>	m_nodes_pos_v;

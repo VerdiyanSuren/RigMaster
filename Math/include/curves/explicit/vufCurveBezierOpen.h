@@ -64,14 +64,7 @@ namespace vufMath
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
 			std::shared_ptr< vufCurveBezierOpen > l_ptr = vufCurveBezierOpen::create();
-
-			l_ptr->m_degree = vufCurve<T, V>::m_degree;
-			l_ptr->m_close = vufCurve<T, V>::m_close;
-			l_ptr->m_valid = vufCurve<T, V>::m_valid;
-
-			l_ptr->m_nodes_pos_v = vufCurveExplicit<T, V>::m_nodes_pos_v;
-			l_ptr->m_pos_offset = vufCurveExplicit<T, V>::m_pos_offset;
-			l_ptr->m_knot_v = m_knot_v;
+			l_ptr->copy_members_from_i(std::static_pointer_cast<vufCurveBezierOpen>(m_this.lock()));
 			return l_ptr;
 		}
 
@@ -256,6 +249,15 @@ namespace vufMath
 		inline V<T>			get_tangent_normalized_at_i(T p_t)	const
 		{
 			return get_tangent_at_i(p_t).normalize_in_place();
+		}
+
+		void		copy_members_from_i(std::shared_ptr<vufCurveBezierOpen> p_crv)
+		{
+			vufCurveExplicit<T, V>::copy_members_from_i(p_crv);
+			m_knot_v			= p_crv->m_knot_v;
+			m_interval_length	= p_crv->m_interval_length;
+			m_interval_count	= p_crv->m_interval_count;
+			m_nodes_count		= p_crv->m_nodes_count;
 		}
 
 	private:

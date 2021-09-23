@@ -23,22 +23,23 @@ namespace vufMath
 	public:
 		virtual ~vufCurveBezierClose() {}
 		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveBezierClose);
+		// inherited virtual methods from vufCurve class
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_close_bezier_piecewise, k_bezier_category);
 		VF_MATH_CRV_REBUILD_CLAMPED;	
 
-		virtual V<T>			get_closest_point(const V<T>& p_point,
-			T			p_start = 0,
-			T			p_end = 1,
-			uint32_t	p_divisions = 10,
-			T p_percition = vufCurve_kTol) const override
+		virtual V<T>			get_closest_point(	const V<T>& p_point,
+													T			p_start = 0,
+													T			p_end = 1,
+													uint32_t	p_divisions = 10,
+													T			p_percition = vufCurve_kTol) const override
 		{
 			return get_pos_at_i(get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition));
 		}
 		virtual T				get_closest_point_param(const V<T>& p_point,
-			T			p_start = 0,
-			T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
-			uint32_t	p_divisions = 10,
-			T	p_percition = vufCurve_kTol) const override
+														T			p_start = 0,
+														T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+														uint32_t	p_divisions = 10,
+														T			p_percition = vufCurve_kTol) const override
 		{
 			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
 		}
@@ -59,14 +60,8 @@ namespace vufMath
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
-			std::shared_ptr< vufCurveBezierClose > l_ptr = vufCurveBezierClose::create();
-
-			l_ptr->m_degree = vufCurve<T, V>::m_degree;
-			l_ptr->m_close = vufCurve<T, V>::m_close;
-			l_ptr->m_valid = vufCurve<T, V>::m_valid;
-
-			l_ptr->m_nodes_pos_v = vufCurveExplicit<T, V>::m_nodes_pos_v;
-			l_ptr->m_knot_v = m_knot_v;
+			std::shared_ptr< vufCurveBezierClose<T,V,CURVE_DEGREE> > l_ptr = vufCurveBezierClose::create();
+			l_ptr->copy_members_from_i(std::static_pointer_cast<vufCurveBezierClose>( m_this.lock()));
 			return l_ptr;
 		}
 
@@ -257,7 +252,14 @@ namespace vufMath
 		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
 		VF_MATH_CRV_GATHER_INFO_I_BODY;
 		VF_MATH_CRV_GET_CLOSEST_PARAM_I;
-	
+		void		copy_members_from_i(std::shared_ptr<vufCurveBezierClose> p_crv)
+		{
+			vufCurveExplicit<T, V>::copy_members_from_i(p_crv);
+			m_knot_v			= p_crv->m_knot_v;
+			m_interval_length	= p_crv->m_interval_length;
+			m_interval_count	= p_crv->m_interval_count;
+			m_nodes_count		= p_crv->m_nodes_count;
+		}
 	private:
 		std::vector<T>		m_knot_v;
 		T					m_interval_length = 0;

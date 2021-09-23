@@ -38,10 +38,10 @@ namespace vufMath
 
 			if (l_blend_curve != nullptr)
 			{
-				T	 l_weight	= l_blend_curve->get_weight();
+				T	 l_weight	= l_blend_curve->get_weight_i();
 				auto l_cntnr_1	= l_blend_curve->get_container_ptr_1();
 				auto l_cntnr_2	= l_blend_curve->get_container_ptr_2();
-				V<T> l_tngnt	= l_blend_curve->get_tangent_at(l_crv_val);
+				V<T> l_tngnt	= l_blend_curve->get_tangent_at_i(l_crv_val);
 				if (l_cntnr_1 != nullptr)
 				{
 					vufQuaternion<T>	l_q_1 = l_cntnr_1->get_quaternion_at(l_crv_val);

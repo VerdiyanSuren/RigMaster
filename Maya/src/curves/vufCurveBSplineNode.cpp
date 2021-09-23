@@ -133,7 +133,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr || p_plug == g_params_out_attr)
 	{
-		vuf::vufTimer l_timer("Bspline curve node compute");
+		vuf::vufTimer l_timer("Bspline curve node compute: ");
 		MStatus l_status;
 		//------------------------------------------------------------------------------
 		// handle out data

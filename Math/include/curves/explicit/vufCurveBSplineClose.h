@@ -669,14 +669,21 @@ std::cout << "]" << std::endl;
 		// return true if point is on the curve
 		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
 		VF_MATH_CRV_GATHER_INFO_I_BODY;
-
+		void		copy_members_from_i(std::shared_ptr<vufCurveBSplineClose> p_crv)
+		{
+			vufCurveExplicit<T, V>::copy_members_from_i(p_crv);
+			m_knot_v	= p_crv->m_knot_v;
+			m_n_v		= p_crv->m_n_v;
+			m_dn_v		= p_crv->m_dn_v;
+			m_node_count = p_crv->m_node_count;
+		}
 	private:
 		std::vector<T>													m_knot_v;
 		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>		m_n_v;	// [time interval, node index] = basis function
 		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE-1>>>	m_dn_v;	// [time interval, node index] = basis derivative
 		uint32_t m_node_count = 0;
-		uint32_t m_indent_start = CURVE_DEGREE % 2 == 0 ? CURVE_DEGREE/2: (CURVE_DEGREE-1)/2;
-		uint32_t m_indent_end	= CURVE_DEGREE % 2 == 0 ? CURVE_DEGREE / 2 : 1 + (CURVE_DEGREE - 1) / 2;
+		static constexpr uint32_t m_indent_start	= CURVE_DEGREE % 2 == 0 ? CURVE_DEGREE/2: (CURVE_DEGREE-1)/2;
+		static constexpr uint32_t m_indent_end		= CURVE_DEGREE % 2 == 0 ? CURVE_DEGREE / 2 : 1 + (CURVE_DEGREE - 1) / 2;
 	};
 #pragma region CAST SPECIALIZATION
 	//specializations

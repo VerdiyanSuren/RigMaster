@@ -102,7 +102,7 @@ namespace vufMath
 				if (p_type == vufCurveType::k_none)
 				{
 					m_curve_ptr = nullptr;
-					return false;
+					return true;
 				}
 				// handle open b spline
 				if (p_type == vufCurveType::k_open_bspline)
@@ -122,8 +122,9 @@ namespace vufMath
 						m_curve_ptr = vufCurveBSplineOpen<T, V,3>::create();
 						return true;
 					}
+					//VF_LOG_INFO("HERE BSPLINE WRONG DEGREE");
 					m_curve_ptr = nullptr;
-					return false;
+					return true;
 				}
 				if (p_type == vufCurveType::k_close_bspline)
 				{
@@ -143,7 +144,7 @@ namespace vufMath
 						return true;
 					}
 					m_curve_ptr = nullptr;
-					return false;
+					return true;
 				}
 				if (p_type == vufCurveType::k_open_bezier_piecewise)
 				{
@@ -163,7 +164,7 @@ namespace vufMath
 						return true;
 					}
 					m_curve_ptr = nullptr;
-					return false;
+					return true;
 				}
 				if (p_type == vufCurveType::k_close_bezier_piecewise)
 				{
@@ -183,7 +184,7 @@ namespace vufMath
 						return true;
 					}
 					m_curve_ptr = nullptr;
-					return false;
+					return true;
 				}
 				if (p_type == vufCurveType::k_blend_curve)
 				{
@@ -201,7 +202,7 @@ namespace vufMath
 					return true;
 				}
 			}
-			m_curve_ptr = nullptr;
+			// nothing was changed
 			return false;
 		}
 		/// Return true if new rebuild has fn been created and assigned to container 

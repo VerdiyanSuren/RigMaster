@@ -218,20 +218,7 @@ namespace vufMath
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
 			std::shared_ptr< vufCurveBSplineOpen > l_ptr = vufCurveBSplineOpen::create();
-
-			l_ptr->m_degree = vufCurve<T, V>::m_degree;
-			l_ptr->m_close	= vufCurve<T, V>::m_close;
-			l_ptr->m_valid	= vufCurve<T, V>::m_valid;
-
-			l_ptr->m_nodes_pos_v	= vufCurveExplicit<T, V>::m_nodes_pos_v;
-			l_ptr->m_pos_offset		= vufCurveExplicit<T, V>::m_pos_offset;
-
-			//l_ptr->m_nodes_max_influence_t_v = m_nodes_max_influence_t_v;
-
-			l_ptr->m_knot_v = m_knot_v;
-			l_ptr->m_n_v = m_n_v;
-			l_ptr->m_dn_v = m_dn_v;
-
+			l_ptr->copy_members_from_i(std::static_pointer_cast<vufCurveBSplineOpen>(m_this.lock()));
 			return l_ptr;
 		}
 
@@ -810,6 +797,13 @@ namespace vufMath
 		// return true if point is on the curve
 		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
 		VF_MATH_CRV_GATHER_INFO_I_BODY;
+		void		copy_members_from_i(std::shared_ptr<vufCurveBSplineOpen> p_crv)
+		{
+			vufCurveExplicit<T, V>::copy_members_from_i(p_crv);
+			m_knot_v	= p_crv->m_knot_v;
+			m_n_v		= p_crv->m_n_v;
+			m_dn_v		= p_crv->m_dn_v;
+		}
 	private:
 		std::vector<T>													m_knot_v;
 		std::vector<std::vector<vufPolinomCoeff<T, CURVE_DEGREE>>>		m_n_v;	// [time interval, node index] = basis function

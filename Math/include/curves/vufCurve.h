@@ -222,6 +222,16 @@ namespace vufMath
 		virtual std::shared_ptr<vufCurveNoise <T, V >>		as_curve_noise()	const { return nullptr; }
 		virtual std::shared_ptr<vufCurveCompose <T, V >>	as_curve_compose()	const { return nullptr; }
 
+		void copy_members_from_i(std::shared_ptr<vufCurve> p_crv)
+		{
+			m_valid			= p_crv->m_valid;
+			m_has_degree	= p_crv->m_has_degree;
+			m_degree		= p_crv->m_degree;
+			m_explicit		= p_crv->m_explicit;
+			m_close			= p_crv->m_close;
+			m_domain_min	= p_crv->m_domain_min;
+			m_domain_max	= p_crv->m_domain_max;
+		}
 	protected:
 		bool		m_valid			= false;	// if inherited curve is valid 
 		bool		m_has_degree	= false;
