@@ -102,51 +102,10 @@ int main()
 	//return 0;
 	*/
 	
-	
-	auto l_cn = vufCurveContainer<double, vufVector4>::create();
-	auto l_cobz = vufCurveBezierOpen<double, vufVector4, 1>::create();
-	//auto l_co = vufCurveOpenBezier<double, vufVector4,1>::create();
-	auto l_co = vufCurveBSplineOpen<double, vufVector4, 3>::create();
-	l_cn->set_curve_ptr(l_co);
-	l_cobz->set_nodes_count(11);
-	l_co->set_nodes_count(11);
-	//std::cout << l_cc->get_interval_index_i(0) << std::endl;
-	//std::cout << l_cc->get_interval_index_i(.5) << std::endl;
-	//std::cout << l_cc->get_interval_index_i(.8) << std::endl;
-	//std::cout << l_cc->get_interval_index_i(2) << std::endl;
-	for (int i = 0; i < 11; ++i)
-	{
-		l_cobz->set_node_at(i, vufVector4<double>::random_vector());
-		l_co->set_node_at(i, vufVector4<double>::random_vector());
-	}
-	{
-		vuf::vufTimer l_timer("closest point bspline");
-		auto p = l_co->get_closest_point(vufVector4<double>(1, 1, 1));
-	}
-	{
-		vuf::vufTimer l_timer("closest point bezier");
-		auto p = l_cobz->get_closest_point(vufVector4<double>(1, 1, 1));
-	}
-	vufVector4<double> l_pos;
-	{		vuf::vufTimer l_timer("get pos");
-		for (int i = 0; i < 1000; ++i)
-		{
-			double t = (double)i * 0.001;
-			l_pos += l_cn->get_pos_at(t);
-		}
-	}
-	std::cout << l_pos.to_string() << std::endl;
-	//std::cout << l_cc->get_interval_t_min_i(3) << std::endl;
-	{		
-		vuf::vufTimer l_timer("get pos native ");
-		for (int i = 0; i < 1000; ++i)
-		{
-			double t = (double)i * 0.001;
-			l_pos += l_co->get_pos_at(t);
-		}
-	}
-	//l_c->get_pos_at(0.9);
-	//std::cout << l_c->to_string() << std::endl;
+	vuf::txtSerializer::init();
+	auto l_test = vufMath::vufTestAll();
+	l_test.run(false);
+
 	system("pause");
 	return 0;
 
@@ -154,18 +113,16 @@ int main()
 	vufPelinNoise<double> l_noise;
 	auto a = l_noise.simplex_4d(0, 1, 2, 3);
 	auto b = l_noise.simplex_2d(0, 1);
-	//vuf::txtSerializer::init();
-	//vufTestAll().run(true);
 	//system("pause");
 	vufCurveOpenBSplineTest<double> l_crv_test;
 	l_crv_test.test_rebuild(true);
 	system("pause");
 	return 0;
 	auto l_cntnr = vufCurveContainer<double, vufVector4>::create();
-	auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
-	auto l_crv_2 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
-	auto l_crv_cls_1 = vufCurveBSplineClose<double, vufVector4, 4>::create();
-	auto l_crv_cls_2 = vufCurveBSplineClose<double, vufVector4, 4>::create();
+	auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 3>::create();
+	auto l_crv_2 = vufCurveBSplineOpen<double, vufVector4, 3>::create();
+	auto l_crv_cls_1 = vufCurveBSplineClose<double, vufVector4, 3>::create();
+	auto l_crv_cls_2 = vufCurveBSplineClose<double, vufVector4, 3>::create();
 
 	l_crv_1->set_nodes_count(10);
 	l_crv_cls_1->set_nodes_count(10);

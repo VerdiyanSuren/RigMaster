@@ -90,6 +90,10 @@ namespace vufMath
 			l_ss << l_str_offset << "____Input Curve Function: " << (m_blend_func_ptr == nullptr? "Absent": m_blend_func_ptr->to_string(p_precision, p_tab_count + 1))<< std::endl;
 			l_ss << l_str_offset << "____Weight: " << m_weight << std::endl;
 			l_ss << l_str_offset << "____Use Function: " << m_use_fcurve << std::endl;
+			l_ss << l_str_offset << "____Should Serialize: Input_First: " << m_should_serialize_first << std::endl;
+			l_ss << l_str_offset << "____Should Serialize: Input_Second: " << m_should_serialize_second << std::endl;
+			l_ss << l_str_offset << "____Should Serialize: Input_Function: " << m_should_serialize_fcurve << std::endl;
+
 			return l_ss.str();
 		}
 		virtual uint64_t		get_binary_size() const override
@@ -98,38 +102,146 @@ namespace vufMath
 			// Implement This
 			uint64_t l_size = 0;
 			l_size += vufCurve<T, V>::get_binary_size();
+			
+			// input first
+			l_size += sizeof(bool);
+			if (m_first_container_ptr != nullptr && m_should_serialize_first == true)
+			{
+				l_size += m_first_container_ptr->get_binary_size();
+			}
+
+			// input second
+			l_size += sizeof(bool);
+			if (m_second_container_ptr != nullptr && m_should_serialize_second == true)
+			{
+				l_size += m_second_container_ptr->get_binary_size();
+			}
+
+			// input function
+			l_size += sizeof(bool);
+			if (m_blend_func_ptr != nullptr && m_should_serialize_fcurve == true)
+			{
+				l_size += m_blend_func_ptr->get_binary_size();
+			}
+
+			l_size += sizeof(m_weight);
+			l_size += sizeof(m_use_fcurve);
 			return  0;
 		}
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const override
 		{
 			// To Do 
 			// Implement This
-			return 0;
+			uint64_t l_curve_size = get_binary_size();
+			if (p_buff.size() < p_offset + l_curve_size)
+			{
+				p_buff.resize(p_offset + l_curve_size);
+			}
+			p_offset = vufCurve<T, V>::to_binary(p_buff, p_offset);
+			// input first
+			if (m_first_container_ptr != nullptr && m_should_serialize_first == true)
+			{
+				bool l_save = true;
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_save, sizeof(l_save));
+				p_offset = m_first_container_ptr->to_binary(p_buff, p_offset);
+			}
+			else
+			{
+				bool l_save = false;
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_save, sizeof(l_save));
+			}
+			// input second
+			if (m_second_container_ptr != nullptr && m_should_serialize_second == true)
+			{
+				bool l_save = true;
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_save, sizeof(l_save));
+				p_offset = m_second_container_ptr->to_binary(p_buff, p_offset);
+			}
+			else
+			{
+				bool l_save = false;
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_save, sizeof(l_save));
+			}
+			// input function
+			if (m_blend_func_ptr != nullptr && m_should_serialize_fcurve == true)
+			{
+				bool l_save = true;
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_save, sizeof(l_save));
+				p_offset = m_blend_func_ptr->to_binary(p_buff, p_offset);
+			}
+			else
+			{
+				bool l_save = false;
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_save, sizeof(l_save));
+			}
+
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_weight, sizeof(m_weight));
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_use_fcurve, sizeof(m_use_fcurve));
+			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& l_version, uint64_t p_offset = 0)		override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)		override
 		{
-			// To Do 
-			// Implement This
+			p_offset = vufCurve<T, V>::from_binary(p_buff, p_version, p_offset);
+			
+			bool l_load;
+			// input first
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_load, sizeof(l_load));
+			if (l_load == true)
+			{
+				m_should_serialize_first = true;
+				m_first_container_ptr =  vufCurveContainer<T, V>::create();
+				p_offset = m_first_container_ptr->from_binary(p_buff, p_version, p_offset);
+			}
+			else
+			{
+				m_should_serialize_first	= false;
+				m_first_container_ptr		= nullptr;
+			}
+			// input second
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_load, sizeof(l_load));
+			if (l_load == true)
+			{
+				m_should_serialize_second = true;
+				m_second_container_ptr = vufCurveContainer<T, V>::create();
+				p_offset = m_second_container_ptr->from_binary(p_buff, p_version, p_offset);
+			}
+			else
+			{
+				m_should_serialize_second = false;
+				m_second_container_ptr = nullptr;
+			}
+			// input function
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_load, sizeof(l_load));
+			if (l_load == true)
+			{
+				m_should_serialize_fcurve = true;
+				m_blend_func_ptr = vufCurveContainer<T, V>::create();
+				p_offset = m_blend_func_ptr->from_binary(p_buff, p_version, p_offset);
+			}
+			else
+			{
+				m_should_serialize_fcurve	= false;
+				m_blend_func_ptr			= nullptr;
+			}
+
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_weight, sizeof(m_weight));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_use_fcurve, sizeof(m_use_fcurve));
+
 			return 0;
 		}
 		virtual uint64_t		encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const override
 		{
-			// To Do 
-			// Implement This
-			return 0;
+			return vufCurve<T, V>::encode_to_buff(p_buff, p_offset);
 		}
 		virtual uint64_t		decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		override
 		{
-			// To Do 
-			// Implement This
-			return 0;
+			return vufCurve<T, V>::decode_from_buff(p_buff, p_offset);
 		}
 		// virtual casts
 		virtual std::shared_ptr<vufCurveBlend <T, V>>		as_curve_blend()	const override
 		{
 			return std::static_pointer_cast<vufCurveBlend<T, V>>(vufCurve<T, V>::m_this.lock());
 		}
-
 
 		// non-virtual methods
 		inline V<T>		get_pos_at_i(T p_t)		const
@@ -161,6 +273,22 @@ namespace vufMath
 												uint32_t	p_divisions = 10,
 												T			p_percition = vufCurve_kTol) const
 		{
+			if (m_valid == true)
+			{
+				p_division++;// to avoid divide by zero
+				T l_interval_step = (p_end - p_start) / (T)p_divisions;
+				
+				T l_start = p_start;
+				V<T> v_start = get_pos_at_i(l_start) - p_point;
+				T l_dot_start = v_start.dot(get_tangent_at_i(l_start));
+				
+
+				for (uint32_t i = 1; i <= p_divisions; ++i)
+				{
+					
+				}
+			}
+			
 			if (m_first_container_ptr != nullptr)
 			{
 				if (m_second_container_ptr != nullptr)
@@ -287,10 +415,10 @@ namespace vufMath
 		{
 			vufCurve<T, V>::copy_members_from_i(p_crv);
 
-			m_first_container_ptr	= p_crv->m_first_container_ptr == nullptr ? nullptr : p_crv->m_first_container_ptr->get_copy();
-			m_second_container_ptr	= p_crv->m_second_container_ptr == nullptr ? nullptr : p_crv->m_second_container_ptr->get_copy();
-			m_blend_func_ptr		= p_crv->m_blend_func_ptr == nullptr ? nullptr : p_crv->m_blend_func_ptr->get_copy();
-			m_weight				= p_crv->m_weight;
+			m_first_container_ptr		= p_crv->m_first_container_ptr == nullptr ? nullptr : p_crv->m_first_container_ptr->get_copy();
+			m_second_container_ptr		= p_crv->m_second_container_ptr == nullptr ? nullptr : p_crv->m_second_container_ptr->get_copy();
+			m_blend_func_ptr			= p_crv->m_blend_func_ptr == nullptr ? nullptr : p_crv->m_blend_func_ptr->get_copy();
+			m_weight					= p_crv->m_weight;
 			m_use_fcurve				= p_crv->m_use_fcurve;
 			m_should_serialize_first	= p_crv->m_should_serialize_first;
 			m_should_serialize_second	= p_crv->m_should_serialize_second;

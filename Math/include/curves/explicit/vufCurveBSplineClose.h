@@ -12,6 +12,7 @@ namespace vufMath
 	class vufCurveBSplineClose : public vufCurveExplicit<T, V>
 	{
 	private:
+		static_assert(CURVE_DEGREE < 4, "accepted bspline close only degree <= 3");
 		vufCurveBSplineClose() :vufCurveExplicit<T, V>()
 		{
 			vufCurve<T, V>::m_has_degree	= true;

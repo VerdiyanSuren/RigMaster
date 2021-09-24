@@ -12,10 +12,13 @@
 //#define VF_MATH_DEBUG_BSPLINE
 namespace vufMath
 {
-	template <class T, template<typename> class V, uint32_t CURVE_DEGREE = 2>
+	template <	class T, 
+				template<typename> class V, 
+				uint32_t CURVE_DEGREE = 2>
 	class vufCurveBSplineOpen : public vufCurveExplicit<T, V>
 	{
 	private:
+		static_assert(CURVE_DEGREE < 4, "accepted bspline open only degree <= 3");
 		vufCurveBSplineOpen() :vufCurveExplicit<T, V>()
 		{
 			//std::cout << "OpenBSpline constructor" << std::endl;

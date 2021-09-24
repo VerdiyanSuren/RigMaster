@@ -18,7 +18,7 @@ namespace vufMath
 		{
 			bool l_status = true;
 			std::cout << "--------------------------------------------------------------------------------" << std::endl;
-			VF_LOG_INFO((vufStringUtils::string_padding(std::string("START_TESTS_FOR_TYPE_vufCurveBSplineTest<") + typeid(T).name() + ">")));
+			VF_LOG_INFO((vufStringUtils::string_padding(std::string("START_TESTS_FOR_TYPE_vufCurveBSplineOpenTest<") + typeid(T).name() + ">")));
 
 			if (test_serialization(p_verbose) == false)	l_status = false;
 			if (test_rebuild(p_verbose) == false)		l_status = false;
@@ -26,11 +26,11 @@ namespace vufMath
 			//if (test_math(p_verbose) == false)			l_status = false;;
 			if (l_status == true)
 			{
-				VF_LOG_INFO((vufStringUtils::string_padding(std::string("END_TESTS_FOR_TYPE_vufCurveBSplineTest<") + typeid(T).name() + ">")));
+				VF_LOG_INFO((vufStringUtils::string_padding(std::string("END_TESTS_FOR_TYPE_vufCurveBSplineOpenTest<") + typeid(T).name() + ">")));
 				std::cout << "--------------------------------------------------------------------------------" << std::endl;
 				return true;
 			}
-			VF_LOG_ERR((vufStringUtils::string_padding(std::string("FAILED_TESTS_FOR_TYPE_vufCurveBSplineTest<") + typeid(T).name() + ">")));
+			VF_LOG_ERR((vufStringUtils::string_padding(std::string("FAILED_TESTS_FOR_TYPE_vufCurveBSplineOpenTest<") + typeid(T).name() + ">")));
 			std::cout << "--------------------------------------------------------------------------------" << std::endl;
 			return false;
 		}
@@ -38,9 +38,9 @@ namespace vufMath
 		{
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
-			auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
-			auto l_crv_2 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
-			l_crv_1->set_nodes_count(4);
+			auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 3>::create();
+			auto l_crv_2 = vufCurveBSplineOpen<double, vufVector4, 3>::create();
+			l_crv_1->set_nodes_count(3);
 			if (l_crv_1->is_valid() != false)
 			{
 				VF_LOG_ERR("is_valid has to be false for empty curve.");
@@ -57,7 +57,7 @@ namespace vufMath
 				return false;
 			}
 			// to_binary from_binary
-			std::vector<char> l_buff(128);
+			std::vector<char> l_buff;
 			uint64_t l_size			= l_crv_1->get_binary_size();
 			uint64_t l_write_offset = l_crv_1->to_binary(l_buff);
 			uint64_t l_read_offset	= l_crv_2->from_binary(l_buff, l_version);
@@ -149,7 +149,7 @@ namespace vufMath
 		bool test_rebuild(bool p_verbos = false)
 		{
 			std::cout << "....Rebuild Test" << std::endl;
-			auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 4>::create();
+			auto l_crv_1 = vufCurveBSplineOpen<double, vufVector4, 3>::create();
 			l_crv_1->set_nodes_count(5);
 			for (int i = 0; i < 5; ++i)
 			{
@@ -286,9 +286,9 @@ namespace vufMath
 		{
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
-			auto l_crv_1 = vufCurveBSplineClose<double, vufVector4, 4>::create();
-			auto l_crv_2 = vufCurveBSplineClose<double, vufVector4, 4>::create();
-			l_crv_1->set_nodes_count(4);
+			auto l_crv_1 = vufCurveBSplineClose<double, vufVector4, 3>::create();
+			auto l_crv_2 = vufCurveBSplineClose<double, vufVector4, 3>::create();
+			l_crv_1->set_nodes_count(3);
 			if (l_crv_1->is_valid() != false)
 			{
 				VF_LOG_ERR("is_valid has to be false for empty curve.");
@@ -406,8 +406,8 @@ namespace vufMath
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
 			auto l_cntnr	= vufCurveContainer<T, vufVector4>::create();
-			auto l_crv_c	= vufCurveBSplineClose<T, vufVector4, 4>::create();
-			auto l_crv_o	= vufCurveBSplineOpen<T, vufVector4, 4>::create();
+			auto l_crv_c	= vufCurveBSplineClose<T, vufVector4, 3>::create();
+			auto l_crv_o	= vufCurveBSplineOpen<T, vufVector4, 3>::create();
 			auto l_rbld_1	= vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_rbld_2	= vufCurveRebuildUniformFn<T, vufVector4>::create();
 			// init curves
@@ -590,8 +590,8 @@ namespace vufMath
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
 			auto l_cntnr = vufCurveContainer<T, vufVector4>::create();
-			auto l_crv_c = vufCurveBSplineClose<T, vufVector4, 4>::create();
-			auto l_crv_o = vufCurveBSplineOpen<T, vufVector4, 4>::create();
+			auto l_crv_c = vufCurveBSplineClose<T, vufVector4, 3>::create();
+			auto l_crv_o = vufCurveBSplineOpen<T, vufVector4, 3>::create();
 			auto l_rbld_1 = vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_rbld_2 = vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_quat_1 = vufCurveQuaternionCloseFn<T, vufVector4>::create();
@@ -707,8 +707,8 @@ namespace vufMath
 			std::cout << "....Serialization Test" << std::endl;
 			uint32_t l_version;
 			auto l_cntnr = vufCurveContainer<T, vufVector4>::create();
-			auto l_crv_c = vufCurveBSplineClose<T, vufVector4, 4>::create();
-			auto l_crv_o = vufCurveBSplineOpen<T, vufVector4, 4>::create();
+			auto l_crv_c = vufCurveBSplineClose<T, vufVector4, 3>::create();
+			auto l_crv_o = vufCurveBSplineOpen<T, vufVector4, 3>::create();
 			auto l_rbld_1 = vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_rbld_2 = vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_quat_1 = vufCurveQuaternionCloseFn<T, vufVector4>::create();
@@ -831,7 +831,7 @@ namespace vufMath
 			uint32_t l_version;
 			auto l_cntnr_1	= vufCurveContainer<T, vufVector4>::create();
 			auto l_cntnr_2	= vufCurveContainer<T, vufVector4>::create();
-			auto l_crv		= vufCurveBSplineClose<T, vufVector4, 4>::create();
+			auto l_crv		= vufCurveBSplineClose<T, vufVector4, 3>::create();
 			auto l_rbld		= vufCurveRebuildUniformFn<T, vufVector4>::create();
 			auto l_quat		= vufCurveQuaternionCloseFn<T, vufVector4>::create();
 			auto l_scl		= vufScaleCloseCurveFn<T, vufVector4>::create();
