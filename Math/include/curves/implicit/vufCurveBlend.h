@@ -38,9 +38,9 @@ namespace vufMath
 														T			p_start = 0,
 														T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
 														uint32_t	p_divisions = 10,
-														T			p_percition = 0.00001) const override
+														T			p_percition = vufCurve_kTol) const override
 		{
-			return get_closest_point_param_i(p_point, p_divisions, p_percition);
+			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
 		}
 
 		virtual T				get_param_by_vector_component(	T			p_value,
@@ -50,9 +50,7 @@ namespace vufMath
 																uint32_t	p_divisions = 10,
 																T			p_percition = vufCurve_kTol)	const override
 		{
-			// To Do 
-			// Implement this
-			return 0;
+			return get_param_by_vector_component_i(p_value, p_component_index, p_start, p_end, p_divisions, p_percition);
 		}
 
 		virtual V<T>			get_pos_at(T p_t)			const override
@@ -255,12 +253,10 @@ namespace vufMath
 		}
 		inline V<T>		get_tangent_at_i(T p_t)	const
 		{
-			T l_weight = get_computed_weight_i(p_t);			
-			if (m_first_container_ptr != nullptr && m_second_container_ptr != nullptr)
-			{
-				return m_first_container_ptr->get_tangent_at(p_t) * (1. - l_weight) + m_second_container_ptr->get_tangent_at(p_t) * l_weight;
-			}
-			return V<T>();
+			T l_weight = get_computed_weight_i(p_t);
+			V<T> l_pos_1 = get_pos_at_i(p_t);
+			V<T> l_pos_2 = get_pos_at_i(p_t + 0.00001);
+			return (l_pos_2 - l_pos_1) * (1. / 0.00001);
 		}
 		inline V<T>		get_tangent_normalized_at_i(T p_t) const
 		{
@@ -273,59 +269,90 @@ namespace vufMath
 												uint32_t	p_divisions = 10,
 												T			p_percition = vufCurve_kTol) const
 		{
-			if (m_valid == true)
-			{
-				p_division++;// to avoid divide by zero
-				T l_interval_step = (p_end - p_start) / (T)p_divisions;
-				
-				T l_start = p_start;
-				V<T> v_start = get_pos_at_i(l_start) - p_point;
-				T l_dot_start = v_start.dot(get_tangent_at_i(l_start));
-				
+			p_divisions++;// to avoid divide by zero
+			T l_interval_step = (p_end - p_start) / (T)p_divisions;
+			// start point and min distance initialization
+			T		l_start			= p_start;													// start param
+			V<T>	l_start_pos		= get_pos_at_i(l_start) - p_point;							// direction from point to start point
+			T		l_dot_start		= l_start_pos.dot(get_tangent_at_i(l_start));
+			T		l_sign_start	=  (VF_ABS(l_dot_start)) > VF_MATH_EPSILON ? l_dot_start : 0.0;
 
-				for (uint32_t i = 1; i <= p_divisions; ++i)
-				{
-					
-				}
-			}
-			
-			if (m_first_container_ptr != nullptr)
+			T l_dist_min		= l_start_pos.length2();//std::numeric_limits<double>::max();
+			T l_param_min		= p_start;
+
+			for (uint32_t i = 1; i <= p_divisions; ++i)
 			{
-				if (m_second_container_ptr != nullptr)
+				T		l_end = p_start + (T)i * l_interval_step;
+				V<T>	l_end_pos = get_pos_at_i(l_end) - p_point;
+				T		l_dot_end = l_end_pos.dot(get_tangent_at_i(l_end));
+				T		l_sign_end = (VF_ABS(l_dot_end)) > VF_MATH_EPSILON ? l_dot_end : 0;
+				T		l_dist_end = l_end_pos.length2();
+
+				if (l_dist_end < l_dist_min)
 				{
-					p_divisions++; // to avoid divideing on zero
-					// TO Do implement this
+					l_param_min = l_end;
+					l_dist_min	= l_dist_end;
 				}
-				// if exist only first curve 
-				return m_first_container_ptr->get_curve_ptr()->get_closest_point_param(p_point,p_start,p_end, p_divisions,p_percition);
+				T l_t_1 = l_start;
+				T l_t_2 = l_end;
+				T l_s_1 = l_sign_start;
+				T l_s_2 = l_sign_end;
+				while (l_s_1 * l_s_2 < 0.0 && (l_t_2 - l_t_1) > p_percition)
+				{
+					T		l_t			= (l_t_1 + l_t_2) * 0.5;
+					V<T>	l_t_pos		= get_pos_at_i(l_t) - p_point;
+					T		l_t_dot		= l_t_pos.dot(get_tangent_at_i(l_t));
+					T		l_t_sign	= (VF_ABS(l_t_dot)) > VF_MATH_EPSILON ? l_t_dot : 0.0;
+					if (l_t_sign == 0)
+					{
+						T l_t_dist = l_t_pos.length2();
+						if (l_t_dist < l_dist_min)
+						{
+							l_dist_min = l_t_dist;
+							l_param_min = l_t;
+						}
+						break;
+					}
+					if (l_t_sign * l_s_1 < 0.0)
+					{
+						l_t_2 = l_t;
+						l_s_2 = l_t_sign;
+						continue;
+					}
+					l_t_1 = l_t;
+					l_s_1 = l_t_sign;
+				}
+				l_end_pos = get_pos_at_i(l_t_1) - p_point;
+				l_dist_end = l_end_pos.length2();
+				if (l_dist_end < l_dist_min)
+				{
+					l_param_min = l_t_1;
+					l_dist_min	= l_dist_end;
+				}
+
+				l_start			= l_end;
+				l_sign_start	= l_sign_end;
 			}
-			if (m_second_container_ptr != nullptr)
-			{
-				// if exists only second curve
-				return m_second_container_ptr->get_curve_ptr()->get_closest_point_param(p_point, p_start, p_end, p_divisions, p_percition);
-			}
-			return 0;
+			return l_param_min;
 		}	
-		inline T	get_closest_point_param_on_interval_i(	const V<T>& p_point, T p_t_1, T p_t_2, T p_percition = 0.00001) const
+		inline T	get_param_by_vector_component_i(T			p_value,
+													uint32_t	p_component_index = 0/*x by default*/,
+													T			p_start = 0,
+													T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+													uint32_t	p_divisions = 10,
+													T			p_percition = vufCurve_kTol)	const
 		{
-			if (m_first_container_ptr != nullptr)
-			{
-				if (m_second_container_ptr != nullptr)
-				{
-					T l_param_1, l_param_2;
-					l_param_1 = m_first_container_ptr->get_curve_ptr()->get_closest_point_param_on_interval(p_point, p_t_1, p_t_2, p_percition);
-					l_param_2 = m_second_container_ptr->get_curve_ptr()->get_closest_point_param_on_interval(p_point, p_t_1, p_t_2, p_percition);
-					return  l_param_1 * (1. - m_weight) + l_param_2 * m_weight;
-				}
-				return m_first_container_ptr->get_curve_ptr()->get_closest_point_param_on_interval(p_point, p_t_1, p_t_2, p_percition);
-			}
-			if (m_second_container_ptr != nullptr)
-			{
-				return m_second_container_ptr->get_curve_ptr()->get_closest_point_param_on_interval(p_point, p_t_1, p_t_2, p_percition);
-			}
-			return false;
+			// To avoid crush we increment p_division. Never divide by zero.
+			p_divisions++;
+			T l_interval_step = (p_end - p_start) / (T)p_divisions;
+			T		l_start = p_start;													// start param
+			T	l_start_pos = get_pos_at_i(l_start)[p_component_index];							// direction from point to start point
+			T		l_dot_start = l_start_pos.dot(get_tangent_at_i(l_start));
+			T		l_sign_start = (VF_ABS(l_dot_start)) > VF_MATH_EPSILON ? l_dot_start : 0.0;
+
+			T l_param_res = l_start;
 		}
-		
+
 		void		set_container_ptr_1(std::shared_ptr < vufCurveContainer<T, V>> p_ptr)
 		{
 			m_first_container_ptr = p_ptr;

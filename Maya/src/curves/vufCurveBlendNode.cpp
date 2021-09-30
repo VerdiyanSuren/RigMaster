@@ -73,11 +73,11 @@ MStatus	vufCurveBlendNode::initialize()
 	l_typed_attr_fn.setWritable(false);
 
 	// Add Attributes
-	l_status = addAttribute(g_curve_container_1_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = addAttribute(g_curve_container_2_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = addAttribute(g_fcurve_attr);				CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_use_fcurve_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_weight_attr);				CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_fcurve_attr);				CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_curve_container_1_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_curve_container_2_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// Attribute affects
 	l_status = attributeAffects(g_curve_container_1_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -144,20 +144,20 @@ MStatus vufCurveBlendNode::connectionMade(const MPlug& p_plug_1, const MPlug& p_
 	if (l_mpx_data == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Made unexeptable fail");
-		return MS::kSuccess;
+		return MPxNode::connectionMade(p_plug_1, p_plug_2, p_as_src);
 	}
 	std::shared_ptr<vufCurveData> l_out_data = l_mpx_data->get_data();
 	if (l_out_data == nullptr || l_out_data->m_internal_data == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Made unexeptable fail");
-		return MS::kSuccess;
+		return MPxNode::connectionMade(p_plug_1, p_plug_2, p_as_src);
 	}
 	vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
 	auto l_blend_curve = l_container.get_curve_ptr()->as_curve_blend();
 	if (l_blend_curve == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Made unexeptable fail: blendcurve is null");
-		return MS::kSuccess;
+		return MPxNode::connectionMade(p_plug_1, p_plug_2, p_as_src);
 	}
 
 	std::cout << " curve_plug: " << l_plug.name() << std::endl;
@@ -174,7 +174,7 @@ MStatus vufCurveBlendNode::connectionMade(const MPlug& p_plug_1, const MPlug& p_
 		l_blend_curve->make_selializable_fcurve(true);
 	}
 	std::cout << "I: " << l_blend_curve->is_serializable_first() << " II: " << l_blend_curve->is_serializable_second() << " FC: " << l_blend_curve->is_serializable_fcurve() << std::endl;
-	return MS::kSuccess;
+	return MPxNode::connectionMade(p_plug_1, p_plug_2, p_as_src);
 }
 MStatus vufCurveBlendNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
 {
@@ -191,20 +191,20 @@ MStatus vufCurveBlendNode::connectionBroken(const MPlug& p_plug_1, const MPlug& 
 	if (l_mpx_data == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Broken unexeptable fail");
-		return MS::kSuccess;
+		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
 	}
 	std::shared_ptr<vufCurveData> l_out_data = l_mpx_data->get_data();
 	if (l_out_data == nullptr || l_out_data->m_internal_data == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Broken unexeptable fail");
-		return MS::kSuccess;
+		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
 	}
 	vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
 	auto l_blend_curve = l_container.get_curve_ptr()->as_curve_blend();
 	if (l_blend_curve == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Broken unexeptable fail: blendcurve is null");
-		return MS::kSuccess;
+		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
 	}
 
 	std::cout << "Connection Broken: plug_1: " << p_plug_1.name() << " plug_2: " << p_plug_2.name() << " source:" << p_as_src << std::endl;
@@ -225,5 +225,5 @@ MStatus vufCurveBlendNode::connectionBroken(const MPlug& p_plug_1, const MPlug& 
 	}
 	std::cout << "I: " << l_blend_curve->is_serializable_first() << " II: " << l_blend_curve->is_serializable_second() << " FC: " << l_blend_curve->is_serializable_fcurve() << std::endl;
 
-	return MS::kSuccess;
+	return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
 }

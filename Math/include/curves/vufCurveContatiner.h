@@ -480,7 +480,7 @@ namespace vufMath
 			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
 			{				
 				T l_curve_param = m_curve_ptr->get_closest_point_param(p_point, p_start, p_end, p_divisions, p_percition);
-				return l_curve_param;
+				//return l_curve_param;
 				return get_remaped_by_curve_value(l_curve_param);
 			}
 			return 0;
@@ -493,9 +493,9 @@ namespace vufMath
 												T			p_percition = vufCurve_kTol)
 		{
 			if (m_curve_ptr != nullptr && m_curve_ptr->is_valid() == true)
-			{
+			{				
 				T l_curve_param = m_curve_ptr->get_param_by_vector_component(p_value, p_component_index, p_start, p_end, p_divisions, p_percition);
-				return l_curve_param;
+				//return l_curve_param;
 				return get_remaped_by_curve_value(l_curve_param);
 			}
 			return 0;
