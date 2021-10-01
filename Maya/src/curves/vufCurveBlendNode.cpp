@@ -93,7 +93,7 @@ MStatus	vufCurveBlendNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
 	{
-		std::cout << "Curve Blend Compute" << std::endl;
+		std::cout << "Curve Blend Compute. " <<  this->name() << std::endl;
 		MStatus l_status;
 		double l_weight		= p_data.inputValue(g_weight_attr).asDouble();
 		bool l_use_fcurve	= p_data.inputValue(g_use_fcurve_attr).asBool();
@@ -118,7 +118,7 @@ MStatus	vufCurveBlendNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		
 		auto l_crv_ptr = l_container.get_curve_ptr();
 		std::shared_ptr<vufCurveBlend_4d> l_blend_ptr = std::static_pointer_cast<vufCurveBlend_4d>( l_crv_ptr );
-		l_blend_ptr->set_container_ptr_1(l_in_container_1 == nullptr? nullptr:l_in_container_1->m_internal_data);
+		l_blend_ptr->set_container_ptr_1(l_in_container_1 == nullptr ? nullptr : l_in_container_1->m_internal_data);
 		l_blend_ptr->set_container_ptr_2(l_in_container_2 == nullptr ? nullptr : l_in_container_2->m_internal_data);
 		l_blend_ptr->set_container_ptr_blend_func(l_in_fcurve_container == nullptr? nullptr: l_in_fcurve_container->m_internal_data);
 		l_blend_ptr->set_weight_i(l_weight);
@@ -129,8 +129,15 @@ MStatus	vufCurveBlendNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	}
 	return MS::kUnknownParameter;
 }
+/*
 MStatus vufCurveBlendNode::connectionMade(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
 {
+	if (p_plug_1 != vufCurveBlendNode::g_curve_container_1_attr &&
+		p_plug_1 != vufCurveBlendNode::g_curve_container_2_attr &&
+		p_plug_1 != vufCurveBlendNode::g_fcurve_attr)
+	{
+		return MPxNode::connectionMade(p_plug_1, p_plug_2, p_as_src);
+	}
 	MStatus l_status;
 	MObject				l_data_obj;
 	MFnDependencyNode	l_node(p_plug_1.node());
@@ -159,7 +166,7 @@ MStatus vufCurveBlendNode::connectionMade(const MPlug& p_plug_1, const MPlug& p_
 		VF_LOG_ERR("vufCurveBlend Connection Made unexeptable fail: blendcurve is null");
 		return MPxNode::connectionMade(p_plug_1, p_plug_2, p_as_src);
 	}
-
+	std::cout << " plug_1: " << p_plug_1.name() << " p_plug_2: " << p_plug_2.name() << " source: " << p_as_src << std::endl;
 	std::cout << " curve_plug: " << l_plug.name() << std::endl;
 	if (p_plug_1 == vufCurveBlendNode::g_curve_container_1_attr)
 	{
@@ -169,15 +176,24 @@ MStatus vufCurveBlendNode::connectionMade(const MPlug& p_plug_1, const MPlug& p_
 	{
 		l_blend_curve->make_selializable_second(false);
 	}
-	if (p_plug_1 == vufCurveBlendNode::g_use_fcurve_attr)
+	if (p_plug_1 == vufCurveBlendNode::g_fcurve_attr)
 	{
-		l_blend_curve->make_selializable_fcurve(true);
+		l_blend_curve->make_selializable_fcurve(false);
 	}
 	std::cout << "I: " << l_blend_curve->is_serializable_first() << " II: " << l_blend_curve->is_serializable_second() << " FC: " << l_blend_curve->is_serializable_fcurve() << std::endl;
+	
+	std::cout << std::endl;
 	return MPxNode::connectionMade(p_plug_1, p_plug_2, p_as_src);
 }
+*/
 MStatus vufCurveBlendNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
 {
+	if (p_plug_1 != vufCurveBlendNode::g_curve_container_1_attr &&
+		p_plug_1 != vufCurveBlendNode::g_curve_container_2_attr &&
+		p_plug_1 != vufCurveBlendNode::g_fcurve_attr)
+	{
+		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
+	}
 	MStatus l_status;
 	MObject				l_data_obj;
 	MFnDependencyNode	l_node(p_plug_1.node());
@@ -191,39 +207,37 @@ MStatus vufCurveBlendNode::connectionBroken(const MPlug& p_plug_1, const MPlug& 
 	if (l_mpx_data == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Broken unexeptable fail");
-		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
+		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
 	}
 	std::shared_ptr<vufCurveData> l_out_data = l_mpx_data->get_data();
 	if (l_out_data == nullptr || l_out_data->m_internal_data == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Broken unexeptable fail");
-		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
+		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
 	}
 	vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
 	auto l_blend_curve = l_container.get_curve_ptr()->as_curve_blend();
 	if (l_blend_curve == nullptr)
 	{
 		VF_LOG_ERR("vufCurveBlend Connection Broken unexeptable fail: blendcurve is null");
-		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
+		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
 	}
 
 	std::cout << "Connection Broken: plug_1: " << p_plug_1.name() << " plug_2: " << p_plug_2.name() << " source:" << p_as_src << std::endl;
 	if (p_plug_1 == vufCurveBlendNode::g_curve_container_1_attr)
-	{
+	{		
 		l_blend_curve->make_input_first_unique();
-		l_blend_curve->make_selializable_first(true);
 	}
 	if (p_plug_1 == vufCurveBlendNode::g_curve_container_2_attr)
 	{
 		l_blend_curve->make_input_second_unique();
-		l_blend_curve->make_selializable_second(true);
 	}
-	if (p_plug_1 == vufCurveBlendNode::g_use_fcurve_attr)
+	if (p_plug_1 == vufCurveBlendNode::g_fcurve_attr)
 	{
 		l_blend_curve->make_blend_func_unique();
-		l_blend_curve->make_selializable_fcurve(true);
 	}
 	std::cout << "I: " << l_blend_curve->is_serializable_first() << " II: " << l_blend_curve->is_serializable_second() << " FC: " << l_blend_curve->is_serializable_fcurve() << std::endl;
+	std::cout << std::endl;
 
 	return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
 }

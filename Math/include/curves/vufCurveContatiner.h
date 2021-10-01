@@ -375,6 +375,7 @@ namespace vufMath
 			}
 		}
 
+
 		// rebuild interface
 		void rebuild()
 		{

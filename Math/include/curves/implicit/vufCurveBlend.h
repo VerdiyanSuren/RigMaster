@@ -344,13 +344,60 @@ namespace vufMath
 		{
 			// To avoid crush we increment p_division. Never divide by zero.
 			p_divisions++;
-			T l_interval_step = (p_end - p_start) / (T)p_divisions;
-			T		l_start = p_start;													// start param
-			T	l_start_pos = get_pos_at_i(l_start)[p_component_index];							// direction from point to start point
-			T		l_dot_start = l_start_pos.dot(get_tangent_at_i(l_start));
-			T		l_sign_start = (VF_ABS(l_dot_start)) > VF_MATH_EPSILON ? l_dot_start : 0.0;
+			T	l_interval_step = (p_end - p_start) / (T)p_divisions;
+
+			T	l_start			= p_start;												// start param
+			T	l_start_val		= get_pos_at_i(l_start)[p_component_index] - p_value;	// direction from point to start point
+			T	l_start_err		= VF_ABS(l_start_val);
 
 			T l_param_res = l_start;
+			T l_param_err = l_start_err;
+			for (uint32_t i = 1; i <= p_divisions; ++i)
+			{
+				T		l_end		= p_start + (T)i * l_interval_step;
+				T		l_end_val	= get_pos_at_i(l_end)[p_component_index] - p_value;
+				T		l_end_err	= VF_ABS(l_end_val);
+
+				if (l_end_err < l_param_err)
+				{
+					l_param_res = l_end;
+					l_param_err = l_end_err;
+				}
+				T l_t_1 = l_start;
+				T l_t_2 = l_end;
+				T l_v_1 = l_start_val;
+				T l_v_2 = l_end_val;
+				while (l_v_1 * l_v_2 < 0.0 && (l_t_2 - l_t_1) > p_percition)
+				{
+					T		l_t = (l_t_1 + l_t_2) * 0.5;
+					T		l_t_val = get_pos_at_i(l_t)[p_component_index] - p_value;
+					T		l_t_err = VF_ABS(l_t_val);
+
+					if (l_t_err == 0)
+					{
+						return l_t;
+					}
+					if (l_t_val * l_v_1 < 0.0)
+					{
+						l_t_2 = l_t;
+						l_v_2 = l_t_val;
+						continue;
+					}
+					l_t_1 = l_t;
+					l_v_1 = l_t_val;
+				}
+				l_start_val = get_pos_at_i(l_t_1)[p_component_index] - p_value;
+				l_start_err = VF_ABS(l_start_val);
+				if (l_start_err < l_param_err)
+				{
+					l_param_res = l_t_1;
+					l_param_err = l_start_err;
+				}
+				l_start		= l_end;
+				l_start_err = l_end_err;
+				l_start_val = l_end_val;
+			}
+			return l_param_res;
 		}
 
 		void		set_container_ptr_1(std::shared_ptr < vufCurveContainer<T, V>> p_ptr)
@@ -459,9 +506,9 @@ namespace vufMath
 		std::shared_ptr< vufCurveContainer<T, V> >	m_blend_func_ptr		= nullptr;
 		T											m_weight = 0;
 		bool										m_use_fcurve = true;
-		bool										m_should_serialize_first	= true;
-		bool										m_should_serialize_second	= true;
-		bool										m_should_serialize_fcurve	= true;
+		bool										m_should_serialize_first	= false;
+		bool										m_should_serialize_second	= false;
+		bool										m_should_serialize_fcurve	= false;
 	};	
 
 #pragma region USING

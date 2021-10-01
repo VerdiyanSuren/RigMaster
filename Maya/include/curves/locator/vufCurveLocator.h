@@ -21,7 +21,7 @@ namespace vufRM
 										M3dView::DisplayStatus status) override;
 		virtual bool            isBounded()		const override;
 		virtual MBoundingBox    boundingBox()	const override;
-
+		virtual MStatus			connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src) override;
 		static  void*			creator();
 		static  MStatus         initialize();
 

@@ -14,7 +14,7 @@ namespace vufRM
 		static  void* creator();
 		static  MStatus	initialize();
 		virtual MStatus	compute(const MPlug& plug, MDataBlock& data) override;
-		virtual MStatus connectionMade(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src) override;
+		//virtual MStatus connectionMade(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src) override;
 		virtual MStatus connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src) override;
 		static const MTypeId	g_id;
 		static const MString	g_type_name;
