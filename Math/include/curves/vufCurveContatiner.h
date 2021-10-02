@@ -9,6 +9,7 @@
 #include <curves/explicit/vufCurveBezierClose.h>
 #include <curves/implicit/vufCurveBlend.h>
 #include <curves/implicit/vufCurveNoise.h>
+#include <curves/implicit/vufCurveSlide.h>
 #include <curves/implicit/vufCurveCompose.h>
 
 #include <curves/rebuildFn/vufCurveRebuildFn.h>
@@ -199,6 +200,11 @@ namespace vufMath
 				if (p_type == vufCurveType::k_compose_curve)
 				{
 					m_curve_ptr = vufCurveCompose<T, V>::create();
+					return true;
+				}
+				if (p_type == vufCurveType::k_slide_curve)
+				{
+					m_curve_ptr = vufCurveSlide<T, V>::create();
 					return true;
 				}
 			}

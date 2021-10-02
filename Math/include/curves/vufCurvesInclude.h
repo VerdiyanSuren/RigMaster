@@ -22,124 +22,93 @@ virtual int				get_curve_category()				const override				\
 	return vufCurveCategory::CATEGORY;													\
 }
 
-
-
-#define VF_MATH_CRV_GATHER_INFO_I_BODY																	\
-/** get information between point in space and point on curve. Return true if point is on curve */		\
-inline bool			gather_info_i( const V<T>& p_point, T p_curve_param, T& p_dist, T& p_dot ) const	\
+//implementation from blend curve
+#define VF_MATH_CRV_DEFINE_CLOSEST_POINTS																\
+virtual V<T>			get_closest_point(	const V<T>&	p_point,										\
+											T			p_start = 0,									\
+											T			p_end = 1,										\
+											uint32_t	p_divisions = 10,								\
+											T p_percition = vufCurve_kTol) const override				\
 {																										\
-	V<T> l_dir = p_point - get_pos_at_i(p_curve_param);													\
-	p_dist = l_dir.length();																			\
-	if (p_dist < VF_MATH_EPSILON)																		\
+	return get_pos_at_i(get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition));	\
+}																										\
+virtual T				get_closest_point_param(const V<T>& p_point,									\
+												T				p_start = 0,							\
+												T				p_end = 1,								\
+												uint32_t		p_divisions = 10,						\
+												T				p_percition = vufCurve_kTol) const override	\
+{																										\
+	return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);				\
+}																										\
+inline T	get_closest_point_param_i(	const V<T>& p_point,											\
+										T			p_start = 0.0,										\
+										T			p_end = 1.0,										\
+										uint32_t	p_divisions = 10,									\
+										T			p_percition = vufCurve_kTol) const					\
+{																										\
+	p_divisions++;																						\
+	T l_interval_step = (p_end - p_start) / (T)p_divisions;												\
+	T		l_start = p_start;																			\
+	V<T>	l_start_pos = get_pos_at_i(l_start) - p_point;												\
+	T		l_dot_start = l_start_pos.dot(get_tangent_at_i(l_start));									\
+	T		l_sign_start = (VF_ABS(l_dot_start)) > VF_MATH_EPSILON ? l_dot_start : 0.0;					\
+	T l_dist_min = l_start_pos.length2();																\
+	T l_param_min = p_start;																			\
+	for (uint32_t i = 1; i <= p_divisions; ++i)															\
 	{																									\
-		p_dot = 0;																						\
-		return true;																					\
+		T		l_end = p_start + (T)i * l_interval_step;												\
+		V<T>	l_end_pos = get_pos_at_i(l_end) - p_point;												\
+		T		l_dot_end = l_end_pos.dot(get_tangent_at_i(l_end));										\
+		T		l_sign_end = (VF_ABS(l_dot_end)) > VF_MATH_EPSILON ? l_dot_end : 0;						\
+		T		l_dist_end = l_end_pos.length2();														\
+																										\
+		if (l_dist_end < l_dist_min)																	\
+		{																								\
+			l_param_min = l_end;																		\
+			l_dist_min = l_dist_end;																	\
+		}																								\
+		T l_t_1 = l_start;																				\
+		T l_t_2 = l_end;																				\
+		T l_s_1 = l_sign_start;																			\
+		T l_s_2 = l_sign_end;																			\
+		while (l_s_1 * l_s_2 < 0.0 && (l_t_2 - l_t_1) > p_percition)									\
+		{																								\
+			T		l_t = (l_t_1 + l_t_2) * 0.5;														\
+			V<T>	l_t_pos = get_pos_at_i(l_t) - p_point;												\
+			T		l_t_dot = l_t_pos.dot(get_tangent_at_i(l_t));										\
+			T		l_t_sign = (VF_ABS(l_t_dot)) > VF_MATH_EPSILON ? l_t_dot : 0.0;						\
+			if (l_t_sign == 0)																			\
+			{																							\
+				T l_t_dist = l_t_pos.length2();															\
+				if (l_t_dist < l_dist_min)																\
+				{																						\
+					l_dist_min = l_t_dist;																\
+					l_param_min = l_t;																	\
+				}																						\
+				break;																					\
+			}																							\
+			if (l_t_sign * l_s_1 < 0.0)																	\
+			{																							\
+				l_t_2 = l_t;																			\
+				l_s_2 = l_t_sign;																		\
+				continue;																				\
+			}																							\
+			l_t_1 = l_t;																				\
+			l_s_1 = l_t_sign;																			\
+		}																								\
+		l_end_pos = get_pos_at_i(l_t_1) - p_point;														\
+		l_dist_end = l_end_pos.length2();																\
+		if (l_dist_end < l_dist_min)																	\
+		{																								\
+			l_param_min = l_t_1;																		\
+			l_dist_min = l_dist_end;																	\
+		}																								\
+																										\
+		l_start = l_end;																				\
+		l_sign_start = l_sign_end;																		\
 	}																									\
-	p_dot = (l_dir * (1. / p_dist)).dot(get_tangent_at_i(p_curve_param).get_normalized());				\
-	return false;																						\
+	return l_param_min;																					\
 }
-
-#define VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY												\
-bool				get_closest_point_param_on_interval_i(	const V<T>& p_point,						\
-															T p_t_1, T p_t_2,							\
-															T p_dist_1, T p_dist_2,						\
-															T& p_res_t, T& p_res_dist, T p_percition = 0.00001) const	\
-	{																									\
-		T l_closest_dist = p_dist_1;																	\
-		T l_closest_t = p_t_1;																			\
-		if (p_dist_2 < p_dist_1)																		\
-		{																								\
-			l_closest_dist = p_dist_2;																	\
-			l_closest_t = p_t_2;																		\
-		}																								\
-		if (p_t_2 - p_t_1 < p_percition)																\
-		{																								\
-			p_res_dist = l_closest_dist;																\
-			p_res_t = l_closest_t;																		\
-			return false;																				\
-		}																								\
-																										\
-		T l_middle_t, l_middle_dist, l_middle_dot;														\
-		l_middle_t = (p_t_1 + p_t_2) * 0.5;																\
-		if (gather_info_i(p_point, l_middle_t, l_middle_dist, l_middle_dot) == true)					\
-		{																								\
-			/* this point is on the curve	*/															\
-			p_res_t = l_middle_t;																		\
-			p_res_dist = l_middle_dist;																	\
-			return true;																				\
-		}																								\
-		if (l_middle_dot < 0)																			\
-		{																								\
-			if (get_closest_point_param_on_interval_i(p_point, p_t_1, l_middle_t,						\
-				p_dist_1, l_middle_dist,																\
-				p_res_t, p_res_dist, p_percition) == true)												\
-			{																							\
-				/* the point is on the curve*/															\
-				return true;																			\
-			}																							\
-			if (l_closest_dist < p_res_dist)															\
-			{																							\
-				p_res_dist = l_closest_dist;															\
-				p_res_t = l_closest_t;																	\
-			}																							\
-			return false;																				\
-		}																								\
-		if (get_closest_point_param_on_interval_i(p_point, l_middle_t, p_t_2,							\
-			l_middle_dist, p_dist_2,																	\
-			p_res_t, p_res_dist, p_percition) == true)													\
-		{																								\
-			/* the point is on the curve*/																\
-			return true;																				\
-		}																								\
-		if (l_closest_dist < p_res_dist)																\
-		{																								\
-			p_res_dist = l_closest_dist;																\
-			p_res_t = l_closest_t;																		\
-		}																								\
-		return false;																					\
-	}
-
-#define VF_MATH_CRV_GET_CLOSEST_PARAM_I																	\
-	T					get_closest_point_param_i(const V<T>& p_point, T p_start, T p_end, uint32_t p_divisions = 10, T p_percition = vufCurve_kTol) const	\
-	{																									\
-		T l_dist_prev, l_dist_next, l_closest_dist, l_closest_t = p_start;								\
-		T l_dot_prev, l_dot_next;																		\
-		T l_prev_t = p_start, l_next_t;																	\
-		if (gather_info_i(p_point, p_start, l_dist_prev, l_dot_prev) == true)							\
-		{																								\
-			/* this point is on the curve */															\
-			return p_start;																				\
-		}																								\
-		l_closest_dist = l_dist_prev;																	\
-																										\
-		T l_interval_step = (p_end - p_start) / (T)p_divisions;											\
-		for (uint32_t i = 1; i <= p_divisions; ++i)														\
-		{																								\
-			l_next_t = p_start + (T)i * l_interval_step;												\
-			if (gather_info_i(p_point, l_next_t, l_dist_next, l_dot_next) == true)						\
-			{																							\
-				/* this point is on the curve */														\
-				return l_next_t;																		\
-			}																							\
-																										\
-			T l_res_t, l_res_dist;																		\
-			if (get_closest_point_param_on_interval_i(p_point, l_prev_t, l_next_t,						\
-				l_dist_prev, l_dist_next,																\
-				l_res_t, l_res_dist, p_percition) == true)												\
-			{																							\
-				/* the point is on the curve */															\
-				return l_res_t;																			\
-			}																							\
-			if (l_res_dist < l_closest_dist)															\
-			{																							\
-				l_closest_dist = l_res_dist;															\
-				l_closest_t = l_res_t;																	\
-			}																							\
-			l_dist_prev = l_dist_next;																	\
-			l_prev_t = l_next_t;																		\
-		}																								\
-		return l_closest_t;																				\
-	}
 
 
 
@@ -233,102 +202,78 @@ virtual bool		rebuild(																			\
 		return true;																					\
 	}
 
-#define VF_MATH_GET_PARAM_COMPONENT																		\
-		virtual T			get_param_by_vector_component(	T			p_value,														\
-															uint32_t	p_component_index = 0/*x by default*/,							\
-															T			p_start = 0,													\
-															T			p_end = 1 /*if p_start == p_end then interval is infinite*/,	\
-															uint32_t	p_divisions = 10,												\
-															T			p_percition = vufCurve_kTol)	const override					\
+#define VF_MATH_DEFINE_PARAM_COMPONENT																		\
+virtual T	get_param_by_vector_component(	T			p_value,										\
+											uint32_t	p_component_index = 0,							\
+											T			p_start = 0,									\
+											T			p_end = 1 ,										\
+											uint32_t	p_divisions = 10,								\
+											T			p_percition = vufCurve_kTol)	const override	\
+{																										\
+	return get_param_by_vector_component_i(p_value, p_component_index, p_start, p_end, p_divisions, p_percition);	\
+}																										\
+inline T	get_param_by_vector_component_i(T			p_value,										\
+											uint32_t	p_component_index = 0,							\
+											T			p_start = 0,									\
+											T			p_end = 1 ,										\
+											uint32_t	p_divisions = 10,								\
+											T			p_percition = vufCurve_kTol)	const			\
+{																										\
+	p_divisions++;																						\
+	T	l_interval_step = (p_end - p_start) / (T)p_divisions;											\
+																										\
+	T	l_start = p_start;																				\
+	T	l_start_val = get_pos_at_i(l_start)[p_component_index] - p_value;								\
+	T	l_start_err = VF_ABS(l_start_val);																\
+																										\
+	T l_param_res = l_start;																			\
+	T l_param_err = l_start_err;																		\
+	for (uint32_t i = 1; i <= p_divisions; ++i)															\
 	{																									\
-		/* To avoid crush we increment p_division.Never divide by zero. */								\
-		p_divisions++;																					\
-		T l_interval_step = (p_end - p_start) / (T)p_divisions;											\
-		T l_res_param = p_start;																		\
-		T l_close_value = get_pos_at_i(l_res_param)[p_component_index];									\
-		T l_err = abs(p_value - l_close_value);															\
-		if (l_err < p_percition)																		\
+		T		l_end = p_start + (T)i * l_interval_step;												\
+		T		l_end_val = get_pos_at_i(l_end)[p_component_index] - p_value;							\
+		T		l_end_err = VF_ABS(l_end_val);															\
+																										\
+		if (l_end_err < l_param_err)																	\
 		{																								\
-			return  l_res_param;																		\
+			l_param_res = l_end;																		\
+			l_param_err = l_end_err;																	\
 		}																								\
-																										\
-		for (uint32_t i = 0; i < p_divisions; ++i)														\
+		T l_t_1 = l_start;																				\
+		T l_t_2 = l_end;																				\
+		T l_v_1 = l_start_val;																			\
+		T l_v_2 = l_end_val;																			\
+		while (l_v_1 * l_v_2 < 0.0 && (l_t_2 - l_t_1) > p_percition)									\
 		{																								\
-			T l_param_1 = p_start + ((T)i) * l_interval_step;											\
-			T l_param_2 = p_start + ((T)(i + 1)) * l_interval_step;										\
-			T l_param_21 = (l_param_1 + l_param_2) * 0.5;												\
+			T		l_t = (l_t_1 + l_t_2) * 0.5;														\
+			T		l_t_val = get_pos_at_i(l_t)[p_component_index] - p_value;							\
+			T		l_t_err = VF_ABS(l_t_val);															\
 																										\
-			T l_x_1 = get_pos_at_i(l_param_1)[p_component_index];										\
-			T l_x_2 = get_pos_at_i(l_param_2)[p_component_index];										\
-			T l_x_21 = get_pos_at_i(l_param_21)[p_component_index];										\
-																										\
-			T l_err_1 = abs(l_x_1 - p_value);															\
-			T l_err_2 = abs(l_x_2 - p_value);															\
-			T l_err_21 = abs(l_x_21 - p_value);															\
-																										\
-			if (l_err_1 < l_err)																		\
+			if (l_t_err == 0)																			\
 			{																							\
-				l_err = l_err_1;																		\
-				l_res_param = l_param_1;																\
+				return l_t;																				\
 			}																							\
-			if (l_err_2 < l_err)																		\
+			if (l_t_val * l_v_1 < 0.0)																	\
 			{																							\
-				l_err = l_err_2;																		\
-				l_res_param = l_param_2;																\
-			}																							\
-			if (l_err_21 < l_err)																		\
-			{																							\
-				l_err = l_err_21;																		\
-				l_res_param = l_param_21;																\
-			}																							\
-																										\
-			if (l_err < p_percition)																	\
-			{																							\
-				return l_res_param;																		\
-			}																							\
-																										\
-			if ((p_value < l_x_1 && p_value < l_x_2) || (l_x_2 < p_value && l_x_1 < p_value))			\
-			{																							\
+				l_t_2 = l_t;																			\
+				l_v_2 = l_t_val;																		\
 				continue;																				\
 			}																							\
-			/*/ check are these point satisfy	 */														\
-			if ((l_x_1 < p_value && p_value < l_x_21) || (l_x_21 < p_value && p_value < l_x_1))			\
-			{																							\
-				return get_param_by_vector_component_i(p_value, p_component_index, l_x_1, l_param_1, l_x_21, l_param_21, p_percition);	\
-			}																							\
-			if ((l_x_21 < p_value && p_value < l_x_2) || (l_x_2 < p_value && p_value < l_x_21))			\
-			{																							\
-				return get_param_by_vector_component_i(p_value, p_component_index, l_x_21, l_param_21, l_x_2, l_param_2, p_percition);	\
-			}																							\
+			l_t_1 = l_t;																				\
+			l_v_1 = l_t_val;																			\
 		}																								\
-		return l_res_param;																				\
-	}																									\
-T					get_param_by_vector_component_i(T			p_value,								\
-													uint32_t	p_component_index = 0/*x by default*/,	\
-													T			p_x_1 = 0,								\
-													T			p_t_1 = 0,								\
-													T			p_x_2 = 1,								\
-													T			p_t_2 = 1,								\
-													T			p_percition = vufCurve_kTol)	const	\
-	{																									\
-		T l_middle_param = (p_t_1 + p_t_2) * 0.5;														\
-		T l_middle_value = get_pos_at_i(l_middle_param)[p_component_index];								\
-		if (abs(l_middle_value - p_value) < p_percition)												\
+		l_start_val = get_pos_at_i(l_t_1)[p_component_index] - p_value;									\
+		l_start_err = VF_ABS(l_start_val);																\
+		if (l_start_err < l_param_err)																	\
 		{																								\
-			return l_middle_param;																		\
+			l_param_res = l_t_1;																		\
+			l_param_err = l_start_err;																	\
 		}																								\
-		if ((p_x_1 < p_value && p_value < l_middle_value) || (l_middle_value < p_value && p_value < p_x_1))									\
-		{																																	\
-			return  get_param_by_vector_component_i(p_value, p_component_index, p_x_1, p_t_1, l_middle_value, l_middle_param, p_percition);	\
-		}																																	\
-		if ((l_middle_value < p_value && p_value < p_x_2) || (p_x_2 < p_value && p_value < l_middle_value))									\
-		{																																	\
-			return get_param_by_vector_component_i(p_value, p_component_index, l_middle_value, l_middle_param, p_x_2, p_t_2, p_percition);	\
-		}																																	\
-		return 0;																															\
-	}
-
-//#define VF_MATH_CRV_GET_CLOSEST_PARAM_I_BODY															\
-
+		l_start = l_end;																				\
+		l_start_err = l_end_err;																		\
+		l_start_val = l_end_val;																		\
+	}																									\
+	return l_param_res;																					\
+}
 
 #endif // !VF_MATH_CRV_INCLUDE_H

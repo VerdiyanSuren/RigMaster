@@ -28,40 +28,8 @@ namespace vufMath
 		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveNoise);
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_noise_curve, k_compound_category);
 		VF_MATH_CRV_REBUILD_CLAMPED;
-		virtual V<T>			get_closest_point(const V<T>&	p_point,
-													T			p_start = 0,
-													T			p_end = 1,
-													uint32_t	p_divisions = 10,
-													T p_percition = vufCurve_kTol) const override
-		{
-			return get_pos_at_i(get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition));
-		}
-
-		virtual T				get_closest_point_param(const V<T>& p_point,
-														T				p_start = 0,
-														T				p_end = 1 /*if p_start == p_end then interval is infinite*/,
-														uint32_t		p_divisions = 10,
-														T				p_percition = vufCurve_kTol) const override
-		{
-			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
-		}
-
-		virtual T				get_param_by_vector_component(	T	p_value,
-																uint32_t	p_component_index = 0/*x by default*/,
-																T			p_start = 0,
-																T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
-																uint32_t	p_divisions = 10,
-																T			p_percition = vufCurve_kTol)	const override
-		{
-			return get_param_by_vector_component_i(p_value, p_component_index, p_start, p_end, p_divisions, p_percition);
-		}
-		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
-		{
-			std::shared_ptr< vufCurveNoise > l_ptr = vufCurveNoise::create();
-			l_ptr->copy_members_from_i(std::static_pointer_cast<vufCurveNoise>(m_this.lock()));
-			return l_ptr;
-		}
-
+		VF_MATH_CRV_DEFINE_CLOSEST_POINTS;
+		VF_MATH_DEFINE_PARAM_COMPONENT;
 		virtual V<T>		get_pos_at(T p_t)										const override
 		{
 			return get_pos_at_i(p_t);
@@ -74,6 +42,12 @@ namespace vufMath
 		{
 			return get_tangent_at_i(p_t).normalize_in_place();
 		}
+		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
+		{
+			std::shared_ptr< vufCurveNoise > l_ptr = vufCurveNoise::create();
+			l_ptr->copy_members_from_i(std::static_pointer_cast<vufCurveNoise>(m_this.lock()));
+			return l_ptr;
+		}
 
 		virtual std::string	to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const override
 		{
@@ -82,18 +56,19 @@ namespace vufMath
 			VF_SET_PRECISION(l_ss, p_precision);
 			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
 
-			l_ss << l_str_offset << "[ Noise Curve: " << typeid(T).name() << ", " << typeid(V).name() << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Time: " << m_time << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Speed " << m_speed << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Amount_x " << m_amount_x << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Amount_y " << m_amount_y << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Amount_z " << m_amount_z << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Scale_x  " << m_scale_x << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Scale_y  " << m_scale_y << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Scale_z  " << m_scale_z << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Offset_x " << m_offset_x << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Offset_y " << m_offset_y << std::endl;
-			l_ss << l_str_offset << l_str_offset << "Offset_z " << m_offset_z << std::endl;
+			l_ss << l_str_offset << "[ Noise Curve: <" << typeid(T).name() << ", " << typeid(V).name() << "> ]" << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Time: " << m_time << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Speed " << m_speed << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Amount_x " << m_amount_x << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Amount_y " << m_amount_y << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Amount_z " << m_amount_z << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Scale_x  " << m_scale_x << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Scale_y  " << m_scale_y << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Scale_z  " << m_scale_z << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Offset_x " << m_offset_x << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Offset_y " << m_offset_y << std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Offset_z " << m_offset_z << std::endl;
+			l_ss << l_str_offset << "____Input Curve: " << (m_container_ptr == nullptr ? "Absent" : m_container_ptr->to_string(p_precision, p_tab_count + 1)) << std::endl;
 			l_ss << std::endl;
 			return l_ss.str();
 		}
@@ -111,7 +86,12 @@ namespace vufMath
 			l_size += sizeof(l_size) + sizeof(m_offset_x);
 			l_size += sizeof(l_size) + sizeof(m_offset_y);
 			l_size += sizeof(l_size) + sizeof(m_offset_z);
-
+			
+			l_size += sizeof(bool);
+			if (m_should_serialize_container == true && m_container_ptr != nullptr)
+			{
+				l_size += m_container_ptr->get_binary_size();
+			}
 			return l_size;
 		}
 		virtual uint64_t	to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const override
@@ -136,6 +116,18 @@ namespace vufMath
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_offset_x, sizeof(m_offset_x));
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_offset_y, sizeof(m_offset_y));
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_offset_z, sizeof(m_offset_z));
+			
+			if (m_container_ptr != nullptr && m_should_serialize_container == true)
+			{
+				bool l_save = true;
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_save, sizeof(l_save));
+				p_offset = m_container_ptr->to_binary(p_buff, p_offset);
+			}
+			else
+			{
+				bool l_save = false;
+				VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_save, sizeof(l_save));
+			}
 
 			return p_offset;
 		}
@@ -159,10 +151,23 @@ namespace vufMath
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset_x, sizeof(m_offset_x));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset_y, sizeof(m_offset_y));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset_z, sizeof(m_offset_z));
+			
+			bool l_load;
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_load, sizeof(l_load));
+			if (l_load == true)
+			{
+				m_should_serialize_container = true;
+				m_container_ptr = vufCurveContainer<T, V>::create();
+				p_offset = m_container_ptr->from_binary(p_buff, p_version, p_offset);
+			}
+			else
+			{
+				m_should_serialize_container = false;
+				m_container_ptr = nullptr;
+			}
 
 			return p_offset;
 		}
-
 		virtual uint64_t	encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const override
 		{
 			return vufCurve<T, V>::encode_to_buff(p_buff, p_offset);
@@ -171,17 +176,6 @@ namespace vufMath
 		{
 			return vufCurve<T, V>::decode_from_buff(p_buff, p_offset);
 		}
-
-		virtual bool			rebuild(std::vector<T>& p_uniform_to_curve_val_v,
-			std::vector<T>& p_curve_to_uniform_val_v,
-			std::vector<T>& p_curve_val_to_length_v,
-			uint32_t					p_divisions = 10,
-			T							p_start = 0 /*interval on which we need rebuild*/,
-			T							p_end = 1) const override
-		{
-			return true;
-		}
-
 
 		virtual std::shared_ptr<vufCurveNoise <T, V >>		as_curve_noise()	const override
 		{ 
@@ -329,6 +323,7 @@ namespace vufMath
 		T m_offset_y	= 0;
 		T m_offset_z	= 0;
 
+		bool										m_should_serialize_container = false;
 		std::shared_ptr< vufCurveContainer<T, V> >	m_container_ptr = nullptr;
 		vufPelinNoise<T> m_noise;
 	};

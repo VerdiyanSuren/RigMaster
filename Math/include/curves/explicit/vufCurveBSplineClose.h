@@ -667,9 +667,6 @@ std::cout << "]" << std::endl;
 		}
 
 
-		// return true if point is on the curve
-		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
-		VF_MATH_CRV_GATHER_INFO_I_BODY;
 		void		copy_members_from_i(std::shared_ptr<vufCurveBSplineClose> p_crv)
 		{
 			vufCurveExplicit<T, V>::copy_members_from_i(p_crv);

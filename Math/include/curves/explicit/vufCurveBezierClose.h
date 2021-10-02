@@ -26,24 +26,8 @@ namespace vufMath
 		// inherited virtual methods from vufCurve class
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_close_bezier_piecewise, k_bezier_category);
 		VF_MATH_CRV_REBUILD_CLAMPED;	
-
-		virtual V<T>			get_closest_point(	const V<T>& p_point,
-													T			p_start = 0,
-													T			p_end = 1,
-													uint32_t	p_divisions = 10,
-													T			p_percition = vufCurve_kTol) const override
-		{
-			return get_pos_at_i(get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition));
-		}
-		virtual T				get_closest_point_param(const V<T>& p_point,
-														T			p_start = 0,
-														T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
-														uint32_t	p_divisions = 10,
-														T			p_percition = vufCurve_kTol) const override
-		{
-			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
-		}
-		VF_MATH_GET_PARAM_COMPONENT;
+		VF_MATH_CRV_DEFINE_CLOSEST_POINTS;
+		VF_MATH_DEFINE_PARAM_COMPONENT;
 
 		virtual V<T>		get_pos_at(T p_t)					const override
 		{
@@ -249,9 +233,6 @@ namespace vufMath
 			return get_tangent_at_i(p_t).normalize_in_place();
 		}
 
-		VF_MATH_CRV_GET_CLOSEST_PARAM_ON_INTERVAL_I_BODY;
-		VF_MATH_CRV_GATHER_INFO_I_BODY;
-		VF_MATH_CRV_GET_CLOSEST_PARAM_I;
 		void		copy_members_from_i(std::shared_ptr<vufCurveBezierClose> p_crv)
 		{
 			vufCurveExplicit<T, V>::copy_members_from_i(p_crv);

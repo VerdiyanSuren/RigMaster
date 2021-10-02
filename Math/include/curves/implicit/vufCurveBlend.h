@@ -98,8 +98,7 @@ namespace vufMath
 		{
 			// To Do 
 			// Implement This
-			uint64_t l_size = 0;
-			l_size += vufCurve<T, V>::get_binary_size();
+			uint64_t l_size = vufCurve<T, V>::get_binary_size();
 			
 			// input first
 			l_size += sizeof(bool);
