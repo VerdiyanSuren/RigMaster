@@ -116,6 +116,65 @@
 	l_wrapp_ptr->set_data(data_var);													\
 }																						\
 
+/**
+* Try to get data from plug
+*/
+#define VF_RM_GET_DATA_FROM_PLUG(WRAPPER_CLASS,DATA_CLASS, PLUG, data_var )				\
+{																						\
+	MObject	l_data_obj;																	\
+	l_status = PLUG.getValue(l_data_obj);												\
+	if (l_status != MS::kSuccess)														\
+	{																					\
+		VF_LOG_ERR("Failed to get value from plug");									\
+	}																					\
+	else																				\
+	{																					\
+		MFnPluginData	l_pd_fn(l_data_obj);											\
+		WRAPPER_CLASS*	l_mpx_data = (WRAPPER_CLASS*)l_pd_fn.constData(&l_status);		\
+		data_var = l_mpx_data == nullptr? nullptr : l_mpx_data->get_data();				\
+	}																					\
+}
+#define VF_RM_GET_INTERNAL_DATA_FROM_PLUG(WRAPPER_CLASS, PLUG, data_var )				\
+{																						\
+	MObject	l_data_obj;																	\
+	l_status = PLUG.getValue(l_data_obj);												\
+	if (l_status != MS::kSuccess)														\
+	{																					\
+		VF_LOG_ERR("Failed to get value from plug");									\
+	}																					\
+	else																				\
+	{																					\
+		MFnPluginData	l_pd_fn(l_data_obj);											\
+		WRAPPER_CLASS*	l_wrapp_ptr = (WRAPPER_CLASS*)l_pd_fn.constData(&l_status);		\
+		auto l_data_var = (l_wrapp_ptr == nullptr ? nullptr : l_wrapp_ptr->get_data());		\
+		data_var		= (l_data_var == nullptr) ? nullptr : l_data_var->m_internal_data;	\
+	}																					\
+}
+/**
+* Try to set data to plug
+*/
+#define VF_RM_SET_DATA_TO_PLUG(WRAPPER_CLASS,DATA_CLASS, PLUG, data_var )				\
+{																						\
+	MFnPluginData l_data_creator;														\
+	MObject l_obj = l_data_creator.create(WRAPPER_CLASS::g_id, &l_status);				\
+	PLUG.setMObject(l_obj);																\
+	WRAPPER_CLASS* l_wrapp_ptr = (WRAPPER_CLASS*)l_data_creator.constData();			\
+	l_wrapp_ptr->set_data(data_var);													\
+}
+
+#define VF_RM_SET_INTERNAL_DATA_TO_PLUG(WRAPPER_CLASS,DATA_CLASS, PLUG, data_var )		\
+{																						\
+	MFnPluginData l_data_creator;														\
+	MObject l_obj = l_data_creator.create(WRAPPER_CLASS::g_id, &l_status);				\
+	WRAPPER_CLASS* l_wrapp_ptr = (WRAPPER_CLASS*)l_data_creator.constData();			\
+	auto l_new_data = std::shared_ptr<DATA_CLASS>(new DATA_CLASS());					\
+	l_new_data->m_internal_data = data_var;												\
+	l_wrapp_ptr->set_data(l_new_data);													\
+	PLUG.setMObject(l_obj);																\
+}
+
+
+
 #define VF_RM_DECLARE_DATA_BODY(CLASS_NAME)														\
 public:																							\
 CLASS_NAME();																					\

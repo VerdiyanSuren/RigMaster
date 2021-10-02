@@ -199,6 +199,7 @@ MStatus	vufCurveGetTransformNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			p_plug == g_res_xform_attr)
 	{
 		//VF_LOG_INFO("COMPUTE TRANSFORM");
+		vuf::vufTimer l_timer("Get transform node compute: ");
 		MMatrix l_parent_matr= p_data.inputValue(g_parent_xform_attr).asMatrix();
 		double l_offset		= p_data.inputValue(g_param_attr).asDouble();
 		double l_pos_param	= p_data.inputValue(g_param_pos_attr).asDouble();

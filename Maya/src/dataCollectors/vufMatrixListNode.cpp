@@ -58,6 +58,7 @@ MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
 	{	
+		vuf::vufTimer l_timer("Matrix collector node compute: ");
 		// Read Transforms and fill matricies
 		MMatrixArray l_matrix_array;
 		MArrayDataHandle l_ah = p_data.inputValue(g_transform_in_attr);

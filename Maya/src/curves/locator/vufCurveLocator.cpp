@@ -81,7 +81,6 @@ MStatus			vufCurveLocator::connectionBroken(const MPlug& p_plug_1, const MPlug& 
 		l_in_data_new->m_internal_data = l_container.get_copy();
 		l_mpx_data->set_data(l_in_data_new);
 		l_plug.setMObject(l_pd_fn.object());
-		std::cout << "made unique" << std::endl;
 	}
 	return MPxLocatorNode::connectionBroken( p_plug_1, p_plug_2, p_as_src );
 }

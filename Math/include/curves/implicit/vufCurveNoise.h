@@ -26,27 +26,41 @@ namespace vufMath
 	public:
 		virtual ~vufCurveNoise() {}
 		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveNoise);
+		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_noise_curve, k_compound_category);
+		VF_MATH_CRV_REBUILD_CLAMPED;
+		virtual V<T>			get_closest_point(const V<T>&	p_point,
+													T			p_start = 0,
+													T			p_end = 1,
+													uint32_t	p_divisions = 10,
+													T p_percition = vufCurve_kTol) const override
+		{
+			return get_pos_at_i(get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition));
+		}
+
+		virtual T				get_closest_point_param(const V<T>& p_point,
+														T				p_start = 0,
+														T				p_end = 1 /*if p_start == p_end then interval is infinite*/,
+														uint32_t		p_divisions = 10,
+														T				p_percition = vufCurve_kTol) const override
+		{
+			return get_closest_point_param_i(p_point, p_start, p_end, p_divisions, p_percition);
+		}
+
+		virtual T				get_param_by_vector_component(	T	p_value,
+																uint32_t	p_component_index = 0/*x by default*/,
+																T			p_start = 0,
+																T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
+																uint32_t	p_divisions = 10,
+																T			p_percition = vufCurve_kTol)	const override
+		{
+			return get_param_by_vector_component_i(p_value, p_component_index, p_start, p_end, p_divisions, p_percition);
+		}
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
 			std::shared_ptr< vufCurveNoise > l_ptr = vufCurveNoise::create();
-
-			l_ptr->m_time		= m_time;
-			l_ptr->m_speed		= m_speed;
-			l_ptr->m_amount_x	= m_amount_x;
-			l_ptr->m_amount_y	= m_amount_y;
-			l_ptr->m_amount_z	= m_amount_z;
-
-			l_ptr->m_scale_x	= m_scale_x;
-			l_ptr->m_scale_y	= m_scale_y;
-			l_ptr->m_scale_z	= m_scale_z;
-
-			l_ptr->m_offset_x = m_offset_x;
-			l_ptr->m_offset_y = m_offset_y;
-			l_ptr->m_offset_z = m_offset_z;
-
+			l_ptr->copy_members_from_i(std::static_pointer_cast<vufCurveNoise>(m_this.lock()));
 			return l_ptr;
 		}
-		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_noise_curve, k_compound_category);
 
 		virtual V<T>		get_pos_at(T p_t)										const override
 		{
@@ -168,33 +182,6 @@ namespace vufMath
 			return true;
 		}
 
-		virtual V<T>			get_closest_point(const V<T>&	p_point,
-													T			p_start = 0,
-													T			p_end = 1,
-													uint32_t	p_divisions = 10,
-													T p_percition = vufCurve_kTol) const override
-		{
-			return V<T>();
-		}
-
-		virtual T				get_closest_point_param(const V<T>& p_point,
-														T				p_start = 0,
-														T				p_end = 1 /*if p_start == p_end then interval is infinite*/,
-														uint32_t		p_divisions = 10,
-														T				p_percition = vufCurve_kTol) const override
-		{
-			return 0;
-		}
-
-		virtual T				get_param_by_vector_component(	T	p_value,
-																uint32_t	p_component_index = 0/*x by default*/,
-																T			p_start = 0,
-																T			p_end = 1 /*if p_start == p_end then interval is infinite*/,
-																uint32_t	p_divisions = 10,
-																T			p_percition = vufCurve_kTol)	const override
-		{
-			return 0;
-		}
 
 		virtual std::shared_ptr<vufCurveNoise <T, V >>		as_curve_noise()	const override
 		{ 
@@ -297,6 +284,32 @@ namespace vufMath
 		inline void set_container_i(std::shared_ptr< vufCurveContainer<T, V> > p_cntnr) 
 		{ 
 			m_container_ptr = p_cntnr;
+		}
+
+
+		void		copy_members_from_i(std::shared_ptr<vufCurveNoise> p_crv)
+		{
+			vufCurve<T, V>::copy_members_from_i(p_crv);
+
+			m_container_ptr = p_crv->m_container_ptr == nullptr ? nullptr : p_crv->m_container_ptr->get_copy();
+
+			m_use_frame_quat	= p_crv->m_use_frame_quat;
+			m_use_frame_scale	= p_crv->m_use_frame_scale;
+
+			m_time		= p_crv->m_time;
+			m_speed		= p_crv->m_speed;
+			m_amount_x	= p_crv->m_amount_x;
+			m_amount_y	= p_crv->m_amount_y;
+			m_amount_z	= p_crv->m_amount_z;
+
+			m_scale_x	= p_crv->m_scale_x;
+			m_scale_y	= p_crv->m_scale_y;
+			m_scale_z	= p_crv->m_scale_z;
+
+			m_offset_x	= p_crv->m_offset_x;
+			m_offset_y	= p_crv->m_offset_y;
+			m_offset_z	= p_crv->m_offset_z;
+
 		}
 
 	private:
