@@ -411,11 +411,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\explicit\vufCurveBSplineClose.h" />
+    <ClInclude Include="include\curves\explicit\vufCurveBSplineOpen.h" />
     <ClInclude Include="include\curves\explicit\vufCurveBezierClose.h" />
     <ClInclude Include="include\curves\explicit\vufCurveBezierOpen.h" />
-    <ClInclude Include="include\curves\explicit\vufCurveBSplineClose.h" />
     <ClInclude Include="include\curves\explicit\vufCurveExplicit.h" />
-    <ClInclude Include="include\curves\explicit\vufCurveBSplineOpen.h" />
     <ClInclude Include="include\curves\implicit\vufCurveBlend.h" />
     <ClInclude Include="include\curves\implicit\vufCurveCompose.h" />
     <ClInclude Include="include\curves\implicit\vufCurveImplicit.h" />
@@ -437,7 +437,6 @@
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleParamFn.h" />
     <ClInclude Include="include\curves\vufCurve.h" />
     <ClInclude Include="include\curves\vufCurveContatiner.h" />
-    <ClInclude Include="include\curves\vufCurveSlide.h" />
     <ClInclude Include="include\curves\vufCurvesInclude.h" />
     <ClInclude Include="include\math\vufMatrix.h" />
     <ClInclude Include="include\math\vufPolinom.h" />

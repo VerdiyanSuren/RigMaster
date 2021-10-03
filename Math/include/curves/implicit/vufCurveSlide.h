@@ -56,6 +56,7 @@ namespace vufMath
 
 			l_ss << l_str_offset << "[ Slide Curve: <" << typeid(T).name() << ", " << typeid(V).name() << "> ]" << std::endl;
 			l_ss << l_str_offset << l_str_offset << "____Hardness:     " << m_hardness		<< std::endl;
+			l_ss << l_str_offset << l_str_offset << "____Offset:       " << m_offset		<< std::endl;
 			l_ss << l_str_offset << l_str_offset << "____Start Param:  " << m_start_value	<< std::endl;
 			l_ss << l_str_offset << l_str_offset << "____Start Weight: " << m_start_weight	<< std::endl;
 			l_ss << l_str_offset << l_str_offset << "____End Param:    " << m_end_value		<< std::endl;
@@ -70,9 +71,12 @@ namespace vufMath
 		{
 			uint64_t l_size = vufCurve<T, V>::get_binary_size();
 			l_size += sizeof(l_size) + sizeof(m_hardness);
+			l_size += sizeof(l_size) + sizeof(m_offset);
 			l_size += sizeof(l_size) + sizeof(m_start_value);
+			l_size += sizeof(l_size) + sizeof(m_start_res);
 			l_size += sizeof(l_size) + sizeof(m_start_weight);
 			l_size += sizeof(l_size) + sizeof(m_end_value);
+			l_size += sizeof(l_size) + sizeof(m_end_res);
 			l_size += sizeof(l_size) + sizeof(m_end_weight);
 			l_size += sizeof(l_size) + sizeof(m_length);
 			l_size += sizeof(l_size) + sizeof(m_use_length);
@@ -95,9 +99,12 @@ namespace vufMath
 			//------------------------------------------------------
 			p_offset = vufCurve<T, V>::to_binary(p_buff, p_offset);
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_hardness,		sizeof(m_hardness));
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_offset,		sizeof(m_offset));
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_start_value,	sizeof(m_start_value));
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_start_res,	sizeof(m_start_res));
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_start_weight, sizeof(m_start_weight));
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_end_value,	sizeof(m_end_value));
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_end_res,		sizeof(m_end_res));
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_end_weight,	sizeof(m_end_weight));
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_length,		sizeof(m_length));
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_use_length,	sizeof(m_use_length));
@@ -126,9 +133,12 @@ namespace vufMath
 				return 0;
 			};
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_hardness,		sizeof(m_hardness));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_offset,		sizeof(m_offset));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_start_value,	sizeof(m_start_value));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_start_res,	sizeof(m_start_res));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_start_weight, sizeof(m_start_weight));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_end_value,	sizeof(m_end_value));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_end_res,		sizeof(m_end_res));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_end_weight,	sizeof(m_end_weight));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_length,		sizeof(m_length));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_use_length,	sizeof(m_use_length));
@@ -163,7 +173,7 @@ namespace vufMath
 			return std::static_pointer_cast<vufCurveSlide<T, V>>(vufCurveSlide<T, V>::m_this.lock());
 		}
 
-		inline void update()
+		inline void		update()
 		{
 
 		}
@@ -193,7 +203,8 @@ namespace vufMath
 		void			make_selializable_input(bool p_val) { m_should_serialize_container = p_val; }
 		bool			is_serializable_input() const { return m_should_serialize_container; }
 
-		inline uint32_t get_hardness()		const { return m_hardness; }
+		inline T		get_hardness()		const { return m_hardness; }
+		inline T		get_offset()		const { return m_offset; }
 		inline T		get_start_param()	const { return m_start_value; }
 		inline T		get_start_weight()  const { return m_start_value; }
 		inline T		get_end_param()		const { return m_end_value; }
@@ -205,7 +216,8 @@ namespace vufMath
 			return m_container_ptr;
 		}
 
-		inline void set_hardness(uint32_t p_val)	{ m_hardness = p_val; }
+		inline void set_hardness(T p_val)	{ m_hardness = p_val; }
+		inline void set_offset(T p_val)				{ m_offset = p_val; }
 		inline void set_start_param(T p_val)		{ m_start_value = p_val; }
 		inline void set_start_weight(T p_val)		{ m_start_value = p_val; }
 		inline void set_end_param(T p_val)			{ m_end_value = p_val; }
@@ -214,11 +226,10 @@ namespace vufMath
 		inline void set_use_lenght(bool p_val)		{ m_use_length = p_val; }
 		void		set_container_ptr(std::shared_ptr < vufCurveContainer<T, V>> p_ptr)
 		{
-			m_should_serialize_container = p_ptr;
-			vufCurve<T, V>::m_valid = m_container_ptr != nullptr && m_container_ptr->is_valid();
+			m_container_ptr = p_ptr;
 		}
 	private:
-		uint32_t m_hardness	= 10;
+		T m_hardness	= 10;
 		T m_start_value = 0.0;
 		T m_start_res	= 0.0;
 		T m_start_weight = 1.0;
@@ -227,7 +238,7 @@ namespace vufMath
 		T m_end_weight	= 1.0;
 		T m_length		= 1;
 		T m_use_length	= true;
-
+		T m_offset =	.0;
 		bool										m_should_serialize_container = false;
 		std::shared_ptr< vufCurveContainer<T, V> >	m_container_ptr = nullptr;
 

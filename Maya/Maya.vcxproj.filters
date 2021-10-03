@@ -338,6 +338,9 @@
     <ClCompile Include="src\curves\vufCurveNullNode.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>
+    <ClCompile Include="src\curves\vufCurveSlideNode.cpp">
+      <Filter>src\curves</Filter>
+    </ClCompile>
     <ClCompile Include="src\curves\vufCurveSwitch.cpp">
       <Filter>src\curves</Filter>
     </ClCompile>

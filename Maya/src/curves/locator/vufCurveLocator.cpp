@@ -20,6 +20,9 @@ MObject vufCurveLocator::g_color_start_attr;
 MObject vufCurveLocator::g_color_end_attr;
 MObject vufCurveLocator::g_draw_start_attr;
 MObject vufCurveLocator::g_draw_end_attr;
+MObject vufCurveLocator::g_color_tngnt_attr;
+MObject vufCurveLocator::g_color_nrml_attr;
+MObject vufCurveLocator::g_draw_width_arrt;
 MObject vufCurveLocator::g_draw_tangents_attr;
 MObject vufCurveLocator::g_draw_normals_attr;
 MObject vufCurveLocator::g_division_attr;
@@ -109,6 +112,20 @@ MStatus			vufCurveLocator::initialize()
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_numeric_attr_fn.setDefault(0.f, 1.f, 0.f));
 	CHECK_MSTATUS(l_numeric_attr_fn.setStorable(true));
+	// tangent color
+	g_color_tngnt_attr = l_numeric_attr_fn.createColor("tangentColor", "tc", &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_numeric_attr_fn.setDefault(1.f, 0.f, 0.f));
+	CHECK_MSTATUS(l_numeric_attr_fn.setStorable(true));
+	// normal color
+	g_color_nrml_attr = l_numeric_attr_fn.createColor("noramlColor", "nc", &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_numeric_attr_fn.setDefault(0.f, 1.f, 0.f));
+	CHECK_MSTATUS(l_numeric_attr_fn.setStorable(true));
+	//width
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_draw_width_arrt, "width", "width", kDouble, 1.0);
+	l_numeric_attr_fn.setMin(0.1);
+	l_numeric_attr_fn.setDefault(1.);
 	// draw tangents
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_draw_tangents_attr, "tangents", "t", kBoolean, false);
 	l_numeric_attr_fn.setDefault(1.0);
@@ -131,6 +148,9 @@ MStatus			vufCurveLocator::initialize()
 	// add atributes
 	l_status = addAttribute(g_color_start_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_color_end_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_color_tngnt_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_color_nrml_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_draw_width_arrt);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_draw_start_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_draw_end_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_draw_tangents_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -166,7 +186,7 @@ MBoundingBox		vufCurveLocatorDrawOverride::boundingBox(const MDagPath& p_obj_pat
 }
 bool				vufCurveLocatorDrawOverride::disableInternalBoundingBoxDraw() const
 {
-	return false;
+	return true;
 }
 MUserData*			vufCurveLocatorDrawOverride::prepareForDraw(	const MDagPath& p_obj_path,
 																	const MDagPath& p_camera_path,
@@ -201,29 +221,60 @@ MUserData*			vufCurveLocatorDrawOverride::prepareForDraw(	const MDagPath& p_obj_
 	auto l_data_ptr = l_in_data_wrap_ptr->get_data();
 	l_locator_data_ptr->m_curve_container_ptr = l_data_ptr == nullptr ? nullptr: l_data_ptr->m_internal_data;
 
+	MHWRender::DisplayStatus ds = MHWRender::MGeometryUtilities::displayStatus(p_obj_path);
 	// read other attibutes
 	MPlug	l_color_start_plug(	l_this_node, vufCurveLocator::g_color_start_attr);
 	MPlug	l_color_end_plug(	l_this_node, vufCurveLocator::g_color_end_attr);
+	MPlug	l_color_tngnt_plug( l_this_node, vufCurveLocator::g_color_tngnt_attr);
+	MPlug	l_color_nrml_plug(	l_this_node, vufCurveLocator::g_color_nrml_attr);
+	MPlug	l_width_plug(		l_this_node, vufCurveLocator::g_draw_width_arrt);
 	MPlug	l_param_start_plug(	l_this_node, vufCurveLocator::g_draw_start_attr);
 	MPlug	l_param_end_plug(	l_this_node, vufCurveLocator::g_draw_end_attr);
 	MPlug	l_tangent_plug(		l_this_node, vufCurveLocator::g_draw_tangents_attr);
 	MPlug	l_normal_plug(		l_this_node, vufCurveLocator::g_draw_normals_attr);
 	MPlug	l_division_plug(	l_this_node, vufCurveLocator::g_division_attr);
+	if (ds == MHWRender::DisplayStatus::kActive || ds == MHWRender::DisplayStatus::kLead)
+	{
+		l_locator_data_ptr->m_color_start.r = 1.0f;
+		l_locator_data_ptr->m_color_start.g = 1.0f;
+		l_locator_data_ptr->m_color_start.b = 1.0f;
 
-	l_color_start_plug.child(0).getValue(l_locator_data_ptr->m_color_start.r);
-	l_color_start_plug.child(1).getValue(l_locator_data_ptr->m_color_start.g);
-	l_color_start_plug.child(2).getValue(l_locator_data_ptr->m_color_start.b);
+		l_locator_data_ptr->m_color_end.r = 1.0f;
+		l_locator_data_ptr->m_color_end.g = 1.0f;
+		l_locator_data_ptr->m_color_end.b = 1.0f;
 
-	l_color_end_plug.child(0).getValue(l_locator_data_ptr->m_color_end.r);
-	l_color_end_plug.child(1).getValue(l_locator_data_ptr->m_color_end.g);
-	l_color_end_plug.child(2).getValue(l_locator_data_ptr->m_color_end.b);
+		l_locator_data_ptr->m_color_tngnt.r = 1.0f;
+		l_locator_data_ptr->m_color_tngnt.g = 1.0f;
+		l_locator_data_ptr->m_color_tngnt.b = 1.0f;
 
+		l_locator_data_ptr->m_color_normal.r = 1.0f;
+		l_locator_data_ptr->m_color_normal.g = 1.0f;
+		l_locator_data_ptr->m_color_normal.b = 1.0f;
+	}
+	else
+	{
+		l_color_start_plug.child(0).getValue(l_locator_data_ptr->m_color_start.r);
+		l_color_start_plug.child(1).getValue(l_locator_data_ptr->m_color_start.g);
+		l_color_start_plug.child(2).getValue(l_locator_data_ptr->m_color_start.b);
+
+		l_color_end_plug.child(0).getValue(l_locator_data_ptr->m_color_end.r);
+		l_color_end_plug.child(1).getValue(l_locator_data_ptr->m_color_end.g);
+		l_color_end_plug.child(2).getValue(l_locator_data_ptr->m_color_end.b);
+
+		l_color_tngnt_plug.child(0).getValue(l_locator_data_ptr->m_color_tngnt.r);
+		l_color_tngnt_plug.child(1).getValue(l_locator_data_ptr->m_color_tngnt.g);
+		l_color_tngnt_plug.child(2).getValue(l_locator_data_ptr->m_color_tngnt.b);
+
+		l_color_nrml_plug.child(0).getValue(l_locator_data_ptr->m_color_normal.r);
+		l_color_nrml_plug.child(1).getValue(l_locator_data_ptr->m_color_normal.g);
+		l_color_nrml_plug.child(2).getValue(l_locator_data_ptr->m_color_normal.b);
+	}
+	l_width_plug.getValue(		l_locator_data_ptr->m_width);
 	l_param_start_plug.getValue(l_locator_data_ptr->m_start_param);
 	l_param_end_plug.getValue(	l_locator_data_ptr->m_end_param);
 	l_tangent_plug.getValue(	l_locator_data_ptr->m_tangent);
 	l_normal_plug.getValue(		l_locator_data_ptr->m_normal);
 	l_division_plug.getValue(	l_locator_data_ptr->m_division);
-
 
 	return p_old_data;
 }
@@ -242,10 +293,11 @@ void				vufCurveLocatorDrawOverride::addUIDrawables(	const MDagPath&					p_obj_p
 	{
 		return;
 	}
-	//p_draw_manager.beginDrawable();
+	p_draw_manager.beginDrawable();
 	p_draw_manager.beginDrawInXray();
+	p_draw_manager.setDepthPriority(5);
 
-	p_draw_manager.setColor(MColor(1.0, .0, .0));
+	p_draw_manager.setLineWidth((float)(l_data->m_width));
 	double	l_step = (l_data->m_end_param - l_data->m_start_param) / (double)l_data->m_division;
 	vufVector_4d	l_start = l_data->m_curve_container_ptr->get_pos_at(0.0 );
 	MPoint l_0(l_start.x, l_start.y, l_start.z);
@@ -264,35 +316,36 @@ void				vufCurveLocatorDrawOverride::addUIDrawables(	const MDagPath&					p_obj_p
 		float l_w_1 = (float)i / (float)l_data->m_division;
 		float l_w_2 = 1.0f - (float)i / (float)l_data->m_division;
 		p_draw_manager.setColor(l_data->m_color_start * l_w_1 + l_data->m_color_end * l_w_2);
-		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
+		p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), l_data->m_width * 0.05, true);
 		p_draw_manager.line( l_0,l_1);
 		//p_draw_manager.sphere(MPoint(l_0.x, l_0.y, l_0.z), 0.05, true);
 	}
 	if (l_data->m_tangent == true)
 	{
+		p_draw_manager.setColor(l_data->m_color_tngnt);
 		for (int i = 0; i <= l_data->m_division; ++i)
 		{
 			auto l_pos = l_data->m_curve_container_ptr->get_pos_at(			l_data->m_start_param + l_step * ((double)i));
 			auto l_tangent = l_data->m_curve_container_ptr->get_tangent_at(	l_data->m_start_param + l_step * ((double)i));
-			l_tangent.normalize_in_place();
-			p_draw_manager.setColor(MColor(1.0f, .0f, .0f));
+			l_tangent.normalize_in_place();			
 			p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_tangent))));
 		}
 	}
 	if (l_data->m_normal == true)
 	{
+		p_draw_manager.setColor(l_data->m_color_normal);
 		for (int i = 0; i <= l_data->m_division; ++i)
 		{
 			auto l_pos	= l_data->m_curve_container_ptr->get_pos_at(		l_data->m_start_param + l_step * ((double)i));
 			auto l_quat = l_data->m_curve_container_ptr->get_quaternion_at(	l_data->m_start_param + l_step * ((double)i));
 			vufMatrix_4d l_matr = vufMatrix_4d();
 			l_matr.set_quaternion(l_quat);
-			auto l_n = l_matr.get_axis_y_4();
-			p_draw_manager.setColor(MColor(0.0f, 1.0f, .0f));
+			auto l_n = l_matr.get_axis_y_4();			
 			p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_pos + l_n))));
 		}
 	}
+	
 	p_draw_manager.endDrawInXray();
-	//p_draw_manager.endDrawable();
+	p_draw_manager.endDrawable();
 }
 #pragma endregion QUAT_CURVE_LOCATOR_OVERRIDE

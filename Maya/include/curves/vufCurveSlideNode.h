@@ -20,9 +20,16 @@ namespace vufRM
 		static const MString	g_type_name;
 		//attributes
 		static MObject	g_enable_attr;
-		//static MObject	g_operator_attr;
-		//static MObject	g_weight_a_attr;
-		//static MObject	g_weight_b_attr;
+		static MObject	g_offset_attr;
+
+		static MObject	g_use_length_attr;
+		static MObject	g_length_attr;
+		static MObject	g_hardness_attr;
+
+		static MObject	g_start_attr;
+		static MObject	g_start_weight_attr;
+		static MObject	g_end_attr;
+		static MObject	g_end_weight_attr;
 
 		static MObject	g_data_in_attr;
 		static MObject	g_data_out_attr;

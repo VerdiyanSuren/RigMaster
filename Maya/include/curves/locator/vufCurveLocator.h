@@ -31,6 +31,9 @@ namespace vufRM
 		// attributes
 		static MObject g_color_start_attr;
 		static MObject g_color_end_attr;
+		static MObject g_color_tngnt_attr;
+		static MObject g_color_nrml_attr;
+		static MObject g_draw_width_arrt;
 		static MObject g_draw_start_attr;
 		static MObject g_draw_end_attr;
 		static MObject g_draw_tangents_attr;
@@ -72,6 +75,9 @@ namespace vufRM
 		virtual ~vufCurveLocatorData() { /*std::cout << "MUserData Destructor" << std::endl;*/ }
 		MColor		m_color_start;
 		MColor		m_color_end;
+		MColor		m_color_tngnt;
+		MColor		m_color_normal;
+		double		m_width;
 		double		m_start_param;
 		double		m_end_param;
 		bool		m_tangent;

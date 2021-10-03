@@ -90,10 +90,10 @@ namespace vufMath
 		{
 			return get_category() & p_category;
 		}
-		// return -1 if length could be easily calculated. Actual for math curves
 		virtual vufCurveType	get_curve_type()							const = 0;
 		virtual int				get_curve_category()						const = 0;
 		/* if curve can easily compute length then compute else return -1  */
+		// Actual for math curves
 		virtual T				get_length(T p_start,T p_end) const 
 		{ 
 			return -1; 

@@ -18,7 +18,8 @@ MObject	vufCurveBlendNode::g_use_fcurve_attr;
 MObject	vufCurveBlendNode::g_fcurve_attr;
 MObject	vufCurveBlendNode::g_weight_attr;
 MObject	vufCurveBlendNode::g_data_out_attr;
-vufCurveBlendNode::vufCurveBlendNode()
+
+vufCurveBlendNode::vufCurveBlendNode():MPxNode()
 {
 	m_gen_id = ++g_unique_id;
 }

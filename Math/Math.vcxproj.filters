@@ -48,19 +48,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\curves\explicit\vufCurveBSplineClose.h">
+      <Filter>include\curves\explicit</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\explicit\vufCurveBSplineOpen.h">
+      <Filter>include\curves\explicit</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\explicit\vufCurveBezierClose.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\explicit\vufCurveBezierOpen.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>
-    <ClInclude Include="include\curves\explicit\vufCurveBSplineClose.h">
-      <Filter>include\curves\explicit</Filter>
-    </ClInclude>
     <ClInclude Include="include\curves\explicit\vufCurveExplicit.h">
-      <Filter>include\curves\explicit</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\explicit\vufCurveBSplineOpen.h">
       <Filter>include\curves\explicit</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\implicit\vufCurveBlend.h">
@@ -124,9 +124,6 @@
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurveContatiner.h">
-      <Filter>include\curves</Filter>
-    </ClInclude>
-    <ClInclude Include="include\curves\vufCurveSlide.h">
       <Filter>include\curves</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\vufCurvesInclude.h">

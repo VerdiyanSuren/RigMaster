@@ -537,6 +537,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClCompile Include="src\curves\vufCurveFromMayaNode.cpp" />
     <ClCompile Include="src\curves\vufCurveNoiseNode.cpp" />
     <ClCompile Include="src\curves\vufCurveNullNode.cpp" />
+    <ClCompile Include="src\curves\vufCurveSlideNode.cpp" />
     <ClCompile Include="src\curves\vufCurveSwitch.cpp" />
     <ClCompile Include="src\curves\vufCurveToMayaNode.cpp" />
     <ClCompile Include="src\data\vufCurveQuatData.cpp" />

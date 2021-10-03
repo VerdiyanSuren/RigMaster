@@ -24,6 +24,7 @@
 #include <curves/vufCurveBlendNode.h>
 #include <curves/vufCurveBezierNode.h>
 #include <curves/vufCurveNoiseNode.h>
+#include <curves/vufCurveSlideNode.h>
 #include <curves/vufCurveComposeNode.h>
 #include <curves/vufCurveSwitch.h>
 
@@ -71,19 +72,20 @@ const MTypeId	vufFromMayaCurveNode::		g_id(0x298530);	const MString	vufFromMayaC
 const MTypeId	vufCurveToMayaNode::		g_id(0x298630);	const MString	vufCurveToMayaNode::		g_type_name("vufCurveToMaya");
 const MTypeId	vufCurveBSplineNode::		g_id(0x298730);	const MString	vufCurveBSplineNode::		g_type_name("vufCurveBSpline");
 const MTypeId	vufCurveBlendNode::			g_id(0x298830);	const MString	vufCurveBlendNode::			g_type_name("vufCurveBlend");
+const MTypeId	vufCurveSlideNode::			g_id(0x298930);	const MString	vufCurveSlideNode::			g_type_name("vufCurveSlide");
 
-const MTypeId	vufCurveNullNode::			g_id(0x298930);	const MString	vufCurveNullNode::			g_type_name("vufCurveNull");
-const MTypeId	vufCurveGetTransformNode::	g_id(0x299030);	const MString	vufCurveGetTransformNode::	g_type_name("vufCurveGetXForm");
-const MTypeId	vufCurveClosestParamNode::	g_id(0x299130);	const MString	vufCurveClosestParamNode::	g_type_name("vufCurveClosestParam");
-const MTypeId	vufCurveQuatCloseNode::		g_id(0x299230);	const MString	vufCurveQuatCloseNode::		g_type_name("vufCurveRotateClosest");
-const MTypeId	vufCurveQuatFrameNode::		g_id(0x299330);	const MString	vufCurveQuatFrameNode::		g_type_name("vufCurveRotateFrame");
-const MTypeId	vufCurveQuat2EndsNode::		g_id(0x299430);	const MString	vufCurveQuat2EndsNode::		g_type_name("vufCurveRotate2Ends");
-const MTypeId	vufCurveQuatParamNode::		g_id(0x299530);	const MString	vufCurveQuatParamNode::		g_type_name("vufCurveRotateParams");
-const MTypeId	vufCurveNoiseNode::			g_id(0x299630);	const MString	vufCurveNoiseNode::			g_type_name("vufCurveNoise");
-const MTypeId	vufCurveComposeNode::		g_id(0x299730);	const MString	vufCurveComposeNode::		g_type_name("vufCurveCompose");
-const MTypeId	vufCurveBezierNode::		g_id(0x299830);	const MString	vufCurveBezierNode::		g_type_name("vufCurveBezier");
-const MTypeId	vufCurveSwitch::			g_id(0x299930);	const MString	vufCurveSwitch::			g_type_name("vufCurveSwitch");
-const MTypeId	vufCurveComponentParamNode::g_id(0x300030);	const MString	vufCurveComponentParamNode::g_type_name("vufCurveCompomentParam");
+const MTypeId	vufCurveNullNode::			g_id(0x299030);	const MString	vufCurveNullNode::			g_type_name("vufCurveNull");
+const MTypeId	vufCurveGetTransformNode::	g_id(0x299130);	const MString	vufCurveGetTransformNode::	g_type_name("vufCurveGetXForm");
+const MTypeId	vufCurveClosestParamNode::	g_id(0x299230);	const MString	vufCurveClosestParamNode::	g_type_name("vufCurveClosestParam");
+const MTypeId	vufCurveQuatCloseNode::		g_id(0x299330);	const MString	vufCurveQuatCloseNode::		g_type_name("vufCurveRotateClosest");
+const MTypeId	vufCurveQuatFrameNode::		g_id(0x299430);	const MString	vufCurveQuatFrameNode::		g_type_name("vufCurveRotateFrame");
+const MTypeId	vufCurveQuat2EndsNode::		g_id(0x299530);	const MString	vufCurveQuat2EndsNode::		g_type_name("vufCurveRotate2Ends");
+const MTypeId	vufCurveQuatParamNode::		g_id(0x299630);	const MString	vufCurveQuatParamNode::		g_type_name("vufCurveRotateParams");
+const MTypeId	vufCurveNoiseNode::			g_id(0x299730);	const MString	vufCurveNoiseNode::			g_type_name("vufCurveNoise");
+const MTypeId	vufCurveComposeNode::		g_id(0x299830);	const MString	vufCurveComposeNode::		g_type_name("vufCurveCompose");
+const MTypeId	vufCurveBezierNode::		g_id(0x299930);	const MString	vufCurveBezierNode::		g_type_name("vufCurveBezier");
+const MTypeId	vufCurveSwitch::			g_id(0x300030);	const MString	vufCurveSwitch::			g_type_name("vufCurveSwitch");
+const MTypeId	vufCurveComponentParamNode::g_id(0x300130);	const MString	vufCurveComponentParamNode::g_type_name("vufCurveCompomentParam");
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
 VF_DEFINE_CUSTOM_LOGGER(vufLogMaya);
@@ -119,6 +121,7 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufCurveBSplineNode);
 	VF_REGISTER_NODE(vufCurveBezierNode);
 	VF_REGISTER_NODE(vufCurveBlendNode);
+	VF_REGISTER_NODE(vufCurveSlideNode);
 	VF_REGISTER_NODE(vufCurveNoiseNode);
 	VF_REGISTER_NODE(vufCurveComposeNode);
 	VF_REGISTER_NODE(vufCurveNullNode);
@@ -165,6 +168,7 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufCurveBSplineNode);
 	VF_DEREGISTER_NODE(vufCurveBezierNode);
 	VF_DEREGISTER_NODE(vufCurveBlendNode);
+	VF_DEREGISTER_NODE(vufCurveSlideNode);
 	VF_DEREGISTER_NODE(vufCurveNoiseNode);
 	VF_DEREGISTER_NODE(vufCurveComposeNode);
 	VF_DEREGISTER_NODE(vufCurveNullNode);
