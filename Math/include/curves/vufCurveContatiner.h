@@ -383,15 +383,27 @@ namespace vufMath
 
 
 		// rebuild interface
-		void rebuild()
+		void	rebuild()
 		{
 			if (m_rebuild_fn != nullptr && m_curve_ptr != nullptr)
 			{
 				m_rebuild_fn->rebuild(*m_curve_ptr);
 			}
 		}
+		T		get_length() const
+		{
+			if (m_curve_ptr == nullptr)
+			{
+				return -1.0;
+			}
+			if (m_rebuild_fn != nullptr)
+			{
+				return m_rebuild_fn->get_length();
+			}
+			return m_curve_ptr->get_length();
+		}
 		// quaternion intrerface
-		bool	compute_bind_params(uint32_t p_divisions = 10, T p_percition = 0.00001)
+		bool	compute_bind_params(uint32_t p_divisions = 10, T p_percition = vufCurve_kTol)
 		{
 			if (m_quaternion_fn != nullptr)
 			{

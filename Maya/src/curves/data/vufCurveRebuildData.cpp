@@ -24,6 +24,7 @@ MStatus 	vufCurveRebuildData::readASCII(const MArgList& p_args, unsigned int& p_
 		std::string l_str = vufMayaUtils::mstr_2_str(l_mstr);
 		std::vector<char> l_buff(l_str.begin(), l_str.end());
 		m_internal_data->decode_from_buff(l_buff);
+		return MS::kSuccess;
 	}
 	return MS::kSuccess;
 }
@@ -56,6 +57,9 @@ MStatus 	vufCurveRebuildData::writeASCII(std::ostream& p_out)
 		p_out << l_type << std::endl;
 		return MS::kSuccess;
 	}
+	int l_type = (int)m_internal_data->get_type();
+	p_out << l_type << std::endl;
+	
 	std::vector<char> l_buff;
 	m_internal_data->encode_to_buff(l_buff);
 	int l_size = (int)l_buff.size();

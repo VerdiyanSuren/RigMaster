@@ -110,91 +110,139 @@ inline T	get_closest_point_param_i(	const V<T>& p_point,											\
 	return l_param_min;																					\
 }
 
-
-
-#define VF_MATH_CRV_REBUILD_CLAMPED																		\
-virtual bool		rebuild(																			\
-								std::vector<T>& p_uniform_to_curve_val_v,								\
+#pragma region CURVE_REBUILD_MACROSES
+#define VF_MATH_CRV_REBUILD																				\
+virtual bool		rebuild(	std::vector<T>& p_uniform_to_curve_val_v,								\
 								std::vector<T>& p_curve_to_uniform_val_v,								\
 								std::vector<T>& p_curve_val_to_length_v,								\
-								uint32_t		p_division_count = 10,									\
-								T				p_start = 0 /*interval on which we need rebuild*/,		\
-								T				p_end = 1) const override								\
-	{																									\
-		p_start = VF_CLAMP(0.0, 1.0, p_start);															\
-		p_end = VF_CLAMP(0.0, 1.0, p_end);																\
-		if (m_valid == false || abs(p_end - p_start) < vufCurve_kTol)									\
+								uint32_t		p_division_count = 10) const override					\
+{																										\
+		if (m_valid == false)																			\
 		{																								\
 			return false;																				\
 		}																								\
-		uint32_t	l_total_interval_count = p_division_count + 1;										\
-		T			l_interval_length = 0;																\
-		T			l_step = (p_end - p_start) / (T)l_total_interval_count;								\
-		if (p_uniform_to_curve_val_v.size() != l_total_interval_count + 1)								\
+		uint32_t	l_global_div = (p_division_count + 1);												\
+		T			l_curve_length = 0;																	\
+		if (p_uniform_to_curve_val_v.size() != l_global_div + 1)										\
 		{																								\
-			p_uniform_to_curve_val_v.resize(l_total_interval_count + 1);								\
-			p_curve_to_uniform_val_v.resize(l_total_interval_count + 1);								\
-			p_curve_val_to_length_v.resize(l_total_interval_count + 1);									\
+			p_uniform_to_curve_val_v.resize(l_global_div + 1);											\
+			p_curve_to_uniform_val_v.resize(l_global_div + 1);											\
+			p_curve_val_to_length_v.resize(l_global_div + 1);											\
 		}																								\
-		V<T> l_vec_prev = get_pos_at_i(p_start);														\
-		p_uniform_to_curve_val_v[0] = p_start;															\
-		p_curve_to_uniform_val_v[0] = p_start;															\
-		p_uniform_to_curve_val_v.back() = p_end;														\
-		p_curve_to_uniform_val_v.back() = p_end;														\
+		V<T> l_vec_prev = get_pos_at_i(0.0);															\
+		p_uniform_to_curve_val_v[0] = 0.0;																\
+		p_curve_to_uniform_val_v[0] = 0.0;																\
+		p_uniform_to_curve_val_v.back() = 1.0;															\
+		p_curve_to_uniform_val_v.back() = 1.0;															\
 		p_curve_val_to_length_v[0] = 0;																	\
-		/* Compute curve length until sample point */													\
-		for (uint64_t i = 1; i < l_total_interval_count + 1; ++i)										\
+																										\
+		/* Compute curve length for each sample point*/													\
+		T l_step = 1. / (T)l_global_div;																\
+		for (uint64_t i = 1; i < l_global_div + 1; ++i)													\
 		{																								\
-			T l_crv_param = p_start + ((T)i) * l_step;													\
+			T l_crv_param = ((T)i) * l_step;															\
 			V<T> l_vec = get_pos_at_i(l_crv_param);														\
 			p_curve_val_to_length_v[i] = p_curve_val_to_length_v[i - 1] + l_vec_prev.distance_to(l_vec);\
 			l_vec_prev = l_vec;																			\
 		}																								\
-		l_interval_length = p_curve_val_to_length_v.back();												\
-		if (l_interval_length < vufCurve_kTol)															\
+																										\
+		l_curve_length = p_curve_val_to_length_v.back();												\
+		if (l_curve_length < vufCurve_kTol)																\
 		{																								\
 			return false;																				\
 		}																								\
-		for (uint64_t i = 1; i < l_total_interval_count; ++i)											\
+		/* compute curve to uniform t_ = l_curve / curve_length */										\
+		for (uint64_t i = 1; i < l_global_div; ++i)														\
 		{																								\
-			p_curve_to_uniform_val_v[i] = p_start + (p_end - p_start) * p_curve_val_to_length_v[i] / l_interval_length;	\
+			p_curve_to_uniform_val_v[i] = p_curve_val_to_length_v[i] / l_curve_length;					\
 		}																								\
+																										\
+		/* compute uniform to curve params*/															\
 		T l_t_1;																						\
 		T l_t_2;																						\
 		T l_w_1;																						\
 		T l_w_2;																						\
 		uint64_t l_ndx = 1;																				\
-		/* forward curve	*/																			\
-		if (l_step > 0)																					\
+		for (uint64_t i = 1; i < l_global_div; ++i)														\
 		{																								\
-			for (uint64_t i = 1; i < l_total_interval_count; ++i)										\
-			{																							\
-				T l_uniform_param = p_start + ((T)i) * l_step;											\
-				while (l_uniform_param > p_curve_to_uniform_val_v[l_ndx])								\
-				{																						\
-					l_ndx++;																			\
-				}																						\
-				l_t_1 = p_start + ((T)(l_ndx - 1)) * l_step;											\
-				l_t_2 = p_start + ((T)(l_ndx)) * l_step;												\
-				l_w_1 = (p_curve_to_uniform_val_v[l_ndx] - l_uniform_param) / (p_curve_to_uniform_val_v[l_ndx] - p_curve_to_uniform_val_v[l_ndx - 1]);	\
-				l_w_2 = 1. - l_w_1;																		\
-																										\
-				p_uniform_to_curve_val_v[i] = l_t_1 * l_w_1 + l_t_2 * l_w_2;							\
-			}																							\
-			return true;																				\
-		}																								\
-		/* if curve reversed */																			\
-		l_ndx = 1;																						\
-		for (uint64_t i = 1; i < l_total_interval_count; ++i)											\
-		{																								\
-			T l_uniform_param = p_start + ((T)i) * l_step;												\
-			while (l_uniform_param < p_curve_to_uniform_val_v[l_ndx])/*/ differense beatween forward and reeverse is here */	\
+			T l_uniform_param = ((T)i) * l_step;														\
+			while (l_uniform_param > p_curve_to_uniform_val_v[l_ndx])									\
 			{																							\
 				l_ndx++;																				\
 			}																							\
-			l_t_1 = p_start + ((T)(l_ndx - 1)) * l_step;												\
-			l_t_2 = p_start + ((T)(l_ndx)) * l_step;													\
-			l_w_1 = (p_curve_to_uniform_val_v[l_ndx] - l_uniform_param) / (p_curve_to_uniform_val_v[l_ndx] - p_curve_to_uniform_val_v[l_ndx - 1]);	\
+			l_t_1 = ((T)(l_ndx - 1)) * l_step;															\
+			l_t_2 = ((T)(l_ndx)) * l_step;																\
+			l_w_1 = (p_curve_to_uniform_val_v[l_ndx] - l_uniform_param) / (p_curve_to_uniform_val_v[l_ndx] - p_curve_to_uniform_val_v[l_ndx - 1]);\
+			l_w_2 = 1. - l_w_1;																			\
+																										\
+			p_uniform_to_curve_val_v[i] = l_t_1 * l_w_1 + l_t_2 * l_w_2;								\
+		}																								\
+		return true;																					\
+}
+
+#define VF_MATH_CRV_REBUILD_SEGMENTED																	\
+virtual bool		rebuild(																			\
+								std::vector<T>& p_uniform_to_curve_val_v,								\
+								std::vector<T>& p_curve_to_uniform_val_v,								\
+								std::vector<T>& p_curve_val_to_length_v,								\
+								uint32_t		p_division_count = 10) const override					\
+	{																									\
+		if (m_valid == false)																			\
+		{																								\
+			return false;																				\
+		}																								\
+		uint32_t	l_global_div = (p_division_count + 1) * get_interval_count_i();						\
+		T			l_curve_length = 0;																	\
+		if (p_uniform_to_curve_val_v.size() != l_global_div + 1)										\
+		{																								\
+			p_uniform_to_curve_val_v.resize(l_global_div + 1);											\
+			p_curve_to_uniform_val_v.resize(l_global_div + 1);											\
+			p_curve_val_to_length_v.resize(l_global_div + 1);											\
+		}																								\
+		V<T> l_vec_prev = get_pos_at_i(0.0);															\
+		p_uniform_to_curve_val_v[0] = 0.0;																\
+		p_curve_to_uniform_val_v[0] = 0.0;																\
+		p_uniform_to_curve_val_v.back() = 1.0;															\
+		p_curve_to_uniform_val_v.back() = 1.0;															\
+		p_curve_val_to_length_v[0] = 0;																	\
+																										\
+		/* Compute curve length for each sample point*/													\
+		T l_step = 1. / (T)l_global_div;																\
+		for (uint64_t i = 1; i < l_global_div + 1; ++i)													\
+		{																								\
+			T l_crv_param = ((T)i) * l_step;															\
+			V<T> l_vec = get_pos_at_i(l_crv_param);														\
+			p_curve_val_to_length_v[i] = p_curve_val_to_length_v[i - 1] + l_vec_prev.distance_to(l_vec);\
+			l_vec_prev = l_vec;																			\
+		}																								\
+																										\
+		l_curve_length = p_curve_val_to_length_v.back();												\
+		if (l_curve_length < vufCurve_kTol)																\
+		{																								\
+			return false;																				\
+		}																								\
+		/* compute curve to uniform t_ = l_curve / curve_length */										\
+		for (uint64_t i = 1; i < l_global_div; ++i)														\
+		{																								\
+			p_curve_to_uniform_val_v[i] = p_curve_val_to_length_v[i] / l_curve_length;					\
+		}																								\
+																										\
+		/* compute uniform to curve params*/															\
+		T l_t_1;																						\
+		T l_t_2;																						\
+		T l_w_1;																						\
+		T l_w_2;																						\
+		uint64_t l_ndx = 1;																				\
+		for (uint64_t i = 1; i < l_global_div; ++i)														\
+		{																								\
+			T l_uniform_param = ((T)i) * l_step;														\
+			while (l_uniform_param > p_curve_to_uniform_val_v[l_ndx])									\
+			{																							\
+				l_ndx++;																				\
+			}																							\
+			l_t_1 = ((T)(l_ndx - 1)) * l_step;															\
+			l_t_2 = ((T)(l_ndx)) * l_step;																\
+			l_w_1 = (p_curve_to_uniform_val_v[l_ndx] - l_uniform_param) / (p_curve_to_uniform_val_v[l_ndx] - p_curve_to_uniform_val_v[l_ndx - 1]);\
 			l_w_2 = 1. - l_w_1;																			\
 																										\
 			p_uniform_to_curve_val_v[i] = l_t_1 * l_w_1 + l_t_2 * l_w_2;								\
@@ -202,7 +250,9 @@ virtual bool		rebuild(																			\
 		return true;																					\
 	}
 
-#define VF_MATH_DEFINE_PARAM_COMPONENT																		\
+#pragma endregion CURVE_REBUILD_MACROSES
+
+#define VF_MATH_DEFINE_PARAM_COMPONENT																	\
 virtual T	get_param_by_vector_component(	T			p_value,										\
 											uint32_t	p_component_index = 0,							\
 											T			p_start = 0,									\

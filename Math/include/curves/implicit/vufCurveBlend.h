@@ -25,7 +25,7 @@ namespace vufMath
 		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveBlend);
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_blend_curve, k_compound_category);
 		// inherited virtual methods from vufCurve class. Curve interface
-		VF_MATH_CRV_REBUILD_CLAMPED;
+		VF_MATH_CRV_REBUILD;
 		virtual V<T>			get_closest_point(const V<T>&	p_point,
 													T			p_start = 0,
 													T			p_end = 1,

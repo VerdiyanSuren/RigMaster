@@ -27,7 +27,6 @@ namespace vufRM
 		static MObject	g_curve_compound_attr;
 		static MObject	g_close_attr;
 		static MObject	g_degree_attr;
-		static MObject	g_rebuild_store_attr;
 		static MObject	g_quaternion_store_attr;
 		static MObject	g_scale_store_attr;
 		//static MObject	g_remap_store_attr;

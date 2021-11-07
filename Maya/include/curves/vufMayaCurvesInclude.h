@@ -7,22 +7,15 @@
 #define VF_RM_CRV_NODE_DECLARE_REBUILD_ATTR()		\
 	static MObject  g_rebuild_compound_attr;		\
 	static MObject	g_rebuild_mode_attr;			\
-	static MObject	g_samples_attr;					\
-	static MObject	g_clamp_start_attr;				\
-	static MObject	g_clamp_start_value_attr;		\
-	static MObject	g_clamp_end_attr;				\
-	static MObject	g_clamp_end_value_attr;			\
-	static MObject	g_rebuild_offset_attr;
+	static MObject	g_rebuild_samples_attr;			\
+	static MObject	g_rebuild_store_attr;			\
 
 #define VF_RM_CRV_NODE_DEFINE_REBUILD_ATTR(CLASS_NAME)	\
 	MObject CLASS_NAME::g_rebuild_compound_attr;		\
 	MObject	CLASS_NAME::g_rebuild_mode_attr;			\
-	MObject	CLASS_NAME::g_samples_attr;					\
-	MObject	CLASS_NAME::g_clamp_start_attr;				\
-	MObject	CLASS_NAME::g_clamp_start_value_attr;		\
-	MObject	CLASS_NAME::g_clamp_end_attr;				\
-	MObject	CLASS_NAME::g_clamp_end_value_attr;			\
-	MObject	CLASS_NAME::g_rebuild_offset_attr;
+	MObject	CLASS_NAME::g_rebuild_samples_attr;			\
+	MObject	CLASS_NAME::g_rebuild_store_attr;
+
 
 #define VF_RM_CRV_NODE_INIT_REBUILD_ATTR()																\
 	/** Assume 	l_status l_enum_attr_fn l_compound_attr_fn	l_numeric_attr_fn is already declared*/		\
@@ -32,38 +25,30 @@
 	CHECK_MSTATUS(l_enum_attr_fn.addField("Compute",	0));											\
 	CHECK_MSTATUS(l_enum_attr_fn.addField("Keep",		1));											\
 	CHECK_MSTATUS(l_enum_attr_fn.addField("Disable",	2));											\
-	CHECK_MSTATUS(l_enum_attr_fn.setDefault(false));													\
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));													\
+	CHECK_MSTATUS(l_enum_attr_fn.setDefault(0));														\
 																										\
 	/* Samples */																						\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_samples_attr,			"samples", "smp", kInt, 5);				\
-	CHECK_MSTATUS(l_numeric_attr_fn.setMin(2));															\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_clamp_start_attr,		"clampStart",		"bst", kBoolean, false);\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_clamp_start_value_attr,"clampStartValue",	"bsv", kDouble, 0.0);	\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_clamp_end_attr,		"clampEnd",			"bnd", kBoolean, false);\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_clamp_end_value_attr,	"clampEndValue",	"bnv", kDouble, 0.0);	\
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_rebuild_offset_attr,	"rebuildOffset",	"bof", kDouble, 0.0);	\
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_rebuild_samples_attr,	"samples", "smp", kInt, 5);				\
+	CHECK_MSTATUS(l_numeric_attr_fn.setMin(1));															\
 	/* Rebuild Compound */																				\
 	g_rebuild_compound_attr = l_compound_attr_fn.create("rebuild", "rb", &l_status);					\
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);																\
+	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_rebuild_samples_attr));									\
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_rebuild_mode_attr));									\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_samples_attr));											\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_clamp_start_attr));										\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_clamp_start_value_attr));								\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_clamp_end_attr));										\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_clamp_end_value_attr));									\
-	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_rebuild_offset_attr));									\
-	l_status = addAttribute(g_rebuild_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_rebuild_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);			\
+	/* Rebuild hidden attribute*/																		\
+	g_rebuild_store_attr = l_typed_attr_fn.create("hRebuild", "hrb", mpxCurveRebuildWrapper::g_id, MObject::kNullObj, &l_status);	\
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);																		\
+	l_typed_attr_fn.setStorable(true);																			\
+	l_typed_attr_fn.setConnectable(false);																		\
+	l_typed_attr_fn.setHidden(true);																			\
+	l_status = addAttribute(g_rebuild_store_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 #define VF_RM_CRV_NODE_REBUILD_ATTR_AFFECT_TO(ATTR)															\
 	l_status = attributeAffects(g_rebuild_compound_attr,	ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
 	l_status = attributeAffects(g_rebuild_mode_attr,		ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_samples_attr,				ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_clamp_start_attr,			ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_clamp_start_value_attr,	ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_clamp_end_attr,			ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_clamp_end_value_attr,		ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);	\
-	l_status = attributeAffects(g_rebuild_offset_attr,		ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = attributeAffects(g_rebuild_samples_attr,		ATTR);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 /** We generate new variables 
 l_rebuild_mode 
@@ -76,12 +61,7 @@ l_rbld_offset
 */
 #define VF_RM_CRV_NODE_READ_REBUILD_ATTR()														\
 	short	l_rebuild_mode = p_data.inputValue(g_rebuild_mode_attr).asShort();					\
-	int		l_rbld_samples = p_data.inputValue(g_samples_attr).asInt();							\
-	bool	l_rbld_pin_start = p_data.inputValue(g_clamp_start_attr).asBool();					\
-	bool	l_rbld_pin_end = p_data.inputValue(g_clamp_end_attr).asBool();						\
-	double	l_rbld_pin_start_value = p_data.inputValue(g_clamp_start_value_attr).asDouble();	\
-	double	l_rbld_pin_end_value = p_data.inputValue(g_clamp_end_value_attr).asDouble();		\
-	double	l_rbld_offset = p_data.inputValue(g_rebuild_offset_attr).asDouble();
+	int		l_rbld_samples = p_data.inputValue(g_rebuild_samples_attr).asInt();					\
 
 #pragma endregion
 #pragma region QUATERNIONS ROUTINES

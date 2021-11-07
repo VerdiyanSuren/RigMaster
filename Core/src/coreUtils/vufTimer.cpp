@@ -38,12 +38,12 @@ void vufTimer::show_time()
 	l_min = l_hours % 60;
 	l_hours = l_days % 24;
 	std::string l_str = m_name + " ";
-	if (l_days != 0) l_str += std::to_string(l_days)	+ "d ";
-	if (l_hours != 0) l_str += std::to_string(l_hours)	+ "h ";
-	if (l_min != 0) l_str += std::to_string(l_min)		+ "m ";
-	if (l_sec != 0) l_str += std::to_string(l_sec)		+ "s ";
-	if (l_ms != 0)	l_str += std::to_string(l_ms)		+ "ms ";
-	if (l_us != 0)	l_str += std::to_string(l_us)		+ "us ";
+	if (l_days != 0) l_str += std::to_string(l_days)	+ " d ";
+	if (l_hours != 0) l_str += std::to_string(l_hours)	+ " h ";
+	if (l_min != 0) l_str += std::to_string(l_min)		+ " m ";
+	if (l_sec != 0) l_str += std::to_string(l_sec)		+ " s ";
+	if (l_ms != 0)	l_str += std::to_string(l_ms)		+ " ms ";
+	if (l_us != 0)	l_str += std::to_string(l_us)		+ " us ";
 	VF_LOG_INFO(l_str);
 
 }

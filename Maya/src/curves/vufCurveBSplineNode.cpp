@@ -25,7 +25,6 @@ MObject	vufCurveBSplineNode::g_curve_compound_attr;
 MObject	vufCurveBSplineNode::g_close_attr;
 MObject	vufCurveBSplineNode::g_degree_attr;
 MObject	vufCurveBSplineNode::g_closest_division_attr;
-MObject	vufCurveBSplineNode::g_rebuild_store_attr;
 MObject	vufCurveBSplineNode::g_quaternion_store_attr;
 MObject	vufCurveBSplineNode::g_scale_store_attr;
 //MObject	vufCurveBSplineNode::g_remap_store_attr;
@@ -75,8 +74,6 @@ MStatus	vufCurveBSplineNode::initialize()
 	CHECK_MSTATUS(l_compound_attr_fn.addChild(g_degree_attr));
 	l_status = addAttribute(g_curve_compound_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_closest_division_attr, "division", "div", kInt, 10);
-	l_status = addAttribute(g_closest_division_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 #pragma endregion
 	//------------------------------------------------------------------------------------------------
 	// QuaternionsFn
@@ -84,6 +81,9 @@ MStatus	vufCurveBSplineNode::initialize()
 	VF_RM_CRV_NODE_INIT_REBUILD_ATTR();
 	VF_RM_CRV_NODE_INIT_QUATERNIONS_ATTR();
 	VF_RM_CRV_NODE_INIT_SCALE_ATTR();
+
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_closest_division_attr, "division", "div", kInt, 10);
+	l_status = addAttribute(g_closest_division_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	//------------------------------------------------------------------------------------------------
 	// Transform list
 	g_transfoms_attr = l_typed_attr_fn.create("xformList", "xfr", MFnData::kMatrixArray, MObject::kNullObj, &l_status);
@@ -122,7 +122,6 @@ MStatus	vufCurveBSplineNode::initialize()
 	VF_RM_CRV_NODE_QUATERNIONS_ATTR_AFFECT_TO(	g_data_out_attr);
 	VF_RM_CRV_NODE_SCALE_ATTR_AFFECT_TO(		g_data_out_attr);
 
-	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_rebuild_store_attr,	"hRebuild",		"hrb", mpxCurveRebuildWrapper);
 	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_quaternion_store_attr, "hRotation",	"hrt", mpxCurveQuatWrapper);
 	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_scale_store_attr,		"hScale",		"hsc", mpxCurveScaleWrapper);
 
@@ -130,7 +129,7 @@ MStatus	vufCurveBSplineNode::initialize()
 	return MS::kSuccess;
 }
 MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
-{
+{	
 	if (p_plug == g_data_out_attr || p_plug == g_params_out_attr)
 	{
 		vuf::vufTimer l_timer("Bspline curve node compute: ");
@@ -318,36 +317,29 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		VF_RM_CRV_NODE_READ_REBUILD_ATTR();
 		if (l_rebuild_mode == 0 /*apply. always refresh*/)
 		{
+			std::cout << "rebuild is always ";
 			l_out_data->m_internal_data->switch_rebuild_fn(vufCurveRebuildFnType::k_constant_step);
 			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr =  l_out_data->m_internal_data->get_rebuild_fn_ptr();
+			std::cout << l_rbl_ptr.get() << std::endl;
 			if (l_rbl_ptr != nullptr)
 			{
 				auto l_r_ptr = l_rbl_ptr->as_uniform_rebuild_fn();
-				l_r_ptr->set_clamp_start(l_rbld_pin_start);
-				l_r_ptr->set_clamp_start_value(l_rbld_pin_start_value);
-				l_r_ptr->set_clamp_end(l_rbld_pin_end);
-				l_r_ptr->set_clamp_end_value(l_rbld_pin_end_value);
-				l_r_ptr->set_offset(l_rbld_offset);
-				l_r_ptr->m_div_per_segment = l_rbld_samples;
+				
+				l_r_ptr->set_segment_divisions_i( l_rbld_samples );
 				l_r_ptr->rebuild(*(l_container.get_curve_ptr()));
 				l_rebuild_store_data->m_internal_data = l_rbl_ptr;
 			}
 		}
 		if (l_rebuild_mode == 1 /* keep rebuild fn*/)
 		{
+			std::cout << "rebuild is keep ";
 			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_rebuild_store_data->m_internal_data;
-			if (l_rbl_ptr != nullptr)
-			{
-				l_rbl_ptr->set_clamp_start(l_rbld_pin_start);
-				l_rbl_ptr->set_clamp_start_value(l_rbld_pin_start_value);
-				l_rbl_ptr->set_clamp_end(l_rbld_pin_end);
-				l_rbl_ptr->set_clamp_end_value(l_rbld_pin_end_value);
-				l_rbl_ptr->set_offset(l_rbld_offset);
-			}
+			std::cout << l_rbl_ptr.get() << std::endl;
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(l_rbl_ptr);
 		}
 		if (l_rebuild_mode == 2 /* delete rebuild fn*/)
 		{
+			std::cout << "rebuild is disabled\n";
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(nullptr);
 			//l_rebuild_store_data->m_internal_data = nullptr;
 		}

@@ -519,6 +519,9 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
   <ItemGroup>
     <ClCompile Include="include\vufLogMaya.cpp" />
     <ClCompile Include="src\curves\data\vufCurveData.cpp" />
+    <ClCompile Include="src\curves\data\vufCurveQuatData.cpp" />
+    <ClCompile Include="src\curves\data\vufCurveRebuildData.cpp" />
+    <ClCompile Include="src\curves\data\vufCurveScaleData.cpp" />
     <ClCompile Include="src\curves\get\vufCurveClosestParamNode.cpp" />
     <ClCompile Include="src\curves\get\vufCurveComponentParam.cpp" />
     <ClCompile Include="src\curves\get\vufCurveGetTransformNode.cpp" />
@@ -540,9 +543,6 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClCompile Include="src\curves\vufCurveSlideNode.cpp" />
     <ClCompile Include="src\curves\vufCurveSwitch.cpp" />
     <ClCompile Include="src\curves\vufCurveToMayaNode.cpp" />
-    <ClCompile Include="src\data\vufCurveQuatData.cpp" />
-    <ClCompile Include="src\data\vufCurveRebuildData.cpp" />
-    <ClCompile Include="src\data\vufCurveScaleData.cpp" />
     <ClCompile Include="src\data\vufData.cpp" />
     <ClCompile Include="src\dataCollectors\vufDoubleListNode.cpp" />
     <ClCompile Include="src\dataCollectors\vufDoubleListNullNode.cpp" />

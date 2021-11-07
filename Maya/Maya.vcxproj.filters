@@ -284,6 +284,15 @@
     <ClCompile Include="src\curves\data\vufCurveData.cpp">
       <Filter>src\curves\data</Filter>
     </ClCompile>
+    <ClCompile Include="src\curves\data\vufCurveQuatData.cpp">
+      <Filter>src\curves\data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\data\vufCurveRebuildData.cpp">
+      <Filter>src\curves\data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\data\vufCurveScaleData.cpp">
+      <Filter>src\curves\data</Filter>
+    </ClCompile>
     <ClCompile Include="src\curves\get\vufCurveClosestParamNode.cpp">
       <Filter>src\curves\get</Filter>
     </ClCompile>
@@ -346,15 +355,6 @@
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveToMayaNode.cpp">
       <Filter>src\curves</Filter>
-    </ClCompile>
-    <ClCompile Include="src\data\vufCurveQuatData.cpp">
-      <Filter>src\data</Filter>
-    </ClCompile>
-    <ClCompile Include="src\data\vufCurveRebuildData.cpp">
-      <Filter>src\data</Filter>
-    </ClCompile>
-    <ClCompile Include="src\data\vufCurveScaleData.cpp">
-      <Filter>src\data</Filter>
     </ClCompile>
     <ClCompile Include="src\data\vufData.cpp">
       <Filter>src\data</Filter>

@@ -94,17 +94,18 @@ namespace vufMath
 		virtual int				get_curve_category()						const = 0;
 		/* if curve can easily compute length then compute else return -1  */
 		// Actual for math curves
-		virtual T				get_length(T p_start,T p_end) const 
+		virtual T				get_length() const
+		{
+			return -1;
+		}
+		virtual T				get_length(T p_start,T p_end ) const 
 		{ 
 			return -1; 
 		}
-
 		virtual bool			rebuild(			std::vector<T>& p_uniform_to_curve_val_v,
 													std::vector<T>& p_curve_to_uniform_val_v,
 													std::vector<T>& p_curve_val_to_length_v,
-													uint32_t		p_divisions = 10,
-													T				p_start		= 0 /*interval on which we need rebuild*/,
-													T				p_end		= 1) const = 0;
+													uint32_t		p_divisions = 10) const = 0;
 
 		virtual V<T>			get_closest_point(			const V<T>& p_point,
 															T			p_start		= 0, 
@@ -186,11 +187,21 @@ namespace vufMath
 		}
 		virtual uint64_t					encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
 		{
-			VF_ENCODE_FOR_BASE();
+			uint64_t l_size = get_binary_size();
+			std::vector<char> l_buff(l_size);
+			to_binary(l_buff);
+			vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);
+			p_offset = l_serializer.encode_to_buff(p_buff, p_offset);
+			return p_offset;
 		}
 		virtual uint64_t					decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
 		{			
-			VF_DECODE_FOR_BASE();
+			uint32_t l_version;
+			std::vector<char> l_buff;
+			vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);
+			p_offset = l_serializer.decode_from_buff(p_buff, p_offset);
+			from_binary(l_buff, l_version);	
+			return p_offset;
 		}
 
 		// convert to explicit

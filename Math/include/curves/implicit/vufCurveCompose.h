@@ -112,16 +112,7 @@ namespace vufMath
 			return vufCurve<T, V>::decode_from_buff(p_buff, p_offset);
 		}
 
-		virtual bool			rebuild(std::vector<T>&				p_uniform_to_curve_val_v,
-										std::vector<T>&				p_curve_to_uniform_val_v,
-										std::vector<T>&				p_curve_val_to_length_v,
-										uint32_t					p_divisions = 10,
-										T							p_start = 0 /*interval on which we need rebuild*/,
-										T							p_end = 1) const override
-		{
-			return true;
-		}
-
+		VF_MATH_CRV_REBUILD;
 		virtual V<T>			get_closest_point(const V<T>&	p_point,
 													T			p_start = 0,
 													T			p_end = 1,

@@ -134,7 +134,7 @@ int main()
 	std::vector<double> l_uniform_to_curve_val_v;
 	std::vector<double> l_curve_to_uniform_val_v;
 	std::vector<double> l_curve_val_to_length_v;
-	bool l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 10, 0, 1);
+	bool l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 10);
 	if ( l_rebuild_res == true )
 	{
 		vufNumericArrayFn<double> l_arr_1(l_uniform_to_curve_val_v);

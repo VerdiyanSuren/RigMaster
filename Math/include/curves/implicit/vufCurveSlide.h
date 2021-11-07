@@ -26,7 +26,7 @@ namespace vufMath
 		virtual ~vufCurveSlide() {}
 		VF_MATH_CURVE_DEFINE_CREATOR(vufCurveSlide);
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_slide_curve, k_compound_category);
-		VF_MATH_CRV_REBUILD_CLAMPED;
+		VF_MATH_CRV_REBUILD;
 		VF_MATH_CRV_DEFINE_CLOSEST_POINTS;
 		VF_MATH_DEFINE_PARAM_COMPONENT;
 		virtual V<T>		get_pos_at(T p_t)										const override

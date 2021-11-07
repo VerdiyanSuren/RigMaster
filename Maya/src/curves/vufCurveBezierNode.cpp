@@ -24,7 +24,6 @@ using namespace vufMath;
 MObject	vufCurveBezierNode::g_curve_compound_attr;
 MObject	vufCurveBezierNode::g_close_attr;
 MObject	vufCurveBezierNode::g_degree_attr;
-MObject	vufCurveBezierNode::g_rebuild_store_attr;
 MObject	vufCurveBezierNode::g_quaternion_store_attr;
 MObject	vufCurveBezierNode::g_scale_store_attr;
 //MObject	vufCurveBSplineNode::g_remap_store_attr;
@@ -112,7 +111,6 @@ MStatus	vufCurveBezierNode::initialize()
 	VF_RM_CRV_NODE_QUATERNIONS_ATTR_AFFECT_TO(g_data_out_attr);
 	VF_RM_CRV_NODE_SCALE_ATTR_AFFECT_TO(g_data_out_attr);
 
-	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_rebuild_store_attr,	"hRebuild", "hrb",	mpxCurveRebuildWrapper);
 	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_quaternion_store_attr, "hRotation", "hrt", mpxCurveQuatWrapper);
 	VF_RM_INIT_AND_ADD_HIDDEN_ATTR(g_scale_store_attr,		"hScale", "hsc",	mpxCurveScaleWrapper);
 
@@ -311,12 +309,7 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			if (l_rbl_ptr != nullptr)
 			{
 				auto l_r_ptr = l_rbl_ptr->as_uniform_rebuild_fn();
-				l_r_ptr->set_clamp_start(l_rbld_pin_start);
-				l_r_ptr->set_clamp_start_value(l_rbld_pin_start_value);
-				l_r_ptr->set_clamp_end(l_rbld_pin_end);
-				l_r_ptr->set_clamp_end_value(l_rbld_pin_end_value);
-				l_r_ptr->set_offset(l_rbld_offset);
-				l_r_ptr->m_div_per_segment = l_rbld_samples;
+				l_r_ptr->set_segment_divisions_i(l_rbld_samples);
 				l_r_ptr->rebuild(*(l_container.get_curve_ptr()));
 				l_rebuild_store_data->m_internal_data = l_rbl_ptr;
 			}
@@ -324,14 +317,6 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		if (l_rebuild_mode == 1 /* keep rebuild fn*/)
 		{
 			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_rebuild_store_data->m_internal_data;
-			if (l_rbl_ptr != nullptr)
-			{
-				l_rbl_ptr->set_clamp_start(l_rbld_pin_start);
-				l_rbl_ptr->set_clamp_start_value(l_rbld_pin_start_value);
-				l_rbl_ptr->set_clamp_end(l_rbld_pin_end);
-				l_rbl_ptr->set_clamp_end_value(l_rbld_pin_end_value);
-				l_rbl_ptr->set_offset(l_rbld_offset);
-			}
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(l_rbl_ptr);
 		}
 		if (l_rebuild_mode == 2 /* delete rebuild fn*/)

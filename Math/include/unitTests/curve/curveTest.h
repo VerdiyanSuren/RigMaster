@@ -159,7 +159,7 @@ namespace vufMath
 			std::vector<double> l_curve_to_uniform_val_v;
 			std::vector<double> l_curve_val_to_length_v;
 			//test rebuild forwars
-			bool l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50, 0, 1);
+			bool l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50);
 			if (l_rebuild_res == true)
 			{	
 				vufNumericArrayFn<double> l_arr_1(l_uniform_to_curve_val_v);
@@ -193,7 +193,7 @@ namespace vufMath
 				return false;
 			}
 			// test rebuild reverse
-			l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50, 1, 0);
+			l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50);
 			if (l_rebuild_res == true)
 			{
 				T l_length = l_crv_1->get_pos_at(l_uniform_to_curve_val_v[0]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[1]));
@@ -226,7 +226,7 @@ namespace vufMath
 				VF_LOG_ERR("Failed. Rebuild OpenBSpline");
 				return false;
 			}
-			l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50, 2, -3);
+			l_rebuild_res = l_crv_1->rebuild(l_uniform_to_curve_val_v, l_curve_to_uniform_val_v, l_curve_val_to_length_v, 50);
 			if (l_rebuild_res == true)
 			{
 				T l_length = l_crv_1->get_pos_at(l_uniform_to_curve_val_v[0]).distance_to(l_crv_1->get_pos_at(l_uniform_to_curve_val_v[1]));
