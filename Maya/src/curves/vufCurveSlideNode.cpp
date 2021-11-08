@@ -24,7 +24,9 @@ MObject	vufCurveSlideNode::g_start_weight_attr;
 MObject	vufCurveSlideNode::g_end_attr;
 MObject	vufCurveSlideNode::g_end_weight_attr;
 MObject	vufCurveSlideNode::g_data_in_attr;
-MObject	vufCurveSlideNode::g_data_out_attr;
+MObject	vufCurveSlideNode::g_data_out_attr;\
+VF_RM_CRV_NODE_DEFINE_REBUILD_ATTR(vufCurveSlideNode);
+
 
 vufCurveSlideNode::vufCurveSlideNode():MPxNode()
 {
@@ -99,6 +101,8 @@ MStatus	vufCurveSlideNode::initialize()
 	l_numeric_attr_fn.setMax(1.0);
 	l_status = addAttribute(g_end_weight_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
+	VF_RM_CRV_NODE_INIT_REBUILD_ATTR();
+
 	// in curve
 	g_data_in_attr = l_typed_attr_fn.create("inCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -116,6 +120,7 @@ MStatus	vufCurveSlideNode::initialize()
 	l_status = addAttribute(g_data_out_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	// Attributes affets
+	VF_RM_CRV_NODE_REBUILD_ATTR_AFFECT_TO(g_data_out_attr);
 	l_status = attributeAffects(g_enable_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_use_percent_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_offset_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -163,6 +168,8 @@ MStatus	vufCurveSlideNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			return MS::kSuccess;
 		}
 		l_out_container.switch_curve(0, vufMath::vufCurveType::k_slide_curve);
+		l_out_container.switch_quaternion_fn(vufMath::vufCurveQuatFnType::k_slide);
+		l_out_container.switch_scale_fn(vufMath::vufCurveScaleFnType::k_slide);
 		auto l_crv = l_out_container.get_curve_ptr()->as_curve_slide();
 
 		l_crv->set_hardness(	p_data.inputValue(g_hardness_attr).asDouble());
@@ -177,7 +184,37 @@ MStatus	vufCurveSlideNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		l_crv->set_container_ptr(l_in_data->m_internal_data);
 		l_crv->update();
 
+		// Handle rebuild fn 
+		std::shared_ptr<vufCurveRebuildData>	l_rebuild_store_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveRebuildWrapper, vufCurveRebuildData, p_data, g_rebuild_store_attr, l_rebuild_store_data, m_gen_id);
+		VF_RM_CRV_NODE_READ_REBUILD_ATTR();
+		if (l_rebuild_mode == 0 /*apply. always refresh*/)
+		{
+			l_out_data->m_internal_data->switch_rebuild_fn(vufCurveRebuildFnType::k_constant_step);
+			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_out_data->m_internal_data->get_rebuild_fn_ptr();
+			std::cout << l_rbl_ptr.get() << std::endl;
+			if (l_rbl_ptr != nullptr)
+			{
+				auto l_r_ptr = l_rbl_ptr->as_uniform_rebuild_fn();
+
+				l_r_ptr->set_segment_divisions_i(l_rbld_samples);
+				l_r_ptr->rebuild(*(l_out_container.get_curve_ptr()));
+				l_rebuild_store_data->m_internal_data = l_rbl_ptr;
+			}
+		}
+		if (l_rebuild_mode == 1 /* keep rebuild fn*/)
+		{
+			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_rebuild_store_data->m_internal_data;
+			std::cout << l_rbl_ptr.get() << std::endl;
+			l_out_data->m_internal_data->set_rebuild_fn_ptr(l_rbl_ptr);
+		}
+		if (l_rebuild_mode == 2 /* delete rebuild fn*/)
+		{
+			l_out_data->m_internal_data->set_rebuild_fn_ptr(nullptr);
+			//l_rebuild_store_data->m_internal_data = nullptr;
+		}
 		p_data.setClean(g_data_out_attr);
+		p_data.setClean(g_rebuild_store_attr);
 		return MS::kSuccess;
 	}
 

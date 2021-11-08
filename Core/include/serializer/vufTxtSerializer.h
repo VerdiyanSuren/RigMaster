@@ -32,6 +32,8 @@ How to use. Examples
 	l_offset	= txtSerializer::decode_number_from_buff(l_dbl, l_buff);
 	l_offset	= txtSerializer::decode_string_from_buff(l_str, l_buff, l_offset);
 	
+	// zip
+	// unzip
 */
 #define VF_TXT_WRITER_DEFINE_STATIC_VARS()								\
 std::map<uint16_t, uint8_t>		vuf::txtSerializer::g_char_to_byte_m;	\
@@ -150,7 +152,7 @@ namespace vuf
 			return p_offset + p_size * 2;
 		}
 		template<typename T>
-		static uint64_t decode_std_vector_from_buff( std::vector<T>& p_dist, const std::vector< char>& p_buff, uint64_t p_offset = 0)
+		static uint64_t decode_std_vector_from_buff(  const std::vector< char>& p_buff, std::vector<T>& p_dist, uint64_t p_offset = 0)
 		{
 			uint64_t l_vec_size;
 			p_offset = decode_from_buff(&l_vec_size, sizeof(l_vec_size), p_buff, p_offset);
@@ -640,7 +642,7 @@ namespace vuf
 		*/
 		// Convertors
 		template<typename T>
-		static T convert_bytes_to_value(const std::vector<unsigned char>& p_bytes, uint64_t* p_offset_ptr = nullptr)
+		static T convert_bytes_to_value(const std::vector<char>& p_bytes, uint64_t* p_offset_ptr = nullptr)
 		{
 			uint64_t l_offset = 0;
 			if (p_offset_ptr != nullptr) l_offset = *p_offset_ptr; 
@@ -649,7 +651,7 @@ namespace vuf
 			return l_res;
 		}
 		template<>
-		static std::string convert_bytes_to_value<std::string>(const std::vector<unsigned char>& p_bytes, uint64_t* p_offset_ptr)
+		static std::string convert_bytes_to_value<std::string>(const std::vector<char>& p_bytes, uint64_t* p_offset_ptr)
 		{
 			uint64_t l_offset = 0;
 			if (p_offset_ptr != nullptr) l_offset = *p_offset_ptr;

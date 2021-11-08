@@ -1,6 +1,7 @@
 #include <data/vufMayaDataList.h>
 #include <utils/vufMayaUtils.h>
 
+using namespace vuf;
 using namespace vufRM;
 using namespace vufMath;
 
@@ -22,8 +23,12 @@ MStatus 	vufCurveScaleData::readASCII(const MArgList& p_args, unsigned int& p_la
 		}
 		MString l_mstr = p_args.asString(p_last_element++, &l_status);
 		std::string l_str = vufMayaUtils::mstr_2_str(l_mstr);
-		std::vector<char> l_buff(l_str.begin(), l_str.end());
-		m_internal_data->decode_from_buff(l_buff);
+
+		std::vector<char> l_zipped(l_str.begin(), l_str.end());
+		std::vector<char> l_unzipped;
+		txtSerializer::unzip_to_buff(l_zipped, l_unzipped);
+		m_internal_data->decode_from_buff(l_unzipped);
+		return MS::kSuccess;
 	}
 	return MS::kSuccess;
 }
@@ -56,10 +61,16 @@ MStatus 	vufCurveScaleData::writeASCII(std::ostream& p_out)
 		p_out << l_type << std::endl;
 		return MS::kSuccess;
 	}
-	std::vector<char> l_buff;
-	m_internal_data->encode_to_buff(l_buff);
-	int l_size = (int)l_buff.size();
-	std::string l_str(l_buff.begin(), l_buff.end());
+	int l_type = (int)m_internal_data->get_type();
+	p_out << l_type << std::endl;
+
+	std::vector<char> l_encoded;
+	std::vector<char> l_zipped;
+
+	m_internal_data->encode_to_buff(l_encoded);
+	txtSerializer::zip_to_buff(l_encoded, l_zipped);
+	int l_size = (int)l_zipped.size();
+	std::string l_str(l_zipped.begin(), l_zipped.end());
 	p_out << l_size;
 	if (l_size > 0)
 	{
@@ -76,6 +87,9 @@ MStatus 	vufCurveScaleData::writeBinary(std::ostream& p_out)
 		p_out.write((char*)&l_type, sizeof(l_type));
 		return MS::kSuccess;
 	}
+	int l_type = (int)m_internal_data->get_type();
+	p_out.write((char*)&l_type, sizeof(l_type));
+
 	std::vector<char> l_buff;
 	m_internal_data->to_binary(l_buff);
 	uint64_t l_size = (int)l_buff.size();

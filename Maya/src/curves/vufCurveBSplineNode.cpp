@@ -317,7 +317,6 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		VF_RM_CRV_NODE_READ_REBUILD_ATTR();
 		if (l_rebuild_mode == 0 /*apply. always refresh*/)
 		{
-			std::cout << "rebuild is always ";
 			l_out_data->m_internal_data->switch_rebuild_fn(vufCurveRebuildFnType::k_constant_step);
 			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr =  l_out_data->m_internal_data->get_rebuild_fn_ptr();
 			std::cout << l_rbl_ptr.get() << std::endl;
@@ -332,14 +331,12 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		}
 		if (l_rebuild_mode == 1 /* keep rebuild fn*/)
 		{
-			std::cout << "rebuild is keep ";
 			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_rebuild_store_data->m_internal_data;
 			std::cout << l_rbl_ptr.get() << std::endl;
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(l_rbl_ptr);
 		}
 		if (l_rebuild_mode == 2 /* delete rebuild fn*/)
 		{
-			std::cout << "rebuild is disabled\n";
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(nullptr);
 			//l_rebuild_store_data->m_internal_data = nullptr;
 		}

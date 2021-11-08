@@ -2,6 +2,8 @@
 #define VF_RM_CRV_SLIDE_NODE_H
 
 #include <maya/MPxNode.h>
+#include <vufMayaGlobalIncludes.h>
+#include <curves/vufMayaCurvesInclude.h>
 
 namespace vufRM
 {
@@ -31,6 +33,8 @@ namespace vufRM
 		static MObject	g_start_weight_attr;
 		static MObject	g_end_attr;
 		static MObject	g_end_weight_attr;
+
+		VF_RM_CRV_NODE_DECLARE_REBUILD_ATTR(); 
 
 		static MObject	g_data_in_attr;
 		static MObject	g_data_out_attr;

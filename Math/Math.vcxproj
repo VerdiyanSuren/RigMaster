@@ -427,6 +427,7 @@
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionInclude.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionParamsFn.h" />
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionSlideFn.h" />
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionTransportFn.h" />
     <ClInclude Include="include\curves\rebuildFn\vufCurveRebuildFn.h" />
     <ClInclude Include="include\curves\remapFn\vufCurveRemapFn.h" />
@@ -435,6 +436,7 @@
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseFn.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleParamFn.h" />
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleSlideFn.h" />
     <ClInclude Include="include\curves\vufCurve.h" />
     <ClInclude Include="include\curves\vufCurveContatiner.h" />
     <ClInclude Include="include\curves\vufCurvesInclude.h" />

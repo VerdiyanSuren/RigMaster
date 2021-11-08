@@ -58,7 +58,7 @@ namespace vuf
 		}
 		uint64_t	decode_from_buff(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{			
-			return txtSerializer::decode_std_vector_from_buff(m_numeric_array_v, p_buff, p_offset);
+			return txtSerializer::decode_std_vector_from_buff( p_buff, m_numeric_array_v, p_offset);
 		}
 		std::vector<T>& m_numeric_array_v;
 	};

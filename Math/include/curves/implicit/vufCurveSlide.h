@@ -175,7 +175,6 @@ namespace vufMath
 
 		inline void		update()
 		{
-			std::cout << "is percent: " << m_percent << std::endl;
 			if (m_percent == false)
 			{
 				m_start_value	= m_container_ptr->get_param_by_length(m_start_value);
@@ -200,9 +199,9 @@ namespace vufMath
 			m_start_res = m_offset + m_start_value;
 			m_end_res	= m_offset + m_end_value;
 		}
-		inline T		get_param_on_base_i(T p_val) const
+		inline T		get_param_on_base_i(T p_t) const
 		{
-			return m_start_res* (1.0 - p_t) + m_end_res * p_t;
+			return  m_start_res * (1.0 - p_t) + m_end_res * p_t;;
 		}
 		inline V<T>		get_pos_at_i(T p_t)		const
 		{

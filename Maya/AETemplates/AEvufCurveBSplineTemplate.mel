@@ -1,0 +1,33 @@
+
+global proc AEvufCurveBSplineTemplate( string $nodeName )
+{
+	editorTemplate -beginScrollLayout;
+	
+		editorTemplate -beginLayout "Curve" -collapse 0;
+			editorTemplate -addControl "close";
+			editorTemplate -addControl "degree";
+		editorTemplate -endLayout;
+		editorTemplate -beginLayout "Rebuild" -collapse 0;
+			editorTemplate -addControl "applyRebuild";
+			editorTemplate -addControl "samples";
+		editorTemplate -endLayout;
+		editorTemplate -addControl "applyRotation";
+		editorTemplate -addControl "applyScale";
+		
+		
+		editorTemplate -suppress "curve";
+		editorTemplate -suppress "close";
+		editorTemplate -suppress "degree";
+		
+		editorTemplate -suppress "rebuild";
+		editorTemplate -suppress "applyRebuild";
+		editorTemplate -suppress "samples";
+		
+		editorTemplate -suppress "applyRotation";
+		editorTemplate -suppress "applyScale";
+		
+		editorTemplate -suppress "xformList";
+		
+		editorTemplate -addExtraControls;
+	editorTemplate -endScrollLayout;
+}

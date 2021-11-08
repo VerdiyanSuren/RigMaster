@@ -15,6 +15,7 @@ namespace vufMath
 	template <class T, template<typename> class V>	class vufCurveQuaternion2EndsFn;
 	template <class T, template<typename> class V>	class vufCurveQuaternionParamFn;
 	template <class T, template<typename> class V>	class vufCurveQuaternionBlendFn;
+	template <class T, template<typename> class V>	class vufCurveQuaternionSlideFn;
 
 #pragma region VF_CURVE_FN_BASE
 	enum class vufCurveQuatFnType :uint8_t
@@ -25,7 +26,8 @@ namespace vufMath
 		k_transport = 2,
 		k_2_ends	= 3,
 		k_param		= 4,
-		k_blend		= 5
+		k_blend		= 5,
+		k_slide		= 6
 	};
 
 	// functions set to work with specific part 
@@ -57,6 +59,10 @@ namespace vufMath
 			{
 				return vufCurveQuaternionBlendFn<T, V>::create();
 			}
+			if (p_type == vufCurveQuatFnType::k_slide)
+			{
+				return vufCurveQuaternionSlideFn<T, V>::create();
+			}
 			return nullptr;
 		}
 		void			is_valid() const { return m_valid; }
@@ -72,6 +78,7 @@ namespace vufMath
 		virtual std::shared_ptr < vufCurveQuaternion2EndsFn<T, V> >		as_2ends_fn()		const { return nullptr; }
 		virtual std::shared_ptr < vufCurveQuaternionParamFn<T, V> >		as_params_fn()		const { return nullptr; }
 		virtual std::shared_ptr < vufCurveQuaternionBlendFn<T, V> >		as_blend_fn()		const { return nullptr; }
+		virtual std::shared_ptr < vufCurveQuaternionSlideFn<T, V> >		as_slide_fn()		const { return nullptr; }
 
 		// serialization interface
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const = 0

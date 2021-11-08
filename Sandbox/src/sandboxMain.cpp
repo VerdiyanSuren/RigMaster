@@ -41,16 +41,16 @@ using namespace vuf;
 
 int main()
 {
-	vuf::txtSeriaslizerUT().run(true);
-	vuf::txtStdVectorSerializerFnUt().run(true);
+	//vuf::txtSeriaslizerUT().run(true);
+	//vuf::txtStdVectorSerializerFnUt().run(true);
 	/*
 	auto g_app = vuf::createApplication();
 	g_app->run();
 	delete g_app;
 
 	*/
-	system("pause");
-	return 0;
+	//system("pause");
+	//return 0;
 
 	vuf::txtSerializer::init();
 
@@ -66,6 +66,25 @@ int main()
 	{
 		VF_LOG_INFO(i);
 	}
+	std::vector<char> l_encoded;
+	std::vector<char> l_zipped;
+	uint64_t  l_offset = 0;
+	std::string l_string = "This is test string";
+
+	std::cout << "Source:   " << l_string << std::endl;
+	txtSerializer::encode_std_string_to_buff(l_string, l_encoded);
+	std::cout << "Encoded:  " << std::string(l_encoded.data(), l_encoded.size()) << std::endl;
+	txtSerializer::zip_to_buff(l_encoded, l_zipped);
+	std::cout << "Zipped:   " << std::string(l_zipped.data(), l_zipped.size()) << std::endl;
+	std::cout << "-----------------------------" << std::endl;
+	std::vector<char> l_decoded;
+	std::vector<char> l_unzipped;
+	txtSerializer::unzip_to_buff(l_zipped, l_unzipped);
+	std::cout << "UnZipped: " << std::string(l_unzipped.data(), l_unzipped.size()) << std::endl;
+	txtSerializer::decode_std_vector_from_buff(l_decoded,l_unzipped);
+	std::cout << "Decoded: "  << std::string(l_decoded.data(),	l_decoded.size()) << std::endl;
+	
+	
 	/*
 	auto l_padded = vufStringUtils::wstring_padding(L"Падинг",40);
 	vufLog::g_log->info(l_padded, __FILE__, __LINE__);

@@ -1,5 +1,6 @@
 #include <data/vufMayaDataList.h>
 #include <utils/vufMayaUtils.h>
+using namespace vuf;
 using namespace vufRM;
 using namespace vufMath;
 
@@ -20,8 +21,10 @@ MStatus 	vufCurveData::readASCII(const MArgList& p_args, unsigned int& p_last_el
 	{
 		MString l_mstr = p_args.asString(p_last_element++, &l_status);
 		std::string l_str = vufMayaUtils::mstr_2_str(l_mstr);
-		std::vector<char> l_buff(l_str.begin(),l_str.end());
-		m_internal_data->decode_from_buff(l_buff);
+		std::vector<char> l_zipped(l_str.begin(),l_str.end());
+		std::vector<char> l_unzipped;
+		txtSerializer::unzip_to_buff(l_zipped, l_unzipped);
+		m_internal_data->decode_from_buff(l_unzipped);
 	}
 	return MS::kSuccess;
 }
@@ -47,10 +50,12 @@ MStatus 	vufCurveData::writeASCII(std::ostream& p_out)
 	{
 		return MS::kSuccess;
 	}
-	std::vector<char> l_buff;
-	m_internal_data->encode_to_buff(l_buff);
-	int l_size = (int)l_buff.size();
-	std::string l_str(l_buff.begin(), l_buff.end());
+	std::vector<char> l_encoded;
+	std::vector<char> l_zipped;
+	m_internal_data->encode_to_buff(l_encoded);
+	txtSerializer::zip_to_buff(l_encoded, l_zipped);
+	int l_size = (int)l_zipped.size();
+	std::string l_str(l_zipped.begin(), l_zipped.end());
 	p_out << l_size;
 	if (l_size > 0)
 	{
