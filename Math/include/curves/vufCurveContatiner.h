@@ -390,7 +390,7 @@ namespace vufMath
 				m_rebuild_fn->rebuild(*m_curve_ptr);
 			}
 		}
-		T		get_length() const
+		T		get_length(T p_start, T p_end) const
 		{
 			if (m_curve_ptr == nullptr)
 			{
@@ -398,10 +398,19 @@ namespace vufMath
 			}
 			if (m_rebuild_fn != nullptr)
 			{
-				return m_rebuild_fn->get_length();
+				return m_rebuild_fn->get_length(p_start, p_end);
 			}
-			return m_curve_ptr->get_length();
+			return m_curve_ptr->get_length(p_start, p_end);
 		}
+		T		get_param_by_length(T p_length) const
+		{
+			if (m_rebuild_fn != nullptr)
+			{
+				return m_rebuild_fn->get_rebuilded_val_by_length(p_length);
+			}
+			return 0;
+		}
+
 		// quaternion intrerface
 		bool	compute_bind_params(uint32_t p_divisions = 10, T p_percition = vufCurve_kTol)
 		{

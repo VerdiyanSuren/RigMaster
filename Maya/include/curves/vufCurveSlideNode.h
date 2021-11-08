@@ -20,6 +20,7 @@ namespace vufRM
 		static const MString	g_type_name;
 		//attributes
 		static MObject	g_enable_attr;
+		static MObject	g_use_percent_attr;
 		static MObject	g_offset_attr;
 
 		static MObject	g_use_length_attr;

@@ -39,8 +39,10 @@ namespace vufMath
 		virtual vufCurveRebuildFnType	get_type() const = 0 { return vufCurveRebuildFnType::k_none; }
 		
 		virtual bool		rebuild(const vufCurve<T, V>& p_curve) = 0;
+
 		virtual T			get_curve_val_by_rebuilded(T p_val) const = 0;
 		virtual T			get_rebuilded_val_by_curve(T p_val) const = 0;
+		virtual T			get_rebuilded_val_by_length(T p_length) const = 0;
 		virtual T			get_length_of_rebuilded() const = 0;
 		virtual T			get_length(T p_start = 0.0, T p_end = 1.0) const = 0;
 		virtual std::shared_ptr< vufCurveRebuildFn<T, V>> get_copy() const = 0;
@@ -224,16 +226,22 @@ namespace vufMath
 			T	l_w0 = ((T)l_ndx_0) + 1.0 - l_T;// *l_k;
 			return  l_offset + m_curve_to_uniform_val_v[l_ndx_0] * (l_w0)+m_curve_to_uniform_val_v[l_ndx_1] * (1.0 - l_w0);
 		}
+		virtual T		get_rebuilded_val_by_length(T p_length) const override
+		{
+			if (m_valid == false)	return 0;
+			return p_length / m_curve_length;
+		}
+
 		virtual T		get_length_of_rebuilded() const override
 		{
 			return m_curve_length;
 		}
 		virtual T		get_length(T p_start = 0.0, T p_end = 1.0) const override
 		{
-			T m_lngth = m_curve_length;
-			int	l_k = (int)(m_curve_to_uniform_val_v.size() - 1);
-			
-			
+			if (m_valid == true)
+			{
+				return std::abs((p_end - p_start) * m_curve_length);
+			}
 			return -1;
 		}
 		virtual std::shared_ptr <vufCurveRebuildUniformFn<T, V>> as_uniform_rebuild_fn() const override

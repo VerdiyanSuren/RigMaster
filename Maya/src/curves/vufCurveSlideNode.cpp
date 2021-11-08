@@ -14,6 +14,7 @@ using namespace vufRM;
 using namespace vufMath;
 
 MObject	vufCurveSlideNode::g_enable_attr;
+MObject	vufCurveSlideNode::g_use_percent_attr;
 MObject	vufCurveSlideNode::g_offset_attr;
 MObject	vufCurveSlideNode::g_use_length_attr;
 MObject	vufCurveSlideNode::g_length_attr;
@@ -45,6 +46,15 @@ MStatus	vufCurveSlideNode::initialize()
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_enable_attr, "enable", "en", kBoolean, true);
 	l_status = addAttribute(g_enable_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	
+	// get mode by length or percent
+	g_use_percent_attr = l_enum_attr_fn.create("by", "by", 0, &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_enum_attr_fn.addField("percent", 0));
+	CHECK_MSTATUS(l_enum_attr_fn.addField("length", 1));
+	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
+	CHECK_MSTATUS(l_enum_attr_fn.setChannelBox(true));
+	CHECK_MSTATUS(l_enum_attr_fn.setDefault(0));
+	l_status = addAttribute(g_use_percent_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// offset
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_offset_attr, "offset", "ofs", kDouble, 0.0);
 	l_numeric_attr_fn.setChannelBox(true);
@@ -107,6 +117,7 @@ MStatus	vufCurveSlideNode::initialize()
 
 	// Attributes affets
 	l_status = attributeAffects(g_enable_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = attributeAffects(g_use_percent_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_offset_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_use_length_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_length_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -155,6 +166,7 @@ MStatus	vufCurveSlideNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		auto l_crv = l_out_container.get_curve_ptr()->as_curve_slide();
 
 		l_crv->set_hardness(	p_data.inputValue(g_hardness_attr).asDouble());
+		l_crv->set_percent_mode ( p_data.inputValue(g_use_percent_attr).asShort() == 0);
 		l_crv->set_offset(		p_data.inputValue(g_offset_attr).asDouble());
 		l_crv->set_start_param(	p_data.inputValue(g_start_attr).asDouble());
 		l_crv->set_start_weight(p_data.inputValue(g_start_weight_attr).asDouble());

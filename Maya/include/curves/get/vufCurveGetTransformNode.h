@@ -24,10 +24,10 @@ namespace vufRM
 		static const MTypeId	g_id;
 		static const MString	g_type_name;
 
-	
 		static MObject	g_parent_xform_attr;
 		static MObject	g_in_curve_attr;
 		static MObject	g_axis_attr;
+		static MObject	g_get_mode_attr;
 		static MObject	g_param_attr;
 		static MObject	g_param_pos_attr;
 		static MObject	g_param_rot_attr;

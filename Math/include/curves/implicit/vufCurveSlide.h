@@ -175,7 +175,34 @@ namespace vufMath
 
 		inline void		update()
 		{
-
+			std::cout << "is percent: " << m_percent << std::endl;
+			if (m_percent == false)
+			{
+				m_start_value	= m_container_ptr->get_param_by_length(m_start_value);
+				m_end_value		= m_container_ptr->get_param_by_length(m_end_value);
+				m_offset		= m_container_ptr->get_param_by_length(m_offset);
+			}
+			if (m_use_length == false)
+			{
+				m_start_res = m_start_value;
+				m_end_res	= m_end_value;
+				return;
+			}
+			T l_delta_hardness = m_hardness - std::floor(m_hardness);
+			for (int i = 0; i < m_hardness; ++i)
+			{
+				T l_length = m_container_ptr->get_length(m_start_value, m_end_value);
+				T l_delta = (m_start_value - m_end_value) * (1. - m_length / l_length );
+				l_delta *= 0.5;
+				m_start_value	-= l_delta * m_start_weight;
+				m_end_value		+= l_delta * m_end_weight;
+			}
+			m_start_res = m_offset + m_start_value;
+			m_end_res	= m_offset + m_end_value;
+		}
+		inline T		get_param_on_base_i(T p_val) const
+		{
+			return m_start_res* (1.0 - p_t) + m_end_res * p_t;
 		}
 		inline V<T>		get_pos_at_i(T p_t)		const
 		{
@@ -203,10 +230,11 @@ namespace vufMath
 		void			make_selializable_input(bool p_val) { m_should_serialize_container = p_val; }
 		bool			is_serializable_input() const { return m_should_serialize_container; }
 
+		inline bool		get_percent_mode()	const { return p_percent; }
 		inline T		get_hardness()		const { return m_hardness; }
 		inline T		get_offset()		const { return m_offset; }
 		inline T		get_start_param()	const { return m_start_value; }
-		inline T		get_start_weight()  const { return m_start_value; }
+		inline T		get_start_weight()  const { return m_start_weight; }
 		inline T		get_end_param()		const { return m_end_value; }
 		inline T		get_end_weight()	const { return m_end_weight; }
 		inline T		get_length()		const { return m_length; }
@@ -216,10 +244,11 @@ namespace vufMath
 			return m_container_ptr;
 		}
 
-		inline void set_hardness(T p_val)	{ m_hardness = p_val; }
+		inline void set_percent_mode(bool p_percent) { m_percent = p_percent; }
+		inline void set_hardness(T p_val)			{ m_hardness = p_val; }
 		inline void set_offset(T p_val)				{ m_offset = p_val; }
 		inline void set_start_param(T p_val)		{ m_start_value = p_val; }
-		inline void set_start_weight(T p_val)		{ m_start_value = p_val; }
+		inline void set_start_weight(T p_val)		{ m_start_weight = p_val; }
 		inline void set_end_param(T p_val)			{ m_end_value = p_val; }
 		inline void set_end_weight(T p_val)			{ m_end_weight = p_val; }
 		inline void set_length(T p_val)				{ m_length = p_val; }
@@ -229,16 +258,17 @@ namespace vufMath
 			m_container_ptr = p_ptr;
 		}
 	private:
-		T m_hardness	= 10;
-		T m_start_value = 0.0;
-		T m_start_res	= 0.0;
-		T m_start_weight = 1.0;
-		T m_end_value	= 1.0;
-		T m_end_res		= 1.0;
-		T m_end_weight	= 1.0;
-		T m_length		= 1;
-		T m_use_length	= true;
-		T m_offset =	.0;
+		bool m_percent		= true;	// start, end values as percent or length
+		T m_hardness		= 10;	// how elasticc is our curve
+		T m_start_value		= 0.0;	
+		T m_start_res		= 0.0;	//start value after solving
+		T m_start_weight	= 1.0;
+		T m_end_value		= 1.0;
+		T m_end_res			= 1.0;	// end value after solving
+		T m_end_weight		= 1.0;
+		T m_length			= 1;	// desired lenght of slide curve
+		bool m_use_length	= true; // set curve as trim or classic slide curve
+		T m_offset			=	.0; // offset slide curve on base curve after solving
 		bool										m_should_serialize_container = false;
 		std::shared_ptr< vufCurveContainer<T, V> >	m_container_ptr = nullptr;
 

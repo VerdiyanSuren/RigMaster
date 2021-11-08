@@ -22,6 +22,8 @@ using namespace vufMath;
 MObject	vufCurveGetTransformNode::g_parent_xform_attr;
 MObject	vufCurveGetTransformNode::g_axis_attr;
 MObject	vufCurveGetTransformNode::g_in_curve_attr;
+
+MObject	vufCurveGetTransformNode::g_get_mode_attr;
 MObject	vufCurveGetTransformNode::g_param_attr;
 MObject	vufCurveGetTransformNode::g_param_pos_attr;
 MObject	vufCurveGetTransformNode::g_param_rot_attr;
@@ -81,6 +83,15 @@ MStatus	vufCurveGetTransformNode::initialize()
 	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
 	CHECK_MSTATUS(l_enum_attr_fn.setChannelBox(true));
 	CHECK_MSTATUS(l_enum_attr_fn.setDefault(k_x));
+
+	// get mode by length or percent
+	g_get_mode_attr = l_enum_attr_fn.create("by", "by", 0, &l_status);
+	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	CHECK_MSTATUS(l_enum_attr_fn.addField("percent", 0));
+	CHECK_MSTATUS(l_enum_attr_fn.addField("length", 1));
+	CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
+	CHECK_MSTATUS(l_enum_attr_fn.setChannelBox(true));
+	CHECK_MSTATUS(l_enum_attr_fn.setDefault(0));
 
 	// Position Param 
 	g_param_attr = l_numeric_attr_fn.create("offset", "ofs", MFnNumericData::kDouble, 0.0, &l_status);
@@ -160,6 +171,7 @@ MStatus	vufCurveGetTransformNode::initialize()
 	l_status = addAttribute(g_parent_xform_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_in_curve_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_axis_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_get_mode_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_param_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_param_pos_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_param_rot_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -171,6 +183,7 @@ MStatus	vufCurveGetTransformNode::initialize()
 	l_status = attributeAffects(g_parent_xform_attr,	g_res_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_in_curve_attr,		g_res_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_axis_attr,			g_res_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = attributeAffects(g_get_mode_attr,		g_res_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_param_attr,			g_res_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_param_pos_attr,		g_res_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_param_rot_attr,		g_res_compound_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -199,23 +212,25 @@ MStatus	vufCurveGetTransformNode::compute(const MPlug& p_plug, MDataBlock& p_dat
 			p_plug == g_res_xform_attr)
 	{
 		//VF_LOG_INFO("COMPUTE TRANSFORM");
-		vuf::vufTimer l_timer("Get transform node compute: ");
-		MMatrix l_parent_matr= p_data.inputValue(g_parent_xform_attr).asMatrix();
-		double l_offset		= p_data.inputValue(g_param_attr).asDouble();
-		double l_pos_param	= p_data.inputValue(g_param_pos_attr).asDouble();
-		double l_rot_param	= p_data.inputValue(g_param_rot_attr).asDouble();
-		double l_scl_param	= p_data.inputValue(g_param_scl_attr).asDouble();
-
+		//vuf::vufTimer l_timer("Get transform node compute: ");
+		MMatrix l_parent_matr	= p_data.inputValue(g_parent_xform_attr).asMatrix();
+		double	l_offset		= p_data.inputValue(g_param_attr).asDouble();
+		double	l_pos_param		= p_data.inputValue(g_param_pos_attr).asDouble();
+		double	l_rot_param		= p_data.inputValue(g_param_rot_attr).asDouble();
+		double	l_scl_param		= p_data.inputValue(g_param_scl_attr).asDouble();
+		auto	l_get_by		= p_data.inputValue(g_get_mode_attr).asShort();
 		std::shared_ptr<vufCurveData> l_in_data;
 		VF_RM_GET_DATA_FROM_IN(mpxCurveWrapper, vufCurveData, p_data, g_in_curve_attr, l_in_data);
 		if (l_in_data != nullptr && l_in_data->m_internal_data != nullptr)
 		{
-			//std::cout << "Compute: " << l_offset + l_pos_param <<std::endl;
+			if (l_get_by == 1)
+			{
+				l_offset =l_in_data->m_internal_data->get_param_by_length(l_offset);
+			}
 			auto l_pos = l_in_data->m_internal_data->get_pos_at(l_offset + l_pos_param);
 			auto l_qtr = l_in_data->m_internal_data->get_quaternion_at(l_offset + l_rot_param);
-//std::cout << l_qtr << std::endl;
 			auto l_scl = l_in_data->m_internal_data->get_scale_at(l_offset + l_scl_param);
-			//std::cout << "q: " << l_qtr << std::endl;
+
 			vufMatrix_4d l_matr;
 			l_matr.set_quaternion(l_qtr);
 			l_matr.set_translation(l_pos);
