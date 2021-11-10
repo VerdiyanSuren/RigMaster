@@ -1146,7 +1146,7 @@ namespace vufMath
 		}
 		vufVector4<T>	get_axis_z_4() const
 		{
-			return vufVector4<T>(m_ptr[3][0], m_ptr[3][1], m_ptr[3][2],1.0);
+			return vufVector4<T>(m_ptr[2][0], m_ptr[2][1], m_ptr[2][2],1.0);
 		}
 		T				get_scale_x() const
 		{

@@ -167,17 +167,19 @@ MStatus	vufCurveNoiseNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		vufCurveContainer_4d& l_in_container = *(l_in_data->m_internal_data.get());
 		vufCurveContainer_4d& l_out_container = *(l_out_data->m_internal_data.get());
 		//l_out_container.set_curve_ptr(l_in_container.get_curve_ptr());
-		l_out_container.set_rebuild_fn_ptr(l_in_container.get_rebuild_fn_ptr());
-		l_out_container.set_scale_fn_ptr(l_in_container.get_scale_fn_ptr());
-		l_out_container.set_quaternion_fn_ptr(l_in_container.get_quaternion_fn_ptr());
-
 		if (l_enable == false)
 		{
 			l_out_container.set_curve_ptr(l_in_container.get_curve_ptr());
+			l_out_container.set_rebuild_fn_ptr(l_in_container.get_rebuild_fn_ptr());
+			l_out_container.set_scale_fn_ptr(l_in_container.get_scale_fn_ptr());
+			l_out_container.set_quaternion_fn_ptr(l_in_container.get_quaternion_fn_ptr());
+
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
-		l_out_container.switch_curve(0, vufMath::vufCurveType::k_noise_curve);
+		l_out_container.switch_curve(0, vufCurveType::k_noise_curve);
+		l_out_container.switch_quaternion_fn(vufCurveQuatFnType::k_compose);
+		l_out_container.switch_scale_fn(vufCurveScaleFnType::k_compose);
 		auto l_crv		= l_out_container.get_curve_ptr()->as_curve_noise();
 		//VF_LOG_INFO(l_crv->to_string());
 		//MGlobal::displayWarning("Noise compute");

@@ -29,18 +29,58 @@ namespace vufMath
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_noise_curve, k_compound_category);
 		VF_MATH_CRV_REBUILD;
 		VF_MATH_CRV_DEFINE_CLOSEST_POINTS;
-		VF_MATH_DEFINE_PARAM_COMPONENT;
-		virtual V<T>		get_pos_at(T p_t)										const override
+		VF_MATH_CRV_DEFINE_PARAM_COMPONENT;
+		virtual V<T>		get_pos_at(T p_t)							const override
 		{
 			return get_pos_at_i(p_t);
 		}
-		virtual V<T>		get_tangent_at(T p_t)									const override
+		virtual V<T>		get_tangent_at(T p_t)						const override
 		{
 			return get_tangent_at_i(p_t);
 		}
-		virtual V<T>		get_tangent_normalized_at(T p_t)						const override
+		virtual V<T>		get_tangent_normalized_at(T p_t)			const override
 		{
 			return get_tangent_at_i(p_t).normalize_in_place();
+		}
+		virtual vufQuaternion<T>	get_quaternion_at(T p_t)			const override
+		{
+			if (m_container_ptr == nullptr)
+			{
+				V<T> l_vec(1.0);
+				V<T> l_tng = get_tangent_normalized_at(p_t);
+				vufQuaternion<T> l_res = vufQuaternion<T>();
+				return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
+			}
+			V<T> l_tng_1 = m_container_ptr->get_tangent_at(p_t);
+			l_tng_1.normalize_in_place();
+			vufQuaternion<T> l_res = m_container_ptr->get_quaternion_at(p_t);
+			for (T l_step = p_rotate_step; l_step <= 1.0; l_step+= p_rotate_step)
+			{
+				V<T> l_tng_2 = get_tangent_normalized_at_i(p_t, l_step);
+				V<T> l_cross = l_tng_1.get_cross(l_tng_2);
+				if (l_cross.length2() < 0.000001)
+				{
+					continue;
+				}
+				l_cross.normalize_in_place();
+				T l_dot		= l_tng_1.dot(l_tng_2);
+				T l_angle	= -acos(VF_CLAMP(-1., 1., l_dot));
+				vufQuaternion<T> l_rot(l_angle, l_cross);
+				l_res *= l_rot;
+				l_tng_1 = l_tng_2;
+			}
+			//------------------------
+			V<T> l_vec(1.0);
+			l_vec = l_res.rotate_vector_by_quaternion(l_vec);
+			return l_res.increment_quaternion_with_2vectors(l_vec, l_tng_1);
+		}
+		virtual V<T>				get_scale_at(T p_t)					const override
+		{
+			if (m_container_ptr == nullptr)
+			{				
+				return m_container_ptr->get_scale_at(p_t);
+			}
+			return V<T>(1.0, 1.0, 1.0);
 		}
 		virtual std::shared_ptr<vufCurve<T, V>>		get_copy() const override
 		{
@@ -182,7 +222,7 @@ namespace vufMath
 			return std::static_pointer_cast<vufCurveNoise<T, V>>(vufCurveNoise<T, V>::m_this.lock());
 		}
 
-		inline V<T>			get_pos_at_i(T p_t)		const
+		inline V<T>			get_pos_at_i(T p_t)							const
 		{
 			if (m_container_ptr == nullptr)
 			{
@@ -240,11 +280,74 @@ namespace vufMath
 
 			return l_res;
 		}
-		inline V<T>			get_tangent_at_i(T p_t) const
+		inline V<T>			get_pos_at_i(T p_t, T p_amount_weight)		const
+		{
+			if (m_container_ptr == nullptr)
+			{
+				V<T>	l_res;
+				l_res.x = m_noise.simplex_4d(p_t * m_scale_x + m_offset_x,
+					.0,
+					.0,
+					m_speed * m_time) * m_amount_x * p_amount_weight;
+				l_res.y = m_noise.simplex_4d(.0,
+					p_t * m_scale_y + m_offset_y,
+					.0,
+					m_speed * m_time) * m_amount_y * p_amount_weight;
+				l_res.z = m_noise.simplex_4d(.0,
+					.0,
+					p_t * m_scale_z + m_offset_z,
+					m_speed * m_time) * m_amount_z * p_amount_weight;
+				return l_res;
+			}
+			V<T>	l_res = m_container_ptr->get_pos_at(p_t);
+
+			T l_x = m_noise.simplex_4d(p_t * m_scale_x + m_offset_x,
+				.0,
+				.0,
+				m_speed * m_time) * m_amount_x * p_amount_weight;
+			T l_y = m_noise.simplex_4d(.0,
+				p_t * m_scale_y + m_offset_y,
+				.0,
+				m_speed * m_time) * m_amount_y * p_amount_weight;
+			T l_z = m_noise.simplex_4d(.0,
+				.0,
+				p_t * m_scale_z + m_offset_z,
+				m_speed * m_time) * m_amount_z * p_amount_weight;
+			
+			if (m_use_frame_scale == true)
+			{
+				V<T> l_scale = m_container_ptr->get_scale_at(p_t);
+				l_x *= l_scale.x;
+				l_y *= l_scale.y;
+				l_z *= l_scale.z;
+			}
+			if (m_use_frame_quat == true)
+			{
+				auto l_quat = m_container_ptr->get_quaternion_at(p_t);
+				vufMatrix_4d l_matr = vufMatrix_4d();
+				l_matr.set_quaternion(l_quat);
+				l_res += l_matr.get_axis_x_4() * l_x +
+					l_matr.get_axis_y_4() * l_y +
+					l_matr.get_axis_z_4() * l_z;
+				return l_res;
+			}
+			
+			l_res.x += l_x;
+			l_res.y += l_y;
+			l_res.z += l_z;
+
+			return l_res;
+		}
+		inline V<T>			get_tangent_at_i(T p_t)						const
 		{
 			//V<T>	l_res = m_container_ptr->get_tangent_at(p_t);
-			V<T> l_res = (get_pos_at_i(p_t) - get_pos_at_i(p_t + 0.00001)) * 10000;
-			return l_res;
+			V<T>	l_res = (get_pos_at_i(p_t + 0.00001) - get_pos_at_i(p_t)) * 10000;
+			return	l_res;
+		}
+		inline V<T>			get_tangent_normalized_at_i(T p_t, T p_amount_weight)	const
+		{
+			V<T>	l_res = (get_pos_at_i(p_t + 0.00001, p_amount_weight) - get_pos_at_i(p_t, p_amount_weight)) * 10000;
+			return	l_res.normalize_in_place();
 		}
 
 		inline bool get_use_quat_i()	const { return m_use_frame_quat; }
@@ -307,6 +410,8 @@ namespace vufMath
 		}
 
 	private:
+		const T p_rotate_step = 0.2;
+
 		bool m_use_frame_quat = false;
 		bool m_use_frame_scale = false;
 		T m_time		= 0;

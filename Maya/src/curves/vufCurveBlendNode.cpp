@@ -94,7 +94,7 @@ MStatus	vufCurveBlendNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
 	{
-		vuf::vufTimer l_timer("Blend curve node compute: ");
+		//vuf::vufTimer l_timer("Blend curve node compute: ");
 		MStatus l_status;
 		double l_weight		= p_data.inputValue(g_weight_attr).asDouble();
 		bool l_use_fcurve	= p_data.inputValue(g_use_fcurve_attr).asBool();
@@ -115,7 +115,9 @@ MStatus	vufCurveBlendNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		}
 		vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
 		l_container.switch_curve(0, vufCurveType::k_blend_curve);
-		l_container.switch_quaternion_fn(vufCurveQuatFnType::k_blend);
+		l_container.switch_quaternion_fn(vufCurveQuatFnType::k_compose);
+		l_container.switch_scale_fn(vufCurveScaleFnType::k_compose);
+
 		
 		auto l_crv_ptr = l_container.get_curve_ptr();
 		std::shared_ptr<vufCurveBlend_4d> l_blend_ptr = std::static_pointer_cast<vufCurveBlend_4d>( l_crv_ptr );

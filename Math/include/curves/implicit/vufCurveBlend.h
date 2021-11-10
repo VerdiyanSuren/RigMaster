@@ -53,19 +53,56 @@ namespace vufMath
 			return get_param_by_vector_component_i(p_value, p_component_index, p_start, p_end, p_divisions, p_percition);
 		}
 
-		virtual V<T>			get_pos_at(T p_t)			const override
+		virtual V<T>				get_pos_at(T p_t)			const override
 		{
 			return get_pos_at_i(p_t);
 		}
-		virtual V<T>			get_tangent_at(T p_t)		const override
+		virtual V<T>				get_tangent_at(T p_t)		const override
 		{
 			return get_tangent_at_i(p_t);
 		}
-		virtual V<T>			get_tangent_normalized_at(T p_t)						const override
+		virtual V<T>				get_tangent_normalized_at(T p_t)						const override
 		{
 			return get_tangent_at_i(p_t).normalize_in_place();
 		}
-		
+		virtual vufQuaternion<T>	get_quaternion_at(T p_t)			const
+		{
+			if (m_first_container_ptr != nullptr && m_second_container_ptr != nullptr)
+			{
+				T l_weight = get_computed_weight_i(p_t);
+				V<T> l_tngnt				= get_tangent_normalized_at(p_t);
+				vufQuaternion<T>	l_q_a	= m_first_container_ptr->get_quaternion_at(p_t);
+				vufQuaternion<T>	l_q_b	= m_second_container_ptr->get_quaternion_at(p_t);
+				V<T>				l_v_1(1.0);
+				V<T> l_v_a	= l_q_a.rotate_vector_by_quaternion(l_v_1);
+				l_q_a		= l_q_a.increment_quaternion_with_2vectors(l_v_a, l_tngnt);
+				V<T> l_v_b	= l_q_b.rotate_vector_by_quaternion(l_v_1);
+				l_q_b		= l_q_b.increment_quaternion_with_2vectors(l_v_b, l_tngnt);
+				if (l_q_a.dot(l_q_b) < 0.0)
+				{
+					l_q_b = -l_q_b;
+				}
+				vufQuaternion<T> l_q_r = l_q_a * (1. - l_weight) + l_q_b * l_weight;
+				V<T> l_v_r = l_q_r.rotate_vector_by_quaternion(l_v_1);
+				l_q_r = l_q_r.increment_quaternion_with_2vectors(l_v_r, l_tngnt);
+				return l_q_r;
+			}
+			V<T> l_vec(1.0);
+			V<T> l_tng = get_tangent_normalized_at(p_t);
+			vufQuaternion<T> l_res = vufQuaternion<T>();
+			return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
+		}
+		virtual V<T>				get_scale_at(T p_t)					const
+		{
+			if (m_first_container_ptr != nullptr && m_second_container_ptr != nullptr)
+			{
+				T l_weight = get_computed_weight_i(p_t);
+				V<T> l_s_a = m_first_container_ptr->get_scale_at(p_t);
+				V<T> l_s_b = m_second_container_ptr->get_scale_at(p_t);
+				return l_s_a * (1. - l_weight) + l_s_b * l_weight;
+			}
+			return V<T>(1.0, 1.0, 1.0);
+		}
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve<T, V>> get_copy() const override
 		{

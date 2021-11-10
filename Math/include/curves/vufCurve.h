@@ -126,15 +126,25 @@ namespace vufMath
 																T			p_end				= 1 /*if p_start == p_end then interval is infinite*/,
 																uint32_t	p_divisions			= 10,
 																T			p_percition			= vufCurve_kTol)	const = 0;
-		virtual V<T>			get_pos_at(T p_t)					const = 0;
-		virtual V<T>			get_tangent_at(T p_t)				const = 0;
-		virtual V<T>			get_tangent_normalized_at(T p_t)	const
+		virtual V<T>				get_pos_at(T p_t)					const = 0;
+		virtual V<T>				get_tangent_at(T p_t)				const = 0;
+		virtual V<T>				get_tangent_normalized_at(T p_t)	const
 		{
 			// To Do 
 			// make abstract
 			return V<T>();
 		}
-		
+		virtual vufQuaternion<T>	get_quaternion_at(T p_t)			const
+		{
+			V<T> l_vec(1.0);
+			V<T> l_tng = get_tangent_normalized_at(p_t);
+			vufQuaternion<T> l_res = vufQuaternion<T>();
+			return l_res.increment_quaternion_with_2vectors(l_vec, l_tng);
+		}
+		virtual V<T>				get_scale_at(T p_t)					const
+		{
+			return V<T>(1.0, 1.0, 1.0);
+		}
 		/// Get copy of this curve.	Original curve is unchenged
 		virtual std::shared_ptr<vufCurve>	get_copy() const = 0;
 		virtual std::string					to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;

@@ -9,6 +9,7 @@ namespace vufMath
 	template<class T, template<typename> class V>	class vufCurveContainer;
 	template <class T, template<typename> class V>	class vufScaleCloseCurveFn;
 	template <class T, template<typename> class V>	class vufCurveScaleParamFn;
+	template <class T, template<typename> class V>	class vufCurveScaleComposeFn;
 	template <class T, template<typename> class V>	class vufCurveScaleSlideFn;
 #pragma region VF_SCALE_FN_BASE
 
@@ -19,7 +20,8 @@ namespace vufMath
 		k_closest_params	= 1,
 		k_params			= 2,
 		k_ends				= 3,
-		k_slide				= 4
+		k_compose			= 4,
+		k_slide				= 5
 	};
 
 	// functions set to work with specific part 
@@ -39,6 +41,10 @@ namespace vufMath
 			{
 				return vufCurveScaleParamFn<T, V>::create();
 			}
+			if (p_type == vufCurveScaleFnType::k_compose)
+			{
+				return vufCurveScaleComposeFn<T, V>::create();
+			}
 			if (p_type == vufCurveScaleFnType::k_slide)
 			{
 				return vufCurveScaleSlideFn<T, V>::create();
@@ -52,9 +58,10 @@ namespace vufMath
 		virtual vufCurveScaleFnType						get_type() const = 0 { return vufCurveScaleFnType::k_none; }
 		virtual std::shared_ptr< vufCurveScaleFn<T, V>> get_copy() const = 0;
 		// cast interface
-		virtual std::shared_ptr < vufScaleCloseCurveFn<T, V> > as_close_fn() const { return nullptr; }
-		virtual std::shared_ptr < vufCurveScaleParamFn<T, V> > as_params_fn() const { return nullptr; }
-		virtual std::shared_ptr < vufCurveScaleSlideFn<T, V> > as_slide_fn() const { return nullptr; }
+		virtual std::shared_ptr < vufScaleCloseCurveFn<T, V> >		as_close_fn() const { return nullptr; }
+		virtual std::shared_ptr < vufCurveScaleParamFn<T, V> >		as_params_fn() const { return nullptr; }
+		virtual std::shared_ptr < vufCurveScaleComposeFn<T, V> >	as_compose_fn() const { return nullptr; }
+		virtual std::shared_ptr < vufCurveScaleSlideFn<T, V> >		as_slide_fn() const { return nullptr; }
 
 		virtual std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const = 0
 		{

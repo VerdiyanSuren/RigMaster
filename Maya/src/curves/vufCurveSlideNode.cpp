@@ -168,8 +168,8 @@ MStatus	vufCurveSlideNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			return MS::kSuccess;
 		}
 		l_out_container.switch_curve(0, vufMath::vufCurveType::k_slide_curve);
-		l_out_container.switch_quaternion_fn(vufMath::vufCurveQuatFnType::k_slide);
-		l_out_container.switch_scale_fn(vufMath::vufCurveScaleFnType::k_slide);
+		l_out_container.switch_quaternion_fn(vufMath::vufCurveQuatFnType::k_compose);
+		l_out_container.switch_scale_fn(vufMath::vufCurveScaleFnType::k_compose);
 		auto l_crv = l_out_container.get_curve_ptr()->as_curve_slide();
 
 		l_crv->set_hardness(	p_data.inputValue(g_hardness_attr).asDouble());

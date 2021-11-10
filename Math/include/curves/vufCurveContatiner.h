@@ -20,12 +20,14 @@
 #include <curves/quaternionFn/vufCurveQuaternionTransportFn.h>
 #include <curves/quaternionFn/vufCurveQuaternion2EndsFn.h>
 #include <curves/quaternionFn/vufCurveQuaternionParamsFn.h>
+#include <curves/quaternionFn/vufCurveQuaternionComposeFn.h>
 #include <curves/quaternionFn/vufCurveQuaternionBlendFn.h>
 #include <curves/quaternionFn/vufCurveQuaternionSlideFn.h>
 
 #include <curves/scaleFn/vufCurveScaleFn.h>
 #include <curves/scaleFn/vufCurveScaleCloseFn.h>
 #include <curves/scaleFn/vufCurveScaleParamFn.h>
+#include <curves/scaleFn/vufCurveScaleComposeFn.h>
 #include <curves/scaleFn/vufCurveScaleSlideFn.h>
 
 #include <curves/remapFn/vufCurveRemapFn.h>

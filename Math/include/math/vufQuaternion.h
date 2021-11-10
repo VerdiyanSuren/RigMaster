@@ -226,6 +226,7 @@ namespace vufMath
 				-x * a.z + y * a.w + z * a.x + w * a.y,
 				x * a.y - y * a.x + z * a.w + w * a.z,
 				-x * a.x - y * a.y - z * a.z + w * a.w);
+			return *this;
 		}
 		inline bool operator==(const vufQuaternion<T> v) const
 		{

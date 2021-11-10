@@ -87,6 +87,9 @@
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionCloseFn.h">
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionComposeFn.h">
+      <Filter>include\curves\quaternionFn</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\quaternionFn\vufCurveQuaternionFn.h">
       <Filter>include\curves\quaternionFn</Filter>
     </ClInclude>
@@ -115,6 +118,9 @@
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseFn.h">
+      <Filter>include\curves\scaleFn</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curves\scaleFn\vufCurveScaleComposeFn.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleFn.h">

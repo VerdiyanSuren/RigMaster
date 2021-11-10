@@ -252,7 +252,7 @@ virtual bool		rebuild(																			\
 
 #pragma endregion CURVE_REBUILD_MACROSES
 
-#define VF_MATH_DEFINE_PARAM_COMPONENT																	\
+#define VF_MATH_CRV_DEFINE_PARAM_COMPONENT																	\
 virtual T	get_param_by_vector_component(	T			p_value,										\
 											uint32_t	p_component_index = 0,							\
 											T			p_start = 0,									\

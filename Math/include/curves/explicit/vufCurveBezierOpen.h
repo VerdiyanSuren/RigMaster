@@ -28,7 +28,7 @@ namespace vufMath
 		VF_MATH_CURVE_DEFINE_TYPE_CATEGORY(k_open_bezier_piecewise, k_bezier_category);
 		VF_MATH_CRV_REBUILD_SEGMENTED;
 		VF_MATH_CRV_DEFINE_CLOSEST_POINTS;
-		VF_MATH_DEFINE_PARAM_COMPONENT;
+		VF_MATH_CRV_DEFINE_PARAM_COMPONENT;
 
 		virtual V<T>			get_pos_at(T p_t)					const override
 		{
