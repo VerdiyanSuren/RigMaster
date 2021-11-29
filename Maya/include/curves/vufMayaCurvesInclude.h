@@ -63,6 +63,37 @@ l_rbld_offset
 	short	l_rebuild_mode = p_data.inputValue(g_rebuild_mode_attr).asShort();					\
 	int		l_rbld_samples = p_data.inputValue(g_rebuild_samples_attr).asInt();					\
 
+#define VF_RM_CRV_NODE_COMPUTE_REBUILD()														\
+	std::shared_ptr<vufCurveRebuildData>	l_rebuild_store_data;								\
+	VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveRebuildWrapper, vufCurveRebuildData, p_data, g_rebuild_store_attr, l_rebuild_store_data, m_gen_id);\
+	VF_RM_CRV_NODE_READ_REBUILD_ATTR();															\
+	if (l_rebuild_mode == 0 /*apply. always refresh*/)											\
+	{																							\
+		l_out_data->m_internal_data->switch_rebuild_fn(vufCurveRebuildFnType::k_constant_step);	\
+		std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_out_data->m_internal_data->get_rebuild_fn_ptr();	\
+		std::cout << l_rbl_ptr.get() << std::endl;												\
+		if (l_rbl_ptr != nullptr)																\
+		{																						\
+			auto l_r_ptr = l_rbl_ptr->as_uniform_rebuild_fn();									\
+			l_r_ptr->set_segment_divisions_i(l_rbld_samples);									\
+			l_r_ptr->rebuild(*(l_out_container.get_curve_ptr()));								\
+			l_rebuild_store_data->m_internal_data = l_rbl_ptr;									\
+		}																						\
+	}																							\
+	if (l_rebuild_mode == 1 /* keep rebuild fn*/)												\
+	{																							\
+		std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_rebuild_store_data->m_internal_data;\
+		l_out_data->m_internal_data->set_rebuild_fn_ptr(l_rbl_ptr);								\
+	}																							\
+	if (l_rebuild_mode == 2 /* delete rebuild fn*/)												\
+	{																							\
+		l_out_data->m_internal_data->set_rebuild_fn_ptr(nullptr);								\
+		l_rebuild_store_data->m_internal_data = nullptr;										\
+	}																							\
+	p_data.setClean(g_rebuild_store_attr);
+
+
+
 #pragma endregion
 #pragma region QUATERNIONS ROUTINES
 #define VF_RM_CRV_NODE_DECLARE_QUATERNIONS_ATTR()		\

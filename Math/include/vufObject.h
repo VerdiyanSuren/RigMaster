@@ -36,7 +36,6 @@ namespace vufMath
 	class vufCustomArrayObject;
 	
 	template<typename T>	class vufPointObject;
-
 	enum class vufObjectType :unsigned int
 	{
 		// undefined 

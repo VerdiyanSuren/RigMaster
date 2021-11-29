@@ -458,6 +458,7 @@
     <ClInclude Include="include\unitTests\math\vufVector4Test.h" />
     <ClInclude Include="include\unitTests\math\vufVectorObjectArrayTest.h" />
     <ClInclude Include="include\unitTests\polinoms\vufPolinomTest.h" />
+    <ClInclude Include="include\unitTests\vufObjectArrayFnUT.h" />
     <ClInclude Include="include\unitTests\vufTestAll.h" />
     <ClInclude Include="include\vufMathInclude.h" />
     <ClInclude Include="include\vufNumericArrayObject.h" />

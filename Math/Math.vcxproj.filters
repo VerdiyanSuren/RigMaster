@@ -189,6 +189,9 @@
     <ClInclude Include="include\unitTests\polinoms\vufPolinomTest.h">
       <Filter>include\unitTests\polinoms</Filter>
     </ClInclude>
+    <ClInclude Include="include\unitTests\vufObjectArrayFnUT.h">
+      <Filter>include\unitTests</Filter>
+    </ClInclude>
     <ClInclude Include="include\unitTests\vufTestAll.h">
       <Filter>include\unitTests</Filter>
     </ClInclude>

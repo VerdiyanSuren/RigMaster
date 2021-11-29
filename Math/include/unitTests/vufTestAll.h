@@ -11,6 +11,7 @@
 //#include <unitTests/maht/vufNumericArrayObjectTest.h>
 
 #include <unitTests/curve/polinomTest.h>
+#include <unitTests/vufObjectArrayFnUT.h>
 
 namespace vufMath
 {
@@ -30,12 +31,12 @@ namespace vufMath
 			//vufQuaternionTest<double>			l_test_quaternion_d;
 			
 			//vufPolinomCoeffTest<double>			l_polinom_d;
-			vufCurveOpenBSplineTest<double>		l_open_bspline_d;
-			vufCurveCloseBSplineTest<double>	l_close_bspline_d;
-			vufCurveRebuildUniformTest<double>	l_rebuild_uniform_d;
-			vufCurveQuaternionCloseTest<double> l_quat_close_d;
-			vufCurveScaleCloseTest<double>		l_scale_close_d;
-			vufCurveContainerTest<double>		l_constatiner_d;
+			//vufCurveOpenBSplineTest<double>		l_open_bspline_d;
+			//vufCurveCloseBSplineTest<double>	l_close_bspline_d;
+			//vufCurveRebuildUniformTest<double>	l_rebuild_uniform_d;
+			//vufCurveQuaternionCloseTest<double> l_quat_close_d;
+			//vufCurveScaleCloseTest<double>		l_scale_close_d;
+			//vufCurveContainerTest<double>		l_constatiner_d;
 			
 			
 			
@@ -85,12 +86,35 @@ namespace vufMath
 
 
 			//if (l_polinom_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
-			if (l_open_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (l_close_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (l_rebuild_uniform_d.run(p_verbose) == false){ std::cin.get();	return false; }
-			if (l_quat_close_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
-			if (l_scale_close_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (l_constatiner_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			//if (l_open_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			//if (l_close_bspline_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			//if (l_rebuild_uniform_d.run(p_verbose) == false){ std::cin.get();	return false; }
+			//if (l_quat_close_d.run(p_verbose) == false)		{ std::cin.get();	return false; }
+			//if (l_scale_close_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			//if (l_constatiner_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
+			
+			if (vufObjectArrayFnUT<uint64_t>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<int>().run(p_verbose) == false)		{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<double>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<float>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			
+			if (vufObjectArrayFnUT<vufMatrix4<double>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufMatrix4<float>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufMatrix3<double>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufMatrix3<float>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufMatrix2<double>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufMatrix2<float>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			
+			if (vufObjectArrayFnUT<vufVector2<float>>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufVector2<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufVector3<float>>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufVector3<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufVector4<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufVector4<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
+
+			if (vufObjectArrayFnUT<vufQuaternion<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT < vufQuaternion <float>>().run(p_verbose) == false) { std::cin.get();	return false; }
+
 			return true;
 		}
 	};

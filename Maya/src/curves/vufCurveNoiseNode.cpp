@@ -1,6 +1,8 @@
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnUnitAttribute.h>
+#include <maya/MFnEnumAttribute.h>
+#include <maya/MFnCompoundAttribute.h>
 #include <maya/MTime.h>
 #include <maya/MGlobal.h>
 
@@ -26,6 +28,7 @@ MObject	vufCurveNoiseNode::g_scale_z_attr;
 MObject	vufCurveNoiseNode::g_offset_x_attr;
 MObject	vufCurveNoiseNode::g_offset_y_attr;
 MObject	vufCurveNoiseNode::g_offset_z_attr;
+VF_RM_CRV_NODE_DEFINE_REBUILD_ATTR(vufCurveNoiseNode);
 
 MObject	vufCurveNoiseNode::g_data_in_attr;
 MObject	vufCurveNoiseNode::g_data_out_attr;
@@ -43,6 +46,8 @@ MStatus	vufCurveNoiseNode::initialize()
 	MStatus l_status;
 	MFnTypedAttribute		l_typed_attr_fn;
 	MFnNumericAttribute		l_numeric_attr_fn;
+	MFnEnumAttribute		l_enum_attr_fn;
+	MFnCompoundAttribute	l_compound_attr_fn;
 	MFnUnitAttribute		l_unit_attr_fn;
 
 	// 	enable
@@ -106,6 +111,7 @@ MStatus	vufCurveNoiseNode::initialize()
 	l_numeric_attr_fn.setChannelBox(true);
 	l_status = addAttribute(g_offset_z_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
+	VF_RM_CRV_NODE_INIT_REBUILD_ATTR();
 	// in curve
 	g_data_in_attr = l_typed_attr_fn.create("inCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -124,6 +130,7 @@ MStatus	vufCurveNoiseNode::initialize()
 
 
 	// Attributes affets
+	VF_RM_CRV_NODE_REBUILD_ATTR_AFFECT_TO(g_data_out_attr);
 	l_status = attributeAffects(g_enable_attr,		g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_use_quat_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = attributeAffects(g_use_scale_attr,	g_data_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -200,6 +207,9 @@ MStatus	vufCurveNoiseNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		l_crv->set_container_i(l_in_data->m_internal_data);
 
 		p_data.setClean(g_data_out_attr);
+
+		VF_RM_CRV_NODE_COMPUTE_REBUILD();
+
 		return MS::kSuccess;
 	}
 

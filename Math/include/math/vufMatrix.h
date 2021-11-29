@@ -28,6 +28,7 @@ namespace vufMath
 	template<typename T>
 	class vufMatrix2
 	{
+		static_assert(std::is_floating_point_v<T>, "Matrix2 can be float or double");
 	public:
 		T m_ptr[2][2] = { { 1., .0 },
 						  { .0, 1.  } };
@@ -63,7 +64,7 @@ namespace vufMath
 		{
 			return m_ptr[p_row];
 		}
-		static vufMatrix2 random_matrix()
+		static vufMatrix2 random()
 		{
 			vufMatrix2 l_matr;
 			for (int i = 0; i < 2; ++i)
@@ -95,11 +96,14 @@ namespace vufMath
 			return *this;
 		}
 
-		std::string		to_string() const
+		std::string		to_string( int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false) const
 		{
 			std::stringstream l_ss;
-			l_ss.precision(64);
-			l_ss << "[";
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
+			l_ss << l_str_offset << "[";
+			if (p_multiline == true) l_ss << std::endl << l_str_offset << ' ';
 			for (int i = 0; i < 2; ++i)
 			{
 				l_ss << "(";
@@ -112,66 +116,66 @@ namespace vufMath
 					}
 				}
 				l_ss << ")";
-
-				if (i != 1)
+				if (i != 1 && p_multiline == true)
 				{
-					l_ss << ",";
+					l_ss << std::endl << l_str_offset << ' ';
 				}
 			}
-			l_ss << "]";
+			if (p_multiline == true)
+			{
+				l_ss << std::endl << l_str_offset << ']';
+				return l_ss.str();
+			}
+			l_ss << ']';
 			return l_ss.str();
 		}
 		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
 		{
-			try
+			std::stringstream l_ss;
+			uint64_t l_index = 0;
+			uint64_t l_str_pos = p_offset;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+			for (int i = 0; i < 2; ++i)
 			{
-				T l_x[4];
-				std::stringstream l_ss;
-				uint64_t l_index = 0;
-				uint64_t l_str_pos = p_offset;
-				for (uint64_t i = p_offset; i < p_str.size(); ++i)
+				VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+				if (p_str[l_str_pos] != '(') return p_offset;
+				l_str_pos++;
+				for (int j = 0; j < 1; ++j)
 				{
-					l_str_pos = i;
-					if (p_str[l_str_pos] == '[' || p_str[l_str_pos] == ' ' || p_str[l_str_pos] == '\t'
-						|| p_str[l_str_pos] == '(' || p_str[l_str_pos] == ')')
+					l_ss.clear();
+					l_ss.str("");
+					while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
 					{
-						continue;
+						l_ss << p_str[l_str_pos++];
 					}
-					if (p_str[l_str_pos] == ',' || p_str[l_str_pos] == ']')
-					{
-						l_ss >> l_x[l_index++];
-						l_ss.clear();
-						if (p_str[l_str_pos] == ']')
-						{
-							++l_str_pos;
-							break;
-						}
-						continue;
-					}
-					l_ss << p_str[l_str_pos];
+					l_ss >> m_ptr[i][j];
+					if (l_ss.fail() == true) return p_offset;
+					++l_str_pos;
+					VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
 				}
-				if (l_index == 4)
+				l_ss.clear();
+				l_ss.str("");
+				while (l_str_pos < p_str.length() && p_str[l_str_pos] != ')')
 				{
-					for (int i = 0; i < 2; ++i)
-					{
-						for (int j = 0; j < 2; ++j)
-						{
-							m_ptr[i][j] = l_x[i * 2 + j];
-						}
-					}
-					return l_str_pos;
+					l_ss << p_str[l_str_pos++];
 				}
-				return p_offset;
+				l_ss >> m_ptr[i][1];
+				if (l_ss.fail() == true) return p_offset;
+				++l_str_pos;
+				VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
 			}
-			catch (const std::exception& l_err)
-			{
-				std::cout << "Error: " << l_err.what() << std::endl;
-				return p_offset;
-			}
-			return p_offset;
+			if (p_str[l_str_pos] != ']') return p_offset;
+			++l_str_pos;
+			return l_str_pos;
 		}
 		/** write into bytes array return size of array of baties*/
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+		uint64_t		get_binary_size() const
+		{
+			return 4 * sizeof(T);
+		}
+		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
 			unsigned char* l_x = (unsigned char*)this;
 			uint64_t l_writen_size = 0;
@@ -185,8 +189,7 @@ namespace vufMath
 			}
 			return l_writen_size;
 		}
-		/** read vector from binary return new offset in buffer */
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 4 * sizeof(T))
 			{
@@ -399,7 +402,7 @@ namespace vufMath
 		{
 			return m_ptr[p_row];
 		}
-		static vufMatrix3 random_matrix()
+		static vufMatrix3 random()
 		{
 			vufMatrix3 l_matr;
 			for (int i = 0; i < 3; ++i)
@@ -460,11 +463,14 @@ namespace vufMath
 			return *this;
 		}
 		
-		std::string		to_string() const
+		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false) const
 		{
 			std::stringstream l_ss;
-			l_ss.precision(64);
-			l_ss << "[";
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
+			l_ss << l_str_offset << "[";
+			if (p_multiline == true) l_ss << std::endl << l_str_offset << ' ';
 			for (int i = 0; i < 3; ++i)
 			{
 				l_ss << "(";
@@ -477,66 +483,66 @@ namespace vufMath
 					}
 				}
 				l_ss << ")";
-
-				if (i != 2)
+				if (i != 2 && p_multiline == true)
 				{
-					l_ss << ",";
+					l_ss << std::endl << l_str_offset << ' ';
 				}
+			}
+			if (p_multiline == true)
+			{
+				l_ss << std::endl << l_str_offset << ']';
+				return l_ss.str();
 			}
 			l_ss << "]";
 			return l_ss.str();
 		}
 		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
 		{
-			try
+			std::stringstream l_ss;
+			uint64_t l_index = 0;
+			uint64_t l_str_pos = p_offset;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+			for (int i = 0; i < 3; ++i)
 			{
-				T l_x[9];
-				std::stringstream l_ss;
-				uint64_t l_index = 0;
-				uint64_t l_str_pos = p_offset;
-				for (uint64_t i = p_offset; i < p_str.size(); ++i)
+				VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+				if (p_str[l_str_pos] != '(') return p_offset;
+				l_str_pos++;
+				for (int j = 0; j < 2; ++j)
 				{
-					l_str_pos = i;
-					if (p_str[l_str_pos] == '[' || p_str[l_str_pos] == ' ' || p_str[l_str_pos] == '\t'
-						|| p_str[l_str_pos] == '(' || p_str[l_str_pos] == ')')
+					l_ss.clear();
+					l_ss.str("");
+					while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
 					{
-						continue;
+						l_ss << p_str[l_str_pos++];
 					}
-					if (p_str[l_str_pos] == ',' || p_str[l_str_pos] == ']')
-					{
-						l_ss >> l_x[l_index++];
-						l_ss.clear();
-						if (p_str[l_str_pos] == ']')
-						{
-							++l_str_pos;
-							break;
-						}
-						continue;
-					}
-					l_ss << p_str[l_str_pos];
+					l_ss >> m_ptr[i][j];
+					if (l_ss.fail() == true) return p_offset;
+					++l_str_pos;
+					VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
 				}
-				if (l_index == 9)
+				l_ss.clear();
+				l_ss.str("");
+				while (l_str_pos < p_str.length() && p_str[l_str_pos] != ')')
 				{
-					for (int i = 0; i < 3; ++i)
-					{
-						for (int j = 0; j < 3; ++j)
-						{
-							m_ptr[i][j] = l_x[i * 3 + j];
-						}
-					}
-					return l_str_pos;
+					l_ss << p_str[l_str_pos++];
 				}
-				return p_offset;
+				l_ss >> m_ptr[i][2];
+				if (l_ss.fail() == true) return p_offset;
+				++l_str_pos;
+				VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
 			}
-			catch (const std::exception& l_err)
-			{
-				std::cout << "Error: " << l_err.what() << std::endl;
-				return p_offset;
-			}
-			return p_offset;
+			if (p_str[l_str_pos] != ']') return p_offset;
+			++l_str_pos;
+			return l_str_pos;
 		}
 		/** write into bytes array return size of array of baties*/
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+		uint64_t		get_binary_size() const
+		{
+			return 9 * sizeof(T);
+		}
+		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
 			unsigned char* l_x = (unsigned char*)this;
 			uint64_t l_writen_size = 0;
@@ -551,7 +557,7 @@ namespace vufMath
 			return l_writen_size;
 		}
 		/** read vector from binary return size of readed */
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 9 * sizeof(T))
 			{
@@ -814,7 +820,7 @@ namespace vufMath
 		{
 			*((vufVector4<T>*)m_ptr[p_row]) = p_vec;
 		}
-		static vufMatrix4 random_matrix()
+		static vufMatrix4 random()
 		{
 			vufMatrix4 l_matr; 
 			for (int i = 0; i < 4; ++i)
@@ -826,7 +832,7 @@ namespace vufMath
 			}
 			return l_matr;
 		}
-		static vufMatrix4 numerate_matrix(T p_start_val = 0, T p_step = 1)
+		static vufMatrix4 numerate(T p_start_val = 0, T p_step = 1)
 		{
 			vufMatrix4 l_matr;
 			T l_count = (T)p_start_val;
@@ -1928,21 +1934,14 @@ namespace vufMath
 		}
 		
 		// serialization
-		std::string		to_string(int p_precision = -1) const
+		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false) const
 		{
 			std::stringstream l_ss;
-			if (p_precision > 0)
-			{
-				if (p_precision > 64)
-				{
-					l_ss.precision(64);
-				}
-				else
-				{
-					l_ss.precision(p_precision);
-				}
-			}
-			l_ss << "[";
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
+			l_ss << l_str_offset << "[";
+			if (p_multiline == true) l_ss << std::endl << l_str_offset << ' ';
 			for (int i = 0; i < 4; ++i)
 			{
 				l_ss << "(";
@@ -1954,67 +1953,67 @@ namespace vufMath
 						l_ss << ",";
 					}
 				}
-				l_ss << ")";
-				
-				if (i != 3)
+				l_ss << ")" ;
+				if (i != 3 && p_multiline == true)
 				{
-					l_ss << ",";
-				}				
+					l_ss << std::endl << l_str_offset << ' ';
+				}
+			}
+			if (p_multiline == true)
+			{
+				l_ss << std::endl << l_str_offset << ']';
+				return l_ss.str();
 			}
 			l_ss << "]";
 			return l_ss.str();
 		}
-		/** patse string for offest return readed chars count in string*/
+		/** parse string for offest return readed chars count in string*/
 		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
 		{
-			try
+			std::stringstream l_ss;
+			uint64_t l_index = 0;
+			uint64_t l_str_pos = p_offset;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+			for (int i = 0; i < 4; ++i)
 			{
-				T l_x[16];
-				std::stringstream l_ss;
-				uint64_t l_index = 0;
-				uint64_t l_str_pos = p_offset;
-				for (uint64_t i = p_offset; i < p_str.size(); ++i)
+				VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+				if (p_str[l_str_pos] != '(') return p_offset;
+				l_str_pos++;
+				for (int j = 0; j < 3; ++j)
 				{
-					l_str_pos = i;
-					if (p_str[l_str_pos] == '[' || p_str[l_str_pos] == ' ' || p_str[l_str_pos] == '\t'
-						|| p_str[l_str_pos] == '(' || p_str[l_str_pos] == ')')
+					l_ss.clear();
+					l_ss.str("");
+					while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
 					{
-						continue;
+						l_ss << p_str[l_str_pos++];
 					}
-					if (p_str[l_str_pos] == ',' || p_str[l_str_pos] == ']' )
-					{
-						l_ss >> l_x[l_index++];
-						l_ss.clear();
-						if (p_str[l_str_pos] == ']')
-						{
-							++l_str_pos;
-							break;
-						}
-						continue;
-					}
-					l_ss << p_str[l_str_pos];
+					l_ss >> m_ptr[i][j];
+					if (l_ss.fail() == true) return p_offset;
+					++l_str_pos;
+					VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
 				}
-				if (l_index == 16)
+				l_ss.clear();
+				l_ss.str("");
+				while (l_str_pos < p_str.length() && p_str[l_str_pos] != ')')
 				{
-					for (int i = 0; i < 4; ++i)
-					{
-						for (int j = 0; j < 4; ++j)
-						{
-							m_ptr[i][j] = l_x[i * 4 + j];
-						}
-					}
-					return l_str_pos;
+					l_ss << p_str[l_str_pos++];
 				}
-				return p_offset;
+				l_ss >> m_ptr[i][3];
+				if (l_ss.fail() == true) return p_offset;
+				++l_str_pos;
+				VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
 			}
-			catch (const std::exception& l_err)
-			{
-				std::cout << "Error: " << l_err.what() << std::endl;
-				return p_offset;
-			}
-			return p_offset;
+			if (p_str[l_str_pos] != ']') return p_offset;
+			++l_str_pos;
+			return l_str_pos;
 		}
 		/** write into bytes array return size of array of baties*/
+		uint64_t		get_binary_size() const
+		{
+			return 16 * sizeof(T);
+		}
 		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
 			if (p_buff.size() < p_offset + sizeof(T) * 16)
@@ -2026,7 +2025,7 @@ namespace vufMath
 			return p_offset + sizeof(T) * 16;
 		}
 		/** read vector from binary return new offset readed */
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 16 * sizeof(T))
 			{

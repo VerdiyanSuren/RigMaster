@@ -38,6 +38,8 @@ namespace vufRM
 		static MObject	g_offset_y_attr;
 		static MObject	g_offset_z_attr;
 
+		VF_RM_CRV_NODE_DECLARE_REBUILD_ATTR();
+
 		static MObject	g_data_in_attr;
 		static MObject	g_data_out_attr;
 	private:

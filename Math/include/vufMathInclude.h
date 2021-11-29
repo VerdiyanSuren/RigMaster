@@ -28,6 +28,14 @@
 	{													\
 		++OFFSET;										\
 	}
+
+#define VF_STR_SKIP_WHITESPACES(STR,OFFSET)							\
+	while (	OFFSET <  p_str.length() &&								\
+	std::isspace(static_cast<unsigned char>(STR[OFFSET])) )			\
+	{																\
+		++OFFSET;													\
+	}
+
 //--------------------------------------------------------------------------------
 #pragma region SERIALIZE_ROUTINE
 #define VF_SAFE_CHECK_SIZE_AND_RETURN_IF_FAILED(BUFF, OFFSET, SIZE )	\
@@ -80,7 +88,7 @@
 
 // Tab count
 #define VF_GENERATE_TAB_COUNT(STR,COUNT,SYMBOL)		\
-	STR = std::string(COUNT * 4, SYMBOL);
+	STR = std::string(COUNT, SYMBOL);
 
 // Serialize numeric
 // Write numeric to string

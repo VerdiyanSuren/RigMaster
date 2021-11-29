@@ -70,6 +70,7 @@ namespace vufMath
 				template<typename> class V>
 	class vufCurve
 	{
+		static_assert(std::is_floating_point_v<T>, "Curve can be of float or double");
 	public:
 		/** all suppported types of curves*/
 		vufCurve()			{}

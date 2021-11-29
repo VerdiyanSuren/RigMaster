@@ -25,8 +25,8 @@ project "Sandbox"
 	links
 	{
 		"Lua.lib",
-		"Core.lib",
-		"GraphicEngine.lib"
+		"Core.lib"
+		--"GraphicEngine.lib"
 	}
 	files
 	{

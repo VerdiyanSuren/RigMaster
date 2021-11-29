@@ -6,6 +6,7 @@
 #include <sstream>
 #include <exception>
 #include <vector>
+#include <type_traits>
 
 #include <serializer/vufTxtSerializer.h>
 #include <vufObject.h>
@@ -31,13 +32,14 @@ namespace vufMath
 	template<typename T>
 	class vufVector2
 	{
+		static_assert(std::is_floating_point_v<T>, "Vector2 can be float or double");
 	public:
 		T x;
 		T y;
 
 		vufVector2(const vufVector2& p_v) :x(p_v.x), y(p_v.y) {}
 		vufVector2(T a = .0, T b = .0) :x(a), y(b) {}
-		static vufVector2 random_vector(bool p_all_component = true)
+		static vufVector2 random(bool p_all_component = true)
 		{
 			vufVector2 l_vec;
 			l_vec.x = (T)(rand()) / (T)(RAND_MAX);
@@ -188,58 +190,58 @@ namespace vufMath
 			return *this;
 		}
 
-		std::string		to_string() const
+		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false) const
 		{
 			std::stringstream l_ss;
-			l_ss.precision(64);
-			l_ss << "[" << x << "," << y << "]";
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
+			l_ss << l_str_offset << "[" << x << "," << y << "]";
 			return l_ss.str();
 		}
 		/** return new offset in string */
 		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
 		{
-			try
+			std::stringstream l_ss;
+			uint64_t l_str_pos = p_offset;
+
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+			
+			// read x
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
 			{
-				T l_x[2];
-				std::stringstream l_ss;
-				uint64_t l_index = 0;
-				uint64_t l_str_pos = p_offset;
-				for (uint64_t i = p_offset; i < p_str.size(); ++i)
-				{
-					l_str_pos = i;
-					if (p_str[l_str_pos] == '[' || p_str[l_str_pos] == ' ' || p_str[l_str_pos] == '\t')
-					{
-						continue;
-					}
-					if (p_str[l_str_pos] == ',' || p_str[l_str_pos] == ']')
-					{
-						l_ss >> l_x[l_index++];
-						l_ss.clear();
-						if (p_str[l_str_pos] == ']')
-						{
-							++l_str_pos;
-							break;
-						}
-						continue;
-					}
-					l_ss << p_str[l_str_pos];
-				}
-				if (l_index == 2)
-				{
-					x = l_x[0];
-					y = l_x[1];
-					return l_str_pos;
-				}
-				return p_offset;
+				l_ss << p_str[l_str_pos++];
 			}
-			catch (const std::exception& l_err)
+			l_ss >> x;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+
+			// read y
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ']')
 			{
-				std::cout << "Error: " << l_err.what() << std::endl;
-				return p_offset;
+				l_ss << p_str[l_str_pos++];
 			}
-			return p_offset;
+			l_ss >> y;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ']') return p_offset;
+			++l_str_pos;
+			return l_str_pos;
 		}
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+		uint64_t		get_binary_size() const
+		{
+			return 2 * sizeof(T);
+		}
+
+		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
 			unsigned char* l_x = (unsigned char*)this;
 			uint64_t l_writen_size = 0;
@@ -251,7 +253,7 @@ namespace vufMath
 			}
 			return l_writen_size;
 		}
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 2 * sizeof(T))
 			{
@@ -329,13 +331,14 @@ namespace vufMath
 	template<typename T>
 	class vufVector3
 	{
+		static_assert(std::is_floating_point_v<T>, "Vector3 can be float or double");
 	public:
 		T x;
 		T y;
 		T z;
 		vufVector3(const vufVector3& p_v) :x(p_v.x), y(p_v.y), z(p_v.z) {}
 		vufVector3( T a = .0, T b = .0, T c = .0 ) :x(a), y(b), z(c) {}
-		static vufVector3 random_vector(bool p_all_component = false)
+		static vufVector3 random(bool p_all_component = true)
 		{
 			vufVector3 l_vec;
 			l_vec.x = (T)(rand()) / (T)(RAND_MAX);
@@ -543,59 +546,70 @@ namespace vufMath
 			return *this;
 		}
 		
-		std::string		to_string() const
+		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false) const
 		{
 			std::stringstream l_ss;
-			l_ss.precision(64);
-			l_ss << "[" << x << "," << y << "," << z << "]";
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
+			l_ss << l_str_offset << "[" << x << "," << y << "," << z << "]";
 			return l_ss.str();
 		}
 		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
 		{
-			try
-			{
-				T l_x[3];
-				std::stringstream l_ss;
-				uint64_t l_index = 0;
-				uint64_t l_str_pos = p_offset;
-				for (uint64_t i = p_offset; i < p_str.size(); ++i)
-				{					
-					l_str_pos = i;
-					if (p_str[l_str_pos] == '[' || p_str[l_str_pos] == ' ' || p_str[l_str_pos] == '\t')
-					{
-						continue;
-					}
-					if (p_str[l_str_pos] == ',' || p_str[l_str_pos] == ']')
-					{
-						l_ss >> l_x[l_index++];
-						l_ss.clear();
-						if (p_str[l_str_pos] == ']')
-						{
-							++l_str_pos;
-							break;
-						}
-						continue;
-					}
-					l_ss << p_str[l_str_pos];
-				}
-				if (l_index == 3)
-				{
-					x = l_x[0];
-					y = l_x[1];
-					z = l_x[2];
-					return l_str_pos;
-				}
-				return p_offset;
-			}
-			catch (const std::exception& l_err)
-			{
-				std::cout << "Error: " << l_err.what() << std::endl;
-				return p_offset;
-			}
-			return p_offset;
-		}
+			std::stringstream l_ss;
+			uint64_t l_str_pos = p_offset;
 
-		uint64_t		to_binary(std::vector<unsigned char>& p_buff)	const
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+
+			// read x
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
+			{
+				l_ss << p_str[l_str_pos++];
+			}
+			l_ss >> x;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+
+			// read y
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
+			{
+				l_ss << p_str[l_str_pos++];
+			}
+			l_ss >> y;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+
+			// read z
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ']')
+			{
+				l_ss << p_str[l_str_pos++];
+			}
+			l_ss >> z;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ']') return p_offset;
+			++l_str_pos;
+
+			return l_str_pos;
+		}
+		
+		uint64_t		get_binary_size() const
+		{
+			return 3 * sizeof(T);
+		}
+		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
 			unsigned char* l_x = (unsigned char*)this;
 			uint64_t l_writen_size = 0;
@@ -607,7 +621,7 @@ namespace vufMath
 			}
 			return l_writen_size;
 		}
-		uint64_t		from_binary(const std::vector<unsigned char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 3 * sizeof(T))
 			{
@@ -688,6 +702,7 @@ namespace vufMath
 	template<typename T>
 	class vufVector4
 	{
+		static_assert(std::is_floating_point_v<T>,"Vector4 can be float or double");
 	public:
 		T x = .0;
 		T y = .0;
@@ -695,7 +710,7 @@ namespace vufMath
 		T w = 1.;
 		vufVector4(const vufVector4& p_v) :x(p_v.x), y(p_v.y), z(p_v.z), w(p_v.w) {}
 		vufVector4(T a = .0, T b = .0, T c = .0, T d = 1.) :x(a), y(b), z(c), w(d) {}
-		static vufVector4 random_vector(bool p_all_component = false)
+		static vufVector4 random(bool p_all_component = true)
 		{
 			vufVector4 l_vec;
 			l_vec.x = (T)(rand()) / (T)(RAND_MAX);
@@ -934,72 +949,85 @@ namespace vufMath
 		}
 		//static vufVector4<T> LinearInterpolation(const vufVector4<T>& v1, const vufVector4<T>& v2);
 		// serialization
-		std::string		to_string(int p_precision = -1) const
+		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false) const
 		{
 			std::stringstream l_ss;
-			if (p_precision > 0)
-			{
-				if (p_precision > 64)
-				{
-					l_ss.precision(64);
-				}
-				else
-				{
-					l_ss.precision(p_precision);
-				}
-			}
-			l_ss << "[" << x << "," << y << "," << z << ","<< w << "]";
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
+			l_ss << l_str_offset << "[" << x << "," << y << "," << z <<"," <<w << "]";
 			return l_ss.str();
 		}
 		/** patse string for offest return new offset in string*/
 		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
 		{
-			try
+			std::stringstream l_ss;
+			uint64_t l_str_pos = p_offset;
+
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+
+			// read x
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
 			{
-				T l_x[4];
-				std::stringstream l_ss;
-				uint64_t l_index = 0;
-				uint64_t l_str_pos = p_offset;
-				for (uint64_t i = p_offset; i < p_str.size(); ++i)
-				{
-					l_str_pos = i;
-					if (p_str[l_str_pos] == '[' || p_str[l_str_pos] == ' ' || p_str[l_str_pos] == '\t')
-					{
-						continue;
-					}
-					if (p_str[l_str_pos] == ',' || p_str[l_str_pos] == ']')
-					{
-						l_ss >> l_x[l_index++];
-						l_ss.clear();
-						if (p_str[l_str_pos] == ']')
-						{
-							++l_str_pos;
-							break;
-						}
-						continue;
-					}
-					l_ss << p_str[l_str_pos];
-				}
-				if (l_index == 4)
-				{
-					x = l_x[0];
-					y = l_x[1];
-					z = l_x[2];
-					w = l_x[3];
-					return l_str_pos;
-				}
-				return p_offset;
+				l_ss << p_str[l_str_pos++];
 			}
-			catch (const std::exception& l_err)
+			l_ss >> x;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+
+			// read y
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
 			{
-				std::cout << "Error: " << l_err.what() << std::endl;
-				return p_offset;
+				l_ss << p_str[l_str_pos++];
 			}
-			return p_offset;
+			l_ss >> y;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+
+			// read z
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
+			{
+				l_ss << p_str[l_str_pos++];
+			}
+			l_ss >> z;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+
+			// read w
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ']')
+			{
+				l_ss << p_str[l_str_pos++];
+			}
+			l_ss >> w;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ']') return p_offset;
+			++l_str_pos;
+
+			return l_str_pos;
 		}
+		uint64_t		get_binary_size() const
+		{
+			return 4 * sizeof(T);
+		}
+
 		/** write into bytes array return size of array of byties*/
-		uint64_t		to_binary( std::vector<char>& p_buff, uint64_t p_offset = 0)	const
-		{			
+		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
+		{
 			if (p_buff.size() < p_offset + sizeof(T) * 4 )
 			{
 				p_buff.resize(p_offset + sizeof(T) * 4);
@@ -1009,7 +1037,7 @@ namespace vufMath
 			return p_offset + sizeof(T) * 4;
 		}
 		/** read vector from binary return size of readed */
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 4 * sizeof(T))
 			{

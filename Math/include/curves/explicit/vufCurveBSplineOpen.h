@@ -212,7 +212,7 @@ namespace vufMath
 			std::stringstream l_ss;
 			std::string l_str_offset;
 			VF_SET_PRECISION(l_ss, p_precision);
-			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
 			l_ss << l_str_offset << "[ General Open BSpline <" << typeid(T).name() << ", " << typeid(V).name() << ", " << CURVE_DEGREE << "> ]" << std::endl;
 			l_ss << l_str_offset << "____Controls Count: " << m_nodes_pos_v.size() << std::endl;
 			l_ss << l_str_offset << "____Knots: ";

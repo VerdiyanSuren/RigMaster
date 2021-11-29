@@ -340,9 +340,8 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(nullptr);
 			//l_rebuild_store_data->m_internal_data = nullptr;
 		}
-
-#pragma endregion
 		p_data.setClean(g_rebuild_store_attr);
+#pragma endregion
 		p_data.setClean(g_quaternion_store_attr);
 		p_data.setClean(g_scale_store_attr);
 		p_data.setClean(g_data_out_attr);

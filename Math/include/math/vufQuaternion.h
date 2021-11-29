@@ -47,7 +47,7 @@ namespace vufMath
 			x *= ax.x;
 		}
 
-		static vufQuaternion<T> random_quaternion(bool p_all_component = true)
+		static vufQuaternion<T> random(bool p_all_component = true)
 		{
 			vufQuaternion l_q;
 			l_q.x = (T)(rand()) / (T)(RAND_MAX);
@@ -296,69 +296,82 @@ namespace vufMath
 			return q;
 		}
 		
-		std::string		to_string(int p_precision = -1) const
+		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false) const
 		{
 			std::stringstream l_ss;
-			if (p_precision > 0)
-			{
-				if (p_precision > 64)
-				{
-					l_ss.precision(64);
-				}
-				else
-				{
-					l_ss.precision(p_precision);
-				}
-			}
-			l_ss << "[" << x << "," << y << "," << z << "," << w << "]";
+			std::string l_str_offset;
+			VF_SET_PRECISION(l_ss, p_precision);
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
+			l_ss << l_str_offset << "[" << x << "," << y << "," << z << "," << w << "]";
 			return l_ss.str();
 		}
 		/** parse string for offset and  return new offset in string*/
 		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
 		{
-			try
+			std::stringstream l_ss;
+			uint64_t l_str_pos = p_offset;
+
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+
+			// read x
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
 			{
-				T l_x[4];
-				std::stringstream l_ss;
-				uint64_t l_index = 0;
-				uint64_t l_str_pos = p_offset;
-				for (uint64_t i = p_offset; i < p_str.size(); ++i)
-				{
-					l_str_pos = i;
-					if (p_str[l_str_pos] == '[' || p_str[l_str_pos] == ' ' || p_str[l_str_pos] == '\t')
-					{
-						continue;
-					}
-					if (p_str[l_str_pos] == ',' || p_str[l_str_pos] == ']')
-					{
-						l_ss >> l_x[l_index++];
-						l_ss.clear();
-						if (p_str[l_str_pos] == ']')
-						{
-							++l_str_pos;
-							break;
-						}
-						continue;
-					}
-					l_ss << p_str[l_str_pos];
-				}
-				if (l_index == 4)
-				{
-					x = l_x[0];
-					y = l_x[1];
-					z = l_x[2];
-					w = l_x[3];
-					return l_str_pos;
-				}
-				return p_offset;
+				l_ss << p_str[l_str_pos++];
 			}
-			catch (const std::exception& l_err)
+			l_ss >> x;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+
+			// read y
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
 			{
-				std::cout << "Error: " << l_err.what() << std::endl;
-				return p_offset;
+				l_ss << p_str[l_str_pos++];
 			}
-			return p_offset;
+			l_ss >> y;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+
+			// read z
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ',')
+			{
+				l_ss << p_str[l_str_pos++];
+			}
+			l_ss >> z;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ',') return p_offset;
+			++l_str_pos;
+
+			// read w
+			l_ss.clear();
+			l_ss.str("");
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ']')
+			{
+				l_ss << p_str[l_str_pos++];
+			}
+			l_ss >> w;
+			if (l_ss.fail() == true) return p_offset;
+			if (p_str[l_str_pos] != ']') return p_offset;
+			++l_str_pos;
+
+			return l_str_pos;
 		}
+		uint64_t		get_binary_size() const
+		{
+			return 4 * sizeof(T);
+		}
+
 		/** write into bytes array return size of array of baties*/
 		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
@@ -371,7 +384,7 @@ namespace vufMath
 			return p_offset + sizeof(T) * 4;
 		}
 		/** read vector from binary return size of readed */
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + 4 * sizeof(T))
 			{

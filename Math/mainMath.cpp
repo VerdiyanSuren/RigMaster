@@ -128,8 +128,8 @@ int main()
 	l_crv_cls_1->set_nodes_count(10);
 	for (int i = 0; i < 10; ++i)
 	{
-		l_crv_1->set_node_at(i, vufVector4<double>::random_vector());
-		l_crv_cls_1->set_node_at(i, vufVector4<double>::random_vector());
+		l_crv_1->set_node_at(i, vufVector4<double>::random(false));
+		l_crv_cls_1->set_node_at(i, vufVector4<double>::random(false));
 	}
 	std::vector<double> l_uniform_to_curve_val_v;
 	std::vector<double> l_curve_to_uniform_val_v;
