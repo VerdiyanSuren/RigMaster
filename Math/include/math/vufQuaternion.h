@@ -50,10 +50,10 @@ namespace vufMath
 		static vufQuaternion<T> random(bool p_all_component = true)
 		{
 			vufQuaternion l_q;
-			l_q.x = (T)(rand()) / (T)(RAND_MAX);
-			l_q.y = (T)(rand()) / (T)(RAND_MAX);
-			l_q.z = (T)(rand()) / (T)(RAND_MAX);
-			l_q.w = (T)(rand()) / (T)(RAND_MAX);
+			l_q.x = (T)(VF_RAND(1));;
+			l_q.y = (T)(VF_RAND(1));;
+			l_q.z = (T)(VF_RAND(1));;
+			l_q.w = (T)(VF_RAND(1));;
 			l_q.normalize_in_place();
 			return l_q;
 		}
@@ -384,7 +384,7 @@ namespace vufMath
 			return p_offset + sizeof(T) * 4;
 		}
 		/** read vector from binary return size of readed */
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr )
 		{
 			if (p_buff.size() < p_offset + 4 * sizeof(T))
 			{

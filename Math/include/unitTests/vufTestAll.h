@@ -22,17 +22,14 @@ namespace vufMath
 
 		bool run(bool p_verbose = false)
 		{
-			//vufVectorTest<double, vufVector2> test_vector_2d;
-			//vufVectorTest<double, vufVector3> test_vector_3d;
+			bool l_res = true;
+			if (vufVector4Test<double>().run(p_verbose) == false)		{ std::cin.get();	l_res = false; }
+			if (vufQuaternionTest<double>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
+			if (vufMatrix4Test<double>().run(p_verbose) == false)		{ std::cin.get();	l_res = false; }
+			if (vufPolinomCoeffTest<double>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
 			
-			
-			//vufVector4Test<double>				l_test_vector_4d;
-			//vufMatrix4Test<double>				l_test_matrix_4d;
-			//vufQuaternionTest<double>			l_test_quaternion_d;
-			
-			//vufPolinomCoeffTest<double>			l_polinom_d;
-			//vufCurveOpenBSplineTest<double>		l_open_bspline_d;
-			//vufCurveCloseBSplineTest<double>	l_close_bspline_d;
+			if (vufCurveOpenBSplineTest<double>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufCurveCloseBSplineTest<double>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
 			//vufCurveRebuildUniformTest<double>	l_rebuild_uniform_d;
 			//vufCurveQuaternionCloseTest<double> l_quat_close_d;
 			//vufCurveScaleCloseTest<double>		l_scale_close_d;
@@ -93,29 +90,31 @@ namespace vufMath
 			//if (l_scale_close_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
 			//if (l_constatiner_d.run(p_verbose) == false)	{ std::cin.get();	return false; }
 			
-			if (vufObjectArrayFnUT<uint64_t>().run(p_verbose) == false) { std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<int>().run(p_verbose) == false)		{ std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<double>().run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<float>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<uint64_t>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<int>().run(p_verbose) == false)		{ std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<double>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<float>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
 			
-			if (vufObjectArrayFnUT<vufMatrix4<double>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufMatrix4<float>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufMatrix3<double>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufMatrix3<float>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufMatrix2<double>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufMatrix2<float>>().run(p_verbose) == false)	{ std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufMatrix4<double>>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufMatrix4<float>>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufMatrix3<double>>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufMatrix3<float>>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufMatrix2<double>>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufMatrix2<float>>().run(p_verbose) == false)	{ std::cin.get();	l_res = false; }
 			
-			if (vufObjectArrayFnUT<vufVector2<float>>().run(p_verbose) == false) { std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufVector2<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufVector3<float>>().run(p_verbose) == false) { std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufVector3<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufVector4<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
-			if (vufObjectArrayFnUT<vufVector4<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufVector2<float>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufVector2<double>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufVector3<float>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufVector3<double>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufVector4<double>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT<vufVector4<double>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
 
-			if (vufObjectArrayFnUT<vufQuaternion<double>>().run(p_verbose) == false) { std::cin.get();	return false; }
-			if (vufObjectArrayFnUT < vufQuaternion <float>>().run(p_verbose) == false) { std::cin.get();	return false; }
+			if (vufObjectArrayFnUT<vufQuaternion<double>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT < vufQuaternion <float>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
 
-			return true;
+			if (vufObjectArrayFnUT < vufPolinomCoeff <float,3>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			if (vufObjectArrayFnUT < vufPolinomCoeff <double,20>>().run(p_verbose) == false) { std::cin.get();	l_res = false; }
+			return l_res;
 		}
 	};
 }

@@ -19,7 +19,8 @@
 #define VF_SIGN(  a )			a > 0 ? 1 : (a < 0 ? -1: 0)
 #define VF_BIT(a)				(1 << a)
 #define VF_ABS(a)				a < 0 ? -a:a
-#define VF_FLOOR(x)				x > 0 ? (int)x:(int)x -1;
+#define VF_FLOOR(x)				x > 0 ? (int)x:(int)x -1
+#define VF_RAND(Length)			Length *(double)(rand() - RAND_MAX/2) / (double)(RAND_MAX/2)
 //--------------------------------------------------------------------------------
 // SERIALIZATION HELPERS
 //--------------------------------------------------------------------------------

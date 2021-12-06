@@ -40,9 +40,9 @@ namespace vufMath
 		{
 			std::cout << "....Serialization Test" << std::endl;
 			// start quaternions are random 
-			vufQuaternion<T> l_q_1 = vufQuaternion<T>::random_quaternion(true);
-			vufQuaternion<T> l_q_2 = vufQuaternion<T>::random_quaternion(true);
-			vufQuaternion<T> l_q_3 = vufQuaternion<T>::random_quaternion(true);
+			vufQuaternion<T> l_q_1 = vufQuaternion<T>::random(true);
+			vufQuaternion<T> l_q_2 = vufQuaternion<T>::random(true);
+			vufQuaternion<T> l_q_3 = vufQuaternion<T>::random(true);
 			if (p_verbose == true)
 			{
 				std::cout << "........Example Quaternions" << std::endl;

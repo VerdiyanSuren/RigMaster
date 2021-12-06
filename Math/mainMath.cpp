@@ -104,7 +104,7 @@ int main()
 	
 	vuf::txtSerializer::init();
 	auto l_test = vufMath::vufTestAll();
-	l_test.run(false);
+	l_test.run(true);
 
 	system("pause");
 	return 0;

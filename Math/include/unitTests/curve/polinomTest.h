@@ -45,9 +45,9 @@ namespace vufMath
 			}
 
 			// degree 1
-			vufPolinomCoeff<T, 5> l_polinom_1 = vufPolinomCoeff<T, 5>::random_polinom();
-			vufPolinomCoeff<T, 5> l_polinom_2 = vufPolinomCoeff<T, 5>::random_polinom();
-			vufPolinomCoeff<T, 5> l_polinom_3 = vufPolinomCoeff<T, 5>::random_polinom();
+			vufPolinomCoeff<T, 5> l_polinom_1 = vufPolinomCoeff<T, 5>::random();
+			vufPolinomCoeff<T, 5> l_polinom_2 = vufPolinomCoeff<T, 5>::random();
+			vufPolinomCoeff<T, 5> l_polinom_3 = vufPolinomCoeff<T, 5>::random();
 			l_polinom_1.a[1] = 0;
 			if (p_verbose == true)
 			{

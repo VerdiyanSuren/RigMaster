@@ -32,9 +32,9 @@ namespace vufMath
 		{
 			std::cout << "....Serialization Test" << std::endl;
 			// start vectors are random 
-			vufVector4<T> l_v_1 = vufVector4<T>::random_vector(true);
-			vufVector4<T> l_v_2 = vufVector4<T>::random_vector(true);
-			vufVector4<T> l_v_3 = vufVector4<T>::random_vector(true);
+			vufVector4<T> l_v_1 = vufVector4<T>::random(true);
+			vufVector4<T> l_v_2 = vufVector4<T>::random(true);
+			vufVector4<T> l_v_3 = vufVector4<T>::random(true);
 			// convert them to string with default precision
 			std::string str_1 = l_v_1.to_string();
 			std::string str_2 = l_v_2.to_string();
@@ -160,7 +160,7 @@ namespace vufMath
 
 
 			// operator *
-			l_matr = vufMatrix4<T>::numerate_matrix(1);
+			l_matr = vufMatrix4<T>::numerate(1);
 			l_dflt.set(1., 2., 3., 4.);
 			l_res = l_dflt * l_matr;
 			if (l_res != vufVector4<T>(90, 100, 110, 120))

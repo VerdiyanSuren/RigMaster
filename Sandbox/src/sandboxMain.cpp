@@ -12,6 +12,7 @@
 #include <vufObjectArrayFn.h>
 #include <math/vufMatrix.h>
 #include <math/vufVector.h>
+#include <math/vufPolinom.h>
 #include <iostream>
 
 //#include <vufApplication.h>
@@ -56,68 +57,13 @@ int main()
 
 	vuf::txtSerializer::init();
 
-	std::vector <int>					l_int_read_arr;
-	std::vector <int>					l_int_arr(5);
-	for (int i = 0; i < (int)l_int_arr.size(); ++i) l_int_arr[i] = i;
-
-	std::vector <vufMatrix4<double>>	l_matr_read_arr;
-	std::vector <vufMatrix4<double>>	l_matr_arr(10);
-	for (int i = 0; i < (int)l_matr_arr.size(); ++i) l_matr_arr[i] = l_matr_arr[i].random_matrix();
-
-	std::vector<vufVector4<double>>		l_vector_read_arr;
-	std::vector<vufVector4<double>>		l_vector_arr(10);
-	for (int i = 0; i < (int)l_vector_arr.size(); ++i) l_vector_arr[i] = l_vector_arr[i].random_vector();
-
-	vufArrayFn<int> l_int_array_fn(l_int_arr);
-	vufArrayFn<int> l_int_read_array_fn(l_int_read_arr);
-
-	vufArrayFn<vufMatrix4<double>> l_matr_arr_fn(l_matr_arr);
-	vufArrayFn<vufMatrix4<double>> l_matr_read_arr_fn(l_matr_read_arr);
-
-	vufArrayFn<vufVector4<double>>	l_vector_arr_fn(l_vector_arr);
-	vufArrayFn<vufVector4<double>>	l_vector_read_arr_fn(l_vector_read_arr);
-
-	auto l_sd = l_int_array_fn.to_string(64, 4);
-	auto l_sv = l_vector_arr_fn.to_string(64, 4);
-	auto l_sm = l_matr_arr_fn.to_string(64,4);
-
-
-	std::cout << l_sd << std::endl << std::endl;
-	std::cout << l_sm << std::endl << std::endl;
-	std::cout << l_sv << std::endl << std::endl;
-
-	l_int_read_array_fn.from_string(l_sd);
-	if (l_int_read_arr == l_int_arr)
+	vufPolinomCoeff<double, 3> l_p;
+	l_p = l_p.random();
+	std::cout << l_p.to_string(3) << std::endl;
+	std::string l_input;
+	while (l_input != "q")
 	{
-		std::cout << "int array matched" << std::endl;
-	}
-	else
-	{
-		std::cout << "int array FAILED" << std::endl;
-	}
 
-	l_matr_read_arr_fn.from_string(l_sm);
-	if (l_matr_read_arr == l_matr_arr)
-	{
-		std::cout << "matrix array matched" << std::endl;
-	}
-	else
-	{
-		std::cout << "matrix array FAILED" << std::endl;
-		auto l_str = l_matr_read_arr_fn.to_string(3);
-		std::cout << l_str << std::endl;
-	}
-
-	l_vector_read_arr_fn.from_string(l_sv);
-	if (l_vector_read_arr == l_vector_arr)
-	{
-		std::cout << "vector array matched" << std::endl;
-	}
-	else
-	{
-		std::cout << "vector array FAILED" << std::endl;
-		auto l_str = l_vector_read_arr_fn.to_string(3);
-		std::cout << l_str << std::endl;
 	}
 
 	system("pause");

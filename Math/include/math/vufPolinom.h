@@ -37,12 +37,19 @@ namespace vufMath
 				a[i] = p_arr[i];
 			}
 		}
-		static vufPolinomCoeff<T, MAX_POLYNOM_DEGREE> random_polinom()
+		void set_zero()
+		{
+			for (int i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
+			{
+				a[i] = .0;
+			}
+		}
+		static vufPolinomCoeff<T, MAX_POLYNOM_DEGREE> random()
 		{
 			vufPolinomCoeff<T, MAX_POLYNOM_DEGREE> l_polinom;
 			for (uint64_t i = 0; i < MAX_POLYNOM_DEGREE + 1; ++i)
 			{
-				l_polinom.a[i] = (T)(rand()) / (T)(RAND_MAX);
+				l_polinom.a[i] = (T)(VF_RAND(20));
 			}
 			return l_polinom;
 		}
@@ -377,14 +384,14 @@ namespace vufMath
 			}
 			return l_t_a;
 		}
-		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0) const
+		std::string		to_string(int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false) const
 		{
 			std::stringstream l_ss;
 			std::string l_str_offset;
 			VF_SET_PRECISION(l_ss, p_precision);
-			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '_');
+			VF_GENERATE_TAB_COUNT(l_str_offset, p_tab_count, '\t');
 			l_ss << l_str_offset;
-			l_ss << "(" << MAX_POLYNOM_DEGREE << ") ";
+			l_ss << "[[" << MAX_POLYNOM_DEGREE << "]";
 			bool l_record_exist = false;
 			for (int i = MAX_POLYNOM_DEGREE; i >= 0; --i)
 			{
@@ -437,7 +444,83 @@ namespace vufMath
 			{
 				l_ss << 0;
 			}
+			l_ss << "]";
 			return l_ss.str();
+		}
+		uint64_t		from_string(const std::string& p_str, uint64_t p_offset = 0)
+		{
+			std::stringstream l_ss;
+			uint64_t l_str_pos = p_offset;
+			vufPolinomCoeff<T, MAX_POLYNOM_DEGREE> l_p;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			if (p_str[l_str_pos] != '[') return p_offset;
+			l_str_pos++;
+
+			uint32_t l_dim = 0;
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ']')
+			{
+				l_ss << p_str[l_str_pos++];
+			}
+			l_ss >> l_dim;
+			if (l_ss.fail() == true || l_dim != MAX_POLYNOM_DEGREE) return p_offset;
+			if (p_str[l_str_pos] != ']') return p_offset;
+			l_ss.clear();
+			l_ss.str("");
+			++l_str_pos;
+			VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+			while (l_str_pos < p_str.length() && p_str[l_str_pos] != ']')
+			{
+				l_ss << p_str[l_str_pos++];
+				while (	l_str_pos < p_str.length() && 
+						p_str[l_str_pos] != ']' && 
+						p_str[l_str_pos] != '*' && 
+						p_str[l_str_pos] != '+' &&
+						p_str[l_str_pos] != '-')
+				{					
+					l_ss << p_str[l_str_pos++];
+				}
+				T l_val;
+				uint32_t l_index = 1;
+				l_ss >> l_val;
+				if (l_ss.fail() == true) return p_offset;
+				l_ss.clear();
+				l_ss.str("");
+				if (p_str[l_str_pos] == '*')
+				{
+					l_str_pos++;
+					VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+					if (p_str[l_str_pos] != 'x') return p_offset;
+					l_str_pos++;
+					VF_STR_SKIP_WHITESPACES(p_str, l_str_pos);
+					if (p_str[l_str_pos] == '^')
+					{
+						l_str_pos++;
+						while (l_str_pos < p_str.length() &&
+							p_str[l_str_pos] != ']' &&
+							p_str[l_str_pos] != '+' &&
+							p_str[l_str_pos] != '-')
+						{
+							l_ss << p_str[l_str_pos++];
+						}
+						l_ss >> l_index;
+						if (l_ss.fail() == true) return p_offset;
+						if (l_index > MAX_POLYNOM_DEGREE) return p_offset;
+						l_ss.clear();
+						l_ss.str("");
+					}
+					l_p.a[l_index] += l_val;
+					continue;
+				}
+				l_p.a[0] += l_val;
+				
+			}
+			if (p_str[l_str_pos] != ']') return p_offset;
+			++l_str_pos;
+			*this = l_p;
+			return l_str_pos;
 		}
 		/*
 		std::string		to_string() const
@@ -475,7 +558,7 @@ namespace vufMath
 			std::memcpy(&p_buff[p_offset], a, sizeof(T) * (MAX_POLYNOM_DEGREE + 1));
 			return  p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1);
 		}
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr)
 		{
 			if (p_buff.size() < p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1))
 			{
@@ -496,7 +579,7 @@ namespace vufMath
 
 		friend std::ostream& operator<<(std::ostream& p_out, const vufPolinomCoeff<T, MAX_POLYNOM_DEGREE>& p_polinom)
 		{
-			p_out << "[ " << p_polinom.to_string() << " ]";
+			p_out << p_polinom.to_string();
 			return p_out;
 		}
 

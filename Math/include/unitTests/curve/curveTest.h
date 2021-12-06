@@ -49,7 +49,7 @@ namespace vufMath
 			l_crv_1->set_nodes_count(5);
 			for (int i = 0; i < 5; ++i)
 			{
-				l_crv_1->set_node_at(i,		vufVector4<double>::random_vector());
+				l_crv_1->set_node_at(i,		vufVector4<double>::random());
 			}
 			if (l_crv_1->is_valid() == false)
 			{
@@ -297,7 +297,7 @@ namespace vufMath
 			l_crv_1->set_nodes_count(5);
 			for (int i = 0; i < 5; ++i)
 			{
-				l_crv_1->set_node_at(i, vufVector4<double>::random_vector());
+				l_crv_1->set_node_at(i, vufVector4<double>::random());
 			}
 			if (l_crv_1->is_valid() == false)
 			{

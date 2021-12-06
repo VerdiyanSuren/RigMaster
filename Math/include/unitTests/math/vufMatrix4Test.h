@@ -37,9 +37,9 @@ namespace vufMath
 		{
 			std::cout << "....Serialization Test" << std::endl;
 			// start matricies are random 
-			vufMatrix4<T> l_m_1 = vufMatrix4<T>::random_matrix();
-			vufMatrix4<T> l_m_2 = vufMatrix4<T>::random_matrix();
-			vufMatrix4<T> l_m_3 = vufMatrix4<T>::random_matrix();
+			vufMatrix4<T> l_m_1 = vufMatrix4<T>::random();
+			vufMatrix4<T> l_m_2 = vufMatrix4<T>::random();
+			vufMatrix4<T> l_m_3 = vufMatrix4<T>::random();
 			vufMatrix4<T> l_src_1(l_m_1);
 			vufMatrix4<T> l_src_2(l_m_2);
 			vufMatrix4<T> l_src_3(l_m_3);
@@ -338,7 +338,7 @@ namespace vufMath
 
 			// Numerator
 			{
-				l_num = vufMatrix4<T>::numerate_matrix();
+				l_num = vufMatrix4<T>::numerate();
 				if (l_num.m_ptr[0][0] != 0.0 || l_num.m_ptr[0][1] != 1.0 || l_num.m_ptr[0][2] != 2.0 || l_num.m_ptr[0][3] != 3.0 ||
 					l_num.m_ptr[1][0] != 4.0 || l_num.m_ptr[1][1] != 5.0 || l_num.m_ptr[1][2] != 6.0 || l_num.m_ptr[1][3] != 7.0 ||
 					l_num.m_ptr[2][0] != 8.0 || l_num.m_ptr[2][1] != 9.0 || l_num.m_ptr[2][2] != 10. || l_num.m_ptr[2][3] != 11. ||

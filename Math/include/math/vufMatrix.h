@@ -71,7 +71,7 @@ namespace vufMath
 			{
 				for (int j = 0; j < 2; ++j)
 				{
-					l_matr.m_ptr[i][j] = (T)(rand()) / (T)(RAND_MAX);
+					l_matr.m_ptr[i][j] = (T)(T)(VF_RAND(1));
 				}
 			}
 			return l_matr;
@@ -177,31 +177,23 @@ namespace vufMath
 		}
 		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_writen_size = 0;
-			uint64_t l_old_buff_sz = p_buff.size();
-
-			p_buff.resize(l_old_buff_sz + 4 * sizeof(T));
-
-			for (uint64_t i = l_old_buff_sz; i < p_buff.size(); ++i)
+			if (p_buff.size() < p_offset + sizeof(T) * 4)
 			{
-				p_buff[i] = l_x[l_writen_size++];
+				p_buff.resize(p_offset + sizeof(T) * 4);
 			}
-			return l_writen_size;
+			char* l_data = (char*)m_ptr;
+			std::memcpy(&p_buff[p_offset], l_data, sizeof(T) * 4);
+			return p_offset + sizeof(T) * 4;
 		}
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr)
 		{
 			if (p_buff.size() < p_offset + 4 * sizeof(T))
 			{
 				return 0;
 			}
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_read_size = 0;
-			for (uint64_t i = p_offset; i < p_offset + 4 * sizeof(T); ++i)
-			{
-				l_x[l_read_size++] = p_buff[i];
-			}
-			return p_offset + l_read_size;
+			char* l_data = (char*)m_ptr;
+			std::memcpy(l_data, &p_buff[p_offset], sizeof(T) * 4);
+			return p_offset + sizeof(T) * 4;
 
 		}
 
@@ -409,7 +401,7 @@ namespace vufMath
 			{
 				for (int j = 0; j < 3; ++j)
 				{
-					l_matr.m_ptr[i][j] = (T)(rand()) / (T)(RAND_MAX);
+					l_matr.m_ptr[i][j] = (T)(T)(VF_RAND(1));
 				}
 			}
 			return l_matr;
@@ -544,32 +536,24 @@ namespace vufMath
 		}
 		uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const
 		{
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_writen_size = 0;
-			uint64_t l_old_buff_sz = p_buff.size();
-
-			p_buff.resize(l_old_buff_sz + 9 * sizeof(T));
-
-			for (uint64_t i = l_old_buff_sz; i < p_buff.size(); ++i)
+			if (p_buff.size() < p_offset + sizeof(T) * 9)
 			{
-				p_buff[i] = l_x[l_writen_size++];
+				p_buff.resize(p_offset + sizeof(T) * 9);
 			}
-			return l_writen_size;
+			char* l_data = (char*)m_ptr;
+			std::memcpy(&p_buff[p_offset], l_data, sizeof(T) * 9);
+			return p_offset + sizeof(T) * 9;
 		}
 		/** read vector from binary return size of readed */
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr)
 		{
 			if (p_buff.size() < p_offset + 9 * sizeof(T))
 			{
 				return 0;
 			}
-			unsigned char* l_x = (unsigned char*)this;
-			uint64_t l_read_size = 0;
-			for (uint64_t i = p_offset; i < p_offset + 9 * sizeof(T); ++i)
-			{
-				l_x[l_read_size++] = p_buff[i];
-			}
-			return p_offset + l_read_size;
+			char* l_data = (char*)m_ptr;
+			std::memcpy(l_data, &p_buff[p_offset], sizeof(T) * 9);
+			return p_offset + sizeof(T) * 9;
 		}
 
 		vufMatrix3& operator+=(const vufMatrix3& p_right)
@@ -827,7 +811,7 @@ namespace vufMath
 			{
 				for (int j = 0; j < 4; ++j)
 				{
-					l_matr.m_ptr[i][j] = (T)(rand()) / (T)(RAND_MAX);
+					l_matr.m_ptr[i][j] = (T)(VF_RAND(1.));
 				}
 			}
 			return l_matr;
@@ -1260,7 +1244,7 @@ namespace vufMath
 			m_ptr[3][1] = p_v.y;
 			m_ptr[3][2] = p_v.z;
 			m_ptr[3][3] = 1.;
-		}		
+		}
 		void			set_translation(const vufVector4<T>& p_v)
 		{
 			m_ptr[3][0] = p_v.x;
@@ -2021,11 +2005,11 @@ namespace vufMath
 				p_buff.resize(p_offset + sizeof(T) * 16);
 			}
 			char* l_data = (char*)m_ptr;
-			std::memcpy(&p_buff[p_offset], l_data, sizeof(T) * 16);			
+			std::memcpy(&p_buff[p_offset], l_data, sizeof(T) * 16);
 			return p_offset + sizeof(T) * 16;
 		}
 		/** read vector from binary return new offset readed */
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr )
 		{
 			if (p_buff.size() < p_offset + 16 * sizeof(T))
 			{
