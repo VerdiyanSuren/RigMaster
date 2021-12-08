@@ -249,10 +249,10 @@ namespace vufMath
 			p_offset = vufCurveExplicit<T, V>::to_binary(p_buff, p_offset);
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version_ptr = nullptr) override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override
 		{
 			vufCurve<T, V>::m_valid = false;
-			p_offset = vufCurveExplicit<T, V>::from_binary(p_buff, p_offset, p_version_ptr);
+			p_offset = vufCurveExplicit<T, V>::from_binary(p_buff, p_offset);
 			if (p_offset == 0)
 			{
 				vufCurve<T, V>::m_valid = false;

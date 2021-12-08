@@ -63,11 +63,10 @@
 
 // decode for base
 #define VF_DECODE_FOR_BASE()										\
-	uint32_t l_version;												\
 	std::vector<char> l_buff;										\
 	vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);		\
 	p_offset = l_serializer.decode_from_buff(p_buff, p_offset);		\
-	from_binary(l_buff, l_version);									\
+	from_binary(l_buff);											\
 	return p_offset;
 
 #pragma endregion SERIALIZE_ROUTINE

@@ -57,7 +57,7 @@ namespace vufMath
 		{			
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)		override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
 		{
 			return p_offset;
 		}

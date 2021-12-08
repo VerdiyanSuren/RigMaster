@@ -558,7 +558,7 @@ namespace vufMath
 			std::memcpy(&p_buff[p_offset], a, sizeof(T) * (MAX_POLYNOM_DEGREE + 1));
 			return  p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1);
 		}
-		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr)
+		uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{
 			if (p_buff.size() < p_offset + sizeof(T) * (MAX_POLYNOM_DEGREE + 1))
 			{

@@ -662,7 +662,6 @@ namespace vufMath
 		uint64_t	to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	const 
 		{
 			uint64_t l_container_size = get_binary_size();
-			uint32_t l_version = VF_MATH_VERSION;
 			//------------------------------------------------------
 			// resize if needed
 			if (p_buff.size() < p_offset + l_container_size)
@@ -670,7 +669,7 @@ namespace vufMath
 				p_buff.resize(p_offset + l_container_size);
 			}
 			
-			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, l_version, sizeof(l_version));
+			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_version, sizeof(m_version));
 			//------------------------------------------------------
 			// curve
 			if (m_curve_ptr == nullptr)
@@ -738,51 +737,46 @@ namespace vufMath
 			}
 			return p_offset;
 		}
-		uint64_t	from_binary(const std::vector<char>& p_buff, uint32_t& l_version, uint64_t p_offset = 0)
+		uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{
 			uint8_t l_type;
 			uint32_t l_degree;
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_version, sizeof(l_version));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_version, sizeof(m_version));
 			// curve
-			uint32_t l_curve_version;
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_degree, sizeof(l_degree));
 			switch_curve(l_degree, (vufCurveType)l_type);
 			if (m_curve_ptr != nullptr)
 			{
-				p_offset = m_curve_ptr->from_binary(p_buff, l_curve_version, p_offset);
+				p_offset = m_curve_ptr->from_binary(p_buff, p_offset);
 			}
 			// rebuild
-			uint32_t l_rebuild_version;
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
 			switch_rebuild_fn(vufCurveRebuildFnType(l_type));
 			if (m_rebuild_fn != nullptr)
 			{
-				p_offset = m_rebuild_fn->from_binary(p_buff, l_rebuild_version, p_offset);
+				p_offset = m_rebuild_fn->from_binary(p_buff, p_offset);
 			}
 			// remap
-			uint32_t l_remap_version;
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
 			switch_remap_fn(vufCurveRemapFnType(l_type));
 			if (m_remap_fn != nullptr)
 			{
-				p_offset = m_remap_fn->from_binary(p_buff, l_remap_version, p_offset);
+				p_offset = m_remap_fn->from_binary(p_buff, p_offset);
 			}
 			// quaternion
-			uint32_t l_quaternion_version;
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
 			switch_quaternion_fn(vufCurveQuatFnType(l_type));
 			if (m_quaternion_fn != nullptr)
 			{
-				p_offset = m_quaternion_fn->from_binary(p_buff, l_quaternion_version, p_offset);
+				p_offset = m_quaternion_fn->from_binary(p_buff, p_offset);
 			}
 			// scale
-			uint32_t l_scale_version;
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_type, sizeof(l_type));
 			switch_scale_fn(vufCurveScaleFnType(l_type));
 			if (m_scale_fn != nullptr)
 			{
-				p_offset = m_scale_fn->from_binary(p_buff, l_scale_version, p_offset);
+				p_offset = m_scale_fn->from_binary(p_buff, p_offset);
 			}
 			return p_offset;
 		}
@@ -799,10 +793,9 @@ namespace vufMath
 		uint64_t	decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)
 		{
 			std::vector<char> l_buff;
-			uint32_t l_version;
 			vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);
 			p_offset = l_serializer.decode_from_buff(p_buff, p_offset);
-			from_binary(l_buff, l_version);
+			from_binary(l_buff);
 			return p_offset;
 		}
 
@@ -812,6 +805,8 @@ namespace vufMath
 			return out;
 		}
 
+	private:
+		uint32_t m_version = VF_MATH_VERSION;
 	};
 #pragma endregion VF_CURVE_CONTAINER
 #pragma region USING_NAMES

@@ -367,10 +367,10 @@ namespace vufMath
 			}
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)	override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)	override
 		{
 			uint64_t l_size;
-			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff, p_version, p_offset);
+			p_offset = vufCurveQuaternionFn<T, V>::from_binary(p_buff, p_offset);
 
 			// m_y_axis_v
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_size, sizeof(l_size));

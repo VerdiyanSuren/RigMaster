@@ -163,13 +163,12 @@ namespace vufMath
 		virtual uint64_t					to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
 		{
 			// resize if needed
-			uint32_t l_version = VF_MATH_VERSION;
 			uint64_t l_size = vufCurve<T, V>::get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
 			{
 				p_buff.resize(p_offset + l_size);
 			}
-			std::memcpy(&p_buff[p_offset], &l_version,		sizeof(l_version));		p_offset += sizeof(l_version);
+			std::memcpy(&p_buff[p_offset], &m_read_version,	sizeof(m_read_version));p_offset += sizeof(m_read_version);
 			std::memcpy(&p_buff[p_offset], &m_valid,		sizeof(m_valid));		p_offset += sizeof(m_valid);
 			std::memcpy(&p_buff[p_offset], &m_has_degree,	sizeof(m_has_degree));	p_offset += sizeof(m_has_degree);
 			std::memcpy(&p_buff[p_offset], &m_degree,		sizeof(m_degree));		p_offset += sizeof(m_degree);
@@ -179,14 +178,13 @@ namespace vufMath
 			std::memcpy(&p_buff[p_offset], &m_domain_max,	sizeof(m_domain_max));	p_offset += sizeof(m_domain_max);
 			return p_offset;
 		}
-		virtual uint64_t					from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version_ptr = nullptr ) = 0
+		virtual uint64_t					from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0 ) = 0
 		{
 			if (p_buff.size() < p_offset + vufCurve<T, V>::get_binary_size())
 			{
 				return 0;
 			}
-			uint32_t l_version;
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_version,		sizeof(l_version));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_read_version,	sizeof(m_read_version));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_valid,		sizeof(m_valid));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_has_degree,	sizeof(m_has_degree));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_degree,		sizeof(m_degree));
@@ -194,10 +192,6 @@ namespace vufMath
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_close,		sizeof(m_close));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_domain_min,	sizeof(m_domain_min));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_domain_max,	sizeof(m_domain_max));
-			if (p_version_ptr != nullptr)
-			{
-				*p_version_ptr = l_version;
-			}
 			return p_offset;
 		}
 		virtual uint64_t					encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const = 0
@@ -211,11 +205,10 @@ namespace vufMath
 		}
 		virtual uint64_t					decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0) = 0
 		{			
-			uint32_t l_version;
 			std::vector<char> l_buff;
 			vuf::txtStdVectorSerializerFn<char> l_serializer(l_buff);
 			p_offset = l_serializer.decode_from_buff(p_buff, p_offset);
-			from_binary(l_buff, 0, &l_version);	
+			from_binary(l_buff, 0);	
 			return p_offset;
 		}
 
@@ -266,6 +259,8 @@ namespace vufMath
 		bool		m_close			= false;	//
 		T			m_domain_min	= 0.0;
 		T			m_domain_max	= 1.0;
+
+		uint32_t	m_read_version	= VF_MATH_VERSION;
 
 		std::weak_ptr<vufCurve> m_this = std::weak_ptr<vufCurve>();
 	};

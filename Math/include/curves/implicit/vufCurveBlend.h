@@ -213,9 +213,9 @@ namespace vufMath
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_use_fcurve, sizeof(m_use_fcurve));
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0)		override
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)		override
 		{
-			p_offset = vufCurve<T, V>::from_binary(p_buff, p_version, p_offset);
+			p_offset = vufCurve<T, V>::from_binary(p_buff, p_offset);
 			
 			bool l_load;
 			// input first
@@ -224,7 +224,7 @@ namespace vufMath
 			{
 				m_should_serialize_first = true;
 				m_first_container_ptr =  vufCurveContainer<T, V>::create();
-				p_offset = m_first_container_ptr->from_binary(p_buff, p_version, p_offset);
+				p_offset = m_first_container_ptr->from_binary(p_buff, p_offset);
 			}
 			else
 			{
@@ -237,7 +237,7 @@ namespace vufMath
 			{
 				m_should_serialize_second = true;
 				m_second_container_ptr = vufCurveContainer<T, V>::create();
-				p_offset = m_second_container_ptr->from_binary(p_buff, p_version, p_offset);
+				p_offset = m_second_container_ptr->from_binary(p_buff, p_offset);
 			}
 			else
 			{
@@ -250,7 +250,7 @@ namespace vufMath
 			{
 				m_should_serialize_fcurve = true;
 				m_blend_func_ptr = vufCurveContainer<T, V>::create();
-				p_offset = m_blend_func_ptr->from_binary(p_buff, p_version, p_offset);
+				p_offset = m_blend_func_ptr->from_binary(p_buff, p_offset);
 			}
 			else
 			{

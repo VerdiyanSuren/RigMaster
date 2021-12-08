@@ -236,10 +236,10 @@ namespace vufMath
 			VF_SAFE_WRITE_TO_BUFF(p_buff, p_offset, m_node_count, sizeof(m_node_count));
 			return p_offset;
 		}
-		virtual uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version_ptr = nullptr)
+		virtual uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
 		{
 			vufCurve<T, V>::m_valid = false;
-			p_offset = vufCurveExplicit<T, V>::from_binary(p_buff, p_offset, p_version_ptr);
+			p_offset = vufCurveExplicit<T, V>::from_binary(p_buff, p_offset);
 			if (p_offset == 0)
 			{
 				vufCurve<T, V>::m_valid = false;

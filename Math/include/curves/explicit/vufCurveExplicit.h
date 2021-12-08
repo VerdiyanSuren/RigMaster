@@ -43,7 +43,6 @@ namespace vufMath
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const override = 0
 		{
 			//std::cout << "------------------------------------- EXPLICIT::to_binary()--------------------- " << std::endl;
-
 			// resize if needed
 			uint64_t l_size = vufCurveExplicit<T, V>::get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
@@ -59,10 +58,10 @@ namespace vufMath
 
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version_ptr = nullptr ) override= 0
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0 ) override= 0
 		{
 			//std::cout << "------------------------------------- EXPLICIT::from_binary()--------------------- " << std::endl;
-			p_offset = vufCurve < T, V>::from_binary(p_buff, p_offset, p_version_ptr);
+			p_offset = vufCurve < T, V>::from_binary(p_buff, p_offset);
 			if (p_offset == 0)
 			{
 				return 0;

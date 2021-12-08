@@ -15,7 +15,7 @@ namespace vufMath
 
 		virtual uint64_t	get_binary_size()														const	= 0;
 		virtual uint64_t	to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const	= 0;
-		virtual uint64_t	from_binary(const std::vector<char>&p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr) = 0;
+		virtual uint64_t	from_binary(const std::vector<char>&p_buff, uint64_t p_offset = 0)				= 0;
 		virtual uint64_t	encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const	= 0;
 		virtual uint64_t	decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)				= 0;
 	};
@@ -59,9 +59,9 @@ namespace vufMath
 			return to_binary_i(p_buff, p_offset);
 			//VF_OBJECTS_ARRAY_TO_BINARY_AND_RETURN_SIZE(p_buff, m_obj_array_v);
 		}
-		virtual uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr) override
+		virtual uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) override
 		{
-			return from_binary_i(p_buff, p_offset, p_version);
+			return from_binary_i(p_buff, p_offset);
 			//VF_OBJECTS_ARRAY_FROM_BINARY_AND_RETURN_OFFSET(p_buff, p_offset, m_obj_array_v);
 		}
 		virtual uint64_t	encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)	const override
@@ -197,7 +197,7 @@ namespace vufMath
 			return p_offset;
 		}
 		template <typename  U = T >
-		uint64_t	from_binary_i(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr, resolvedType<p_state, U>* = nullptr)
+		uint64_t	from_binary_i(const std::vector<char>& p_buff, uint64_t p_offset = 0,  resolvedType<p_state, U>* = nullptr)
 		{
 			uint64_t l_sz = 0;
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_sz, sizeof(l_sz));
@@ -319,14 +319,14 @@ namespace vufMath
 			return p_offset;
 		}
 		template <typename  U = T >
-		uint64_t	from_binary_i(const std::vector<char>& p_buff, uint64_t p_offset = 0, uint32_t* p_version = nullptr, resolvedType<!p_state, U>* = nullptr)
+		uint64_t	from_binary_i(const std::vector<char>& p_buff, uint64_t p_offset = 0,  resolvedType<!p_state, U>* = nullptr)
 		{
 			uint64_t l_sz = 0;
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, l_sz, sizeof(l_sz));
 			m_array_v.resize(l_sz);
 			for (uint64_t i = 0; i < l_sz; i++)
 			{
-				p_offset = m_array_v[i].from_binary(p_buff, p_offset, p_version);
+				p_offset = m_array_v[i].from_binary(p_buff, p_offset);
 			}
 			return p_offset;
 		}

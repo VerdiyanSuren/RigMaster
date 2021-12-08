@@ -107,26 +107,25 @@ namespace vufMath
 		}
 		virtual uint64_t		to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)				const = 0
 		{
-			uint32_t l_version	= VF_MATH_VERSION;
 			uint64_t l_size		= vufCurveQuaternionFn<T, V>::get_binary_size();
 
 			if (p_buff.size() < p_offset + l_size)
 			{
 				p_buff.resize(p_offset + l_size);
 			}
-			std::memcpy(&p_buff[p_offset], &l_version,			sizeof(l_version));			p_offset += sizeof(l_version);
+			std::memcpy(&p_buff[p_offset], &m_version,			sizeof(m_version));			p_offset += sizeof(m_version);
 			std::memcpy(&p_buff[p_offset], &m_valid,			sizeof(m_valid));			p_offset += sizeof(m_valid);
 
 			return p_offset;
 		}
-		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint32_t& p_version, uint64_t p_offset = 0) = 0
+		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0) = 0
 		{
 			uint64_t l_size = vufCurveQuaternionFn<T, V>::get_binary_size();
 			if (p_buff.size() < p_offset + l_size)
 			{
 				return 0;
 			}
-			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, p_version,			sizeof(p_version));
+			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_version,			sizeof(m_version));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_valid,			sizeof(m_valid));
 
 			return p_offset;
@@ -144,6 +143,8 @@ namespace vufMath
 
 		bool m_valid = false;
 		std::weak_ptr <vufCurveQuaternionFn<T, V> > m_this;
+
+		uint32_t m_version = VF_MATH_VERSION;
 	};
 #pragma endregion
 #pragma region USING_NAMES
