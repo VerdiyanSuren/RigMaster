@@ -10,7 +10,7 @@
 namespace vufMath
 {
 	template <class T, template<typename> class V, uint32_t CURVE_DEGREE = 2>
-	class vufCurveBezierClose : public vufCurveExplicit<T, V>
+	class vufCurveBezierClose final: public vufCurveExplicit<T, V>
 	{
 	private:
 		vufCurveBezierClose() :vufCurveExplicit<T, V>()

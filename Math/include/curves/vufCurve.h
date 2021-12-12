@@ -151,7 +151,7 @@ namespace vufMath
 		virtual std::string					to_string(int p_precision = -1, uint32_t p_tab_count = 0)				const	= 0;
 		virtual uint64_t					get_binary_size() const = 0
 		{
-			return  sizeof(uint32_t) +	//version
+			return  sizeof(m_read_version) +
 					sizeof(m_valid) + 
 					sizeof(m_has_degree) + 
 					sizeof(m_degree) + 
@@ -182,7 +182,7 @@ namespace vufMath
 		{
 			if (p_buff.size() < p_offset + vufCurve<T, V>::get_binary_size())
 			{
-				return 0;
+				return p_offset;
 			}
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_read_version,	sizeof(m_read_version));
 			VF_SAFE_READ_AND_RETURN_IF_FAILED(p_buff, p_offset, m_valid,		sizeof(m_valid));
@@ -259,7 +259,6 @@ namespace vufMath
 		bool		m_close			= false;	//
 		T			m_domain_min	= 0.0;
 		T			m_domain_max	= 1.0;
-
 		uint32_t	m_read_version	= VF_MATH_VERSION;
 
 		std::weak_ptr<vufCurve> m_this = std::weak_ptr<vufCurve>();

@@ -61,11 +61,12 @@ namespace vufMath
 		virtual uint64_t		from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0 ) override= 0
 		{
 			//std::cout << "------------------------------------- EXPLICIT::from_binary()--------------------- " << std::endl;
-			p_offset = vufCurve < T, V>::from_binary(p_buff, p_offset);
-			if (p_offset == 0)
+			auto l_offset = vufCurve < T, V>::from_binary(p_buff, p_offset);
+			if (p_offset == l_offset)
 			{
-				return 0;
+				return p_offset;
 			}
+			p_offset = l_offset;
 			uint64_t l_array_size;
 			
 			if (p_buff.size() < p_offset + sizeof(m_pos_offset))
