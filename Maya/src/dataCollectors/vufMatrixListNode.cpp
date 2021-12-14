@@ -51,8 +51,13 @@ MStatus	vufMatrixListNode::initialize()
 	l_status = addAttribute(g_data_out_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	l_status = attributeAffects(g_transform_in_attr,	g_data_out_attr);	 CHECK_MSTATUS_AND_RETURN_IT(l_status);
-
+	
 	return MS::kSuccess;
+}
+void 	vufMatrixListNode::postConstructor()
+{
+	setExistWithoutOutConnections(true);
+	setExistWithoutInConnections(true);
 }
 MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {

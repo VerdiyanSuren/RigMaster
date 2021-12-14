@@ -62,6 +62,12 @@ MStatus	vufMatrixListNullNode::initialize()
 
 	return MS::kSuccess;
 }
+void 	vufMatrixListNullNode::postConstructor()
+{
+	setExistWithoutOutConnections(true);
+	setExistWithoutInConnections(true);
+}
+
 MStatus	vufMatrixListNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)

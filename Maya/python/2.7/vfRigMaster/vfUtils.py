@@ -19,6 +19,54 @@ _CURVE_LOCATOR_NODE = "vfCrvLocator"
 # c = vufRM.add_bspline(b)
 # d = vufRM.add_curve_null(c)
 # f = vufRM.add_curve_locator(d)
+class helpers(object):
+	def __init__(self):
+		pass
+	@staticmethod
+	def get_distination_node(source_nodes = [], source_plugs = [], dist_type = [], depth = 10):
+		res = {}
+		if (depth == 0):
+			return res
+		for source in source_nodes:			
+			if (cmds.objExists(source) == True):
+				for plug in source_plugs:
+					if (cmds.attributeQuery(plug, node = source, exists = True)  == True):
+						connected = cmds.listConnections("{0}.{1}".format(source,plug),d = True, s = False, sh = True)						
+						if (connected == None or len(connected) == 0):
+							continue
+						for obj in connected:
+							if (cmds.nodeType(obj) in dist_type):
+								res[obj] = obj
+						res2 = helpers.get_distination_node(source_nodes 	= connected, 
+															source_plugs 	= source_plugs,
+															dist_type 		= dist_type,
+															depth = depth - 1)
+						res.update(res2)
+		return res
+								
+	@staticmethod
+	def get_source_node(dist_nodes = [], dist_plugs = [], source_type = [], depth = 10):
+		res = {}
+		if (depth == 0):
+			return res
+		for dist in dist_nodes:
+			if (cmds.objExists(dist) == True):
+				for plug in dist_plugs:
+					if (cmds.attributeQuery(plug, node = dist, exists = True)  == True):
+						connected = cmds.listConnections("{0}.{1}".format(dist,plug),d = False, s = True, sh = True)
+						if (connected == None or len(connected) == 0):
+							continue
+						for obj in connected:
+							if (cmds.nodeType(obj) in source_type):
+								res[obj] = obj
+						res2 = helpers.get_source_node(	dist_nodes 	= connected, 
+														dist_plugs 	= dist_plugs,
+														source_type = source_type,
+														depth = depth - 1)
+						res.update(res2)
+		return res
+						
+				
 #--------------------------------------------
 #	Matrix Collector Class
 #--------------------------------------------
@@ -160,6 +208,13 @@ class spline(object):
 		d = self.add_curve_null(c)
 		f = self.add_curve_locator(d)
 		self.get_spline(dag_names = driven,curve_node_name = d)
+	def get_inputs_xfrom_spline(self,spline_name):
+		if (cmds.objExists(spline_name) == True and cmds.nodeType(spline_name) in [_BSPLINE_NODE,_BEZIER_NODE]):
+			lst = cmds.listConnections("{0}.xformList".format(spline_name), d = False, s = True)
+			if (lst == None or len(lst) == 0):
+				return ""
+			return lst[0]
+		return ""
 #--------------------------------------------
 #	Quaternion Node methods
 #--------------------------------------------
