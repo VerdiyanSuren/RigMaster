@@ -31,6 +31,7 @@ namespace vufRM
 
 		static  void*	creator();
 		static  MStatus	initialize();
+		virtual void 	postConstructor() override;
 		virtual MStatus	compute(const MPlug& plug, MDataBlock& data) override;
 		
 		

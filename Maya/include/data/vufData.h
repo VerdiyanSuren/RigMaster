@@ -119,8 +119,13 @@
 /**
 * Try to get data from plug
 */
-#define VF_RM_GET_DATA_FROM_PLUG(WRAPPER_CLASS,DATA_CLASS, PLUG, data_var )				\
+#define VF_RM_GET_DATA_FROM_PLUG(WRAPPER_CLASS,DATA_CLASS, ATTR, data_var )				\
 {																						\
+	MPlug	PLUG = l_node.findPlug(ATTR, true, &l_status);								\
+	if (l_status != MS::kSuccess)														\
+	{																					\
+		VF_LOG_ERR("Failed to find plug");												\
+	}																					\
 	MObject	l_data_obj;																	\
 	l_status = PLUG.getValue(l_data_obj);												\
 	if (l_status != MS::kSuccess)														\
@@ -132,6 +137,11 @@
 		MFnPluginData	l_pd_fn(l_data_obj);											\
 		WRAPPER_CLASS*	l_mpx_data = (WRAPPER_CLASS*)l_pd_fn.constData(&l_status);		\
 		data_var = l_mpx_data == nullptr? nullptr : l_mpx_data->get_data();				\
+	}																					\
+	if (data_var == nullptr)															\
+	{																					\
+		/*std::cout << "Wanna constructor" <<std::endl;*/								\
+		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);							\
 	}																					\
 }
 #define VF_RM_GET_INTERNAL_DATA_FROM_PLUG(WRAPPER_CLASS, PLUG, data_var )				\
@@ -210,6 +220,7 @@ namespace vufRM
 			k_absent_data = 0,
 			k_lua_port_data,
 			k_lua_script_data,
+			k_transform_list_data,
 			k_curve_data,
 			k_curve_quat_data,
 			k_curve_scale_data,

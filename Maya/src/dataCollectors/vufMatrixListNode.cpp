@@ -7,8 +7,9 @@
 #include <maya/MFnMatrixAttribute.h>
 #include <maya/MArrayDataHandle.h>
 #include <maya/MMatrix.h>
-#include <maya/MMatrixArray.h>
-#include <maya/MFnMatrixArrayData.h>
+//#include <maya/MMatrixArray.h>
+//#include <maya/MFnMatrixArrayData.h>
+#include <vufObjectArrayFn.h>
 
 
 using namespace vufRM;
@@ -17,7 +18,9 @@ MObject	vufMatrixListNode::g_transform_in_attr;
 MObject	vufMatrixListNode::g_data_out_attr;
 
 vufMatrixListNode::vufMatrixListNode() :MPxNode()
-{}
+{
+	m_gen_id = ++g_unique_id;
+}
 
 void* vufMatrixListNode::creator()
 {
@@ -41,7 +44,7 @@ MStatus	vufMatrixListNode::initialize()
 	l_matrix_attr_fn.setUsesArrayDataBuilder(true);
 	l_matrix_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete);
 
-	g_data_out_attr = l_typed_attr_fn.create("outMatrixList", "oml", MFnData::kMatrixArray, MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create("outMatrixList", "oml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	//g_data_out_attr = l_typed_attr_fn.create("TransformList","tl", mpxTransformListWrapper::g_id, MObject::kNullObj, &l_status);// , MFnPluginData().create(vufUniversalData::id, &status));
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
@@ -64,24 +67,34 @@ MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	if (p_plug == g_data_out_attr)
 	{	
 		vuf::vufTimer l_timer("Matrix collector node compute: ");
+		MStatus l_status;
+		//------------------------------------------------------------------------------
+		// handle out data
+		std::shared_ptr<vufMatrixListData>	l_out_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_out_attr, l_out_data, m_gen_id);
+		//VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
+		if (l_out_data->m_internal_data == nullptr)
+		{
+			l_out_data->m_internal_data = vufMath::vufObjectArray<vufMath::vufMatrix_4d>::create();
+		}
+		auto l_matrix_array = (l_out_data->m_internal_data.get())->m_array_v;
+		//------------------------------------------------------------------------------
 		// Read Transforms and fill matricies
-		MMatrixArray l_matrix_array;
+		//MMatrixArray l_matrix_array;
 		MArrayDataHandle l_ah = p_data.inputValue(g_transform_in_attr);
 		unsigned int l_matr_arr_length = l_ah.elementCount();
-		l_matrix_array.setLength(l_matr_arr_length);
+		if (l_matr_arr_length != l_matrix_array.size())
+		{
+			l_matrix_array.resize(l_matr_arr_length);
+		}
 		int l_matrix_index = 0;
 		for (;;)
 		{
-			l_matrix_array[l_matrix_index] = l_ah.inputValue().asMatrix();
+			l_matrix_array[l_matrix_index] = *((vufMath::vufMatrix_4d*)(&l_ah.inputValue().asMatrix()));
 			++l_matrix_index;
 			if (!l_ah.next()) break;
-		}
-		
+		}		
 		// set output handle
-		MDataHandle l_out_handle = p_data.outputValue(g_data_out_attr);
-		MFnMatrixArrayData l_data_fn;
-		MObject l_obj_data = l_data_fn.create(l_matrix_array);
-		l_out_handle.setMObject(l_obj_data);
 		p_data.setClean(g_data_out_attr);
 
 		return MS::kSuccess;

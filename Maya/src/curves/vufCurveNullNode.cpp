@@ -12,7 +12,7 @@ MObject	vufCurveNullNode::g_data_in_attr;
 MObject	vufCurveNullNode::g_data_out_attr;
 MObject	vufCurveNullNode::g_store_data_attr;
 
-void* vufCurveNullNode::creator()
+void*	vufCurveNullNode::creator()
 {
 	return new vufCurveNullNode();
 }
@@ -62,6 +62,12 @@ MStatus	vufCurveNullNode::initialize()
 
 	return MS::kSuccess;
 }
+void 	vufCurveNullNode::postConstructor()
+{
+	setExistWithoutOutConnections(true);
+	setExistWithoutInConnections(true);
+}
+
 MStatus	vufCurveNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)

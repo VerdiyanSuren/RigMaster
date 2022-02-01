@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <type_traits>
 
 #include <math/vufVector.h>
 #include <math/vufQuaternion.h>
@@ -70,7 +71,7 @@ namespace vufMath
 				template<typename> class V>
 	class vufCurve
 	{
-		static_assert(std::is_floating_point_v<T>, "Curve can be of float or double");
+		static_assert(std::is_floating_point<T>::value, "Curve can be of float or double");
 	public:
 		/** all suppported types of curves*/
 		vufCurve()			{}

@@ -4,8 +4,9 @@
 #include <dataCollectors/vufMatrixListNullNode.h>
 #include <data/vufData.h>
 #include <vufMayaGlobalIncludes.h>
-#include <maya/MMatrix.h>
-#include <maya/MMatrixArray.h>
+//#include <maya/MMatrix.h>
+//#include <maya/MMatrixArray.h>
+#include <data/vufMayaDataList.h>
 #include <maya/MFnMatrixArrayData.h>
 
 using namespace vufRM;
@@ -17,7 +18,9 @@ MObject	vufMatrixListNullNode::g_data_store_attr;
 
 
 vufMatrixListNullNode::vufMatrixListNullNode() :MPxNode()
-{}
+{
+	m_gen_id = ++g_unique_id;
+}
 
 void* vufMatrixListNullNode::creator()
 {
@@ -31,7 +34,7 @@ MStatus	vufMatrixListNullNode::initialize()
 	
 	VF_RM_CREATE_AND_ADD_LOCK_ATTR();
 	// Input Data
-	g_data_in_attr	= l_typed_attr_fn.create("inMatrixList", "iml",	 MFnData::kMatrixArray, MObject::kNullObj, &l_status);
+	g_data_in_attr	= l_typed_attr_fn.create("inMatrixList", "iml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
@@ -39,13 +42,13 @@ MStatus	vufMatrixListNullNode::initialize()
 	CHECK_MSTATUS(l_typed_attr_fn.setHidden(false));
 	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 	// Internal Data to store and lock
-	g_data_store_attr = l_typed_attr_fn.create("hiddenML", "hml", MFnData::kMatrixArray, MObject::kNullObj, &l_status);
+	g_data_store_attr = l_typed_attr_fn.create("hiddenML", "hml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setConnectable(false);
 	l_typed_attr_fn.setHidden(true);
 	// Output Data
-	g_data_out_attr = l_typed_attr_fn.create("outMatrixList", "oml", MFnData::kMatrixArray, MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create("outMatrixList", "oml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	//g_data_out_attr = l_typed_attr_fn.create("TransformList","tl", mpxTransformListWrapper::g_id, MObject::kNullObj, &l_status);// , MFnPluginData().create(vufUniversalData::id, &status));
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
@@ -72,22 +75,21 @@ MStatus	vufMatrixListNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
 	{
+		MStatus l_status;
 		bool	l_locked = p_data.inputValue(g_lock_attr).asBool();
 		// if unlocked just pass
 		if (l_locked == false) 
 		{
 			//VF_LOG_INFO("UNLOCKED");
 			m_locked = false;
-
-			MDataHandle l_input_data_map	= p_data.inputValue(g_data_in_attr);
-			MObject		l_in_obj			= l_input_data_map.data();
-			MFnMatrixArrayData l_in_data_fn(l_in_obj);
-			MMatrixArray l_matrix_array = l_in_data_fn.array();
-			// set output handle
-			MDataHandle l_out_handle = p_data.outputValue(g_data_out_attr);
-			MFnMatrixArrayData l_out_data_fn;
-			MObject l_out_obj_data = l_out_data_fn.create(l_matrix_array);
-			l_out_handle.setMObject(l_out_obj_data);
+			std::shared_ptr<vufMatrixListData>	l_out_data;
+			std::shared_ptr<vufMatrixListData>	l_in_data;
+			VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_out_attr,	l_out_data, m_gen_id);
+			VF_RM_GET_DATA_FROM_IN(						mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_in_attr,	l_in_data);
+			if (l_in_data != nullptr)
+			{
+				l_out_data->m_internal_data = l_in_data->m_internal_data;
+			}			
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
@@ -96,23 +98,15 @@ MStatus	vufMatrixListNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		{
 			//VF_LOG_INFO("JUST LOCKED");
 			m_locked = true;
-
-			MDataHandle l_input_data_map = p_data.inputValue(g_data_in_attr);
-			MObject		l_in_obj = l_input_data_map.data();
-			MFnMatrixArrayData l_in_data_fn(l_in_obj);
-			MMatrixArray l_matrix_array = l_in_data_fn.array();
+			std::shared_ptr<vufMatrixListData>	l_out_data;
+			std::shared_ptr<vufMatrixListData>	l_store_data;
+			std::shared_ptr<vufMatrixListData>	l_in_data;
+			VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_out_attr,	l_out_data,		m_gen_id);
+			VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_store_attr, l_store_data, m_gen_id);
+			VF_RM_GET_DATA_FROM_IN(						mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_in_attr,	l_in_data);
 			
-			// set hidden 
-			MDataHandle l_store_handle = p_data.outputValue(g_data_store_attr);
-			MFnMatrixArrayData l_store_data_fn;
-			MObject l_store_obj_data = l_store_data_fn.create(l_matrix_array);
-			l_store_handle.setMObject(l_store_obj_data);
-			
-			// set output handle
-			MDataHandle l_out_handle = p_data.outputValue(g_data_out_attr);
-			MFnMatrixArrayData l_out_data_fn;
-			MObject l_out_obj_data = l_out_data_fn.create(l_matrix_array);
-			l_out_handle.setMObject(l_out_obj_data);
+			l_store_data->m_internal_data	= l_in_data->m_internal_data->get_copy();
+			l_out_data->m_internal_data		= l_store_data->m_internal_data;
 			p_data.setClean(g_data_out_attr);
 			p_data.setClean(g_data_store_attr);
 
@@ -120,19 +114,25 @@ MStatus	vufMatrixListNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		}
 		//VF_LOG_INFO("LOCKED");
 		// if locked
-		MDataHandle l_store_data_map = p_data.outputValue(g_data_store_attr);
-		MObject		l_store_obj = l_store_data_map.data();
-		MFnMatrixArrayData l_store_data_fn(l_store_obj);
-		MMatrixArray l_matrix_array = l_store_data_fn.array();
-		 
-		// set output handle
-		MDataHandle l_out_handle = p_data.outputValue(g_data_out_attr);
-		MFnMatrixArrayData l_data_fn;
-		MObject l_obj_data = l_data_fn.create(l_matrix_array);
-		l_out_handle.setMObject(l_obj_data);
+		std::shared_ptr<vufMatrixListData>	l_out_data;
+		std::shared_ptr<vufMatrixListData>	l_store_data;
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_out_attr, l_out_data, m_gen_id);
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_store_attr, l_store_data, m_gen_id);
+		l_out_data->m_internal_data = l_store_data->m_internal_data;		
 		p_data.setClean(g_data_out_attr);
 
 		return MS::kSuccess;
 	}
 	return MS::kUnknownParameter;
+}
+MStatus	vufMatrixListNullNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
+{
+	MStatus l_status;
+	MObject				l_data_obj;
+	MFnDependencyNode	l_node(p_plug_1.node());
+	std::shared_ptr<vufMatrixListData>	l_in_data;
+	VF_RM_GET_DATA_FROM_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_data_in_attr,		l_in_data);
+	l_in_data->m_internal_data		= l_in_data->m_internal_data->get_copy();
+
+	return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
 }

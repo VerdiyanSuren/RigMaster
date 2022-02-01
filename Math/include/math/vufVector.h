@@ -690,7 +690,7 @@ namespace vufMath
 	template<typename T>
 	class vufVector4
 	{
-		static_assert(std::is_floating_point_v<T>,"Vector4 can be float or double");
+		static_assert(std::is_floating_point<T>::value,"Vector4 can be float or double");
 	public:
 		T x = .0;
 		T y = .0;

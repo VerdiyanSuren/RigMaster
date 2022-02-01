@@ -39,7 +39,7 @@ vufCurveBSplineNode::vufCurveBSplineNode():MPxNode()
 {
 	m_gen_id = ++g_unique_id;
 }
-void* vufCurveBSplineNode::creator()
+void*	vufCurveBSplineNode::creator()
 {
 	return new vufCurveBSplineNode();
 }
@@ -128,6 +128,12 @@ MStatus	vufCurveBSplineNode::initialize()
 
 	return MS::kSuccess;
 }
+void 	vufCurveBSplineNode::postConstructor() 
+{
+	setExistWithoutOutConnections(true);
+	setExistWithoutInConnections(true);
+}
+
 MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {	
 	if (p_plug == g_data_out_attr || p_plug == g_params_out_attr)

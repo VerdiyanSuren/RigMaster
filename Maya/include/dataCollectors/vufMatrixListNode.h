@@ -25,6 +25,7 @@ namespace vufRM
 
 		static const MString	g_type_name;
 	private:
+		uint64_t		m_gen_id;
 	};
 }
 #endif // !VF_RM_MATRIX_LST_NODE_H

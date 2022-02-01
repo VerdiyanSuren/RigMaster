@@ -3,10 +3,15 @@
 
 #include <cctype>
 #include <vufMathInclude.h>
+#include <memory>
 
 namespace vufMath
 {
 #pragma region VUF_OBJECT_ARRAY_FN
+	//---------------------------------------------------------------------------------------------------------
+	//									VF OBJECT ARRAY FN (BASE CLASS)
+	//---------------------------------------------------------------------------------------------------------
+
 	class vufObjectArrayFn
 	{
 	public:
@@ -19,6 +24,9 @@ namespace vufMath
 		virtual uint64_t	encode_to_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)		const	= 0;
 		virtual uint64_t	decode_from_buff(std::vector< char>& p_buff, uint64_t p_offset = 0)				= 0;
 	};
+	//---------------------------------------------------------------------------------------------------------
+	//											VF ARRAY FN
+	//---------------------------------------------------------------------------------------------------------
 	/*
 	* Examples
 	* std::vector<int> l_int_array(10);
@@ -332,6 +340,73 @@ namespace vufMath
 		}
 	private:
 		std::vector<T>& m_array_v;
+	};
+	//---------------------------------------------------------------------------------------------------------
+	//										VF OBJECT ARRAY
+	//---------------------------------------------------------------------------------------------------------
+	template<typename T, 
+			template<typename> class V = vufArrayFn>
+	class vufObjectArray
+	{
+	public:
+		vufObjectArray()	{}
+		vufObjectArray(const vufObjectArray& p_other)
+		{
+			m_array_v = p_other.m_array_v;
+		}
+		~vufObjectArray()	{}
+		static std::shared_ptr <vufObjectArray<T,V> > create()
+		{
+			return std::shared_ptr< vufObjectArray<T,V> >(new vufObjectArray<T, V>());
+		}
+		std::shared_ptr<vufObjectArray> get_copy() const
+		{
+			auto l_ptr = vufObjectArray<T,V>::create();
+			l_ptr->m_array_v = m_array_v;
+			return l_ptr;
+		}
+
+		std::string	to_string(int p_precision = -1, uint32_t p_tab_count = 0, bool p_multiline = false)	const
+		{
+			V<T> l_fn(m_array_v);
+			return l_fn.to_string(p_precision, p_tab_count, p_multiline);
+		}
+		uint64_t	from_string(const std::string& p_str, uint64_t p_offset = 0)
+		{
+			V<T> l_fn(m_array_v);
+			return l_fn.from_string(p_str, p_offset);
+		}
+		uint64_t	get_binary_size()														const
+		{
+			V<T> l_fn(m_array_v);
+			return l_fn.get_binary_size();
+		}
+		// TO Do 
+		// this method has to be const. fix it later
+		uint64_t	to_binary(std::vector<char>& p_buff, uint64_t p_offset = 0)	//			const
+		{
+			V<T> l_fn(m_array_v);
+			return l_fn.to_binary(p_buff, p_offset);
+		}
+		uint64_t	from_binary(const std::vector<char>& p_buff, uint64_t p_offset = 0)
+		{
+			V<T> l_fn(m_array_v);
+			return l_fn.from_binary(p_buff, p_offset);
+		}
+		// TO Do 
+		// this method has to be const. fix it later
+		uint64_t	encode_to_buff(std::vector<char>& p_buff, uint64_t p_offset = 0)//		const
+		{
+			V<T> l_fn(m_array_v);
+			return l_fn.encode_to_buff(p_buff, p_offset);
+		}
+		uint64_t	decode_from_buff(std::vector<char>& p_buff, uint64_t p_offset = 0)
+		{
+			V<T> l_fn(m_array_v);
+			return l_fn.decode_from_buff(p_buff, p_offset);
+		}
+	//private:
+		std::vector<T> m_array_v;
 	};
 #pragma endregion
 }
