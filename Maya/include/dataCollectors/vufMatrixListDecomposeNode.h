@@ -20,6 +20,7 @@ namespace vufRM
 
 		static const MTypeId	g_id;
 		//attributes
+		static MObject	g_parent_inverse_attr;
 		static MObject	g_use_parent_attr;
 		static MObject	g_look_rotation_attr;
 		static MObject	g_data_in_attr;
@@ -28,7 +29,6 @@ namespace vufRM
 		static const MString	g_type_name;
 	private:
 		uint64_t		m_gen_id;
-		MMatrixArray	m_cach_array;
 	};
 }
 

@@ -64,8 +64,8 @@ namespace vufRM
 		
 		//static void					draw(const MHWRender::MDrawContext& context, const MUserData* data) {}
 
-	private:
-		MBoundingBox m_current_bounding_box;
+	//private:
+		//MBoundingBox m_current_bounding_box;
 	};
 	
 	class vufCurveLocatorData : public MUserData

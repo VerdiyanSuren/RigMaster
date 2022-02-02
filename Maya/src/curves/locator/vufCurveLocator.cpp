@@ -182,7 +182,7 @@ bool				vufCurveLocatorDrawOverride::isBounded(const MDagPath& /*objPath*/, cons
 }
 MBoundingBox		vufCurveLocatorDrawOverride::boundingBox(const MDagPath& p_obj_path, const MDagPath& p_camera_path) const
 {
-	return m_current_bounding_box;
+	return MBoundingBox();
 }
 bool				vufCurveLocatorDrawOverride::disableInternalBoundingBoxDraw() const
 {

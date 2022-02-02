@@ -2,7 +2,7 @@
 #include <maya/MFnNumericAttribute.h>
 
 #include <dataCollectors/vufMatrixListNullNode.h>
-#include <data/vufData.h>
+//#include <data/vufData.h>
 #include <vufMayaGlobalIncludes.h>
 //#include <maya/MMatrix.h>
 //#include <maya/MMatrixArray.h>
@@ -51,7 +51,7 @@ MStatus	vufMatrixListNullNode::initialize()
 	g_data_out_attr = l_typed_attr_fn.create("outMatrixList", "oml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	//g_data_out_attr = l_typed_attr_fn.create("TransformList","tl", mpxTransformListWrapper::g_id, MObject::kNullObj, &l_status);// , MFnPluginData().create(vufUniversalData::id, &status));
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_typed_attr_fn.setStorable(true);
+	l_typed_attr_fn.setStorable(false);
 	l_typed_attr_fn.setWritable(false);
 
 	// Add Attributes
@@ -89,7 +89,7 @@ MStatus	vufMatrixListNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			if (l_in_data != nullptr)
 			{
 				l_out_data->m_internal_data = l_in_data->m_internal_data;
-			}			
+			}
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}

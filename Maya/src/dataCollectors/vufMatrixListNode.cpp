@@ -47,7 +47,7 @@ MStatus	vufMatrixListNode::initialize()
 	g_data_out_attr = l_typed_attr_fn.create("outMatrixList", "oml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	//g_data_out_attr = l_typed_attr_fn.create("TransformList","tl", mpxTransformListWrapper::g_id, MObject::kNullObj, &l_status);// , MFnPluginData().create(vufUniversalData::id, &status));
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_typed_attr_fn.setStorable(true);
+	l_typed_attr_fn.setStorable(false);
 	l_typed_attr_fn.setWritable(false);
 
 	l_status = addAttribute(g_transform_in_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -77,7 +77,7 @@ MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		{
 			l_out_data->m_internal_data = vufMath::vufObjectArray<vufMath::vufMatrix_4d>::create();
 		}
-		auto l_matrix_array = (l_out_data->m_internal_data.get())->m_array_v;
+		auto& l_matrix_array = (l_out_data->m_internal_data.get())->m_array_v;
 		//------------------------------------------------------------------------------
 		// Read Transforms and fill matricies
 		//MMatrixArray l_matrix_array;

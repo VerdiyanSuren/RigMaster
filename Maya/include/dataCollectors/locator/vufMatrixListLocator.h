@@ -34,8 +34,8 @@ namespace vufRM
 		static MObject g_tripod_attr;
 		static MObject g_size_attr;
 		static MObject g_connect_attr;
-		static MObject g_draw_width_arrt;
-		static MObject g_in_data_attr;
+		static MObject g_draw_width_attr;
+		static MObject g_data_in_attr;
 	};
 	class vufMatrixListLocatorDrawOverride : public MHWRender::MPxDrawOverride
 	{
@@ -67,16 +67,17 @@ namespace vufRM
 	public:
 		vufMatrixListLocatorData() :MUserData(true) { /*std::cout << "MUserData Construcotr" << std::endl;*/ }
 		virtual ~vufMatrixListLocatorData() { /*std::cout << "MUserData Destructor" << std::endl;*/ }
-		MColor		m_color_start;
-		MColor		m_color_end;
-		MColor		m_color_tngnt;
-		MColor		m_color_normal;
-		double		m_width;
-		double		m_start_param;
-		double		m_end_param;
-		bool		m_tangent;
-		bool		m_normal;
-		int			m_division;
+		MColor		m_color_dot;
+		MColor		m_color_tripod_x;
+		MColor		m_color_tripod_y;
+		MColor		m_color_tripod_z;
+		MColor		m_color_line;
+		double		m_dot_size;
+		double		m_line_width;
+		bool		m_draw;
+		bool		m_draw_dot;
+		bool		m_draw_tripods;
+		bool		m_draw_connections;
 		std::shared_ptr<vufMath::vufObjectArray<vufMath::vufMatrix_4d>> m_data_ptr = nullptr;
 	};
 }
