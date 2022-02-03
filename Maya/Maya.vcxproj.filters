@@ -144,6 +144,9 @@
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleParamNode.h">
       <Filter>include\curves\scaleFn</Filter>
     </ClInclude>
+    <ClInclude Include="include\curves\vufBezier3Tangents.h">
+      <Filter>include\curves</Filter>
+    </ClInclude>
     <ClInclude Include="include\curves\vufCurveBSplineNode.h">
       <Filter>include\curves</Filter>
     </ClInclude>
@@ -343,6 +346,9 @@
     </ClCompile>
     <ClCompile Include="src\curves\scaleFn\vufCurveScaleParamNode.cpp">
       <Filter>src\curves\scaleFn</Filter>
+    </ClCompile>
+    <ClCompile Include="src\curves\vufBezier3Tangents.cpp">
+      <Filter>src\curves</Filter>
     </ClCompile>
     <ClCompile Include="src\curves\vufCurveBSplineNode.cpp">
       <Filter>src\curves</Filter>

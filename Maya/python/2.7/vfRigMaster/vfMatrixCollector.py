@@ -40,8 +40,10 @@ class TCGui(ui.Wnd):
 		if ( cmds.window( self.wnd, ex = True ) == True):
 			cmds.window( self.wnd, e = True, visible = True, iconify = False )
 			return
+		# Creation
+		print "HERE"
 		super(TCGui, self).create_window()
-		cmds.frameLayout (label= "Create", collapsable =True, collapse = False )
+		cmds.frameLayout (label= "Create", collapsable = True, collapse = False )
 		cmds.rowLayout(	numberOfColumns 	= 5,						
 						adjustableColumn5 	= 4, 
 						columnAlign			=(1, 'right'),
@@ -55,6 +57,36 @@ class TCGui(ui.Wnd):
 		self.checkNull 		= cmds.checkBox( label 	= "Add Null", 	v = _NULL)
 		cmds.button(label 	= "Select inputs", c 	= self.select_inputs)
 		cmds.symbolButton(image = "vufIcons/DELETE.png",ann="Delete Transform Collector",c = self.delete_tc, bgc=(0.4,0.2,0.2))
+		# Selection
+		cmds.setParent(self.cLayout)
+		cmds.frameLayout (label= "Select", collapsable = True, collapse = True )
+		cmds.rowLayout(	numberOfColumns 	= 3,						
+						adjustableColumn3 	= 3, 
+						columnAlign			=(1, 'right'),
+						columnAttach=[	(1, 'both', 2),
+										(2, 'both', 2),
+										(3, 'both', 2)])
+		cmds.button(label 	= "Drivers", c = self.select_inputs)
+		cmds.button(label 	= "Drivens", c = self.select_inputs)
+		cmds.button(label 	= "GetDecompose", c = self.select_inputs)
+		# Locator
+		cmds.setParent(self.cLayout)
+		cmds.frameLayout (label= "Locator", collapsable =True, collapse = True )	
+		cmds.rowLayout(	numberOfColumns 	= 3,
+						columnAlign			=(1, 'right'),
+						columnAttach=[	(1, 'both', 2),
+										(2, 'both', 2),
+										(3, 'both', 2)])		
+		cmds.symbolButton(image = "vufIcons/SELECT.png", 	ann="Select Locator",			bgc=(0.2,0.4,0.2), c = self.select_locator)
+		cmds.symbolButton(image = "vufIcons/ADD.png",		ann="Add Locator for Bspline",	bgc=(0.2,0.4,0.2), c = self.add_locator )
+		cmds.symbolButton(image = "vufIcons/MINUS.png",		ann="Remoce Locator forBspline",bgc=(0.2,0.4,0.2), c = self.remove_locator )
+		
+		# GetDecompose
+		cmds.setParent(self.cLayout)
+		cmds.frameLayout (label= "GetDecompose", collapsable =True, collapse = True )
+		cmds.rowLayout()
+		cmds.button(label 	= "Decompose", c = self.select_inputs)
+		
 		
 		self.refresh_ui()
 	
@@ -97,7 +129,14 @@ class TCGui(ui.Wnd):
 				return
 				
 		cmds.optionMenu(self.listUI,edit=True,sl = 1)
-
-
+	
+	def select_locator(self,*args):
+		pass
+	
+	def add_locator(self,*args):
+		pass
+	
+	def remove_locator(self,*args):
+		pass
 
 

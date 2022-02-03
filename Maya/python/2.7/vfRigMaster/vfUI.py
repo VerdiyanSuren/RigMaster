@@ -66,18 +66,20 @@ class Wnd(object):
 			return
 		self.wnd  		= cmds.window( self.wnd, menuBar=True, title= self.title, widthHeight=(self.width,self.height), resizeToFitChildren = True)
 		self.cLayout 	= cmds.columnLayout( adjustableColumn = True)
-		cmds.rowLayout(	numberOfColumns 	= 4,						
-						adjustableColumn4 	= 3, 
+		cmds.rowLayout(	numberOfColumns 	= 5,						
+						adjustableColumn5 	= 3, 
 						columnAlign			=(1, 'right'),
 						columnAttach=[	(1, 'both', 2),
 										(2, 'both', 2),
 										(3, 'both', 20),
-										(4, 'both', 2)],	
+										(4, 'both', 2),
+										(5, 'both', 2)],	
 						bgc = self.color)
 		cmds.symbolButton(image = "vufIcons/REFRESH.png",	ann="Refresh list of nodes",c = self.refresh_ui )
 		cmds.symbolButton(image = "vufIcons/SELECT.png", 	ann="Select node",	c = self.select_node)
 		self.listUI 			= cmds.optionMenu(label = self.nodeType  + ": ", cc = self.item_selected)
-		cmds.symbolButton(image = "vufIcons/Back.png", 		ann="Get From Scene",c = self.get_node_from_scene)
+		cmds.symbolButton(image = "vufIcons/BACK.png", 		ann="Get From Selected Drivers",c = self.get_node_from_drivens)
+		cmds.symbolButton(image = "vufIcons/RIGHT.png", 		ann="Get From Selected Drivens",c = self.get_node_from_scene)
 		cmds.setParent(self.cLayout)
 		
 	def show(self):
@@ -115,7 +117,9 @@ class Wnd(object):
 		
 	def get_node_from_scene(self,*args):
 		pass
-		
+	
+	def get_node_from_drivens(self,*args):
+		pass
 
 class ChooseListDialog(object):
 	def __init__(self):
