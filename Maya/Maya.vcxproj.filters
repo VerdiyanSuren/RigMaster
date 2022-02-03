@@ -201,6 +201,9 @@
     <ClInclude Include="include\dataCollectors\vufMatrixListDecomposeNode.h">
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
+    <ClInclude Include="include\dataCollectors\vufMatrixListLookAtNode.h">
+      <Filter>include\dataCollectors</Filter>
+    </ClInclude>
     <ClInclude Include="include\dataCollectors\vufMatrixListNode.h">
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
@@ -387,6 +390,9 @@
       <Filter>src\dataCollectors</Filter>
     </ClCompile>
     <ClCompile Include="src\dataCollectors\vufMatrixListDecomposeNode.cpp">
+      <Filter>src\dataCollectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dataCollectors\vufMatrixListLookAtNode.cpp">
       <Filter>src\dataCollectors</Filter>
     </ClCompile>
     <ClCompile Include="src\dataCollectors\vufMatrixListNode.cpp">

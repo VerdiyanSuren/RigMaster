@@ -7,7 +7,7 @@
 //#include <maya/MMatrix.h>
 //#include <maya/MMatrixArray.h>
 #include <data/vufMayaDataList.h>
-#include <maya/MFnMatrixArrayData.h>
+//#include <maya/MFnMatrixArrayData.h>
 
 using namespace vufRM;
 

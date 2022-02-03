@@ -14,6 +14,8 @@
 #include <dataCollectors/vufMatrixListNode.h>
 #include <dataCollectors/vufMatrixListNullNode.h>
 #include <dataCollectors/vufMatrixListDecomposeNode.h>
+#include <dataCollectors/vufMatrixListLookAtNode.h>
+
 #include <dataCollectors/vufDoubleListNode.h>
 #include <dataCollectors/vufDoubleListNullNode.h>
 #include <dataCollectors/locator/vufMatrixListLocator.h>
@@ -60,39 +62,40 @@ const MTypeId	mpxMatrixListWrapper::		g_id(0x297630);	const MString	mpxMatrixLis
 const MTypeId	vufMatrixListNode::			g_id(0x297730);	const MString	vufMatrixListNode::			g_type_name("vfMtrxList");
 const MTypeId	vufMatrixListNullNode::		g_id(0x297830);	const MString	vufMatrixListNullNode::		g_type_name("vfMtrxListNull");
 const MTypeId	vufMatrixListDecomposeNode::g_id(0x297930);	const MString	vufMatrixListDecomposeNode::g_type_name("vfMtrxListDcmps");
+const MTypeId	vufMatrixListLookAtNode::	g_id(0x298030);	const MString	vufMatrixListLookAtNode::	g_type_name("vfMtrxListLookAt");
 // Matrix List locator
-const MTypeId	vufMatrixListLocator::		g_id(0x298030);	const MString	vufMatrixListLocator::g_type_name("vfMtrxListLocator"); const MString	vufMatrixListLocator::g_drawDb_classification("drawdb/geometry/vfMtrxListLocator");
+const MTypeId	vufMatrixListLocator::		g_id(0x298130);	const MString	vufMatrixListLocator::g_type_name("vfMtrxListLocator"); const MString	vufMatrixListLocator::g_drawDb_classification("drawdb/geometry/vfMtrxListLocator");
 
-const MTypeId	vufDoubleListNode::			g_id(0x298130);	const MString	vufDoubleListNode::			g_type_name("vfDblList");
-const MTypeId	vufDoubleListNullNode::		g_id(0x298230);	const MString	vufDoubleListNullNode::		g_type_name("vfDblListNull");
+const MTypeId	vufDoubleListNode::			g_id(0x298230);	const MString	vufDoubleListNode::			g_type_name("vfDblList");
+const MTypeId	vufDoubleListNullNode::		g_id(0x298330);	const MString	vufDoubleListNullNode::		g_type_name("vfDblListNull");
 // Curve Data
-const MTypeId	mpxCurveWrapper::			g_id(0x298330);	const MString	mpxCurveWrapper::			g_type_name("CrvData");
-const MTypeId	mpxCurveQuatWrapper::		g_id(0x298430);	const MString	mpxCurveQuatWrapper::		g_type_name("CrvRotData");
-const MTypeId	mpxCurveScaleWrapper::		g_id(0x298530);	const MString	mpxCurveScaleWrapper::		g_type_name("CrvSclData");
-const MTypeId	mpxCurveRebuildWrapper::	g_id(0x298630);	const MString	mpxCurveRebuildWrapper::	g_type_name("CrvRbldData");
+const MTypeId	mpxCurveWrapper::			g_id(0x298430);	const MString	mpxCurveWrapper::			g_type_name("CrvData");
+const MTypeId	mpxCurveQuatWrapper::		g_id(0x298530);	const MString	mpxCurveQuatWrapper::		g_type_name("CrvRotData");
+const MTypeId	mpxCurveScaleWrapper::		g_id(0x298630);	const MString	mpxCurveScaleWrapper::		g_type_name("CrvSclData");
+const MTypeId	mpxCurveRebuildWrapper::	g_id(0x298730);	const MString	mpxCurveRebuildWrapper::	g_type_name("CrvRbldData");
 
 // Curve locator
-const MTypeId	vufCurveLocator::			g_id(0x298730);	const MString	vufCurveLocator::			g_type_name("vfCrvLocator"); const MString	vufCurveLocator::g_drawDb_classification("drawdb/geometry/vfCrvLocator");
+const MTypeId	vufCurveLocator::			g_id(0x298830);	const MString	vufCurveLocator::			g_type_name("vfCrvLocator"); const MString	vufCurveLocator::g_drawDb_classification("drawdb/geometry/vfCrvLocator");
 // Curve Nodes
-const MTypeId	vufFromMayaCurveNode::		g_id(0x298830);	const MString	vufFromMayaCurveNode::		g_type_name("vfCrvFromMaya");
-const MTypeId	vufCurveToMayaNode::		g_id(0x298930);	const MString	vufCurveToMayaNode::		g_type_name("vfCrvToMaya");
-const MTypeId	vufCurveBSplineNode::		g_id(0x299030);	const MString	vufCurveBSplineNode::		g_type_name("vfCrvBSpline");
-const MTypeId	vufCurveBezierNode::		g_id(0x299130);	const MString	vufCurveBezierNode::		g_type_name("vfCrvBezier");
-const MTypeId	vufCurveNoiseNode::			g_id(0x299230);	const MString	vufCurveNoiseNode::			g_type_name("vfCrvNoise");
-const MTypeId	vufCurveSlideNode::			g_id(0x299330);	const MString	vufCurveSlideNode::			g_type_name("vfCrvSlide");
-const MTypeId	vufCurveBlendNode::			g_id(0x299430);	const MString	vufCurveBlendNode::			g_type_name("vfCrvBlend");
-const MTypeId	vufCurveComposeNode::		g_id(0x299530);	const MString	vufCurveComposeNode::		g_type_name("vfCrvCompose");
-const MTypeId	vufCurveSwitch::			g_id(0x299630);	const MString	vufCurveSwitch::			g_type_name("vfCrvSwitch");
+const MTypeId	vufFromMayaCurveNode::		g_id(0x298930);	const MString	vufFromMayaCurveNode::		g_type_name("vfCrvFromMaya");
+const MTypeId	vufCurveToMayaNode::		g_id(0x299030);	const MString	vufCurveToMayaNode::		g_type_name("vfCrvToMaya");
+const MTypeId	vufCurveBSplineNode::		g_id(0x299130);	const MString	vufCurveBSplineNode::		g_type_name("vfCrvBSpline");
+const MTypeId	vufCurveBezierNode::		g_id(0x299230);	const MString	vufCurveBezierNode::		g_type_name("vfCrvBezier");
+const MTypeId	vufCurveNoiseNode::			g_id(0x299330);	const MString	vufCurveNoiseNode::			g_type_name("vfCrvNoise");
+const MTypeId	vufCurveSlideNode::			g_id(0x299430);	const MString	vufCurveSlideNode::			g_type_name("vfCrvSlide");
+const MTypeId	vufCurveBlendNode::			g_id(0x299530);	const MString	vufCurveBlendNode::			g_type_name("vfCrvBlend");
+const MTypeId	vufCurveComposeNode::		g_id(0x299630);	const MString	vufCurveComposeNode::		g_type_name("vfCrvCompose");
+const MTypeId	vufCurveSwitch::			g_id(0x299730);	const MString	vufCurveSwitch::			g_type_name("vfCrvSwitch");
 
-const MTypeId	vufCurveNullNode::			g_id(0x299730);	const MString	vufCurveNullNode::			g_type_name("vfCrvNull");
+const MTypeId	vufCurveNullNode::			g_id(0x299830);	const MString	vufCurveNullNode::			g_type_name("vfCrvNull");
 
-const MTypeId	vufCurveGetTransformNode::	g_id(0x299830);	const MString	vufCurveGetTransformNode::	g_type_name("vfCrvGetXForm");
-const MTypeId	vufCurveClosestParamNode::	g_id(0x299930);	const MString	vufCurveClosestParamNode::	g_type_name("vfCrvClosestParam");
-const MTypeId	vufCurveComponentParamNode::g_id(0x300030);	const MString	vufCurveComponentParamNode::g_type_name("vfCrvCompomentParam");
-const MTypeId	vufCurveQuatCloseNode::		g_id(0x300130);	const MString	vufCurveQuatCloseNode::		g_type_name("vfCrvRotateClosest");
-const MTypeId	vufCurveQuatFrameNode::		g_id(0x300230);	const MString	vufCurveQuatFrameNode::		g_type_name("vfCrvRotateFrame");
-const MTypeId	vufCurveQuat2EndsNode::		g_id(0x300330);	const MString	vufCurveQuat2EndsNode::		g_type_name("vfCrvRotate2Ends");
-const MTypeId	vufCurveQuatParamNode::		g_id(0x300430);	const MString	vufCurveQuatParamNode::		g_type_name("vfCrvRotateParams");
+const MTypeId	vufCurveGetTransformNode::	g_id(0x299930);	const MString	vufCurveGetTransformNode::	g_type_name("vfCrvGetXForm");
+const MTypeId	vufCurveClosestParamNode::	g_id(0x300030);	const MString	vufCurveClosestParamNode::	g_type_name("vfCrvClosestParam");
+const MTypeId	vufCurveComponentParamNode::g_id(0x300130);	const MString	vufCurveComponentParamNode::g_type_name("vfCrvCompomentParam");
+const MTypeId	vufCurveQuatCloseNode::		g_id(0x300230);	const MString	vufCurveQuatCloseNode::		g_type_name("vfCrvRotateClosest");
+const MTypeId	vufCurveQuatFrameNode::		g_id(0x300330);	const MString	vufCurveQuatFrameNode::		g_type_name("vfCrvRotateFrame");
+const MTypeId	vufCurveQuat2EndsNode::		g_id(0x300430);	const MString	vufCurveQuat2EndsNode::		g_type_name("vfCrvRotate2Ends");
+const MTypeId	vufCurveQuatParamNode::		g_id(0x300530);	const MString	vufCurveQuatParamNode::		g_type_name("vfCrvRotateParams");
 
 VF_TXT_WRITER_DEFINE_STATIC_VARS(); //Define txt serializer variables  
 VF_DEFINE_CUSTOM_LOGGER(vufLogMaya);
@@ -122,6 +125,8 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufMatrixListNode);
 	VF_REGISTER_NODE(vufMatrixListNullNode);
 	VF_REGISTER_NODE(vufMatrixListDecomposeNode);
+	VF_REGISTER_NODE(vufMatrixListLookAtNode);
+
 	VF_REGISTER_NODE(vufDoubleListNode);
 	VF_REGISTER_NODE(vufDoubleListNullNode);
 
@@ -173,6 +178,7 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufMatrixListNode);
 	VF_DEREGISTER_NODE(vufMatrixListNullNode);
 	VF_DEREGISTER_NODE(vufMatrixListDecomposeNode);
+	VF_DEREGISTER_NODE(vufMatrixListLookAtNode);
 	VF_DEREGISTER_NODE(vufDoubleListNode);
 	VF_DEREGISTER_NODE(vufDoubleListNullNode);
 

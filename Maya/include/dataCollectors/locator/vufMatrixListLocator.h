@@ -32,9 +32,10 @@ namespace vufRM
 		static MObject g_draw_attr;
 		static MObject g_dot_attr;
 		static MObject g_tripod_attr;
-		static MObject g_size_attr;
-		static MObject g_connect_attr;
+		static MObject g_dot_size_attr;
+		static MObject g_tripod_size_attr;
 		static MObject g_draw_width_attr;
+		static MObject g_connect_attr;
 		static MObject g_data_in_attr;
 	};
 	class vufMatrixListLocatorDrawOverride : public MHWRender::MPxDrawOverride
@@ -74,6 +75,7 @@ namespace vufRM
 		MColor		m_color_line;
 		double		m_dot_size;
 		double		m_line_width;
+		double		m_tri_size;
 		bool		m_draw;
 		bool		m_draw_dot;
 		bool		m_draw_tripods;

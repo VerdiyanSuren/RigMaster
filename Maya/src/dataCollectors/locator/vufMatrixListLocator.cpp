@@ -19,7 +19,8 @@ using namespace vufMath;
 MObject vufMatrixListLocator::g_draw_attr;
 MObject vufMatrixListLocator::g_dot_attr;
 MObject vufMatrixListLocator::g_tripod_attr;
-MObject vufMatrixListLocator::g_size_attr;
+MObject vufMatrixListLocator::g_dot_size_attr;
+MObject vufMatrixListLocator::g_tripod_size_attr;
 MObject vufMatrixListLocator::g_connect_attr;
 MObject vufMatrixListLocator::g_draw_width_attr;
 MObject vufMatrixListLocator::g_data_in_attr;
@@ -72,7 +73,10 @@ MStatus			vufMatrixListLocator::initialize()
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_dot_attr,		"dot",		"dot",	kBoolean,	false);
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_tripod_attr,	"tripod",	"trp",	kBoolean,	true);
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_connect_attr,	"line",		"ln",	kBoolean, true);
-	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_size_attr,		"dotSize",	"dsz",	kDouble, 1.0);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_dot_size_attr, "dotSize",	"dsz",	kDouble, 1.0);
+	l_numeric_attr_fn.setDefault(1.0);
+	l_numeric_attr_fn.setMin(0.000001);
+	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_tripod_size_attr,	"tripodSize",	"tsz",	kDouble, 1.0);
 	l_numeric_attr_fn.setDefault(1.0);
 	l_numeric_attr_fn.setMin(0.000001);
 	VF_RM_CREATE_STORABLE_NUMERIC_ATTR(g_draw_width_attr,	"lineWidth", "lw", kDouble, 1.0);
@@ -86,12 +90,14 @@ MStatus			vufMatrixListLocator::initialize()
 	l_typed_attr_fn.setKeyable(true);
 
 	// Add Attributes
-	l_status = addAttribute(g_draw_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = addAttribute(g_dot_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = addAttribute(g_tripod_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = addAttribute(g_connect_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = addAttribute(g_draw_width_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_status = addAttribute(g_data_in_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_draw_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_dot_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_tripod_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_connect_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_dot_size_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_tripod_size_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_draw_width_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	l_status = addAttribute(g_data_in_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 
 	return MS::kSuccess;
 }
@@ -161,83 +167,84 @@ MUserData*			vufMatrixListLocatorDrawOverride::prepareForDraw(	const MDagPath& p
 	MPlug	l_draw_plug(l_this_node,		vufMatrixListLocator::g_draw_attr);
 	MPlug	l_draw_dot_plug(l_this_node,	vufMatrixListLocator::g_dot_attr);
 	MPlug	l_draw_tripod_plug(l_this_node, vufMatrixListLocator::g_tripod_attr);
-	MPlug	l_dot_size_plug(l_this_node,	vufMatrixListLocator::g_size_attr);
-MPlug	l_draw_lines_plug(l_this_node, vufMatrixListLocator::g_connect_attr);
-MPlug	l_line_width_plug(l_this_node, vufMatrixListLocator::g_draw_width_attr);
+	MPlug	l_dot_size_plug(l_this_node,	vufMatrixListLocator::g_dot_size_attr);
+	MPlug	l_tri_size_plug(l_this_node,	vufMatrixListLocator::g_tripod_size_attr);
+	MPlug	l_draw_lines_plug(l_this_node,	vufMatrixListLocator::g_connect_attr);
+	MPlug	l_line_width_plug(l_this_node,	vufMatrixListLocator::g_draw_width_attr);
 
-if (ds == MHWRender::DisplayStatus::kActive || ds == MHWRender::DisplayStatus::kLead)
-{
-	// selected all white
-	l_locator_data_ptr->m_color_dot.r = 1.0f;
-	l_locator_data_ptr->m_color_dot.g = 1.0f;
-	l_locator_data_ptr->m_color_dot.b = 1.0f;
+	if (ds == MHWRender::DisplayStatus::kActive || ds == MHWRender::DisplayStatus::kLead)
+	{
+		// selected all white
+		l_locator_data_ptr->m_color_dot.r = 1.0f;
+		l_locator_data_ptr->m_color_dot.g = 1.0f;
+		l_locator_data_ptr->m_color_dot.b = 1.0f;
 
-	l_locator_data_ptr->m_color_tripod_x.r = 1.0f;
-	l_locator_data_ptr->m_color_tripod_x.g = 1.0f;
-	l_locator_data_ptr->m_color_tripod_x.b = 1.0f;
+		l_locator_data_ptr->m_color_tripod_x.r = 1.0f;
+		l_locator_data_ptr->m_color_tripod_x.g = 1.0f;
+		l_locator_data_ptr->m_color_tripod_x.b = 1.0f;
 
-	l_locator_data_ptr->m_color_tripod_y.r = 1.0f;
-	l_locator_data_ptr->m_color_tripod_y.g = 1.0f;
-	l_locator_data_ptr->m_color_tripod_y.b = 1.0f;
+		l_locator_data_ptr->m_color_tripod_y.r = 1.0f;
+		l_locator_data_ptr->m_color_tripod_y.g = 1.0f;
+		l_locator_data_ptr->m_color_tripod_y.b = 1.0f;
 
-	l_locator_data_ptr->m_color_tripod_z.r = 1.0f;
-	l_locator_data_ptr->m_color_tripod_z.g = 1.0f;
-	l_locator_data_ptr->m_color_tripod_z.b = 1.0f;
+		l_locator_data_ptr->m_color_tripod_z.r = 1.0f;
+		l_locator_data_ptr->m_color_tripod_z.g = 1.0f;
+		l_locator_data_ptr->m_color_tripod_z.b = 1.0f;
 
-	l_locator_data_ptr->m_color_line.r = 1.0f;
-	l_locator_data_ptr->m_color_line.g = 1.0f;
-	l_locator_data_ptr->m_color_line.b = 1.0f;
+		l_locator_data_ptr->m_color_line.r = 1.0f;
+		l_locator_data_ptr->m_color_line.g = 1.0f;
+		l_locator_data_ptr->m_color_line.b = 1.0f;
+	}
+	else
+	{
+		l_locator_data_ptr->m_color_dot.r = 1.0f;
+		l_locator_data_ptr->m_color_dot.g = 1.0f;
+		l_locator_data_ptr->m_color_dot.b = 0.0f;
+
+		l_locator_data_ptr->m_color_tripod_x.r = 1.0f;
+		l_locator_data_ptr->m_color_tripod_x.g = 0.0f;
+		l_locator_data_ptr->m_color_tripod_x.b = 0.0f;
+
+		l_locator_data_ptr->m_color_tripod_y.r = 0.0f;
+		l_locator_data_ptr->m_color_tripod_y.g = 1.0f;
+		l_locator_data_ptr->m_color_tripod_y.b = 0.0f;
+
+		l_locator_data_ptr->m_color_tripod_z.r = 0.0f;
+		l_locator_data_ptr->m_color_tripod_z.g = 0.0f;
+		l_locator_data_ptr->m_color_tripod_z.b = 1.0f;
+
+		l_locator_data_ptr->m_color_line.r = 1.0f;
+		l_locator_data_ptr->m_color_line.g = 1.0f;
+		l_locator_data_ptr->m_color_line.b = 0.0f;
+	}
+
+	l_draw_plug.getValue(		l_locator_data_ptr->m_draw);
+	l_draw_dot_plug.getValue(	l_locator_data_ptr->m_draw_dot);
+	l_draw_tripod_plug.getValue(l_locator_data_ptr->m_draw_tripods);
+	l_dot_size_plug.getValue(	l_locator_data_ptr->m_dot_size);
+	l_tri_size_plug.getValue(	l_locator_data_ptr->m_tri_size);
+	l_draw_lines_plug.getValue(	l_locator_data_ptr->m_draw_connections);
+	l_line_width_plug.getValue(	l_locator_data_ptr->m_line_width);
+
+	return p_old_data;
 }
-else
-{
-	l_locator_data_ptr->m_color_dot.r = 1.0f;
-	l_locator_data_ptr->m_color_dot.g = 1.0f;
-	l_locator_data_ptr->m_color_dot.b = 0.0f;
-
-	l_locator_data_ptr->m_color_tripod_x.r = 1.0f;
-	l_locator_data_ptr->m_color_tripod_x.g = 0.0f;
-	l_locator_data_ptr->m_color_tripod_x.b = 0.0f;
-
-	l_locator_data_ptr->m_color_tripod_y.r = 0.0f;
-	l_locator_data_ptr->m_color_tripod_y.g = 1.0f;
-	l_locator_data_ptr->m_color_tripod_y.b = 0.0f;
-
-	l_locator_data_ptr->m_color_tripod_z.r = 0.0f;
-	l_locator_data_ptr->m_color_tripod_z.g = 0.0f;
-	l_locator_data_ptr->m_color_tripod_z.b = 1.0f;
-
-	l_locator_data_ptr->m_color_line.r = 0.0f;
-	l_locator_data_ptr->m_color_line.g = 0.6f;
-	l_locator_data_ptr->m_color_line.b = 0.0f;
-}
-
-l_draw_plug.getValue(l_locator_data_ptr->m_draw);
-l_draw_dot_plug.getValue(l_locator_data_ptr->m_draw_dot);
-l_draw_tripod_plug.getValue(l_locator_data_ptr->m_draw_tripods);
-l_dot_size_plug.getValue(l_locator_data_ptr->m_dot_size);
-l_draw_lines_plug.getValue(l_locator_data_ptr->m_draw_connections);
-l_line_width_plug.getValue(l_locator_data_ptr->m_line_width);
-
-return p_old_data;
-}
-void				vufMatrixListLocatorDrawOverride::addUIDrawables(const MDagPath& p_obj_path,
-	MHWRender::MUIDrawManager& p_draw_manager,
-	const MHWRender::MFrameContext& p_frame_context,
-	const MUserData* p_data)
+void				vufMatrixListLocatorDrawOverride::addUIDrawables(	const MDagPath& p_obj_path,
+																		MHWRender::MUIDrawManager& p_draw_manager,
+																		const MHWRender::MFrameContext& p_frame_context,
+																		const MUserData* p_data)
 {
 	if (p_data == nullptr)
 	{
 		return;
 	}
 	vufMatrixListLocatorData* l_data = (vufMatrixListLocatorData*)p_data;
-	if (l_data->m_data_ptr == nullptr || l_data->m_draw == true)
+	if (l_data->m_data_ptr == nullptr || l_data->m_draw != true)
 	{
 		return;
 	}
 	p_draw_manager.beginDrawable();
 	p_draw_manager.beginDrawInXray();
 	p_draw_manager.setDepthPriority(5);
-
 	auto& l_array = l_data->m_data_ptr->m_array_v;
 	int l_sz = (int)l_array.size();
 	if (l_sz == 0)
@@ -263,9 +270,9 @@ void				vufMatrixListLocatorDrawOverride::addUIDrawables(const MDagPath& p_obj_p
 		for (int i = 0; i < l_sz; ++i)
 		{
 			auto l_pos	= l_array[i].get_translation_4();
-			auto l_x	= l_array[i].get_axis_x_4() * l_data->m_dot_size; 
-			auto l_y	= l_array[i].get_axis_y_4() * l_data->m_dot_size;
-			auto l_z	= l_array[i].get_axis_z_4() * l_data->m_dot_size;
+			auto l_x	= l_pos + l_array[i].get_axis_x_4() * l_data->m_tri_size;
+			auto l_y	= l_pos + l_array[i].get_axis_y_4() * l_data->m_tri_size;
+			auto l_z	= l_pos + l_array[i].get_axis_z_4() * l_data->m_tri_size;
 			p_draw_manager.setColor(l_data->m_color_tripod_x);
 			p_draw_manager.line(*((MPoint*)(&l_pos)), *((MPoint*)(&(l_x))));
 			p_draw_manager.setColor(l_data->m_color_tripod_y);

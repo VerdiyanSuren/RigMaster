@@ -487,6 +487,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClInclude Include="include\dataCollectors\vufDoubleListNode.h" />
     <ClInclude Include="include\dataCollectors\vufDoubleListNullNode.h" />
     <ClInclude Include="include\dataCollectors\vufMatrixListDecomposeNode.h" />
+    <ClInclude Include="include\dataCollectors\vufMatrixListLookAtNode.h" />
     <ClInclude Include="include\dataCollectors\vufMatrixListNode.h" />
     <ClInclude Include="include\dataCollectors\vufMatrixListNullNode.h" />
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h" />
@@ -551,6 +552,7 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClCompile Include="src\dataCollectors\vufDoubleListNode.cpp" />
     <ClCompile Include="src\dataCollectors\vufDoubleListNullNode.cpp" />
     <ClCompile Include="src\dataCollectors\vufMatrixListDecomposeNode.cpp" />
+    <ClCompile Include="src\dataCollectors\vufMatrixListLookAtNode.cpp" />
     <ClCompile Include="src\dataCollectors\vufMatrixListNode.cpp" />
     <ClCompile Include="src\dataCollectors\vufMatrixListNullNode.cpp" />
     <ClCompile Include="src\expressions\data\vufMayaLuaPortData.cpp" />
