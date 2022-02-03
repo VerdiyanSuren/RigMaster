@@ -22,14 +22,10 @@ namespace vufRM
 		//attributes
 		static MObject	g_parent_inverse_attr;
 		static MObject	g_use_parent_attr;
-		static MObject	g_look_rotation_attr;
 		static MObject	g_data_in_attr;
 		static MObject	g_data_out_attr;
 
 		static const MString	g_type_name;
-	private:
-		uint64_t		m_gen_id;
 	};
 }
-
 #endif //!VF_RM_MATRIX_LST_LCTR_NODE_H

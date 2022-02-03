@@ -4,7 +4,9 @@
 #include <maya/MPxData.h>
 #include <maya/MFnPluginData.h>
 #include <vufLog.h>
-#include "data/vufDataTemplate.h"
+#include <data/vufDataTemplate.h>
+#include <vufLogMaya.h>
+#include <utils/vufMayaUtils.h>
 #include <memory>
 
 /**
@@ -16,10 +18,11 @@
 * { ...
 *	std::shared_ptr<vufDataTest> l_src_data;
 *	VF_TP_GET_DATA_FROM_OUT_AND_CREATE(mpxTestWrapper, vufDataTest, p_data, g_data_src_attr, l_src_data);
-*	l_src_data->set_owner_node(m_node_unique_id);
 *	...
 * }
 */
+
+// m_internal could ve null
 #define VF_RM_GET_DATA_FROM_OUT_AND_CREATE(WRAPPER_CLASS, DATA_CLASS, data_block, attr, data_var)	\
 {																						\
 	MDataHandle	 l_out_handle	= data_block.outputValue(attr);							\
@@ -36,11 +39,13 @@
 	if (data_var == nullptr)															\
 	{																					\
 		/*std::cout << "Wanna constructor" <<std::endl;*/								\
-		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);							\
+		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS());						\
 		l_wrapp_ptr->set_data(data_var);												\
 	}																					\
 }
 
+// m_internal could ve null
+// after this internal data could be nullptr becource some data types is abstract interfaces
 #define VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(WRAPPER_CLASS, DATA_CLASS, data_block, attr, data_var,ID)	\
 {																												\
 	MDataHandle	 l_out_handle	= data_block.outputValue(attr);													\
@@ -54,13 +59,12 @@
 		l_wrapp_ptr = (WRAPPER_CLASS*)l_out_handle.asPluginData();												\
 	}																											\
 	data_var = l_wrapp_ptr->get_data();																			\
-	if (data_var == nullptr)																					\
+	/*if (data_var == nullptr)																					\
 	{																											\
-		/*std::cout << "Wanna constructor" <<std::endl;*/														\
-		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);													\
+		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS());												\
 		data_var->set_owner_id(ID);																				\
 		l_wrapp_ptr->set_data(data_var);																		\
-	}																											\
+	}																											\*/\
 	if (data_var->get_owner_id() != ID)																			\
 	{																											\
 		auto l_internal_data = data_var->m_internal_data;														\
@@ -68,13 +72,17 @@
 		{																										\
 			l_internal_data = data_var->m_internal_data->get_copy();											\
 		}																										\
-		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);													\
+		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS());												\
 		data_var->set_owner_id(ID);																				\
 		l_wrapp_ptr->set_data(data_var);																		\
 		data_var->m_internal_data = l_internal_data;															\
 	}																											\
 }
-
+#define VF_CHECK_AND_CREATE_INTERNAL_DATA(DATA,TYPE)\
+if (DATA->m_internal_data == nullptr)\
+{\
+	l_out_data->m_internal_data = std::shared_ptr<TYPE>(new TYPE());\
+}
 #define VF_RM_INIT_AND_ADD_HIDDEN_ATTR(ATTR,LONG_NAME,SHORT_NAME,WRAPPER_CLASS)									\
 {																												\
 	ATTR = l_typed_attr_fn.create(LONG_NAME, SHORT_NAME, WRAPPER_CLASS::g_id, MObject::kNullObj, &l_status);	\
@@ -115,22 +123,54 @@
 	WRAPPER_CLASS* l_wrapp_ptr = (WRAPPER_CLASS*)l_data_creator.constData();			\
 	l_wrapp_ptr->set_data(data_var);													\
 }																						\
-
+/**
+* Try to get data from plugin in node
+*  This method call node->name() which is not defined outside of node
+*/
+// internal could be nullptr
+#define VF_RM_NODE_GET_DATA_FROM_PLUG(WRAPPER_CLASS,DATA_CLASS, ATTR, data_var )		\
+{																						\
+	/* Find Plug by attribute object*/													\
+	MPlug	PLUG = l_node.findPlug(ATTR, true, &l_status);								\
+	if (l_status != MS::kSuccess)														\
+	{																					\
+		VF_MAYA_NODE_LOG_ERR(" Failed to find plug");									\
+	}																					\
+	/* Get data object from plug*/														\
+	MObject	l_data_obj;																	\
+	l_status = PLUG.getValue(l_data_obj);												\
+	if (l_status != MS::kSuccess)														\
+	{																					\
+		VF_MAYA_NODE_LOG_ERR(" Failed to get value from plug");							\
+	}																					\
+	else																				\
+	{																					\
+		/* Cast obj to mpx data*/														\
+		MFnPluginData	l_pd_fn(l_data_obj);											\
+		WRAPPER_CLASS*	l_mpx_data = (WRAPPER_CLASS*)l_pd_fn.constData(&l_status);		\
+		data_var = l_mpx_data == nullptr? nullptr : l_mpx_data->get_data();				\
+	}																					\
+	if (data_var == nullptr)															\
+	{																					\
+		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);							\
+	}																					\
+}
 /**
 * Try to get data from plug
 */
+// internal could be nullptr
 #define VF_RM_GET_DATA_FROM_PLUG(WRAPPER_CLASS,DATA_CLASS, ATTR, data_var )				\
 {																						\
 	MPlug	PLUG = l_node.findPlug(ATTR, true, &l_status);								\
 	if (l_status != MS::kSuccess)														\
 	{																					\
-		VF_LOG_ERR("Failed to find plug");												\
+		VF_MAYA_NODE_LOG_ERR("Failed to find plug");									\
 	}																					\
 	MObject	l_data_obj;																	\
 	l_status = PLUG.getValue(l_data_obj);												\
 	if (l_status != MS::kSuccess)														\
 	{																					\
-		VF_LOG_ERR("Failed to get value from plug");									\
+		VF_MAYA_NODE_LOG_ERR("Failed to get value from plug");							\
 	}																					\
 	else																				\
 	{																					\
@@ -183,26 +223,18 @@
 	PLUG.setMObject(l_obj);																\
 }
 
-
-
-#define VF_RM_DECLARE_DATA_BODY(CLASS_NAME)														\
-public:																							\
-CLASS_NAME();																					\
-virtual ~CLASS_NAME##();																		\
-virtual MStatus 	readASCII(const MArgList& p_args, unsigned int& p_last_element) override;	\
-virtual MStatus 	readBinary(std::istream& p_in,	  unsigned int	length)			override;	\
-virtual MStatus 	writeASCII(std::ostream& p_out)  override;									\
-virtual MStatus 	writeBinary(std::ostream& p_out) override;									\
-virtual int			get_type()	const override;													\
-virtual void		log_me()	const override;													\
-
-#define VF_RM_DECLARE_STANDART_DATA_CLASS(WRAPPER_CALSS_NAME,CLASS_NAME,INNER_CLASS_NAME)		\
-class CLASS_NAME :public vufData																\
-	{																							\
-	public:																						\
-		VF_RM_DECLARE_DATA_BODY(CLASS_NAME);													\
-		std::shared_ptr<INNER_CLASS_NAME> m_internal_data = nullptr;							\
-	};																							\
+#define VF_RM_DECLARE_STANDART_DATA_CLASS(WRAPPER_CALSS_NAME,CLASS_NAME,INNER_CLASS_NAME)				\
+class CLASS_NAME :public vufData																		\
+	{																									\
+	public:																								\
+		CLASS_NAME();																					\
+		virtual ~CLASS_NAME##();																		\
+		virtual MStatus 	readASCII(const MArgList& p_args, unsigned int& p_last_element) override;	\
+		virtual MStatus 	readBinary(std::istream& p_in,	  unsigned int	length)			override;	\
+		virtual MStatus 	writeASCII(std::ostream& p_out)  override;									\
+		virtual MStatus 	writeBinary(std::ostream& p_out) override;									\
+		std::shared_ptr<INNER_CLASS_NAME> m_internal_data = nullptr;									\
+	};																									\
 	using WRAPPER_CALSS_NAME = vufDataTemplate<CLASS_NAME>;
 
 namespace vufRM
@@ -215,18 +247,6 @@ namespace vufRM
 	public:
 		vufData() :m_owner_node_id(0) {}
 		virtual ~vufData() {};
-		enum
-		{
-			k_absent_data = 0,
-			k_lua_port_data,
-			k_lua_script_data,
-			k_transform_list_data,
-			k_curve_data,
-			k_curve_quat_data,
-			k_curve_scale_data,
-			k_curve_rebuild_data,
-			k_test_data
-		};
 		void		set_owner_id(uint64_t p_new_owner_id)	{ m_owner_node_id = p_new_owner_id; }
 		uint64_t	get_owner_id() const					{ return m_owner_node_id; }
 
@@ -241,14 +261,6 @@ namespace vufRM
 		virtual MStatus 	writeASCII(	std::ostream&	p_out) = 0;
 		virtual MStatus 	writeBinary(std::ostream&	p_out) = 0;
 
-		virtual int						get_type()	const = 0;
-		virtual void					log_me()	const = 0;
-		//static methods
-		static std::shared_ptr<vufData> create_data(int p_type);
-		static int						get_data_type(std::shared_ptr<vufData> p_data)
-		{
-			return p_data == nullptr ? k_absent_data : p_data->get_type();
-		}
 	protected:
 		uint64_t	m_owner_node_id = 0;
 		void*		m_owner_ptr		= nullptr;
@@ -256,16 +268,6 @@ namespace vufRM
 
 	};
 
-	class vufDataTest :public vufData
-	{
-	public:
-		VF_RM_DECLARE_DATA_BODY(vufDataTest)
-		
-		double		m_value;
-		int			m_random = 0;
-		int			m_type	 = 0; // 1 - child  2- dist
-	};
-	using mpxTestWrapper = vufDataTemplate<vufDataTest>;
 
 	// methods to manipulate with custom data from command
 	template<typename CLASS_WRAPPER, typename CLASS_NAME, typename INNER_CLASS_NAME>

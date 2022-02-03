@@ -60,12 +60,20 @@ MStatus	vufMatrixListLookAtNode::compute(const MPlug& p_plug, MDataBlock& p_data
 		MStatus l_status;
 		std::shared_ptr<vufMatrixListData>	l_out_data;
 		std::shared_ptr<vufMatrixListData>	l_in_data;
-		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_out_attr, l_out_data, m_gen_id);
-		VF_RM_GET_DATA_FROM_IN(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_in_attr, l_in_data);
+		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_out_attr,	l_out_data, m_gen_id);
+		VF_RM_GET_DATA_FROM_IN(						mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_in_attr,	l_in_data);
+		// check if we have valid input
+		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
+		{
+			VF_MAYA_NODE_LOG_ERR(" in data is null");
+			p_data.setClean(g_data_out_attr);
+			return MS::kSuccess;
+		}
+		VF_CHECK_AND_CREATE_INTERNAL_DATA(l_out_data, vufObjectArray<vufMatrix_4d>);
 		auto&	l_in_array	= l_in_data->m_internal_data->m_array_v;
 		auto&	l_out_array = l_out_data->m_internal_data->m_array_v;
-		auto	l_in_sz = l_in_array.size();
-		auto	l_out_sz = l_out_array.size();
+		auto	l_in_sz		= l_in_array.size();
+		auto	l_out_sz	= l_out_array.size();
 		if (l_in_sz <2)
 		{
 			l_out_data->m_internal_data = l_in_data->m_internal_data;
@@ -104,7 +112,12 @@ MStatus	vufMatrixListLookAtNode::connectionBroken(const MPlug& p_plug_1, const M
 		MObject				l_data_obj;
 		MFnDependencyNode	l_node(p_plug_1.node());
 		std::shared_ptr<vufMatrixListData>	l_in_data;
-		VF_RM_GET_DATA_FROM_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_data_in_attr, l_in_data);
+		VF_RM_NODE_GET_DATA_FROM_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_data_in_attr, l_in_data);
+		// check this
+		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
+		{
+			return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
+		}
 		l_in_data->m_internal_data = l_in_data->m_internal_data->get_copy();
 	}
 	return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);

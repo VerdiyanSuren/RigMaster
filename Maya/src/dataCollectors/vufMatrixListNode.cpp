@@ -13,6 +13,7 @@
 
 
 using namespace vufRM;
+using namespace vufMath;
 
 MObject	vufMatrixListNode::g_transform_in_attr;
 MObject	vufMatrixListNode::g_data_out_attr;
@@ -66,17 +67,14 @@ MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
 	{	
-		vuf::vufTimer l_timer("Matrix collector node compute: ");
+		//vuf::vufTimer l_timer("Matrix collector node compute: ");
 		MStatus l_status;
 		//------------------------------------------------------------------------------
 		// handle out data
 		std::shared_ptr<vufMatrixListData>	l_out_data;
 		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_out_attr, l_out_data, m_gen_id);
 		//VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
-		if (l_out_data->m_internal_data == nullptr)
-		{
-			l_out_data->m_internal_data = vufMath::vufObjectArray<vufMath::vufMatrix_4d>::create();
-		}
+		VF_CHECK_AND_CREATE_INTERNAL_DATA(l_out_data, vufObjectArray<vufMatrix_4d>);
 		auto& l_matrix_array = (l_out_data->m_internal_data.get())->m_array_v;
 		//------------------------------------------------------------------------------
 		// Read Transforms and fill matricies

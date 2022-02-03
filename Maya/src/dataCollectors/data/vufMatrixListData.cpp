@@ -85,11 +85,3 @@ MStatus 	vufMatrixListData::writeBinary(std::ostream& p_out)
 	}
 	return MS::kSuccess;
 }
-int			vufMatrixListData::get_type()	const
-{
-	return vufData::k_transform_list_data;
-}
-void		vufMatrixListData::log_me() const
-{
-	std::cout << "Trasnsform List data log " << std::endl;
-}

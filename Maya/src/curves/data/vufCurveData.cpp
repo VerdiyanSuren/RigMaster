@@ -81,11 +81,3 @@ MStatus 	vufCurveData::writeBinary(std::ostream& p_out)
 	}
 	return MS::kSuccess;
 }
-int			vufCurveData::get_type()	const
-{
-	return vufData::k_curve_data;
-}
-void		vufCurveData::log_me() const
-{
-	std::cout << "Curve data log " << std::endl;
-}

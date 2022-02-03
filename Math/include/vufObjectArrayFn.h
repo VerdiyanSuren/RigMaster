@@ -406,7 +406,7 @@ namespace vufMath
 			return l_fn.decode_from_buff(p_buff, p_offset);
 		}
 	//private:
-		std::vector<T> m_array_v;
+		std::vector<T> m_array_v = std::vector<T>();
 	};
 #pragma endregion
 }

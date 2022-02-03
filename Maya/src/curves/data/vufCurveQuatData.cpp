@@ -97,11 +97,3 @@ MStatus 	vufCurveQuatData::writeBinary(std::ostream& p_out)
 	}
 	return MS::kSuccess;
 }
-int			vufCurveQuatData::get_type()	const
-{
-	return vufData::k_curve_quat_data;
-}
-void		vufCurveQuatData::log_me() const
-{
-	std::cout << "Curve Quat data log " << std::endl;
-}

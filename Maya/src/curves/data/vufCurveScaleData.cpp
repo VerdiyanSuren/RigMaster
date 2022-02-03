@@ -99,11 +99,3 @@ MStatus 	vufCurveScaleData::writeBinary(std::ostream& p_out)
 	}
 	return MS::kSuccess;
 }
-int			vufCurveScaleData::get_type()	const
-{
-	return vufData::k_curve_scale_data;
-}
-void		vufCurveScaleData::log_me() const
-{
-	std::cout << "Curve Scale data log " << std::endl;
-}

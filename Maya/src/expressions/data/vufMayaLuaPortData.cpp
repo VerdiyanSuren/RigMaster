@@ -16,11 +16,11 @@ vufMayaLuaPortData::~vufMayaLuaPortData()
 MStatus 	vufMayaLuaPortData::readASCII(const MArgList& p_args, unsigned int& p_last_element)
 {
 	MStatus l_status;
-	m_internal_data = std::shared_ptr<vufMayaLuaPortInternalData>(new vufMayaLuaPortInternalData());
+	m_internal_data		= std::shared_ptr<vufMayaLuaPortInternalData>(new vufMayaLuaPortInternalData());
 	
-	MString l_maya_str = p_args.asString(p_last_element++, &l_status); CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	std::string l_str = vufMayaUtils::mstr_2_str(l_maya_str);	
-	std::vector<char> l_buff(l_str.begin(), l_str.end());
+	MString l_maya_str	= p_args.asString(p_last_element++, &l_status); CHECK_MSTATUS_AND_RETURN_IT(l_status);
+	std::string l_str	= vufMayaUtils::mstr_2_str(l_maya_str);	
+	std::vector<char>	l_buff(l_str.begin(), l_str.end());
 	// read version
 	uint32_t l_version;
 	uint64_t l_offset = vuf::txtSerializer::decode_number_from_buff(l_version, l_buff);
@@ -531,13 +531,4 @@ MStatus 	vufMayaLuaPortData::writeBinary(std::ostream& p_out)
 		p_out.write(&l_buff[0], l_offset);
 	}
 	return MS::kSuccess;
-}
-int			vufMayaLuaPortData::get_type()	const
-{
-	return vufData::k_lua_port_data;
-}
-
-void		vufMayaLuaPortData::log_me() const
-{
-	std::cout << "Txt port data log " << std::endl;
 }

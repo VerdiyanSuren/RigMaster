@@ -99,11 +99,3 @@ MStatus 	vufCurveRebuildData::writeBinary(std::ostream& p_out)
 	}
 	return MS::kSuccess;
 }
-int			vufCurveRebuildData::get_type()	const
-{
-	return vufData::k_curve_rebuild_data;
-}
-void		vufCurveRebuildData::log_me() const
-{
-	std::cout << "Curve Rebuild data log " << std::endl;
-}

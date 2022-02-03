@@ -52,11 +52,12 @@ MStatus			vufMatrixListLocator::connectionBroken(const MPlug& p_plug_1, const MP
 		MObject				l_data_obj;
 		MFnDependencyNode	l_node(p_plug_1.node());
 		std::shared_ptr<vufMatrixListData>	l_in_data;
-		VF_RM_GET_DATA_FROM_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_data_in_attr, l_in_data);
+		VF_RM_NODE_GET_DATA_FROM_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_data_in_attr, l_in_data);
+		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
+		{
+			return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
+		}
 		l_in_data->m_internal_data = l_in_data->m_internal_data->get_copy();
-		// When we call plug::getValue compute method will be implicity called
-		// Is garantee that data hs been created by compute method
-		// We can skip all checking but keep them just in case (who knows may be maya api will be changed)
 	}
 	return MPxLocatorNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
 }
@@ -143,12 +144,9 @@ MUserData*			vufMatrixListLocatorDrawOverride::prepareForDraw(	const MDagPath& p
 	// Read Attributes in data attribute from node
 	MStatus l_status;
 	MObject l_this_node = p_obj_path.node();
-	// read data
 	MObject l_input_data_obj;
 	MPlug	l_data_plug(l_this_node, vufMatrixListLocator::g_data_in_attr);
-
-	l_status = l_data_plug.getValue(l_input_data_obj);
-	if (l_status != MS::kSuccess)
+	if (l_data_plug.getValue(l_input_data_obj) != MS::kSuccess)
 	{
 		return nullptr;
 	}
@@ -156,9 +154,9 @@ MUserData*			vufMatrixListLocatorDrawOverride::prepareForDraw(	const MDagPath& p
 	mpxMatrixListWrapper* l_in_data_wrap_ptr = (mpxMatrixListWrapper*)l_plugin_data_fn.constData(&l_status);
 	if (l_in_data_wrap_ptr == nullptr)
 	{
-		l_locator_data_ptr->m_data_ptr = nullptr;
 		return nullptr;
 	}
+
 	auto l_data_ptr = l_in_data_wrap_ptr->get_data();
 	l_locator_data_ptr->m_data_ptr = l_data_ptr == nullptr ? nullptr : l_data_ptr->m_internal_data;
 
@@ -238,7 +236,7 @@ void				vufMatrixListLocatorDrawOverride::addUIDrawables(	const MDagPath& p_obj_
 		return;
 	}
 	vufMatrixListLocatorData* l_data = (vufMatrixListLocatorData*)p_data;
-	if (l_data->m_data_ptr == nullptr || l_data->m_draw != true)
+	if (l_data->m_data_ptr == nullptr || l_data->m_draw == false)
 	{
 		return;
 	}

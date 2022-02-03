@@ -91,13 +91,3 @@ MStatus 	vufMayaLuaTxtData::writeBinary(std::ostream& p_out)
 	}
 	return MS::kSuccess;
 }
-int			vufMayaLuaTxtData::get_type()	const
-{
-	return vufData::k_lua_script_data;
-}
-
-void		vufMayaLuaTxtData::log_me() const
-{
-	std::cout << "Txt data log " << std::endl;
-}
-
