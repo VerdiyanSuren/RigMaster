@@ -46,7 +46,7 @@
 #include <vufMayaGlobalIncludes.h>
 #include <serializer/vufTxtSerializer.h>
 
-#include <expressions/luaWrappers/luaUnitTest/vufLuaMayaMathUnitTest.h>
+//#include <expressions/luaWrappers/luaUnitTest/vufLuaMayaMathUnitTest.h>
 
 using namespace vufRM;
 
@@ -78,7 +78,7 @@ const MTypeId	mpxCurveRebuildWrapper::	g_id(0x298730);	const MString	mpxCurveReb
 // Curve locator
 const MTypeId	vufCurveLocator::			g_id(0x298830);	const MString	vufCurveLocator::			g_type_name("vfCrvLocator"); const MString	vufCurveLocator::g_drawDb_classification("drawdb/geometry/vfCrvLocator");
 
-const MTypeId	vufCurveBezier3Tangents::	g_id(0x298930);	const MString	vufCurveBezier3Tangents::	g_type_name("vfBezier3Tngnt");
+const MTypeId	vufCurveBezier3Tangents::	g_id(0x298930);	const MString	vufCurveBezier3Tangents::	g_type_name("vfBezier3Tngns");
 // Curve Nodes
 const MTypeId	vufFromMayaCurveNode::		g_id(0x299030);	const MString	vufFromMayaCurveNode::		g_type_name("vfCrvFromMaya");
 const MTypeId	vufCurveToMayaNode::		g_id(0x299130);	const MString	vufCurveToMayaNode::		g_type_name("vfCrvToMaya");

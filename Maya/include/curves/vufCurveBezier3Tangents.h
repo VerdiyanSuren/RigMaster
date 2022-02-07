@@ -4,6 +4,8 @@
 #include <maya/MPxNode.h>
 #include <maya/MMatrix.h>
 #include <vector>
+#include <math/vufVector.h>
+#include <math/vufMatrix.h>
 
 namespace vufRM
 {	
@@ -14,19 +16,30 @@ namespace vufRM
 		{
 			short	m_mode;
 			double	m_chord_length;
-			MMatrix m_tangent_a;
-			MMatrix m_tangent_b;
-			MMatrix m_knot;
+			vufMath::vufMatrix_4d m_tangent_a;
+			vufMath::vufMatrix_4d m_tangent_b;
+			vufMath::vufMatrix_4d m_knot;
 		};
 		std::vector<vufKnotInfo> m_knots_array;
 		inline void auto_tangent(const vufKnotInfo& p_prev, const vufKnotInfo& p_next, vufKnotInfo& p_current);
+		inline void auto_tangent_first_knot( const vufKnotInfo& p_next, vufKnotInfo& p_current);
+		inline void auto_tangent_last_knot(const vufKnotInfo& p_prev, vufKnotInfo& p_current);
+
+		inline void simple_tangent(const vufKnotInfo& p_prev, const vufKnotInfo& p_next, vufKnotInfo& p_current);
+		inline void simple_tangent_first_knot(const vufKnotInfo& p_next, vufKnotInfo& p_current);
+		inline void simple_tangent_last_knot(const vufKnotInfo& p_prev,  vufKnotInfo& p_current);
+
+
+
+		inline void arc_tangent(const vufKnotInfo& p_prev, const vufKnotInfo& p_next, vufKnotInfo& p_current);
+		bool m_closed = false;
 	public:
 		enum
 		{
-			k_pass,
 			k_auto,
-			k_simple_chord,
-			k_arc_arc
+			k_simple,
+			k_arc,
+			k_pass
 		};
 		vufCurveBezier3Tangents():MPxNode(){}
 		virtual ~vufCurveBezier3Tangents() {}

@@ -91,5 +91,28 @@ std::ostream& operator,(std::ostream& out, const T& t)
 }
 std::ostream& operator,(std::ostream& out, std::ostream& (*f)(std::ostream&));
 
-
+//---------------------------------------------------------------------------------
+// Plug names
+//---------------------------------------------------------------------------------
+// Input MMatrix (array builder)
+extern const char* g_in_mbld_long_s,	*g_in_mbld_s;
+// Output MMatrix (array builder)
+extern const char* g_out_mbld_long_s,	*g_out_mbld_s;
+// Input vufMatrixList
+extern const char* g_in_mlist_long_s,	*g_in_mlist_s;
+// Outt vufMatrixList
+extern const char* g_out_mlist_long_s,	*g_out_mlist_s;
+// Input Curve Data
+extern const char* g_in_crv_long_s,		*g_in_crv_s;
+// Output Curve Data
+extern const char* g_out_crv_long_s,	*g_out_crv_s;
+// Input Curve Data A B C D
+extern const char* g_in_crvA_long_s, * g_in_crvA_s;
+extern const char* g_in_crvB_long_s, * g_in_crvB_s;
+extern const char* g_in_crvC_long_s, * g_in_crvC_s;
+extern const char* g_in_crvD_long_s, * g_in_crvD_s;
+extern const char* g_in_fcrv_long_s, * g_in_fcrv_s;
+//---------------------------------------------------------------------------------
+// Command flags 
+//---------------------------------------------------------------------------------
 #endif // !VF_TP_GLBL_INCLDS_H

@@ -1,16 +1,43 @@
 
 import maya.cmds as cmds
 import math
-
-_MATRIX_LIST_NODE 	= "vfMtrxList"
-_MATRIX_NULL_NODE 	= "vfMtrxListNull"
-_DOUBLE_LIST_NODE 	= "vfDblList"
-
+#---------------------------------------------------
+#			NATRIX LIST NODES AND PLUGE
+#---------------------------------------------------
+#nodes
+_MTRX_LIST_NODE 	= "vfMtrxList"
+_MTRX_NULL_NODE 	= "vfMtrxListNull"
+_MTRX_LOOK_NODE 	= "vfMtrxListLookAt"
+_MTRX_DCMPS_NODE 	= "vfMtrxListDcmps"
+_MTRX_LCTR_NODE 	= "vfMtrxListLocator"
+#plugs
+_PLUG_IN_MMTRX_BLDR 	= "inXForms"
+_PLUG_OUT_MMTRX_BLDR 	= "outXForms"
+_PLUG_IN_MMTRX_LST 		= "inMatrixList"
+_PLUG_OUT_MMTRX_LST 	= "outMatrixList"
+#---------------------------------------------------
+#			DOUBLE LIST NODES AND PLUGE
+#---------------------------------------------------
+#nodes
+_DBL_LST_NODE 	= "vfDblList"
+_DBL_LST_NODE 	= "vfDblListNull"
+#---------------------------------------------------
+#			CURVE NODES AND PLUGE
+#---------------------------------------------------
+#node
+_BZR3_TNGNT_NODE = "vfBezier3Tngnt"
+#---------------------------------------------------
+#			CURVE NODES AND PLUGE
+#---------------------------------------------------
+#nodes
 _BSPLINE_NODE 		= "vfCrvBSpline"
 _BEZIER_NODE		= "vfCrvBezier"
 _CURVE_NULL_NODE 	= "vfCrvNull"
 _CURVE_GET_SINGLE 	= "vfCrvGetXForm"
-_CURVE_LOCATOR_NODE = "vfCrvLocator"
+_CURVE_LCTR_NODE = "vfCrvLocator"
+
+_PLUG_IN_CRV 		= "inCurve"
+_PLUG_OUT_CRV 		= "outCurve"
 #--------------------------------------------
 # import vufRM
 # reload(vufRM)
@@ -105,6 +132,16 @@ class matrCollector(object):
 			if (list == None):
 				list = []		
 		return list
+	@staticmethod
+	def add_locator(transform_node, new_node_name = "MtrxLocator"):
+		if (cmds.objExists(transform_node) == True and cmds.attributeQuery(_PLUG_OUT_MMTRX_LST,node = transform_node, exists = True) == True):
+			loc_name 		= cmds.createNode(_MTRX_LCTR_NODE )
+			cmds.connectAttr("{0}.{1}".format(transform_node,_PLUG_OUT_MMTRX_LST),"{0}.{1}".format(loc_name,_PLUG_IN_MMTRX_LST), f = True)
+			transform = cmds.pickWalk( loc_name, direction='up' )[0]
+			loc_name = cmds.rename(transform, new_node_name)
+			return loc_name
+		return ""
+
 #--------------------------------------------
 #	Double Collector Class
 #--------------------------------------------
@@ -128,38 +165,106 @@ class dblCollector(object):
 			cmds.setAttr("{0}.value[{1}]".format(node_name,i),val)
 		node_name = cmds.rename(node_name,new_node_name)
 		return node_name
+class Bezier3Tangeents(object):
+	def __init__(self):
+		pass
+	@staticmethod
+	def dags_to_bezier_tangents(dag_names = [], new_node_name = "tangentGen", world_space = True):
+		if (len(dag_names) < 2):
+			return ''
+		# choose attribute
+		attr_name 	= 'worldMatrix[0]'
+		if (world_space == False):
+			attr_name = 'xformMatrix'
+		# add enum attributes
+		for dag in dag_names:			
+			if (cmds.attributeQuery("mode", node = dag, exists = True) == True):
+				cmds.deleteAttr( dag,at= "mode" )
+			cmds.addAttr( dag,longName = "mode", attributeType =  "enum", enumName = "auto:simple:arc:pass", keyable = True  )
+			if (cmds.attributeQuery("chord", node = dag, exists = True) == True):
+				cmds.deleteAttr( dag,at= "chord" )
+			cmds.addAttr( dag,longName = "chord", attributeType =  "float",  keyable = True  )
+			cmds.setAttr( dag + ".chord",0.3)
+		# create tangent node
+		tngn_node 	= cmds.createNode(_BZR3_TNGNT_NODE )
+		tr_null 	= cmds.createNode(_MTRX_LIST_NODE)
+		index_tangent		= 0
+		index_transform 	= 0
+		first_tangent 	= ''
+		for dag in dag_names:
+			# connect 
+			cmds.connectAttr('{0}.{1}'.format(	dag, attr_name),'{0}.inputGroup[{1}].xForm'.format(tngn_node,index_tangent), f = True)
+			cmds.connectAttr('{0}.mode'.format(	dag),'{0}.inputGroup[{1}].mode'.format(tngn_node,index_tangent), f = True)
+			cmds.connectAttr('{0}.chord'.format(dag),'{0}.inputGroup[{1}].chord'.format(tngn_node,index_tangent), f = True)
+			# create tangents and nulls
+			dec_a = cmds.createNode("decomposeMatrix")
+			dec_b = cmds.createNode("decomposeMatrix")
+			l_a = cmds.spaceLocator(name = "tngA#")[0]
+			l_b = cmds.spaceLocator(name = "tngB#")[0]
+			g_a = cmds.group (l_a,name = "nullA#")
+			g_b = cmds.group (l_b,name = "nullB#")
+			cmds.parent(g_a,dag)
+			cmds.parent(g_b,dag)
+			# connect out tangents to decomposes
+			cmds.connectAttr('{0}.outputGroup[{1}].{2}'.format(tngn_node,index_tangent,'tangA'),'{0}.inputMatrix'.format(dec_a), f = True )
+			cmds.connectAttr('{0}.outputGroup[{1}].{2}'.format(tngn_node,index_tangent,'tangB'),'{0}.inputMatrix'.format(dec_b), f = True )
+			cmds.connectAttr('{0}.outputRotate'.format(		dec_a),'{0}.rotate'.format(		g_a) ,f = True )
+			cmds.connectAttr('{0}.outputTranslate'.format(	dec_a),'{0}.translate'.format(	g_a),f = True )
+			cmds.connectAttr('{0}.outputRotate'.format(		dec_b),'{0}.rotate'.format(		g_b),f = True )
+			cmds.connectAttr('{0}.outputTranslate'.format(	dec_b),'{0}.translate'.format(	g_b),f = True )	
+			#connect to transform list node 
+			if (index_tangent == 0):
+				first_tangent = l_b
+			else:
+				cmds.connectAttr('{0}.{1}'.format(l_b, attr_name),'{0}.{1}[{2}]'.format(tr_null,_PLUG_IN_MMTRX_BLDR,index_transform), f = True)				
+				index_transform += 1
+			cmds.connectAttr('{0}.outputGroup[{1}].{2}'.format(tngn_node, index_tangent,'knot'),'{0}.{1}[{2}]'.format(tr_null,_PLUG_IN_MMTRX_BLDR,index_transform), f = True)
+			index_transform += 1
+			cmds.connectAttr('{0}.{1}'.format(l_a, attr_name),'{0}.{1}[{2}]'.format(tr_null,_PLUG_IN_MMTRX_BLDR,index_transform), f = True)
+			index_transform += 1
+			index_tangent += 1
+		cmds.connectAttr('{0}.{1}'.format(first_tangent, attr_name),'{0}.{1}[{2}]'.format(tr_null,_PLUG_IN_MMTRX_BLDR,index_transform), f = True)
+		matrCollector.add_locator(transform_node = tr_null)
+		#bezier = spline.add_bezier(matrix_null_node_name = tr_null)
+		#spline.add_curve_locator(curve_node = bezier);
+		return (tngn_node, tr_null)
 #--------------------------------------------
 #	Spline Node methods
 #--------------------------------------------
 class spline(object):
-	def add_bspline(self, matrix_null_node_name, new_node_name = "bspline"):
+	@staticmethod
+	def add_bspline( matrix_null_node_name, new_node_name = "bspline"):
 		if (cmds.objExists(matrix_null_node_name) == True and  cmds.attributeQuery("outMatrixList",node = matrix_null_node_name, exists = True) == True):
 			node_name 		= cmds.createNode(_BSPLINE_NODE )
 			cmds.connectAttr("{0}.outMatrixList".format(matrix_null_node_name),"{0}.xformList".format(node_name), f = True)
 			node_name = cmds.rename(node_name,new_node_name)
 			return node_name
+	@staticmethod
 	def add_bezier(matrix_null_node_name, new_node_name = "bezier"):
-		if (cmds.objExists(matrix_null_node_name) == True and  cmds.attributeQuery("outMatrixList",node = matrix_null_node_name, exists = True) == True):
-				node_name 		= cmds.createNode(vufCurveBezier )
-				cmds.connectAttr("{0}.outMatrixList".format(matrix_null_node_name),"{0}.xformList".format(node_name), f = True)
+		if (cmds.objExists(matrix_null_node_name) == True and  cmds.attributeQuery(_PLUG_OUT_MMTRX_LST,node = matrix_null_node_name, exists = True) == True):
+				node_name 		= cmds.createNode(_BEZIER_NODE )
+				cmds.connectAttr("{0}.{1}".format(matrix_null_node_name,_PLUG_OUT_MMTRX_LST),"{0}.{1}".format(node_name,_PLUG_IN_MMTRX_LST), f = True)
 				node_name = cmds.rename(node_name,new_node_name)
 				return node_name
-	def add_curve_null(self, curve_node, new_node_name = "curveNull"):
+	@staticmethod
+	def add_null( curve_node, new_node_name = "curveNull"):
 		if (cmds.objExists(curve_node) == True and cmds.attributeQuery("outCurve",node = curve_node, exists = True) == True):
 			node_name 		= cmds.createNode(_CURVE_NULL_NODE )
 			cmds.connectAttr("{0}.outCurve".format(curve_node),"{0}.inCurve".format(node_name), f = True)
 			node_name = cmds.rename(node_name,new_node_name)
 			return node_name
 		return ""
-	def add_curve_locator(self, curve_node, new_node_name = "curveLocator"):
-		if (cmds.objExists(curve_node) == True and cmds.attributeQuery("outCurve",node = curve_node, exists = True) == True):
+	@staticmethod
+	def add_locator( curve_node, new_node_name = "crvLocator"):
+		if (cmds.objExists(curve_node) == True and cmds.attributeQuery(_PLUG_OUT_CRV,node = curve_node, exists = True) == True):
 			node_name 		= cmds.createNode(_CURVE_LOCATOR_NODE )
-			cmds.connectAttr("{0}.outCurve".format(curve_node),"{0}.inCurve".format(node_name), f = True)
+			cmds.connectAttr("{0}.{1}".format(curve_node,_PLUG_OUT_CRV),"{0}.{1}".format(node_name,_PLUG_IN_CRV), f = True)
 			transform = cmds.pickWalk( node_name, direction='up' )[0]
 			node_name = cmds.rename(transform, new_node_name)
 			return node_name
 		return ""
-	def add_bspline_fcurve(self, new_node_name = "fcurve", degree = 3, controls_count = 4):
+	@staticmethod
+	def add_bspline_fcurve( new_node_name = "fcurve", degree = 3, controls_count = 4):
 		index = 0
 		items = []
 		for i in range(controls_count):
@@ -173,7 +278,8 @@ class spline(object):
 		cmds.parent(items, parent)
 		cmds.parent(curve_draw, parent)
 		return parent
-	def get_spline(self, dag_names = [], curve_node_name = "", new_node_name = "getTransform"):
+	@staticmethod
+	def get_spline( dag_names = [], curve_node_name = "", new_node_name = "getTransform"):
 		if (cmds.objExists(curve_node_name) == True and cmds.attributeQuery("outCurve",node = curve_node_name, exists = True) == True):
 			param = 0.0
 			delta = 0
@@ -191,7 +297,8 @@ class spline(object):
 				param = param + delta
 				node_name = cmds.rename(getNode, "{0}_{1}".format(new_node_name,index))
 				index += 1
-	def test_bspline(self,controls_count = 10, driven_count = 1000):
+	@staticmethod
+	def test_bspline( controls_count = 10, driven_count = 1000):
 		controls = []
 		driven = []
 		for i in range(controls_count):
@@ -208,7 +315,8 @@ class spline(object):
 		d = self.add_curve_null(c)
 		f = self.add_curve_locator(d)
 		self.get_spline(dag_names = driven,curve_node_name = d)
-	def get_inputs_xfrom_spline(self,spline_name):
+	@staticmethod
+	def get_inputs_xfrom_spline(spline_name):
 		if (cmds.objExists(spline_name) == True and cmds.nodeType(spline_name) in [_BSPLINE_NODE,_BEZIER_NODE]):
 			lst = cmds.listConnections("{0}.xformList".format(spline_name), d = False, s = True)
 			if (lst == None or len(lst) == 0):

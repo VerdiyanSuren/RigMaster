@@ -35,7 +35,7 @@ MStatus	vufCurveBlendNode::initialize()
 	MFnEnumAttribute		l_enum_attr_fn;
 	MFnCompoundAttribute	l_compound_attr_fn;
 
-	g_curve_container_1_attr = l_typed_attr_fn.create("inCurveA", "ica", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_curve_container_1_attr = l_typed_attr_fn.create(g_in_crvA_long_s, g_in_crvA_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
@@ -43,7 +43,7 @@ MStatus	vufCurveBlendNode::initialize()
 	CHECK_MSTATUS(l_typed_attr_fn.setHidden(false));
 	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 
-	g_curve_container_2_attr = l_typed_attr_fn.create("inCurveB", "icb", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_curve_container_2_attr = l_typed_attr_fn.create(g_in_crvB_long_s, g_in_crvB_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
@@ -51,7 +51,7 @@ MStatus	vufCurveBlendNode::initialize()
 	CHECK_MSTATUS(l_typed_attr_fn.setHidden(false));
 	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 	// fcurve
-	g_fcurve_attr = l_typed_attr_fn.create("inFCurve", "ifc", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_fcurve_attr = l_typed_attr_fn.create(g_in_fcrv_long_s, g_in_fcrv_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
@@ -68,7 +68,7 @@ MStatus	vufCurveBlendNode::initialize()
 	CHECK_MSTATUS(l_numeric_attr_fn.setKeyable(true));
 	CHECK_MSTATUS(l_numeric_attr_fn.setDefault(true));
 	// Output Data
-	g_data_out_attr = l_typed_attr_fn.create("outCurve", "ocd", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create(g_out_crv_long_s, g_out_crv_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setWritable(false);

@@ -81,7 +81,7 @@
 #define VF_CHECK_AND_CREATE_INTERNAL_DATA(DATA,TYPE)\
 if (DATA->m_internal_data == nullptr)\
 {\
-	l_out_data->m_internal_data = std::shared_ptr<TYPE>(new TYPE());\
+	DATA->m_internal_data = std::shared_ptr<TYPE>(new TYPE());\
 }
 #define VF_RM_INIT_AND_ADD_HIDDEN_ATTR(ATTR,LONG_NAME,SHORT_NAME,WRAPPER_CLASS)									\
 {																												\

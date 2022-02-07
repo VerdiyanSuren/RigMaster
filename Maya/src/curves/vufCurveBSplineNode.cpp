@@ -86,15 +86,16 @@ MStatus	vufCurveBSplineNode::initialize()
 	l_status = addAttribute(g_closest_division_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	//------------------------------------------------------------------------------------------------
 	// Transform list
-	g_transfoms_attr = l_typed_attr_fn.create("xformList", "xfr", MFnData::kMatrixArray, MObject::kNullObj, &l_status);
+	g_transfoms_attr = l_typed_attr_fn.create(g_in_mlist_long_s, g_in_mlist_s, mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_typed_attr_fn.setWritable(true);
-	l_typed_attr_fn.setStorable(true);
-	l_typed_attr_fn.setHidden(false);
-	l_typed_attr_fn.setKeyable(true);
+	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
+	CHECK_MSTATUS(l_typed_attr_fn.setStorable(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setHidden(false));
+	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 	//------------------------------------------------------------------------------------------------
 	// Out Curve Data
-	g_data_out_attr = l_typed_attr_fn.create("outCurve", "oc", mpxCurveWrapper::g_id,MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create(g_out_crv_long_s, g_out_crv_s, mpxCurveWrapper::g_id,MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setWritable(false);
@@ -142,20 +143,24 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		MStatus l_status;
 		//------------------------------------------------------------------------------
 		// handle out data
-		std::shared_ptr<vufCurveData>	l_out_data;
+		std::shared_ptr<vufCurveData>		l_out_data;
+		std::shared_ptr<vufMatrixListData>	l_in_data;
 		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data, m_gen_id);
-		//VF_RM_GET_DATA_FROM_OUT_AND_CREATE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data);
-		if (l_out_data->m_internal_data == nullptr)
-		{
-			l_out_data->m_internal_data = vufCurveContainer_4d::create();
-		}
+		VF_CHECK_AND_CREATE_INTERNAL_DATA(l_out_data, vufCurveContainer_4d);
+
 		vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
 		//------------------------------------------------------------------------------
-		// Handle input transform list data
-		MMatrixArray l_matrix_array;
 		MDoubleArray l_double_array;
-		VF_RM_GET_MATRIX_ARRAY_FROM_IN(g_transfoms_attr, l_matrix_array);
-		uint32_t l_transforms_sz = (uint32_t)l_matrix_array.length();
+		// Handle input transform list data
+		VF_RM_GET_DATA_FROM_IN(mpxMatrixListWrapper, vufMatrixListData, p_data, g_transfoms_attr, l_in_data);
+		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
+		{
+			VF_MAYA_NODE_LOG_ERR(" in data is null");
+			p_data.setClean(g_data_out_attr);
+			return MS::kSuccess;
+		}
+		auto& l_in_array			= l_in_data->m_internal_data->m_array_v;
+		uint32_t l_transforms_sz	= (uint32_t)l_in_array.size();
 		l_double_array.setLength(l_transforms_sz);
 		//-----------------------------------------------------------------------------
 		// Read attributes
@@ -183,8 +188,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		l_crv_ptr->set_nodes_count( l_transforms_sz );
 		for (uint32_t i = 0; i < l_transforms_sz; ++i)
 		{
-			vufMatrix4<double>* l_matr = (vufMatrix4<double>*)& l_matrix_array[i];
-			vufVector4<double> l_pos = l_matr->get_translation_4();
+			vufVector4<double> l_pos = l_in_array[i].get_translation_4();
 			l_crv_ptr->set_node_at(i, l_pos);
 		}
 		if (l_crv_ptr->is_valid() == false)
@@ -201,8 +205,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			for (uint32_t i = 0; i < l_transforms_sz; ++i)
 			{
 				//std::cout << i << ": ";
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
-				vufVector4<double> l_pos = l_matr->get_translation_4();
+				vufVector4<double> l_pos = l_in_array[i].get_translation_4();
 				l_double_array[i] = l_crv_ptr->get_closest_point_param(l_pos, 0.0, 1.0, 10);
 				//std::cout << l_double_array[i] << " ";
 			}
@@ -229,9 +232,8 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_qtr_ptr->set_item_count_i(l_transforms_sz);
 			for (uint32_t i = 0; i < l_transforms_sz; ++i)
 			{
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) &l_matrix_array[i];
 				// set params and quaternions
-				l_qtr_ptr->set_item_at_i(i,l_double_array[i], *l_matr, l_crv_ptr);
+				l_qtr_ptr->set_item_at_i(i,l_double_array[i], l_in_array[i], l_crv_ptr);
 			}
 			l_qtr_ptr->match_quaternions_i();
 
@@ -248,9 +250,8 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				{
 					for (uint32_t i = 0; i < l_transforms_sz; ++i)
 					{
-						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
 						// update only quaterniions
-						l_qtr_ptr->set_item_at_i(i, *l_matr, l_crv_ptr);
+						l_qtr_ptr->set_item_at_i(i, l_in_array[i], l_crv_ptr);
 					}
 					l_qtr_ptr->match_quaternions_i();
 				}
@@ -284,8 +285,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_scale_ptr->set_item_count_i(l_transforms_sz);
 			for (uint32_t i = 0; i < l_transforms_sz; ++i)
 			{
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];	
-				l_scale_ptr->set_item_at_i(i, l_double_array[i], *l_matr);
+				l_scale_ptr->set_item_at_i(i, l_double_array[i], l_in_array[i]);
 			}
 			l_scale_ptr->match_scales_i();
 			l_scale_store_data->m_internal_data = l_scale_ptr;
@@ -300,9 +300,8 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				{
 					for (uint32_t i = 0; i < l_transforms_sz; ++i)
 					{
-						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
 						// update only quaterniions
-						l_scl_ptr->set_item_at_i(i, *l_matr);
+						l_scl_ptr->set_item_at_i(i, l_in_array[i]);
 					}
 					l_scl_ptr->match_scales_i();
 				}
@@ -325,7 +324,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		{
 			l_out_data->m_internal_data->switch_rebuild_fn(vufCurveRebuildFnType::k_constant_step);
 			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr =  l_out_data->m_internal_data->get_rebuild_fn_ptr();
-			std::cout << l_rbl_ptr.get() << std::endl;
+//std::cout << l_rbl_ptr.get() << std::endl;
 			if (l_rbl_ptr != nullptr)
 			{
 				auto l_r_ptr = l_rbl_ptr->as_uniform_rebuild_fn();
@@ -338,7 +337,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		if (l_rebuild_mode == 1 /* keep rebuild fn*/)
 		{
 			std::shared_ptr<vufCurveRebuildFn_4d> l_rbl_ptr = l_rebuild_store_data->m_internal_data;
-			std::cout << l_rbl_ptr.get() << std::endl;
+//std::cout << l_rbl_ptr.get() << std::endl;
 			l_out_data->m_internal_data->set_rebuild_fn_ptr(l_rbl_ptr);
 		}
 		if (l_rebuild_mode == 2 /* delete rebuild fn*/)
@@ -355,3 +354,4 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	}
 	return MS::kUnknownParameter;
 }
+ 

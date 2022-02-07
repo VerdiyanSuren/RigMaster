@@ -79,7 +79,7 @@ class Wnd(object):
 		cmds.symbolButton(image = "vufIcons/SELECT.png", 	ann="Select node",	c = self.select_node)
 		self.listUI 			= cmds.optionMenu(label = self.nodeType  + ": ", cc = self.item_selected)
 		cmds.symbolButton(image = "vufIcons/BACK.png", 		ann="Get From Selected Drivers",c = self.get_node_from_drivens)
-		cmds.symbolButton(image = "vufIcons/RIGHT.png", 		ann="Get From Selected Drivens",c = self.get_node_from_scene)
+		cmds.symbolButton(image = "vufIcons/RIGHT.png", 		ann="Get From Selected Drivens",c = self.get_node_from_drivers)
 		cmds.setParent(self.cLayout)
 		
 	def show(self):
@@ -115,7 +115,7 @@ class Wnd(object):
 	def item_selected(self, *args):
 		pass
 		
-	def get_node_from_scene(self,*args):
+	def get_node_from_drivers(self,*args):
 		pass
 	
 	def get_node_from_drivens(self,*args):

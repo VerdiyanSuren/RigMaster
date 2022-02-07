@@ -32,7 +32,7 @@ MStatus	vufCurveNullNode::initialize()
 	*/
 	VF_RM_CREATE_AND_ADD_LOCK_ATTR();
 	// Input Data
-	g_data_in_attr = l_typed_attr_fn.create("inCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_in_attr = l_typed_attr_fn.create(g_in_crv_long_s, g_in_crv_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
@@ -46,7 +46,7 @@ MStatus	vufCurveNullNode::initialize()
 	l_typed_attr_fn.setConnectable(false);
 	l_typed_attr_fn.setHidden(true);
 	// Output Data
-	g_data_out_attr = l_typed_attr_fn.create("outCurve", "ocd", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create(g_out_crv_long_s, g_out_crv_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setWritable(false);

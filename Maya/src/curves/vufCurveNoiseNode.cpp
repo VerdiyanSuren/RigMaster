@@ -113,7 +113,7 @@ MStatus	vufCurveNoiseNode::initialize()
 
 	VF_RM_CRV_NODE_INIT_REBUILD_ATTR();
 	// in curve
-	g_data_in_attr = l_typed_attr_fn.create("inCurve", "ic", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_in_attr = l_typed_attr_fn.create(g_in_crv_long_s, g_in_crv_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
@@ -122,7 +122,7 @@ MStatus	vufCurveNoiseNode::initialize()
 	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 	l_status = addAttribute(g_data_in_attr); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	// out data
-	g_data_out_attr = l_typed_attr_fn.create("outCurve", "oc", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create(g_out_crv_long_s, g_out_crv_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setWritable(false);

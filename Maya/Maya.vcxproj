@@ -468,8 +468,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClInclude Include="include\curves\rotateFn\vufCurveQuatParamNode.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleCloseNode.h" />
     <ClInclude Include="include\curves\scaleFn\vufCurveScaleParamNode.h" />
-    <ClInclude Include="include\curves\vufBezier3Tangents.h" />
     <ClInclude Include="include\curves\vufCurveBSplineNode.h" />
+    <ClInclude Include="include\curves\vufCurveBezier3Tangents.h" />
     <ClInclude Include="include\curves\vufCurveBezierNode.h" />
     <ClInclude Include="include\curves\vufCurveBlendNode.h" />
     <ClInclude Include="include\curves\vufCurveComposeNode.h" />
@@ -537,8 +537,8 @@ copy $(TargetDir)Lua.dll "C:/Program Files/Autodesk/Maya2022/bin/Lua.dll"</Comma
     <ClCompile Include="src\curves\rotateFn\vufCurveQuatParamNode.cpp" />
     <ClCompile Include="src\curves\scaleFn\vufCurveScaleCloseNode.cpp" />
     <ClCompile Include="src\curves\scaleFn\vufCurveScaleParamNode.cpp" />
-    <ClCompile Include="src\curves\vufBezier3Tangents.cpp" />
     <ClCompile Include="src\curves\vufCurveBSplineNode.cpp" />
+    <ClCompile Include="src\curves\vufCurveBezier3Tangents.cpp" />
     <ClCompile Include="src\curves\vufCurveBezierNode.cpp" />
     <ClCompile Include="src\curves\vufCurveBlendNode.cpp" />
     <ClCompile Include="src\curves\vufCurveComposeNode.cpp" />

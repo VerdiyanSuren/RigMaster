@@ -33,7 +33,7 @@ MStatus	vufMatrixListNullNode::initialize()
 	
 	VF_RM_CREATE_AND_ADD_LOCK_ATTR();
 	// Input Data
-	g_data_in_attr	= l_typed_attr_fn.create("inMatrixList", "iml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_in_attr	= l_typed_attr_fn.create(g_in_mlist_long_s, g_in_mlist_s, mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
 	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
@@ -47,7 +47,7 @@ MStatus	vufMatrixListNullNode::initialize()
 	l_typed_attr_fn.setConnectable(false);
 	l_typed_attr_fn.setHidden(true);
 	// Output Data
-	g_data_out_attr = l_typed_attr_fn.create("outMatrixList", "oml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create(g_out_mlist_long_s, g_out_mlist_s, mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	//g_data_out_attr = l_typed_attr_fn.create("TransformList","tl", mpxTransformListWrapper::g_id, MObject::kNullObj, &l_status);// , MFnPluginData().create(vufUniversalData::id, &status));
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(false);

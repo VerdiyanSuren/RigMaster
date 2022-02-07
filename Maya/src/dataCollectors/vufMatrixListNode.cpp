@@ -35,7 +35,7 @@ MStatus	vufMatrixListNode::initialize()
 	MFnNumericAttribute l_numeric_attr_fn;	
 	//-------------------------------------------------------------------------------------------
 
-	g_transform_in_attr = l_matrix_attr_fn.create("xForm", "xf", MFnMatrixAttribute::kDouble, &l_status);
+	g_transform_in_attr = l_matrix_attr_fn.create(g_in_mbld_long_s, g_in_mbld_s, MFnMatrixAttribute::kDouble, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_matrix_attr_fn.setWritable(true);
 	l_matrix_attr_fn.setStorable(true);
@@ -45,7 +45,7 @@ MStatus	vufMatrixListNode::initialize()
 	l_matrix_attr_fn.setUsesArrayDataBuilder(true);
 	l_matrix_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete);
 
-	g_data_out_attr = l_typed_attr_fn.create("outMatrixList", "oml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create(g_out_mlist_long_s, g_out_mlist_s, mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	//g_data_out_attr = l_typed_attr_fn.create("TransformList","tl", mpxTransformListWrapper::g_id, MObject::kNullObj, &l_status);// , MFnPluginData().create(vufUniversalData::id, &status));
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(false);

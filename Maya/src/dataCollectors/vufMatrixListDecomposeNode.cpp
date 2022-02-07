@@ -44,7 +44,7 @@ MStatus	vufMatrixListDecomposeNode::initialize()
 	// look at correction
 	
 	// Input Data
-	g_data_in_attr = l_typed_attr_fn.create("inMatrixList", "iml", mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_in_attr = l_typed_attr_fn.create(g_in_mlist_long_s, g_in_mlist_s, mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_typed_attr_fn.setWritable(true));
 	CHECK_MSTATUS_AND_RETURN_IT(l_typed_attr_fn.setReadable(false));
@@ -53,7 +53,7 @@ MStatus	vufMatrixListDecomposeNode::initialize()
 	CHECK_MSTATUS_AND_RETURN_IT(l_typed_attr_fn.setKeyable(true));
 
 	// Output Data
-	g_data_out_attr = l_matrix_attr_fn.create("xForm", "oxf", MFnMatrixAttribute::kDouble, &l_status);
+	g_data_out_attr = l_matrix_attr_fn.create(g_out_mbld_long_s, g_out_mbld_s, MFnMatrixAttribute::kDouble, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_matrix_attr_fn.setWritable(false);
 	l_matrix_attr_fn.setStorable(false);

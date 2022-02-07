@@ -4,9 +4,9 @@
 #include <maya/MFnEnumAttribute.h>
 #include <maya/MArrayDataHandle.h>
 #include <maya/MFnCompoundAttribute.h>
-#include <maya/MFnMatrixArrayData.h>
-#include <maya/MMatrix.h>
-#include <maya/MMatrixArray.h>
+//#include <maya/MFnMatrixArrayData.h>
+//#include <maya/MMatrix.h>
+//#include <maya/MMatrixArray.h>
 #include <maya/MDoubleArray.h>
 #include <maya/MGlobal.h>
 
@@ -79,16 +79,18 @@ MStatus	vufCurveBezierNode::initialize()
 	VF_RM_CRV_NODE_INIT_SCALE_ATTR();
 	//------------------------------------------------------------------------------------------------
 // Transform list
-	g_transfoms_attr = l_typed_attr_fn.create("xformList", "xfr", MFnData::kMatrixArray, MObject::kNullObj, &l_status);
+
+	g_transfoms_attr = l_typed_attr_fn.create(g_in_mlist_long_s, g_in_mlist_s, mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-	l_typed_attr_fn.setWritable(true);
-	l_typed_attr_fn.setStorable(true);
-	l_typed_attr_fn.setHidden(false);
-	l_typed_attr_fn.setKeyable(true);
+	CHECK_MSTATUS(l_typed_attr_fn.setWritable(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setReadable(false));
+	CHECK_MSTATUS(l_typed_attr_fn.setStorable(true));
+	CHECK_MSTATUS(l_typed_attr_fn.setHidden(false));
+	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 	l_status = addAttribute(g_transfoms_attr);		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	//------------------------------------------------------------------------------------------------
 	// Out Curve Data
-	g_data_out_attr = l_typed_attr_fn.create("outCurve", "oc", mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
+	g_data_out_attr = l_typed_attr_fn.create(g_out_crv_long_s, g_out_crv_s, mpxCurveWrapper::g_id, MObject::kNullObj, &l_status);
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(true);
 	l_typed_attr_fn.setWritable(false);
@@ -116,33 +118,44 @@ MStatus	vufCurveBezierNode::initialize()
 
 	return MS::kSuccess;
 }
+void 	vufCurveBezierNode::postConstructor()
+{
+	setExistWithoutOutConnections(true);
+	setExistWithoutInConnections(true);
+}
+
 MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr || p_plug == g_params_out_attr)
 	{
 		vuf::vufTimer l_timer("Bezier curve node compute");
 		MStatus l_status;
+		std::shared_ptr<vufCurveData>		l_out_data;
+		std::shared_ptr<vufMatrixListData>	l_in_data;
 		//------------------------------------------------------------------------------
 		// handle out data
-		std::shared_ptr<vufCurveData>	l_out_data;
 		VF_RM_GET_DATA_FROM_OUT_AND_MAKE_REF_UNIQUE(mpxCurveWrapper, vufCurveData, p_data, g_data_out_attr, l_out_data, m_gen_id);
-		if (l_out_data->m_internal_data == nullptr )
-		{
-			l_out_data->m_internal_data = vufCurveContainer_4d::create();
-		}
+		VF_CHECK_AND_CREATE_INTERNAL_DATA(l_out_data, vufCurveContainer_4d);
+
 		vufCurveContainer_4d& l_container = *(l_out_data->m_internal_data.get());
 		//------------------------------------------------------------------------------
-		// Handle input transform list data
-		MMatrixArray	l_matrix_array;
 		MDoubleArray	l_double_array;
-		VF_RM_GET_MATRIX_ARRAY_FROM_IN(g_transfoms_attr, l_matrix_array);
-		uint32_t l_transforms_sz = (uint32_t)l_matrix_array.length();
+		// Handle input transform list data
+		VF_RM_GET_DATA_FROM_IN(mpxMatrixListWrapper, vufMatrixListData, p_data, g_transfoms_attr, l_in_data);
+		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
+		{
+			VF_MAYA_NODE_LOG_ERR(" in data is null");
+			p_data.setClean(g_data_out_attr);
+			return MS::kSuccess;
+		}
+		auto& l_in_array			= l_in_data->m_internal_data->m_array_v;
+		uint32_t l_transforms_sz	= (uint32_t)l_in_array.size();
 		//-----------------------------------------------------------------------------
 		// Read attributes
 		bool	l_close		= p_data.inputValue(g_close_attr).asBool();
-		short	l_degree	= p_data.inputValue(g_degree_attr).asShort() + 1;		
+		short	l_degree	= p_data.inputValue(g_degree_attr).asShort() + 1;
 		short	l_quat_mode = p_data.inputValue(g_quaternion_mode_attr).asShort();
-		short	l_scale_mode = p_data.inputValue(g_scale_mode_attr).asShort();		
+		short	l_scale_mode = p_data.inputValue(g_scale_mode_attr).asShort();
 #pragma region HANDLE_CURVE
 		bool	l_is_crv_new = (l_close == true) ?
 			l_out_data->m_internal_data->switch_curve(l_degree, vufMath::vufCurveType::k_close_bezier_piecewise) :
@@ -159,8 +172,7 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		l_crv_ptr->set_nodes_count(l_transforms_sz);
 		for (uint32_t i = 0; i < l_transforms_sz; ++i)
 		{
-			vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i];
-			l_crv_ptr->set_node_at(i, l_matr->get_translation_4());
+			l_crv_ptr->set_node_at(i, l_in_array[i].get_translation_4());
 		}
 		if (l_crv_ptr->is_valid() == false)
 		{
@@ -172,21 +184,20 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		// controls count for rotate and scale
 		// ignore tangents
 		uint32_t l_controls_count = l_close? l_crv_ptr->get_interval_count(): (l_crv_ptr->get_interval_count() + 1);
-		std::cout << "l_controls_count " << l_controls_count << std::endl;
+//std::cout << "l_controls_count " << l_controls_count << std::endl;
 		l_double_array.setLength(l_controls_count);
 		if (l_quat_mode == 0 || l_scale_mode == 0)
 		{
-			std::cout << "----------Bezier-------------" << std::endl;
-			std::cout << std::fixed;
-			std::cout << "[ ";
+//			std::cout << "----------Bezier-------------" << std::endl;
+//			std::cout << std::fixed;
+//			std::cout << "[ ";
 			for (uint32_t i = 0; i < l_controls_count;++i)
 			{
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i * l_degree];
-				vufVector4<double> l_pos = l_matr->get_translation_4();
+				vufVector_4d l_pos = l_in_array[i].get_translation_4();
 				l_double_array[i] = l_crv_ptr->get_closest_point_param(l_pos, 0.0, 1.0, 10);
-				std::cout << i <<":" << l_double_array[i * l_degree] << ", ";
+//std::cout << i <<":" << l_double_array[i * l_degree] << ", ";
 			}
-			std::cout << " ]" << std::endl;
+//			std::cout << " ]" << std::endl;
 		}
 #pragma endregion
 #pragma region HANDLE_QUATERNION
@@ -209,9 +220,8 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_qtr_ptr->set_item_count_i(l_controls_count);
 			for (uint32_t i = 0; i < l_controls_count; ++i) 
 			{
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i * l_degree];
 				// set params and quaternions
-				l_qtr_ptr->set_item_at_i(i, l_double_array[i], *l_matr, l_crv_ptr);
+				l_qtr_ptr->set_item_at_i(i, l_double_array[i], l_in_array[i * l_degree], l_crv_ptr);
 			}
 			//l_qtr_ptr->sort_params_i();
 			l_qtr_ptr->match_quaternions_i();
@@ -229,9 +239,8 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				{
 					for (uint32_t i = 0; i < l_controls_count; ++i) 
 					{
-						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i *l_degree];
 						// update only quaterniions
-						l_qtr_ptr->set_item_at_i(i, *l_matr, l_crv_ptr);
+						l_qtr_ptr->set_item_at_i(i, l_in_array[i * l_degree], l_crv_ptr);
 					}
 					l_qtr_ptr->match_quaternions_i();
 				}
@@ -265,8 +274,7 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 			l_scale_ptr->set_item_count_i(l_controls_count);
 			for (uint32_t i = 0; i < l_controls_count; ++i)
 			{
-				vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i * l_degree];
-				l_scale_ptr->set_item_at_i(i, l_double_array[i], *l_matr);
+				l_scale_ptr->set_item_at_i(i, l_double_array[i], l_in_array[i * l_degree]);
 			}
 			l_scale_ptr->match_scales_i();
 			l_scale_store_data->m_internal_data = l_scale_ptr;
@@ -281,9 +289,8 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 				{
 					for (uint32_t i = 0; i < l_controls_count; ++i)
 					{
-						vufMatrix4<double>* l_matr = (vufMatrix4<double>*) & l_matrix_array[i * l_degree];
 						// update only quaterniions
-						l_scl_ptr->set_item_at_i(i, *l_matr);
+						l_scl_ptr->set_item_at_i(i, l_in_array[i * l_degree]);
 					}
 					l_scl_ptr->match_scales_i();
 				}

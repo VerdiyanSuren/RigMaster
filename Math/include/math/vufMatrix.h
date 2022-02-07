@@ -771,7 +771,16 @@ namespace vufMath
 				}
 			}
 		}
-
+		template<typename M>
+		static vufMatrix4& cast_from(const M& p_val)
+		{
+			return *((vufMatrix4<T>*)(&p_val));
+		}
+		template<typename M>
+		static M& cast_to(const vufMatrix4& p_val)
+		{
+			return *((M*)(&p_val));
+		}
 		~vufMatrix4() {}
 		vufMatrix4& operator = (const vufMatrix4& p_other)
 		{

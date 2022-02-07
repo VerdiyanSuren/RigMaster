@@ -108,12 +108,10 @@ class TCGui(ui.Wnd):
 		cmds.select(nodes, r = True)
 		print (nodes)
 		
-	def get_node_from_scene(self,*args):
+	def get_node_from_drivers(self,*args):
 		nodes = cmds.ls(sl = True)
 		list = []
-		for i in nodes:
-			if ( cmds.nodeType(i) == _NODE_TYPE ):
-				list.append(i)
+		list = [i for i in nodes if cmds.nodeType(i) == _NODE_TYPE]
 		lst = utils.helpers.get_distination_node(	source_nodes = nodes,
 													source_plugs = ['worldMatrix','xformMatrix'],
 													dist_type = [_NODE_TYPE])
@@ -130,6 +128,23 @@ class TCGui(ui.Wnd):
 				
 		cmds.optionMenu(self.listUI,edit=True,sl = 1)
 	
+	def get_node_from_drivens(self,*args):
+		nodes = cmds.ls(sl = True)
+		list = [i for i in nodes if cmds.nodeType(i) == _NODE_TYPE]
+		lst = utils.helpers.get_source_node(	dist_nodes = nodes, 
+										dist_plugs = ['outMAtrixList'], 
+										source_type = [_NODE_TYPE])
+		list = list + lst.keys()								
+		if (len(list) == 1):
+			self.select_option_item(list[0], self.listUI)
+			return
+		if (len(list) > 1):
+			res = ui.ChooseListDialog().choose(list = list)
+			if (res != "dismiss"):
+				self.select_option_item(res, self.listUI)
+				return
+		cmds.optionMenu(self.listUI,edit=True,sl = 1)
+		
 	def select_locator(self,*args):
 		pass
 	
