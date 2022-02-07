@@ -27,7 +27,7 @@ MObject vufCurveBezier3Tangents::g_out_knot_attr;
 MObject vufCurveBezier3Tangents::g_out_tang_a_attr;
 MObject vufCurveBezier3Tangents::g_out_tang_b_attr;
 
-void* vufCurveBezier3Tangents::creator()
+void*	vufCurveBezier3Tangents::creator()
 {
 	return new vufCurveBezier3Tangents();
 }
@@ -164,7 +164,19 @@ MStatus	vufCurveBezier3Tangents::compute(const MPlug& plug, MDataBlock& data)
 			m_knots_array[i].m_mode			= l_input_data.child(g_mode_attr).asShort();
 			m_knots_array[i].m_chord_length = l_input_data.child(g_chord_part_attr).asDouble();
 			m_knots_array[i].m_knot			= vufMatrix_4d::cast_from<MMatrix>(l_input_data.child(g_cntrl_xform_attr).asMatrix());
-			if (!l_vh.next()) break;	
+			if (l_knots_count < 3)
+			{
+				m_knots_array[i].m_mode = k_pass;
+				VF_MAYA_LOG_ERR(" knots count less than 3. mode switched to pass.");
+			}
+			if (!l_vh.next()) break;
+		}
+		// check count of inputs knots
+		if (l_knots_count < 2)
+		{
+			VF_MAYA_LOG_ERR(" not enouth count of inputs.");
+			data.setClean(g_out_group_attr);
+			data.setClean(plug);
 		}
 		
 		for (int i = 1; i < (l_knots_count - 1); ++i)
@@ -190,34 +202,44 @@ MStatus	vufCurveBezier3Tangents::compute(const MPlug& plug, MDataBlock& data)
 		}
 		if (m_closed == true)
 		{
-			if (m_knots_array.front().m_mode == k_pass)
+			if (m_knots_array.front().m_mode	== k_pass)
 			{
 				m_knots_array.front().m_tangent_a = m_knots_array.front().m_knot;
 				m_knots_array.front().m_tangent_b = m_knots_array.front().m_knot;
 			}
-			if (m_knots_array.back().m_mode == k_pass)
+			if (m_knots_array.back().m_mode		== k_pass)
 			{
 				m_knots_array.back().m_tangent_a = m_knots_array.back().m_knot;
 				m_knots_array.back().m_tangent_b = m_knots_array.back().m_knot;
 			}
 
-			if (m_knots_array.front().m_mode == k_auto)
+			if (m_knots_array.front().m_mode	== k_auto)
 			{
 				auto_tangent(m_knots_array.back(), m_knots_array[1], m_knots_array.front());
 			}
-			if (m_knots_array.back().m_mode == k_auto)
+			if (m_knots_array.back().m_mode		== k_auto)
 			{
 				auto_tangent(m_knots_array[l_knots_count-2], m_knots_array[0], m_knots_array.back());
 			}
 
-			if (m_knots_array.front().m_mode == k_simple)
+			if (m_knots_array.front().m_mode	== k_simple)
 			{
 				simple_tangent(m_knots_array.back(), m_knots_array[1], m_knots_array.front());
 			}
-			if (m_knots_array.back().m_mode == k_simple)
+			if (m_knots_array.back().m_mode		== k_simple)
 			{
 				simple_tangent(m_knots_array[l_knots_count - 2], m_knots_array[0], m_knots_array.back());
 			}
+
+			if (m_knots_array.front().m_mode	== k_arc)
+			{
+				arc_tangent(m_knots_array.back(), m_knots_array[1], m_knots_array.front());
+			}
+			if (m_knots_array.back().m_mode		== k_arc)
+			{
+				arc_tangent(m_knots_array[l_knots_count - 2], m_knots_array[0], m_knots_array.back());
+			}
+
 
 		}
 		else
@@ -250,6 +272,16 @@ MStatus	vufCurveBezier3Tangents::compute(const MPlug& plug, MDataBlock& data)
 			{
 				simple_tangent_last_knot(m_knots_array[l_knots_count - 2], m_knots_array.back());
 			}
+
+			if (m_knots_array.front().m_mode == k_arc)
+			{
+				auto_tangent_first_knot(m_knots_array[1], m_knots_array.front());
+			}
+			if (m_knots_array.back().m_mode == k_arc)
+			{
+				auto_tangent_last_knot(m_knots_array[l_knots_count - 2], m_knots_array.back());
+			}
+
 		}
 		
 		//setOutputs
@@ -377,7 +409,64 @@ void vufCurveBezier3Tangents::simple_tangent_last_knot(const vufKnotInfo& p_prev
 }
 
 
-void	vufCurveBezier3Tangents::arc_tangent(const vufKnotInfo& p_prev, const vufKnotInfo& p_next, vufKnotInfo& p_current)
+void	vufCurveBezier3Tangents::arc_tangent(const vufKnotInfo& p_prev, const vufKnotInfo& p_next, vufKnotInfo& p_curr)
 {
-
+	p_curr.m_tangent_a = p_curr.m_knot;
+	p_curr.m_tangent_b = p_curr.m_knot;
+	vufVector_4d l_pos_prev = p_prev.m_knot.get_translation_4();
+	vufVector_4d l_pos_next = p_next.m_knot.get_translation_4();
+	vufVector_4d l_pos_curr = p_curr.m_knot.get_translation_4();
+	auto l_dir_prev = l_pos_prev - l_pos_curr;
+	auto l_dir_next = l_pos_next - l_pos_curr;
+	auto l_dir_next_norm = l_dir_next.get_normalized();
+	auto l_dir_prev_norm = l_dir_prev.get_normalized();
+	if (l_dir_next_norm.get_cross(l_dir_prev_norm).length2() < VF_MATH_EPSILON)
+	{
+		p_curr.m_tangent_a.set_translation(l_pos_curr + l_dir_prev * p_curr.m_chord_length);
+		p_curr.m_tangent_b.set_translation(l_pos_curr + l_dir_next * p_curr.m_chord_length);
+		return;
+	}
+	//https://ru.wikipedia.org/wiki/%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%BD%D0%B0%D1%8F_%D0%BE%D0%BA%D1%80%D1%83%D0%B6%D0%BD%D0%BE%D1%81%D1%82%D1%8C
+	// 
+	vufVector_4d x_axis = l_dir_prev_norm;
+	vufVector_4d y_axis = l_dir_next_norm;
+	y_axis.make_ortho_to_in_place(x_axis);
+	y_axis.normalize_in_place();
+	// calculate coordinates in new coord system;
+	double l_bx = l_dir_prev.dot(x_axis);
+	double l_by = l_dir_prev.dot(y_axis);
+	double l_cx = l_dir_next.dot(x_axis);
+	double l_cy = l_dir_next.dot(y_axis);
+	double l_d = 2.0 * (l_bx * l_cy - l_by * l_cx);
+	double l_bx2 = l_bx * l_bx;
+	double l_by2 = l_by * l_by;
+	double l_cx2 = l_cx * l_cx;
+	double l_cy2 = l_cy * l_cy;
+	double l_rx = l_cy * (l_bx2 + l_by2) - l_by * (l_cx2 + l_cy2); l_rx /= l_d;
+	double l_ry = l_bx * (l_cx2 + l_cy2) - l_cx * (l_bx2 + l_by2); l_ry /= l_d;
+	vufVector_4d l_circle_center	= l_pos_curr + x_axis * l_rx + y_axis * l_ry; // base of midperpendiculars
+	vufVector_4d l_circle_tangent	= x_axis * l_ry - y_axis * l_rx;
+	l_circle_tangent.normalize_in_place();
+	double l_radius = (l_pos_curr - l_circle_center).length();
+	
+	vufVector_4d l_circle_to_curr = l_pos_curr - l_circle_center; l_circle_to_curr.normalize_in_place();
+	vufVector_4d l_circle_to_next = l_pos_next - l_circle_center; l_circle_to_next.normalize_in_place();
+	vufVector_4d l_circle_to_prev = l_pos_prev - l_circle_center; l_circle_to_prev.normalize_in_place();
+	double l_angle_next = l_circle_to_curr.dot(l_circle_to_next); l_angle_next = acos(VF_CLAMP(-1.0, 1.0, l_angle_next));
+	double l_angle_prev = l_circle_to_curr.dot(l_circle_to_prev); l_angle_prev = acos(VF_CLAMP(-1.0, 1.0, l_angle_prev));
+	
+	double l_chord_next = l_radius * l_angle_next * p_curr.m_chord_length;
+	double l_chord_prev = l_radius * l_angle_prev * p_curr.m_chord_length;
+	p_curr.m_tangent_a.set_translation(l_pos_curr - l_circle_tangent * l_chord_next);
+	p_curr.m_tangent_b.set_translation(l_pos_curr + l_circle_tangent * l_chord_prev);
+}
+void vufCurveBezier3Tangents::parabola_tangent(const vufKnotInfo& p_prev, const vufKnotInfo& p_next, vufKnotInfo& p_curr)
+{
+	p_curr.m_tangent_a = p_curr.m_knot;
+	p_curr.m_tangent_b = p_curr.m_knot;
+	vufVector_4d l_pos_prev = p_prev.m_knot.get_translation_4();
+	vufVector_4d l_pos_next = p_next.m_knot.get_translation_4();
+	vufVector_4d l_pos_curr = p_curr.m_knot.get_translation_4();
+	// To Do 
+	// Implemetn later
 }

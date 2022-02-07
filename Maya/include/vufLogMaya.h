@@ -1,6 +1,7 @@
 #ifndef VF_MAYA_LOG_H
 #define VF_MAYA_LOG_H
 #include <vufLog.h>
+#include <utils/vufMayaUtils.h>
 
 #define VF_MAYA_LOG_INFO(MSTRING) \
 {\

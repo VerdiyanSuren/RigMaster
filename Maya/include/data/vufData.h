@@ -122,12 +122,15 @@ if (DATA->m_internal_data == nullptr)\
 	l_out_handle.set(l_obj);															\
 	WRAPPER_CLASS* l_wrapp_ptr = (WRAPPER_CLASS*)l_data_creator.constData();			\
 	l_wrapp_ptr->set_data(data_var);													\
-}																						\
+}
+
 /**
 * Try to get data from plugin in node
 *  This method call node->name() which is not defined outside of node
+* internal could be nullptr 
+* data_var still reference if you need use VF_RM_NODE_SET_DATA_TO_PLUG
 */
-// internal could be nullptr
+
 #define VF_RM_NODE_GET_DATA_FROM_PLUG(WRAPPER_CLASS,DATA_CLASS, ATTR, data_var )		\
 {																						\
 	/* Find Plug by attribute object*/													\
@@ -155,6 +158,47 @@ if (DATA->m_internal_data == nullptr)\
 		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS);							\
 	}																					\
 }
+/**
+* Try to set data to plugin in node
+*  This method call node->name() which is not defined outside of node
+* data_var still reference if you need use VF_RM_NODE_SET_DATA_TO_PLUG
+*/
+#define VF_RM_NODE_SET_DATA_TO_PLUG(WRAPPER_CLASS,DATA_CLASS, ATTR, data_var )			\
+{																						\
+	MPlug	PLUG = l_node.findPlug(ATTR, true, &l_status);								\
+	if (l_status != MS::kSuccess)														\
+	{																					\
+		VF_MAYA_NODE_LOG_ERR(" Failed to find plug");									\
+	}																					\
+	MFnPluginData l_data_creator;														\
+	MObject l_obj = l_data_creator.create(WRAPPER_CLASS::g_id, &l_status);				\
+	WRAPPER_CLASS* l_wrapp_ptr = (WRAPPER_CLASS*)l_data_creator.constData();			\
+	l_wrapp_ptr->set_data(data_var);													\
+	PLUG.setMObject(l_obj);																\
+}
+
+#define VF_RM_NODE_CONNECT_BROKEN_SIMPLE(WRAPPER_CLASS, DATA_CLASS, ATTR  )					\
+{																							\
+if (p_plug_1 == ATTR)																		\
+{																							\
+	MStatus l_status;																		\
+	MObject						l_data_obj;													\
+	MFnDependencyNode			l_node(p_plug_1.node());									\
+	std::shared_ptr<DATA_CLASS>	l_in_data;													\
+	VF_RM_NODE_GET_DATA_FROM_PLUG(WRAPPER_CLASS, DATA_CLASS, ATTR, l_in_data);				\
+	std::shared_ptr<DATA_CLASS>	l_copy_data = std::shared_ptr<DATA_CLASS>(new DATA_CLASS());\
+	if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)						\
+	{																						\
+		l_copy_data->m_internal_data = nullptr;												\
+		VF_RM_NODE_SET_DATA_TO_PLUG(WRAPPER_CLASS, DATA_CLASS, ATTR, l_copy_data);			\
+		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);						\
+	}																						\
+	l_copy_data->m_internal_data = l_in_data->m_internal_data->get_copy();					\
+	VF_RM_NODE_SET_DATA_TO_PLUG(WRAPPER_CLASS, DATA_CLASS, ATTR, l_copy_data)				\
+}																							\
+return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);								\
+}
+
 /**
 * Try to get data from plug
 */
@@ -207,9 +251,9 @@ if (DATA->m_internal_data == nullptr)\
 {																						\
 	MFnPluginData l_data_creator;														\
 	MObject l_obj = l_data_creator.create(WRAPPER_CLASS::g_id, &l_status);				\
-	PLUG.setMObject(l_obj);																\
 	WRAPPER_CLASS* l_wrapp_ptr = (WRAPPER_CLASS*)l_data_creator.constData();			\
 	l_wrapp_ptr->set_data(data_var);													\
+	PLUG.setMObject(l_obj);																\
 }
 
 #define VF_RM_SET_INTERNAL_DATA_TO_PLUG(WRAPPER_CLASS,DATA_CLASS, PLUG, data_var )		\
@@ -314,8 +358,6 @@ namespace vufRM
 
 		return l_class_data->m_internal_data;
 	}
-
-
 
 }
 #endif // !VF_RM_DATA_H

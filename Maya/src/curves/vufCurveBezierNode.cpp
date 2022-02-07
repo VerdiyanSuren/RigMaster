@@ -40,7 +40,7 @@ vufCurveBezierNode::vufCurveBezierNode() :MPxNode()
 {
 	m_gen_id = ++g_unique_id;
 }
-void* vufCurveBezierNode::creator()
+void*	vufCurveBezierNode::creator()
 {
 	return new vufCurveBezierNode();
 }
@@ -340,4 +340,30 @@ MStatus	vufCurveBezierNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		return MS::kSuccess;
 	}
 	return MS::kUnknownParameter;
+}
+MStatus	vufCurveBezierNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
+{
+	VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxMatrixListWrapper, vufMatrixListData, g_transfoms_attr);
+	/*
+	if (p_plug_1 == g_transfoms_attr)
+	{
+		std::cout << p_plug_1.name() << std::endl;
+		MStatus l_status;
+		MObject				l_data_obj;
+		MFnDependencyNode	l_node(p_plug_1.node());
+		std::shared_ptr<vufMatrixListData>	l_in_data;
+		VF_RM_NODE_GET_DATA_FROM_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_transfoms_attr, l_in_data);
+		std::shared_ptr<vufMatrixListData>	l_copy_data = std::shared_ptr<vufMatrixListData>(new vufMatrixListData());
+		// check this
+		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
+		{
+			l_copy_data->m_internal_data = nullptr;
+			VF_RM_NODE_SET_DATA_TO_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_transfoms_attr, l_copy_data);
+			return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
+		}
+		l_copy_data->m_internal_data = l_in_data->m_internal_data->get_copy();
+		VF_RM_NODE_SET_DATA_TO_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_transfoms_attr, l_copy_data)
+	}
+	return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
+	*/	
 }

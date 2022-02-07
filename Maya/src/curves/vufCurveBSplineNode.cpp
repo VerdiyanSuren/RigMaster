@@ -354,4 +354,7 @@ MStatus	vufCurveBSplineNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	}
 	return MS::kUnknownParameter;
 }
- 
+MStatus	vufCurveBSplineNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
+{
+	VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxMatrixListWrapper, vufMatrixListData, g_transfoms_attr);
+}

@@ -106,20 +106,6 @@ MStatus	vufMatrixListLookAtNode::compute(const MPlug& p_plug, MDataBlock& p_data
 }
 MStatus	vufMatrixListLookAtNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
 {
-	if (p_plug_1 == g_data_in_attr)
-	{
-		MStatus l_status;
-		MObject				l_data_obj;
-		MFnDependencyNode	l_node(p_plug_1.node());
-		std::shared_ptr<vufMatrixListData>	l_in_data;
-		VF_RM_NODE_GET_DATA_FROM_PLUG(mpxMatrixListWrapper, vufMatrixListData, g_data_in_attr, l_in_data);
-		// check this
-		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
-		{
-			return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
-		}
-		l_in_data->m_internal_data = l_in_data->m_internal_data->get_copy();
-	}
-	return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
+	VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxMatrixListWrapper, vufMatrixListData, g_data_in_attr);
 }
 

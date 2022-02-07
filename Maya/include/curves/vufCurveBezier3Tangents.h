@@ -32,6 +32,8 @@ namespace vufRM
 
 
 		inline void arc_tangent(const vufKnotInfo& p_prev, const vufKnotInfo& p_next, vufKnotInfo& p_current);
+
+		inline void parabola_tangent(const vufKnotInfo& p_prev, const vufKnotInfo& p_next, vufKnotInfo& p_current);
 		bool m_closed = false;
 	public:
 		enum

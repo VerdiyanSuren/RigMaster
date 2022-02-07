@@ -56,36 +56,7 @@ MBoundingBox	vufCurveLocator::boundingBox() const
 }
 MStatus			vufCurveLocator::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
 {
-	if (p_plug_1 == g_in_data_attr)
-	{	
-		MStatus l_status;
-		MObject				l_data_obj;
-		MFnDependencyNode	l_node(p_plug_1.node());
-		MPlug				l_plug = l_node.findPlug(g_in_data_attr, true, &l_status);
-		// When we call plug::getValue compute method will be implicity called
-		// Is garantee that data hs been created by compute method
-		// We can skip all checking but keep them just in case (who knows may be maya api will be changed)
-		l_status = l_plug.getValue(l_data_obj);
-		MFnPluginData l_pd_fn(l_data_obj);
-		mpxCurveWrapper* l_mpx_data = (mpxCurveWrapper*)l_pd_fn.constData(&l_status);
-		if (l_mpx_data == nullptr)
-		{
-			VF_LOG_ERR("vufCurveLocator Connection Broken unexeptable fail");
-			return MPxLocatorNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
-		}
-		std::shared_ptr<vufCurveData> l_in_data = l_mpx_data->get_data();
-		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
-		{
-			VF_LOG_ERR("vufCurveLocator Connection Broken unexeptable fail");
-			return MPxLocatorNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
-		}
-		std::shared_ptr<vufCurveData> l_in_data_new = std::shared_ptr<vufCurveData>(new vufCurveData());
-		vufCurveContainer_4d& l_container = *(l_in_data->m_internal_data.get());
-		l_in_data_new->m_internal_data = l_container.get_copy();
-		l_mpx_data->set_data(l_in_data_new);
-		l_plug.setMObject(l_pd_fn.object());
-	}
-	return MPxLocatorNode::connectionBroken( p_plug_1, p_plug_2, p_as_src );
+	VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxCurveWrapper, vufCurveData, g_in_data_attr);
 }
 void*			vufCurveLocator::creator()
 {

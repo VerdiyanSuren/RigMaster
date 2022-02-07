@@ -130,14 +130,9 @@ MStatus	vufCurveNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	return MS::kUnknownParameter;
 }
 
-/*
-MStatus	vufQuatNullNode::connectionBroken(const MPlug& p_my_plug, const MPlug& p_other_plug, bool asSrc)
+
+MStatus	vufCurveNullNode::connectionBroken(const MPlug& p_plug_1/* my plug */, const MPlug& p_plug_2/* other plug*/, bool p_as_src)
 {
-	if (p_my_plug == g_data_in_attr)
-	{
-		//To Do 
-		// reset or make copy of data
-	}
-	return MS::kSuccess;
+	VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxCurveWrapper, vufCurveData, g_data_in_attr);
 }
-*/
+
