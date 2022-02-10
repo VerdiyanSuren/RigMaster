@@ -10,11 +10,12 @@ _MTRX_NULL_NODE 	= "vfMtrxListNull"
 _MTRX_LOOK_NODE 	= "vfMtrxListLookAt"
 _MTRX_DCMPS_NODE 	= "vfMtrxListDcmps"
 _MTRX_LCTR_NODE 	= "vfMtrxListLocator"
+_MTRX_VFK_NODE 		= "vfMtrxListVFK"
 #plugs
 _PLUG_IN_MMTRX_BLDR 	= "inXForms"
 _PLUG_OUT_MMTRX_BLDR 	= "outXForms"
-_PLUG_IN_MMTRX_LST 		= "inMatrixList"
-_PLUG_OUT_MMTRX_LST 	= "outMatrixList"
+_PLUG_IN_MTRX_LST 		= "inMatrixList"
+_PLUG_OUT_MTRX_LST 		= "outMatrixList"
 #---------------------------------------------------
 #			DOUBLE LIST NODES AND PLUGE
 #---------------------------------------------------
@@ -97,50 +98,172 @@ class helpers(object):
 #--------------------------------------------
 #	Matrix Collector Class
 #--------------------------------------------
-class matrCollector(object):
+class matr(object):
 	def __init__(self):
 		pass
-	def dags_to_matrix_list_node(self, dag_names = [], new_node_name = "matrixCollector", world_space = True):
-		if (len(dag_names) == 0):
+	'''
+	Example	
+drivers = ['pCube1','pCube2','pCube3','pCube4']
+drivens = ['pSphere1','pSphere2','pSphere3','pSphere4']
+effs    = ['nurbsCircle1','nurbsCircle2']
+res = {}
+res['collector']   = utls.matr.create_from_dags(dags = drivers ) # create collector from selected objects
+res['inputs']      = utls.matr.get_inputs(node_name = res['collector'])
+res['vfk']         = utls.matr.add_vfk(node_name = res['collector'], effectors = effs )
+res['look_at']     = utls.matr.add_look(node_name = res['vfk'])
+res['null']        = utls.matr.add_null(node_name = res['look_at'])
+res['locator']     = utls.matr.add_locator(node_name = res['null'])
+res['decompose']   = utls.matr.add_decompose(node_name = res['null'], dags_to = drivens )
+print res
+	'''
+	@staticmethod
+	def create_from_dags( dags = [], new_node_name = "matrixCollector", world_space = True):
+		if (len(dags) == 0):
 			return ""
 		index 		= 0;
-		node_name 		= cmds.createNode(_MATRIX_LIST_NODE )
+		node_name 		= cmds.createNode(_MTRX_LIST_NODE )
 		attr_name 	= "worldMatrix[0]"
 		if (world_space == False):
 			attr_name = "xformMatrix"
 		if (node_name == None):
 			return ""
-		for dag in dag_names:
-			cmds.connectAttr("{0}.{1}".format(dag, attr_name),"{0}.xForm[{1}]".format(node_name,index), f = True)
+		for dag in dags:
+			cmds.connectAttr("{0}.{1}".format(dag, attr_name),"{0}.{1}[{2}]".format(node_name,_PLUG_IN_MMTRX_BLDR,index), f = True)
 			index += 1
 		node_name = cmds.rename(node_name,new_node_name)
 		return node_name
-	def selection_to_matrix_list(self, new_node_name = "matrixCollector", world_space = True):
-		dags = cmds.ls(sl = True, ap = True, tr = True )
-		return self.dags_to_matrix_list_node(dag_names = dags, new_node_name = new_node_name, world_space = world_space)
-	def add_null_matrix_to_list( self, matrix_list_node_name, new_node_name = "matrixNull"):
-		if (cmds.objExists(matrix_list_node_name) == True and  cmds.nodeType(matrix_list_node_name) == _MATRIX_LIST_NODE):
-			node_name 		= cmds.createNode(_MATRIX_NULL_NODE )
-			cmds.connectAttr("{0}.outMatrixList".format(matrix_list_node_name),"{0}.inMatrixList".format(node_name), f = True)
-			node_name = cmds.rename(node_name,new_node_name)
-			return node_name
+	@staticmethod
+	def create_from_selection( new_node_name = "matrixCollector", world_space = True):
+		dag_s = cmds.ls(sl = True, ap = True, tr = True )
+		return matrCollector.create_from_dags(dags = dag_s, new_node_name = new_node_name, world_space = world_space)
+	@staticmethod
+	def add_null( node_name, new_node_name = "matrixNull"):
+		if (cmds.objExists(node_name) == True and  cmds.attributeQuery(_PLUG_OUT_MTRX_LST,node = node_name, exists = True) == True):
+			node_null 		= cmds.createNode(_MTRX_NULL_NODE )
+			cmds.connectAttr("{0}.{1}".format(node_name, _PLUG_OUT_MTRX_LST),"{0}.{1}".format(node_null, _PLUG_IN_MTRX_LST), f = True)
+			node_null = cmds.rename(node_null,new_node_name)
+			return node_null
 		return ""
-	def get_inputs(self, node_name = ""):
+	@staticmethod
+	def get_inputs( node_name = ""):
 		list = []
-		if (cmds.objExists(node_name) == True and cmds.nodeType(node_name) == _MATRIX_LIST_NODE):
-			list =  cmds.listConnections( "{0}.xForm".format(node_name), d = False, s = True)
+		if (cmds.objExists(node_name) == True and cmds.nodeType(node_name) == _MTRX_LIST_NODE):
+			list =  cmds.listConnections( "{0}.{1}".format(node_name, _PLUG_IN_MMTRX_BLDR), d = False, s = True)
 			if (list == None):
 				list = []		
 		return list
 	@staticmethod
-	def add_locator(transform_node, new_node_name = "MtrxLocator"):
-		if (cmds.objExists(transform_node) == True and cmds.attributeQuery(_PLUG_OUT_MMTRX_LST,node = transform_node, exists = True) == True):
+	def add_locator(node_name = "", new_node_name = "MtrxLocator"):
+		if (cmds.objExists(node_name) == True and cmds.attributeQuery(_PLUG_OUT_MTRX_LST,node = node_name, exists = True) == True):
 			loc_name 		= cmds.createNode(_MTRX_LCTR_NODE )
-			cmds.connectAttr("{0}.{1}".format(transform_node,_PLUG_OUT_MMTRX_LST),"{0}.{1}".format(loc_name,_PLUG_IN_MMTRX_LST), f = True)
+			cmds.connectAttr("{0}.{1}".format(node_name,_PLUG_OUT_MTRX_LST),"{0}.{1}".format(loc_name,_PLUG_IN_MTRX_LST), f = True)
 			transform = cmds.pickWalk( loc_name, direction='up' )[0]
 			loc_name = cmds.rename(transform, new_node_name)
 			return loc_name
 		return ""
+	@staticmethod
+	def add_look(node_name = "", new_node_name = "MtrxLookAt"):
+		if (cmds.objExists(node_name) == True and  cmds.attributeQuery(_PLUG_OUT_MTRX_LST,node = node_name, exists = True) == True):
+			node_look 		= cmds.createNode(_MTRX_LOOK_NODE )
+			cmds.connectAttr("{0}.{1}".format(node_name, _PLUG_OUT_MTRX_LST),"{0}.{1}".format(node_look, _PLUG_IN_MTRX_LST), f = True)
+			node_look = cmds.rename(node_look,new_node_name)
+			return node_look
+		return ""
+	@staticmethod
+	def add_decompose(node_name = '', dags_to = [], new_node_name = "MtrxDecopmpose", use_parent = True):
+		if (cmds.objExists(node_name) == True and  cmds.attributeQuery(_PLUG_OUT_MTRX_LST,node = node_name, exists = True) == True):
+			if (len(dags_to) > 0):
+				node_dc		= cmds.createNode(_MTRX_DCMPS_NODE )
+				cmds.setAttr('{0}.useParent'.format(node_dc),use_parent)
+				cmds.connectAttr('{0}.{1}'.format(node_name, _PLUG_OUT_MTRX_LST),'{0}.{1}'.format(node_dc, _PLUG_IN_MTRX_LST), f = True)
+				cmds.connectAttr('{0}.parentInverseMatrix'.format(dags_to[0]),"{0}.{1}".format(node_dc,'inverseParent'), f = True)
+				counter = 0
+				for dag in dags_to:
+					dec = cmds.createNode('decomposeMatrix')
+					cmds.connectAttr('{0}.{1}[{2}]'.format(node_dc, _PLUG_OUT_MMTRX_BLDR, counter),'{0}.inputMatrix'.format(dec), f = True)
+					cmds.connectAttr('{0}.outputTranslate'.format(	dec),'{0}.translate'.format(	dag),f = True )
+					cmds.connectAttr('{0}.outputRotate'.format(		dec),'{0}.rotate'.format(		dag),f = True )
+					cmds.connectAttr('{0}.outputScale'.format(		dec),'{0}.scale'.format(		dag),f = True )	
+					counter += 1					
+				node_dc = cmds.rename(node_dc,new_node_name)
+				return node_dc
+		return ''
+	@staticmethod
+	def add_vfk(node_name = '', effectors = [], new_node_name = "MtrxVFK"):
+		if (cmds.objExists(node_name) == False or  cmds.attributeQuery(_PLUG_OUT_MTRX_LST,node = node_name, exists = True) == False):
+			return ''
+		if (len(effectors) < 1):
+			return ''
+		node_vfk	= cmds.createNode(_MTRX_VFK_NODE )
+		cmds.connectAttr('{0}.{1}'.format(node_name, _PLUG_OUT_MTRX_LST),'{0}.{1}'.format(node_vfk, _PLUG_IN_MTRX_LST), f = True)
+		counter = 0
+		for eff in effectors:
+			param_step = 1.0/(len(effectors)-1)
+			if (cmds.attributeQuery('spaceT', 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = 'spaceT', attributeType =  'enum', enumName = "local:world", keyable = True )
+			if (cmds.attributeQuery('spaceR', 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "spaceR", attributeType =  "enum", enumName = "local:world", keyable = True )
+			if (cmds.attributeQuery("param", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "param", attributeType =  "float",  keyable = True)
+			if (cmds.attributeQuery("amount", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "amount", attributeType =  "float",  keyable = True)
+			if (cmds.attributeQuery("falloffA", node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "falloffA", attributeType =  "float",  keyable = True)
+			if (cmds.attributeQuery("falloffB", node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "falloffB", attributeType =  "float",  keyable = True)
+				
+			cmds.connectAttr('{0}.spaceT'.format(eff),		'{0}.effector[{1}].spaceT'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.spaceR'.format(eff),		'{0}.effector[{1}].spaceR'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.param'.format(eff),		'{0}.effector[{1}].param'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.amount'.format(eff),		'{0}.effector[{1}].amount'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.falloffA'.format(eff),	'{0}.effector[{1}].falloffA'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.falloffB'.format(eff),	'{0}.effector[{1}].falloffB'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.translate'.format(eff),	'{0}.effector[{1}].translate'.format(node_vfk, counter), f = True)
+			
+			cmds.connectAttr('{0}.rotateX'.format(eff),		'{0}.effector[{1}].rotateX'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.rotateY'.format(eff),		'{0}.effector[{1}].rotateY'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.rotateZ'.format(eff),		'{0}.effector[{1}].rotateZ'.format(node_vfk, counter), f = True)
+			
+			cmds.connectAttr('{0}.scale'.format(eff),		'{0}.effector[{1}].scale'.format(node_vfk, counter), f = True)
+			
+			g_compensate 	= cmds.group (em = True, name = 'vfkCompensate#')
+			g_parent 		= cmds.group (em = True, name = 'vfkParent#')
+			cmds.parent(g_compensate, g_parent)
+			cmds.parent(eff,g_compensate)
+			cmds.setAttr('{0}.tx'.format(eff), 0)
+			cmds.setAttr('{0}.ty'.format(eff), 0)
+			cmds.setAttr('{0}.tz'.format(eff), 0)
+			cmds.setAttr('{0}.rx'.format(eff), 0)
+			cmds.setAttr('{0}.ry'.format(eff), 0)
+			cmds.setAttr('{0}.rz'.format(eff), 0)
+			cmds.setAttr('{0}.sx'.format(eff), 1)
+			cmds.setAttr('{0}.sy'.format(eff), 1)
+			cmds.setAttr('{0}.sz'.format(eff), 1)
+			cmds.setAttr('{0}.amount'.format(eff), 1)
+			cmds.setAttr('{0}.falloffA'.format(eff), 0.5)
+			cmds.setAttr('{0}.falloffB'.format(eff), 0.5)
+			cmds.setAttr('{0}.param'.format(eff),param_step * counter)
+			
+			dec_parent 		= cmds.createNode("decomposeMatrix")
+			dec_compensate 	= cmds.createNode("decomposeMatrix")
+			cmds.connectAttr('{0}.helpers[{1}].parent'.format(	node_vfk,counter ),		'{0}.inputMatrix'.format(dec_parent), f = True)
+			cmds.connectAttr('{0}.helpers[{1}].compensate'.format(	node_vfk, counter),	'{0}.inputMatrix'.format(dec_compensate), f = True)
+			
+			cmds.connectAttr('{0}.outputRotate'.format(		dec_parent),'{0}.rotate'.format(	g_parent) ,f = True )
+			cmds.connectAttr('{0}.outputTranslate'.format(	dec_parent),'{0}.translate'.format(	g_parent),f = True )
+			cmds.connectAttr('{0}.outputScale'.format(		dec_parent),'{0}.scale'.format(		g_parent),f = True )
+			
+			cmds.connectAttr('{0}.outputRotate'.format(		dec_compensate),'{0}.rotate'.format(	g_compensate),f = True )
+			cmds.connectAttr('{0}.outputTranslate'.format(	dec_compensate),'{0}.translate'.format(	g_compensate),f = True )	
+			cmds.connectAttr('{0}.outputScale'.format(		dec_compensate),'{0}.scale'.format(		g_compensate),f = True )
+			counter += 1
+		return node_vfk
+	@staticmethod
+	def add_spring(node_name = ''):
+		pass
+	@staticmethod
+	def add_length_constrain(node_name = ''):
+		pass
 
 #--------------------------------------------
 #	Double Collector Class
