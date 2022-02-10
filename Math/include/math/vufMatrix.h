@@ -1147,6 +1147,10 @@ namespace vufMath
 		{
 			return vufVector4<T>(m_ptr[2][0], m_ptr[2][1], m_ptr[2][2],1.0);
 		}
+		vufVector4<T>	get_scale_4() const
+		{
+			return vufVector4<T>(get_scale_x(), get_scale_y(), get_scale_z());
+		}
 		T				get_scale_x() const
 		{
 			return sqrt(m_ptr[0][0] * m_ptr[0][0] + m_ptr[0][1] * m_ptr[0][1] + m_ptr[0][2] * m_ptr[0][2]);
@@ -1303,6 +1307,13 @@ namespace vufMath
 			m_ptr[2][2] = p_v.z;
 			m_ptr[2][3] = .0;
 		}
+		void			set_scale_4(const vufVector4<T>& p_v)
+		{
+			set_scale_x(p_v.x);
+			set_scale_y(p_v.y);
+			set_scale_z(p_v.z);
+		}
+
 		void			set_scale_x(T p_s)
 		{
 			T l_length = sqrt(	m_ptr[0][0] * m_ptr[0][0] +
@@ -1318,7 +1329,7 @@ namespace vufMath
 			m_ptr[0][1] *= p_s;
 			m_ptr[0][2] *= p_s;
 		}
-		void			set_scale_y(double p_s)
+		void			set_scale_y(T p_s)
 		{
 			T l_length = sqrt(	m_ptr[1][0] * m_ptr[1][0] +
 								m_ptr[1][1] * m_ptr[1][1] +
@@ -1333,7 +1344,7 @@ namespace vufMath
 			m_ptr[1][1] *= p_s;
 			m_ptr[1][2] *= p_s;
 		}
-		void			set_scale_z(double p_s)
+		void			set_scale_z(T p_s)
 		{
 			T l_length = sqrt(	m_ptr[2][0] * m_ptr[2][0] +
 								m_ptr[2][1] * m_ptr[2][1] +

@@ -52,6 +52,9 @@
     <Filter Include="include\locator">
       <UniqueIdentifier>{EC23D9BF-58AF-4684-61C0-C978CDCAA284}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\ui">
+      <UniqueIdentifier>{5646B8DA-42FE-F927-AB05-D38397DC9418}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\utils">
       <UniqueIdentifier>{C98351A6-3544-CDDC-FE7E-165A6AFE11B9}</UniqueIdentifier>
     </Filter>
@@ -105,6 +108,9 @@
     </Filter>
     <Filter Include="src\expressions\ui">
       <UniqueIdentifier>{4C7A2978-385E-EACD-A1BE-E4208DC1D44F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{7A4F661C-66F1-90F2-4FAC-A4463BED1743}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\utils">
       <UniqueIdentifier>{6DAA42B6-D914-F72C-2253-A8D28EFCD481}</UniqueIdentifier>
@@ -213,6 +219,9 @@
     <ClInclude Include="include\dataCollectors\vufMatrixListNullNode.h">
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
+    <ClInclude Include="include\dataCollectors\vufMatrixListVFK.h">
+      <Filter>include\dataCollectors</Filter>
+    </ClInclude>
     <ClInclude Include="include\expressions\data\vufMayaLuaPortInternalData.h">
       <Filter>include\expressions\data</Filter>
     </ClInclude>
@@ -287,6 +296,9 @@
     </ClInclude>
     <ClInclude Include="include\locator\vufLocator.h">
       <Filter>include\locator</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui\vufFcurveEditor.h">
+      <Filter>include\ui</Filter>
     </ClInclude>
     <ClInclude Include="include\utils\vufMayaUtils.h">
       <Filter>include\utils</Filter>
@@ -407,6 +419,9 @@
     <ClCompile Include="src\dataCollectors\vufMatrixListNullNode.cpp">
       <Filter>src\dataCollectors</Filter>
     </ClCompile>
+    <ClCompile Include="src\dataCollectors\vufMatrixListVFK.cpp">
+      <Filter>src\dataCollectors</Filter>
+    </ClCompile>
     <ClCompile Include="src\expressions\data\vufMayaLuaPortData.cpp">
       <Filter>src\expressions\data</Filter>
     </ClCompile>
@@ -460,6 +475,9 @@
     </ClCompile>
     <ClCompile Include="src\register.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\vufFcurveEditor.cpp">
+      <Filter>src\ui</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\vufMayaUtils.cpp">
       <Filter>src\utils</Filter>

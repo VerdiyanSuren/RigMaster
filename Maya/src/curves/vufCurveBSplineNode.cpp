@@ -107,7 +107,6 @@ MStatus	vufCurveBSplineNode::initialize()
 	l_status = addAttribute(g_params_out_attr);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	//------------------------------------------------------------------------------------------------
 	// Add Attributes
-
 	l_status = addAttribute(g_transfoms_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_status = addAttribute(g_data_out_attr);			CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	//------------------------------------------------------------------------------------------------

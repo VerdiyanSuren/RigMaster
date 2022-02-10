@@ -76,13 +76,13 @@ MStatus vufCurveBezier3Tangents::initialize()
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_chord_part_attr));
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_cntrl_xform_attr));
 	
-	CHECK_MSTATUS_AND_RETURN_IT(l_numeric_attr_fn.setStorable(true));
-	CHECK_MSTATUS_AND_RETURN_IT(l_numeric_attr_fn.setWritable(true));
-	CHECK_MSTATUS_AND_RETURN_IT(l_numeric_attr_fn.setHidden(false));
-	CHECK_MSTATUS_AND_RETURN_IT(l_numeric_attr_fn.setKeyable(true));
+	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setStorable(true));
+	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setWritable(true));
+	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setHidden(false));
+	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setKeyable(true));
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setArray(true));
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setUsesArrayDataBuilder(true));
-	CHECK_MSTATUS_AND_RETURN_IT(l_matrix_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
+	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete));
 
 	//--------------------------------------------------------
 	//create attibutes

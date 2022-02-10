@@ -194,43 +194,23 @@ MStatus vufCurveBlendNode::connectionMade(const MPlug& p_plug_1, const MPlug& p_
 
 MStatus vufCurveBlendNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
 {
+	if (p_plug_1 == vufCurveBlendNode::g_curve_container_1_attr)
+	{
+		VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxCurveWrapper, vufCurveData, g_curve_container_1_attr);
+	}
+	if (p_plug_1 == g_curve_container_2_attr)
+	{
+		VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxCurveWrapper, vufCurveData, g_curve_container_2_attr);
+	}
+	if (p_plug_1 == vufCurveBlendNode::g_fcurve_attr)
+	{
+		VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxCurveWrapper, vufCurveData, g_fcurve_attr);
+	}
 	if (p_plug_1 != vufCurveBlendNode::g_curve_container_1_attr &&
 		p_plug_1 != vufCurveBlendNode::g_curve_container_2_attr &&
 		p_plug_1 != vufCurveBlendNode::g_fcurve_attr)
 	{
 		return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);
-	}
-	MStatus l_status;
-	MObject				l_data_obj;
-	MFnDependencyNode	l_node(p_plug_1.node());
-	// When we call plug::getValue compute method will be implicity called
-	// Is garantee that data hs been created by compute method
-	// We can skip all checking but keep them just in case (who knows may be maya api will be changed)
-	std::shared_ptr<vufCurveContainer_4d> l_crv_out_cntnr;
-	if (p_plug_1 == vufCurveBlendNode::g_curve_container_1_attr)
-	{
-		MPlug	l_plug_in_a = l_node.findPlug(g_curve_container_1_attr, true, &l_status);
-		std::shared_ptr<vufCurveContainer_4d> l_crv_input_a_cntnr;
-		VF_RM_GET_INTERNAL_DATA_FROM_PLUG(mpxCurveWrapper, l_plug_in_a, l_crv_input_a_cntnr);
-		std::shared_ptr<vufCurveContainer_4d> l_crv_input_a_cntnr_copy = (l_crv_input_a_cntnr == nullptr ? nullptr: l_crv_input_a_cntnr->get_copy());
-		VF_RM_SET_INTERNAL_DATA_TO_PLUG(mpxCurveWrapper, vufCurveData, l_plug_in_a, l_crv_input_a_cntnr_copy);
-	}
-	if (p_plug_1 == vufCurveBlendNode::g_curve_container_2_attr)
-	{
-		MPlug	l_plug_in_b = l_node.findPlug(g_curve_container_2_attr, true, &l_status);
-		std::shared_ptr<vufCurveContainer_4d> l_crv_input_b_cntnr;
-		VF_RM_GET_INTERNAL_DATA_FROM_PLUG(mpxCurveWrapper, l_plug_in_b, l_crv_input_b_cntnr);
-		std::shared_ptr<vufCurveContainer_4d> l_crv_input_b_cntnr_copy = (l_crv_input_b_cntnr == nullptr ? nullptr : l_crv_input_b_cntnr->get_copy());
-		VF_RM_SET_INTERNAL_DATA_TO_PLUG(mpxCurveWrapper, vufCurveData, l_plug_in_b, l_crv_input_b_cntnr_copy);
-
-	}
-	if (p_plug_1 == vufCurveBlendNode::g_fcurve_attr)
-	{
-		MPlug	l_plug_in_f = l_node.findPlug(g_fcurve_attr, true, &l_status);
-		std::shared_ptr<vufCurveContainer_4d> l_crv_input_f_cntnr;
-		VF_RM_GET_INTERNAL_DATA_FROM_PLUG(mpxCurveWrapper, l_plug_in_f, l_crv_input_f_cntnr);
-		std::shared_ptr<vufCurveContainer_4d> l_crv_input_f_cntnr_copy = (l_crv_input_f_cntnr == nullptr ? nullptr : l_crv_input_f_cntnr->get_copy());
-		VF_RM_SET_INTERNAL_DATA_TO_PLUG(mpxCurveWrapper, vufCurveData, l_plug_in_f, l_crv_input_f_cntnr_copy);
 	}
 	return MPxNode::connectionBroken(p_plug_1, p_plug_2, p_as_src);;
 }

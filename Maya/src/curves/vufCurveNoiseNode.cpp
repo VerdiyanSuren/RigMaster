@@ -149,7 +149,6 @@ MStatus	vufCurveNoiseNode::initialize()
 
 	return MS::kSuccess;
 }
-
 MStatus	vufCurveNoiseNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
@@ -214,5 +213,9 @@ MStatus	vufCurveNoiseNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	}
 
 	return MS::kUnknownParameter;
+}
+MStatus	vufCurveNoiseNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
+{
+	VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxCurveWrapper, vufCurveData, g_data_in_attr);
 }
 

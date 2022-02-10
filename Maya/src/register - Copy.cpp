@@ -15,6 +15,7 @@
 #include <dataCollectors/vufMatrixListNullNode.h>
 #include <dataCollectors/vufMatrixListDecomposeNode.h>
 #include <dataCollectors/vufMatrixListLookAtNode.h>
+#include <dataCollectors/vufMatrixListVFK.h>
 
 #include <dataCollectors/vufDoubleListNode.h>
 #include <dataCollectors/vufDoubleListNullNode.h>
@@ -46,7 +47,7 @@
 #include <vufMayaGlobalIncludes.h>
 #include <serializer/vufTxtSerializer.h>
 
-//#include <expressions/luaWrappers/luaUnitTest/vufLuaMayaMathUnitTest.h>
+#include <expressions/luaWrappers/luaUnitTest/vufLuaMayaMathUnitTest.h>
 
 using namespace vufRM;
 
@@ -64,6 +65,8 @@ const MTypeId	vufMatrixListNode::			g_id(0x297730);	const MString	vufMatrixListN
 const MTypeId	vufMatrixListNullNode::		g_id(0x297830);	const MString	vufMatrixListNullNode::		g_type_name("vfMtrxListNull");
 const MTypeId	vufMatrixListDecomposeNode::g_id(0x297930);	const MString	vufMatrixListDecomposeNode::g_type_name("vfMtrxListDcmps");
 const MTypeId	vufMatrixListLookAtNode::	g_id(0x298030);	const MString	vufMatrixListLookAtNode::	g_type_name("vfMtrxListLookAt");
+const MTypeId	vufMatrixListVFK::			g_id(0x298030);	const MString	vufMatrixListVFK::			g_type_name("vfMtrxListVFK");
+
 // Matrix List locator
 const MTypeId	vufMatrixListLocator::		g_id(0x298130);	const MString	vufMatrixListLocator::g_type_name("vfMtrxListLocator"); const MString	vufMatrixListLocator::g_drawDb_classification("drawdb/geometry/vfMtrxListLocator");
 
@@ -78,7 +81,7 @@ const MTypeId	mpxCurveRebuildWrapper::	g_id(0x298730);	const MString	mpxCurveReb
 // Curve locator
 const MTypeId	vufCurveLocator::			g_id(0x298830);	const MString	vufCurveLocator::			g_type_name("vfCrvLocator"); const MString	vufCurveLocator::g_drawDb_classification("drawdb/geometry/vfCrvLocator");
 
-const MTypeId	vufCurveBezier3Tangents::	g_id(0x298930);	const MString	vufCurveBezier3Tangents::	g_type_name("vfBezier3Tngns");
+const MTypeId	vufCurveBezier3Tangents::	g_id(0x298930);	const MString	vufCurveBezier3Tangents::	g_type_name("vfBezier3Tngnt");
 // Curve Nodes
 const MTypeId	vufFromMayaCurveNode::		g_id(0x299030);	const MString	vufFromMayaCurveNode::		g_type_name("vfCrvFromMaya");
 const MTypeId	vufCurveToMayaNode::		g_id(0x299130);	const MString	vufCurveToMayaNode::		g_type_name("vfCrvToMaya");
@@ -129,6 +132,7 @@ MStatus initializePlugin(MObject obj)
 	VF_REGISTER_NODE(vufMatrixListNullNode);
 	VF_REGISTER_NODE(vufMatrixListDecomposeNode);
 	VF_REGISTER_NODE(vufMatrixListLookAtNode);
+	VF_REGISTER_NODE(vufMatrixListVFK);
 
 	VF_REGISTER_NODE(vufDoubleListNode);
 	VF_REGISTER_NODE(vufDoubleListNullNode);
@@ -183,6 +187,8 @@ MStatus uninitializePlugin(MObject obj)
 	VF_DEREGISTER_NODE(vufMatrixListNullNode);
 	VF_DEREGISTER_NODE(vufMatrixListDecomposeNode);
 	VF_DEREGISTER_NODE(vufMatrixListLookAtNode);
+	VF_DEREGISTER_NODE(vufMatrixListVFK);
+
 	VF_DEREGISTER_NODE(vufDoubleListNode);
 	VF_DEREGISTER_NODE(vufDoubleListNullNode);
 

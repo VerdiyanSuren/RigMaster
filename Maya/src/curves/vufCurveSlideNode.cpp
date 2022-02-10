@@ -24,7 +24,7 @@ MObject	vufCurveSlideNode::g_start_weight_attr;
 MObject	vufCurveSlideNode::g_end_attr;
 MObject	vufCurveSlideNode::g_end_weight_attr;
 MObject	vufCurveSlideNode::g_data_in_attr;
-MObject	vufCurveSlideNode::g_data_out_attr;\
+MObject	vufCurveSlideNode::g_data_out_attr;
 VF_RM_CRV_NODE_DEFINE_REBUILD_ATTR(vufCurveSlideNode);
 
 
@@ -219,4 +219,8 @@ MStatus	vufCurveSlideNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	}
 
 	return MS::kUnknownParameter;
+}
+MStatus	vufCurveSlideNode::connectionBroken(const MPlug& p_plug_1, const MPlug& p_plug_2, bool p_as_src)
+{
+	VF_RM_NODE_CONNECT_BROKEN_SIMPLE(mpxCurveWrapper, vufCurveData, g_data_in_attr);
 }
