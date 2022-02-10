@@ -88,6 +88,12 @@ MStatus	vufMatrixListDecomposeNode::compute(const MPlug& p_plug, MDataBlock& p_d
 		MMatrix l_inv_matr = p_data.inputValue(g_parent_inverse_attr).asMatrix();
 		std::shared_ptr<vufMatrixListData>	l_in_data;
 		VF_RM_GET_DATA_FROM_IN(mpxMatrixListWrapper, vufMatrixListData, p_data, g_data_in_attr, l_in_data);
+		if (l_in_data == nullptr || l_in_data->m_internal_data == nullptr)
+		{
+			VF_MAYA_NODE_LOG_ERR(" in data is null");
+			p_data.setClean(g_data_out_attr);
+			return MS::kSuccess;
+		}
 		auto&	l_array = l_in_data->m_internal_data->m_array_v;
 		auto	l_sz = l_array.size();
 		if (l_sz == 0)

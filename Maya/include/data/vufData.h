@@ -70,6 +70,7 @@
 		auto l_internal_data = data_var->m_internal_data;														\
 		if (data_var->m_internal_data != nullptr)																\
 		{																										\
+			std::cout << "data has been copied" << std::endl;													\
 			l_internal_data = data_var->m_internal_data->get_copy();											\
 		}																										\
 		data_var = std::shared_ptr<DATA_CLASS>(new DATA_CLASS());												\

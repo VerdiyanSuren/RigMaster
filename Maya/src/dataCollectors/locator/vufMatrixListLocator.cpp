@@ -222,6 +222,7 @@ void				vufMatrixListLocatorDrawOverride::addUIDrawables(	const MDagPath& p_obj_
 	{
 		return;
 	}
+	//vuf::vufTimer l_timer("Matrix Locaator node compute: ");
 	vufMatrixListLocatorData* l_data = (vufMatrixListLocatorData*)p_data;
 	if (l_data->m_data_ptr == nullptr || l_data->m_draw == false)
 	{
