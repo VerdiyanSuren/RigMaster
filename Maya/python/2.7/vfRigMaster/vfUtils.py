@@ -189,7 +189,7 @@ print res
 				return node_dc
 		return ''
 	@staticmethod
-	def add_vfk(node_name = '', effectors = [], new_node_name = "MtrxVFK"):
+	def add_vfk(node_name = '', effectors = [], param_scale = 1, new_node_name = "MtrxVFK"):
 		if (cmds.objExists(node_name) == False or  cmds.attributeQuery(_PLUG_OUT_MTRX_LST,node = node_name, exists = True) == False):
 			return ''
 		if (len(effectors) < 1):
@@ -199,26 +199,25 @@ print res
 		counter = 0
 		for eff in effectors:
 			param_step = 1.0/(len(effectors)-1)
-			if (cmds.attributeQuery('spaceT', 	node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = 'spaceT', attributeType =  'enum', enumName = "local:world", keyable = True )
-			if (cmds.attributeQuery('spaceR', 	node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = "spaceR", attributeType =  "enum", enumName = "local:world", keyable = True )
 			if (cmds.attributeQuery("param", 	node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "param", attributeType =  "float",  keyable = True)
 			if (cmds.attributeQuery("amount", 	node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "amount", attributeType =  "float",  keyable = True)
 			if (cmds.attributeQuery("falloffA", node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = "falloffA", attributeType =  "float",  keyable = True)
+				cmds.addAttr( eff,longName = "falloffA", attributeType =  "float",  minValue = 0, keyable = True)
+			if (cmds.attributeQuery("constA", node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "constA", attributeType =  "float", minValue = 0, keyable = True)
 			if (cmds.attributeQuery("falloffB", node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = "falloffB", attributeType =  "float",  keyable = True)
+				cmds.addAttr( eff,longName = "falloffB", attributeType =  "float", minValue=0, keyable = True)
+			if (cmds.attributeQuery("constB", node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "constB", attributeType =  "float", minValue = 0, keyable = True)
 				
-			cmds.connectAttr('{0}.spaceT'.format(eff),		'{0}.effector[{1}].spaceT'.format(node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.spaceR'.format(eff),		'{0}.effector[{1}].spaceR'.format(node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.param'.format(eff),		'{0}.effector[{1}].param'.format(node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.amount'.format(eff),		'{0}.effector[{1}].amount'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.param'.format(eff),		'{0}.effector[{1}].param'.format(	node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.amount'.format(eff),		'{0}.effector[{1}].amount'.format(	node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.falloffA'.format(eff),	'{0}.effector[{1}].falloffA'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.constA'.format(eff),		'{0}.effector[{1}].constA'.format(	node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.falloffB'.format(eff),	'{0}.effector[{1}].falloffB'.format(node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.translate'.format(eff),	'{0}.effector[{1}].translate'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.constB'.format(eff),		'{0}.effector[{1}].constB'.format(	node_vfk, counter), f = True)
 			
 			cmds.connectAttr('{0}.rotateX'.format(eff),		'{0}.effector[{1}].rotateX'.format(node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.rotateY'.format(eff),		'{0}.effector[{1}].rotateY'.format(node_vfk, counter), f = True)
@@ -230,6 +229,7 @@ print res
 			g_parent 		= cmds.group (em = True, name = 'vfkParent#')
 			cmds.parent(g_compensate, g_parent)
 			cmds.parent(eff,g_compensate)
+			
 			cmds.setAttr('{0}.tx'.format(eff), 0)
 			cmds.setAttr('{0}.ty'.format(eff), 0)
 			cmds.setAttr('{0}.tz'.format(eff), 0)
@@ -242,7 +242,7 @@ print res
 			cmds.setAttr('{0}.amount'.format(eff), 1)
 			cmds.setAttr('{0}.falloffA'.format(eff), 0.5)
 			cmds.setAttr('{0}.falloffB'.format(eff), 0.5)
-			cmds.setAttr('{0}.param'.format(eff),param_step * counter)
+			cmds.setAttr('{0}.param'.format(eff), param_step * param_scale * counter )
 			
 			dec_parent 		= cmds.createNode("decomposeMatrix")
 			dec_compensate 	= cmds.createNode("decomposeMatrix")
@@ -257,6 +257,8 @@ print res
 			cmds.connectAttr('{0}.outputTranslate'.format(	dec_compensate),'{0}.translate'.format(	g_compensate),f = True )	
 			cmds.connectAttr('{0}.outputScale'.format(		dec_compensate),'{0}.scale'.format(		g_compensate),f = True )
 			counter += 1
+		cmds.setAttr('{0}.scaleParam'.format(node_vfk), param_scale)
+		node_vfk = cmds.rename(node_vfk,new_node_name)
 		return node_vfk
 	@staticmethod
 	def add_spring(node_name = ''):

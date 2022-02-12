@@ -13,7 +13,7 @@ class matrTest(object):
 	'''
 	
 	@staticmethod
-	def vfk_test(count_of_chains = 4, fk_count = 1):
+	def vfk_test(count_of_chains = 4, fk_count = 1, param_scale = 1):
 		drivers = []
 		drivens = []
 		effects = []
@@ -40,15 +40,12 @@ class matrTest(object):
 		res['collector']   = uts.matr.create_from_dags( dags = drivers ) # create collector from selected objects
 		res['inputs']      = uts.matr.get_inputs(       node_name = res['collector'])
 		res['look_at']     = uts.matr.add_look(			node_name = res['collector'])
-		res['vfk']         = uts.matr.add_vfk(			node_name = res['look_at'], effectors = effects )
+		res['vfk']         = uts.matr.add_vfk(			node_name = res['look_at'], effectors = effects, param_scale = param_scale, new_node_name = "vfkTest" )
 		res['null']        = uts.matr.add_null(			node_name = res['vfk'])
 		res['locator']     = uts.matr.add_locator(		node_name = res['null'])
 		res['decompose']   = uts.matr.add_decompose(	node_name = res['vfk'], dags_to = drivens )
 		print res
-		counter = 0.0;
-		for eff in effects:
-			cmds.setAttr('{0}.param'.format(eff), counter/(len(effects)-1))
-			counter += 1
+		
 		cmds.setAttr('{0}.useParent'.format(res['decompose']),0)
 		
 		
