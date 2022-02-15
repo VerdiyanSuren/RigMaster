@@ -201,29 +201,56 @@ print res
 			param_step = 1.0/(len(effectors)-1)
 			if (cmds.attributeQuery("param", 	node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "param", attributeType =  "float",  keyable = True)
+				
+			if (cmds.attributeQuery("mode", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "mode", attributeType =  "enum", enumName = "gauss:linear:smooth:psmooth", keyable = True)
+			
+			if (cmds.attributeQuery("twist", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "twist", attributeType =  "float",  keyable = True)	
+				
+			if (cmds.attributeQuery("normalize", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "normalize", attributeType =  "float", minValue = 0, maxValue = 1, keyable = True)
+				
 			if (cmds.attributeQuery("amount", 	node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "amount", attributeType =  "float",  keyable = True)
+				
 			if (cmds.attributeQuery("falloffA", node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "falloffA", attributeType =  "float",  minValue = 0, keyable = True)
+				
 			if (cmds.attributeQuery("constA", node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "constA", attributeType =  "float", minValue = 0, keyable = True)
+				
 			if (cmds.attributeQuery("falloffB", node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "falloffB", attributeType =  "float", minValue=0, keyable = True)
+				
 			if (cmds.attributeQuery("constB", node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "constB", attributeType =  "float", minValue = 0, keyable = True)
 				
-			cmds.connectAttr('{0}.param'.format(eff),		'{0}.effector[{1}].param'.format(	node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.amount'.format(eff),		'{0}.effector[{1}].amount'.format(	node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.falloffA'.format(eff),	'{0}.effector[{1}].falloffA'.format(node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.constA'.format(eff),		'{0}.effector[{1}].constA'.format(	node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.falloffB'.format(eff),	'{0}.effector[{1}].falloffB'.format(node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.constB'.format(eff),		'{0}.effector[{1}].constB'.format(	node_vfk, counter), f = True)
+			if (cmds.attributeQuery("tSpace", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "tSpace", attributeType =  "enum", enumName = "local:picked:world", keyable = True)
+				
+			if (cmds.attributeQuery("rSpace", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "rSpace", attributeType =  "enum", enumName = "local:picked:world", keyable = True)
+				
+			cmds.connectAttr('{0}.param'.format(eff),		'{0}.effector[{1}].param'.format(			node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.mode'.format(eff),		'{0}.effector[{1}].mode'.format(			node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.twist'.format(eff),		'{0}.effector[{1}].twist'.format(			node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.normalize'.format(eff),	'{0}.effector[{1}].normalizeWights'.format(	node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.amount'.format(eff),		'{0}.effector[{1}].amount'.format(			node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.falloffA'.format(eff),	'{0}.effector[{1}].falloffA'.format(		node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.constA'.format(eff),		'{0}.effector[{1}].constA'.format(			node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.falloffB'.format(eff),	'{0}.effector[{1}].falloffB'.format(		node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.constB'.format(eff),		'{0}.effector[{1}].constB'.format(			node_vfk, counter), f = True)
 			
-			cmds.connectAttr('{0}.rotateX'.format(eff),		'{0}.effector[{1}].rotateX'.format(node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.rotateY'.format(eff),		'{0}.effector[{1}].rotateY'.format(node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.rotateZ'.format(eff),		'{0}.effector[{1}].rotateZ'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.translate'.format(eff),	'{0}.effector[{1}].translate'.format(		node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.rotateX'.format(eff),		'{0}.effector[{1}].rotateX'.format(			node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.rotateY'.format(eff),		'{0}.effector[{1}].rotateY'.format(			node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.rotateZ'.format(eff),		'{0}.effector[{1}].rotateZ'.format(			node_vfk, counter), f = True)
 			
-			cmds.connectAttr('{0}.scale'.format(eff),		'{0}.effector[{1}].scale'.format(node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.scale'.format(eff),		'{0}.effector[{1}].scale'.format(			node_vfk, counter), f = True)
+			
+			cmds.connectAttr('{0}.tSpace'.format(eff),		'{0}.effector[{1}].translateMode'.format(	node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.rSpace'.format(eff),		'{0}.effector[{1}].rotateMode'.format(		node_vfk, counter), f = True)
 			
 			g_compensate 	= cmds.group (em = True, name = 'vfkCompensate#')
 			g_parent 		= cmds.group (em = True, name = 'vfkParent#')

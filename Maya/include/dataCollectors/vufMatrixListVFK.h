@@ -11,38 +11,68 @@ namespace vufRM
 	class vufMatrixListVFK : public MPxNode
 	{
 	private:
+		enum
+		{
+			k_gauss,
+			k_linear,
+			k_smooth,
+			k_psmooth
+		};
+		enum
+		{
+			k_local,
+			k_picked,
+			k_world
+		};
 		struct vufEffectors
 		{
-			double m_t;
-			double m_amount;
-			double m_sigma_a;
-			double m_sigma_b;
-			double m_const_a;
-			double m_const_b;
-			double m_rx, m_ry, m_rz;
-			vufMath::vufVector_4d m_scale;
-			unsigned int m_next;
-			unsigned int m_prev;
+			double	m_t				= 0;
+			int		m_mode			= k_gauss;
+			double	m_normalized	= 0.0;
+			double	m_amount		= 1.0;
+			double	m_sigma_a		= 0.5;
+			double	m_sigma_b		= 0.5;
+			double	m_const_a		= 0.0;
+			double	m_const_b		= 0.0;
+			double	m_rx = 0.0, m_ry = 0.0, m_rz = 0.0;
+			double	m_twist = 0.0;
+			int		m_translate_mode = k_local;
+			int		m_rotate_mode	 = k_local;
+			vufMath::vufVector_4d m_scale			= vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_translate		= vufMath::vufVector_4d();
+			vufMath::vufMatrix_4d m_translate_space = vufMath::vufMatrix_4d();
+			vufMath::vufMatrix_4d m_rotate_space	= vufMath::vufMatrix_4d();
+			vufMath::vufVector_4d m_tx_axis = vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_ty_axis = vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_tz_axis = vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_rx_axis = vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_ry_axis = vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_rz_axis = vufMath::vufVector_4d();
+			unsigned int m_next = 0;
+			unsigned int m_prev = 0;
 			double m_w_1 = 0;
 			double m_w_2 = 0;
 		};
 		struct vufInputList
 		{
-			double m_l;
-			double m_t;
-			vufMath::vufVector_4d m_dir_x;
-			vufMath::vufVector_4d m_dir_y;
-			vufMath::vufVector_4d m_dir_z;
+			double m_l; // length to this knot
+			double m_t; // param of this knot
+			vufMath::vufVector_4d m_dir_x = vufMath::vufVector_4d();	//
+			vufMath::vufVector_4d m_dir_y = vufMath::vufVector_4d();	//
+			vufMath::vufVector_4d m_dir_z = vufMath::vufVector_4d();	//
 
-			vufMath::vufVector_4d m_dir_x_n;
-			vufMath::vufVector_4d m_dir_y_n;
-			vufMath::vufVector_4d m_dir_z_n;
+			vufMath::vufVector_4d m_dir_x_n = vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_dir_y_n = vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_dir_z_n = vufMath::vufVector_4d();
 			//vufMath::vufVector_4d		m_dir_to_next;
 			vufMath::vufVector_4d		m_coord_p	= vufMath::vufVector_4d();
 			vufMath::vufQuaternion_d	m_quat_w	= vufMath::vufQuaternion_d();
 			vufMath::vufQuaternion_d	m_quat_r	= vufMath::vufQuaternion_d();
-			vufMath::vufVector_4d m_scale_origin;
-			vufMath::vufVector_4d m_scale_apply;
+			vufMath::vufVector_4d	m_scale_origin	= vufMath::vufVector_4d();
+			vufMath::vufVector_4d	m_scale_apply	= vufMath::vufVector_4d();
+			//vufMath::vufVector_4d	m_frame_pos		= vufMath::vufVector_4d();
+			std::vector<double>		m_effector_weights;
+			std::vector<double>		m_effector_weights_r;
 			//vufMath::vufQuaternion_d	m_quat;
 			//vufMath::vufVector_4d		m_translate;
 		};
@@ -69,9 +99,13 @@ namespace vufRM
 		//attributes
 		static MObject	g_in_data_attr;
 		static MObject	g_out_data_attr;
-		static MObject	g_max_t_attr;
+
+		static MObject	g_scale_t_attr;
+
 		static MObject	g_in_effectors_attr;
+		static MObject	g_mix_mode_attr;
 		static MObject	g_t_attr;
+		static MObject	g_normalize_weights_attr;
 		static MObject	g_amount_attr;
 		static MObject	g_sigma_a_attr;
 		static MObject	g_cnst_a_attr;
@@ -79,6 +113,14 @@ namespace vufRM
 		static MObject	g_cnst_b_attr;
 		static MObject	g_rot_compound_attr, g_rx_attr, g_ry_attr, g_rz_attr;
 		static MObject	g_scale_attr;
+		static MObject	g_translate_attr;
+		static MObject	g_twist_attr;
+		static MObject  g_translate_mode_attr;
+		static MObject  g_rotate_mode_attr;
+		static MObject	g_translate_parent_attr;
+		static MObject	g_rotate_parent_attr;
+
+
 		static MObject  g_out_parent_attr;
 		static MObject	g_out_inverse_attr;
 		static MObject	g_outs_attr;
@@ -93,8 +135,7 @@ namespace vufRM
 		double						m_scale_t			= 1.0;
 
 		inline double	compute_input_matrix_param( const std::vector<vufMath::vufMatrix_4d>& p_in_array);
-		inline void		compute_out_array(	unsigned int p_xfrms_count, unsigned int p_eff_count,
-											const std::vector<vufMath::vufMatrix_4d>& p_in_array, 
+		inline void		compute_out_array(	const std::vector<vufMath::vufMatrix_4d>& p_in_array, 
 											std::vector<vufMath::vufMatrix_4d>& p_out_array);
 		//inline void compute_out_effectors()
 		inline vufIndex find_list_index(double p_t, unsigned int p_total_count) const;
