@@ -24,11 +24,15 @@ namespace vufRM
 			k_picked,
 			k_world
 		};
+		enum
+		{
+			k_hierarchy,
+			k_bounded
+		};
 		struct vufEffectors
 		{
 			double	m_t				= 0;
 			int		m_mode			= k_gauss;
-			double	m_normalized	= 0.0;
 			double	m_amount		= 1.0;
 			double	m_sigma_a		= 0.5;
 			double	m_sigma_b		= 0.5;
@@ -36,18 +40,17 @@ namespace vufRM
 			double	m_const_b		= 0.0;
 			double	m_rx = 0.0, m_ry = 0.0, m_rz = 0.0;
 			double	m_twist = 0.0;
-			int		m_translate_mode = k_local;
-			int		m_rotate_mode	 = k_local;
+			int		m_twist_mode	 = k_hierarchy;
+			int		m_transform_mode = k_local;
+			vufMath::vufMatrix_4d m_picked_space	= vufMath::vufMatrix_4d();
 			vufMath::vufVector_4d m_scale			= vufMath::vufVector_4d();
 			vufMath::vufVector_4d m_translate		= vufMath::vufVector_4d();
-			vufMath::vufMatrix_4d m_translate_space = vufMath::vufMatrix_4d();
-			vufMath::vufMatrix_4d m_rotate_space	= vufMath::vufMatrix_4d();
-			vufMath::vufVector_4d m_tx_axis = vufMath::vufVector_4d();
-			vufMath::vufVector_4d m_ty_axis = vufMath::vufVector_4d();
-			vufMath::vufVector_4d m_tz_axis = vufMath::vufVector_4d();
-			vufMath::vufVector_4d m_rx_axis = vufMath::vufVector_4d();
-			vufMath::vufVector_4d m_ry_axis = vufMath::vufVector_4d();
-			vufMath::vufVector_4d m_rz_axis = vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_tx_picked_axis	= vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_ty_picked_axis	= vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_tz_picked_axis	= vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_rx_picked_axis	= vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_ry_picked_axis	= vufMath::vufVector_4d();
+			vufMath::vufVector_4d m_rz_picked_axis	= vufMath::vufVector_4d();
 			unsigned int m_next = 0;
 			unsigned int m_prev = 0;
 			double m_w_1 = 0;
@@ -105,7 +108,6 @@ namespace vufRM
 		static MObject	g_in_effectors_attr;
 		static MObject	g_mix_mode_attr;
 		static MObject	g_t_attr;
-		static MObject	g_normalize_weights_attr;
 		static MObject	g_amount_attr;
 		static MObject	g_sigma_a_attr;
 		static MObject	g_cnst_a_attr;
@@ -115,10 +117,9 @@ namespace vufRM
 		static MObject	g_scale_attr;
 		static MObject	g_translate_attr;
 		static MObject	g_twist_attr;
-		static MObject  g_translate_mode_attr;
-		static MObject  g_rotate_mode_attr;
-		static MObject	g_translate_parent_attr;
-		static MObject	g_rotate_parent_attr;
+static MObject	g_twist_mode_attr;
+static MObject  g_transform_mode_attr;
+static MObject	g_picked_attr;
 
 
 		static MObject  g_out_parent_attr;

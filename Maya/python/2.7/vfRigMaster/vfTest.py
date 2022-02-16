@@ -45,7 +45,10 @@ class matrTest(object):
 		res['locator']     = uts.matr.add_locator(		node_name = res['null'])
 		res['decompose']   = uts.matr.add_decompose(	node_name = res['vfk'], dags_to = drivens )
 		print res
-		
+		#counter = 0.0;
+		#for eff in effects:
+		#	cmds.setAttr('{0}.param'.format(eff), counter/(len(effects)-1))
+		#	counter += 1
 		cmds.setAttr('{0}.useParent'.format(res['decompose']),0)
 		
 		

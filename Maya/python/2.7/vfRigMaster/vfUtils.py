@@ -206,10 +206,10 @@ print res
 				cmds.addAttr( eff,longName = "mode", attributeType =  "enum", enumName = "gauss:linear:smooth:psmooth", keyable = True)
 			
 			if (cmds.attributeQuery("twist", 	node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = "twist", attributeType =  "float",  keyable = True)	
-				
-			if (cmds.attributeQuery("normalize", 	node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = "normalize", attributeType =  "float", minValue = 0, maxValue = 1, keyable = True)
+				cmds.addAttr( eff,longName = "twist", attributeType =  "doubleAngle",  keyable = True)
+
+			if (cmds.attributeQuery("twistMode", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "twistMode", attributeType =  "enum", enumName = "hierarchy:bounded", keyable = True)
 				
 			if (cmds.attributeQuery("amount", 	node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "amount", attributeType =  "float",  keyable = True)
@@ -226,16 +226,14 @@ print res
 			if (cmds.attributeQuery("constB", node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "constB", attributeType =  "float", minValue = 0, keyable = True)
 				
-			if (cmds.attributeQuery("tSpace", 	node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = "tSpace", attributeType =  "enum", enumName = "local:picked:world", keyable = True)
+			if (cmds.attributeQuery("trSpace", 	node = eff, exists = True) == False):
+				cmds.addAttr( eff,longName = "trSpace", attributeType =  "enum", enumName = "local:picked:world", keyable = True)
 				
-			if (cmds.attributeQuery("rSpace", 	node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = "rSpace", attributeType =  "enum", enumName = "local:picked:world", keyable = True)
 				
 			cmds.connectAttr('{0}.param'.format(eff),		'{0}.effector[{1}].param'.format(			node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.mode'.format(eff),		'{0}.effector[{1}].mode'.format(			node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.twist'.format(eff),		'{0}.effector[{1}].twist'.format(			node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.normalize'.format(eff),	'{0}.effector[{1}].normalizeWights'.format(	node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.twistMode'.format(eff),	'{0}.effector[{1}].twistMode'.format(		node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.amount'.format(eff),		'{0}.effector[{1}].amount'.format(			node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.falloffA'.format(eff),	'{0}.effector[{1}].falloffA'.format(		node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.constA'.format(eff),		'{0}.effector[{1}].constA'.format(			node_vfk, counter), f = True)
@@ -249,8 +247,7 @@ print res
 			
 			cmds.connectAttr('{0}.scale'.format(eff),		'{0}.effector[{1}].scale'.format(			node_vfk, counter), f = True)
 			
-			cmds.connectAttr('{0}.tSpace'.format(eff),		'{0}.effector[{1}].translateMode'.format(	node_vfk, counter), f = True)
-			cmds.connectAttr('{0}.rSpace'.format(eff),		'{0}.effector[{1}].rotateMode'.format(		node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.trSpace'.format(eff),		'{0}.effector[{1}].transformMode'.format(	node_vfk, counter), f = True)
 			
 			g_compensate 	= cmds.group (em = True, name = 'vfkCompensate#')
 			g_parent 		= cmds.group (em = True, name = 'vfkParent#')

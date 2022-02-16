@@ -109,6 +109,9 @@
     <Filter Include="src\expressions\ui">
       <UniqueIdentifier>{4C7A2978-385E-EACD-A1BE-E4208DC1D44F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\locator">
+      <UniqueIdentifier>{9083AE90-FC38-2786-852D-215DF1E11D8A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\ui">
       <UniqueIdentifier>{7A4F661C-66F1-90F2-4FAC-A4463BED1743}</UniqueIdentifier>
     </Filter>
@@ -207,6 +210,9 @@
     <ClInclude Include="include\dataCollectors\vufDoubleListNullNode.h">
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
+    <ClInclude Include="include\dataCollectors\vufMAtrixListElastica.h">
+      <Filter>include\dataCollectors</Filter>
+    </ClInclude>
     <ClInclude Include="include\dataCollectors\vufMatrixListDecomposeNode.h">
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
@@ -217,6 +223,9 @@
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
     <ClInclude Include="include\dataCollectors\vufMatrixListNullNode.h">
+      <Filter>include\dataCollectors</Filter>
+    </ClInclude>
+    <ClInclude Include="include\dataCollectors\vufMatrixListSpring.h">
       <Filter>include\dataCollectors</Filter>
     </ClInclude>
     <ClInclude Include="include\dataCollectors\vufMatrixListVFK.h">
@@ -293,6 +302,9 @@
     </ClInclude>
     <ClInclude Include="include\expressions\ui\vufLuaTextEditor.h">
       <Filter>include\expressions\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\locator\vufControl.h">
+      <Filter>include\locator</Filter>
     </ClInclude>
     <ClInclude Include="include\locator\vufLocator.h">
       <Filter>include\locator</Filter>
@@ -407,6 +419,9 @@
     <ClCompile Include="src\dataCollectors\vufDoubleListNullNode.cpp">
       <Filter>src\dataCollectors</Filter>
     </ClCompile>
+    <ClCompile Include="src\dataCollectors\vufMAtrixListElastica.cpp">
+      <Filter>src\dataCollectors</Filter>
+    </ClCompile>
     <ClCompile Include="src\dataCollectors\vufMatrixListDecomposeNode.cpp">
       <Filter>src\dataCollectors</Filter>
     </ClCompile>
@@ -417,6 +432,9 @@
       <Filter>src\dataCollectors</Filter>
     </ClCompile>
     <ClCompile Include="src\dataCollectors\vufMatrixListNullNode.cpp">
+      <Filter>src\dataCollectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dataCollectors\vufMatrixListSpring.cpp">
       <Filter>src\dataCollectors</Filter>
     </ClCompile>
     <ClCompile Include="src\dataCollectors\vufMatrixListVFK.cpp">
@@ -472,6 +490,9 @@
     </ClCompile>
     <ClCompile Include="src\expressions\ui\vufLuaTextEditor.cpp">
       <Filter>src\expressions\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\locator\vufControl.cpp">
+      <Filter>src\locator</Filter>
     </ClCompile>
     <ClCompile Include="src\register.cpp">
       <Filter>src</Filter>
