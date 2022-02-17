@@ -42,7 +42,8 @@ MStatus	vufMatrixListNode::initialize()
 	l_matrix_attr_fn.setHidden(false);
 	l_matrix_attr_fn.setKeyable(true);
 	l_matrix_attr_fn.setArray(true);
-	l_matrix_attr_fn.setUsesArrayDataBuilder(true);
+	l_matrix_attr_fn.setIndexMatters(false);
+	//l_matrix_attr_fn.setUsesArrayDataBuilder(true);
 	l_matrix_attr_fn.setDisconnectBehavior(MFnAttribute::kDelete);
 
 	g_data_out_attr = l_typed_attr_fn.create(g_out_mlist_long_s, g_out_mlist_s, mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
@@ -67,7 +68,6 @@ MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_data_out_attr)
 	{	
-		//vuf::vufTimer l_timer("Matrix collector node compute: ");
 		MStatus l_status;
 		//------------------------------------------------------------------------------
 		// handle out data
@@ -79,12 +79,14 @@ MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 		//------------------------------------------------------------------------------
 		// Read Transforms and fill matricies
 		//MMatrixArray l_matrix_array;
-		MArrayDataHandle l_ah = p_data.inputValue(g_transform_in_attr);
+		MArrayDataHandle l_ah = p_data.inputArrayValue(g_transform_in_attr);
+		//MArrayDataHandle l_ah = p_data.outputArrayValue(g_transform_in_attr);
 		unsigned int l_matr_arr_length = l_ah.elementCount();
 		if (l_matr_arr_length != l_matrix_array.size())
 		{
 			l_matrix_array.resize(l_matr_arr_length);
 		}
+vuf::vufTimer l_timer("Matrix collector node compute: ");
 		int l_matrix_index = 0;
 		for (;;)
 		{

@@ -4,11 +4,11 @@
 #include <dataCollectors/vufDoubleListNullNode.h>
 #include <data/vufData.h>
 #include <vufMayaGlobalIncludes.h>
+#include <vufLogMaya.h>
 #include <maya/MDoubleArray.h>
 #include <maya/MFnDoubleArrayData.h>
 
 using namespace vufRM;
-
 MObject	vufDoubleListNullNode::g_lock_attr;
 MObject	vufDoubleListNullNode::g_data_in_attr;
 MObject	vufDoubleListNullNode::g_data_out_attr;

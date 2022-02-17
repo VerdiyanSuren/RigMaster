@@ -99,7 +99,10 @@ extern const char* g_in_mbld_long_s,	*g_in_mbld_s;
 // Output MMatrix (array builder)
 extern const char* g_out_mbld_long_s,	*g_out_mbld_s;
 // Input vufMatrixList
-extern const char* g_in_mlist_long_s,	*g_in_mlist_s;
+extern const char* g_in_mlist_long_s,		*g_in_mlist_s;
+extern const char* g_in_mlist2_long_s,		*g_in_mlist2_s;
+extern const char* g_in_mlist_rest_long_s,	*g_in_mlist_rest_s;
+
 // Outt vufMatrixList
 extern const char* g_out_mlist_long_s,	*g_out_mlist_s;
 // Input Curve Data

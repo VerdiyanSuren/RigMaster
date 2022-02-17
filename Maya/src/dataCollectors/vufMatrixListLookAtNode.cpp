@@ -34,7 +34,6 @@ MStatus	vufMatrixListLookAtNode::initialize()
 	CHECK_MSTATUS(l_typed_attr_fn.setKeyable(true));
 	// Output Data
 	g_data_out_attr = l_typed_attr_fn.create(g_out_mlist_long_s, g_out_mlist_s, mpxMatrixListWrapper::g_id, MObject::kNullObj, &l_status);
-	//g_data_out_attr = l_typed_attr_fn.create("TransformList","tl", mpxTransformListWrapper::g_id, MObject::kNullObj, &l_status);// , MFnPluginData().create(vufUniversalData::id, &status));
 	CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	l_typed_attr_fn.setStorable(false);
 	l_typed_attr_fn.setWritable(false);
@@ -69,6 +68,7 @@ MStatus	vufMatrixListLookAtNode::compute(const MPlug& p_plug, MDataBlock& p_data
 			p_data.setClean(g_data_out_attr);
 			return MS::kSuccess;
 		}
+vuf::vufTimer l_timer("Matrix Look At node compute: ");
 		VF_CHECK_AND_CREATE_INTERNAL_DATA(l_out_data, vufObjectArray<vufMatrix_4d>);
 		auto&	l_in_array	= l_in_data->m_internal_data->m_array_v;
 		auto&	l_out_array = l_out_data->m_internal_data->m_array_v;

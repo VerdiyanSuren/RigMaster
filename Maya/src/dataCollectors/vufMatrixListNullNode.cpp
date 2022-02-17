@@ -75,6 +75,7 @@ MStatus	vufMatrixListNullNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	if (p_plug == g_data_out_attr)
 	{
 		MStatus l_status;
+vuf::vufTimer l_timer("Matrix Null node compute: ");
 		bool	l_locked = p_data.inputValue(g_lock_attr).asBool();
 		// if unlocked just pass
 		if (l_locked == false) 

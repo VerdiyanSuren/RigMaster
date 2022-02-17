@@ -276,8 +276,6 @@ MStatus	vufMatrixListVFK::compute(const MPlug& p_plug, MDataBlock& p_data)
 {
 	if (p_plug == g_out_data_attr || p_plug == g_outs_attr)
 	{
-		vuf::vufTimer l_timer("Matrix VFK node compute: ");
-
 		MStatus l_status;
 		std::shared_ptr<vufMatrixListData>	l_out_data;
 		std::shared_ptr<vufMatrixListData>	l_in_data;
@@ -311,7 +309,7 @@ MStatus	vufMatrixListVFK::compute(const MPlug& p_plug, MDataBlock& p_data)
 		m_scale_t = p_data.inputValue(g_scale_t_attr).asDouble();
 		//--------------------------------------------------------------------------
 		// read effectors
-		MArrayDataHandle l_vh	= p_data.inputValue(g_in_effectors_attr);
+		MArrayDataHandle l_vh	= p_data.inputArrayValue(g_in_effectors_attr);
 		uint l_eff_count		= l_vh.elementCount();
 		if (m_eff_arr.size() != l_eff_count || m_in_t_arr.size() != l_xfrms_count)
 		{
@@ -357,12 +355,15 @@ MStatus	vufMatrixListVFK::compute(const MPlug& p_plug, MDataBlock& p_data)
 			//std::cout << "m_twist " << m_eff_arr[i].m_twist << std::endl;
 			if (!l_vh.next()) break;
 		}
+		
+vuf::vufTimer l_timer("Matrix VFK node compute: ");
 		//--------------------------------------------------------------------------
 		// compute input matrix list params
 		double l_length = compute_input_matrix_param(l_in_array);
 		//--------------------------------------------------------------------------
 		// do main job. modify output array
 		compute_out_array( l_in_array, l_out_array);
+		
 		//--------------------------------------------------------------------------
 		// set out for effector root
 		//compute_out_helpers(l_out_array);
