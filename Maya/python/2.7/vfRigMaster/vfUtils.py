@@ -226,12 +226,10 @@ print res
 			if (cmds.attributeQuery("constB", node = eff, exists = True) == False):
 				cmds.addAttr( eff,longName = "constB", attributeType =  "float", minValue = 0, keyable = True)
 				
-			if (cmds.attributeQuery("trSpace", 	node = eff, exists = True) == False):
-				cmds.addAttr( eff,longName = "trSpace", attributeType =  "enum", enumName = "local:picked:world", keyable = True)
-				
 				
 			cmds.connectAttr('{0}.param'.format(eff),		'{0}.effector[{1}].param'.format(			node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.mode'.format(eff),		'{0}.effector[{1}].mode'.format(			node_vfk, counter), f = True)
+			cmds.connectAttr('{0}.rotateOrder'.format(eff),	'{0}.effector[{1}].rotateOrder'.format(		node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.twist'.format(eff),		'{0}.effector[{1}].twist'.format(			node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.twistMode'.format(eff),	'{0}.effector[{1}].twistMode'.format(		node_vfk, counter), f = True)
 			cmds.connectAttr('{0}.amount'.format(eff),		'{0}.effector[{1}].amount'.format(			node_vfk, counter), f = True)
@@ -246,8 +244,6 @@ print res
 			cmds.connectAttr('{0}.rotateZ'.format(eff),		'{0}.effector[{1}].rotateZ'.format(			node_vfk, counter), f = True)
 			
 			cmds.connectAttr('{0}.scale'.format(eff),		'{0}.effector[{1}].scale'.format(			node_vfk, counter), f = True)
-			
-			cmds.connectAttr('{0}.trSpace'.format(eff),		'{0}.effector[{1}].transformMode'.format(	node_vfk, counter), f = True)
 			
 			g_compensate 	= cmds.group (em = True, name = 'vfkCompensate#')
 			g_parent 		= cmds.group (em = True, name = 'vfkParent#')

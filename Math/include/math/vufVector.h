@@ -696,9 +696,7 @@ namespace vufMath
 		T y = .0;
 		T z = .0;
 		T w = 1.;
-		static const vufVector4 x_unit_dir = vufVector4(1.0);
-		static const vufVector4 y_unit_dir = vufVector4(0.0,1.0);
-		static const vufVector4 z_unit_dir = vufVector4(0.0,0.0,1.0);
+
 		vufVector4(const vufVector4& p_v) :x(p_v.x), y(p_v.y), z(p_v.z), w(p_v.w) {}
 		vufVector4(T a = .0, T b = .0, T c = .0, T d = 1.) :x(a), y(b), z(c), w(d) {}
 		static vufVector4 random(bool p_all_component = true)

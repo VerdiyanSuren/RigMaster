@@ -133,7 +133,6 @@ namespace vufRM
 
 		static const MString	g_type_name;
 	private:
-	private:
 		uint64_t					m_gen_id		= 0;
 		std::vector<vufEffectors>	m_eff_arr		= std::vector<vufEffectors>();
 		std::vector<vufInputList>	m_in_t_arr		= std::vector<vufInputList>();
@@ -145,28 +144,70 @@ namespace vufRM
 		inline void		compute_out_array(	const std::vector<vufMath::vufMatrix_4d>& p_in_array, 
 											std::vector<vufMath::vufMatrix_4d>& p_out_array);
 		inline void compute_out_helpers(std::vector<vufMath::vufMatrix_4d>& p_out_array);
-		inline vufIndex find_list_index(double p_t, unsigned int p_total_count) const;
 		
-		static vufMath::vufQuaternion_d xyz_order(double x, double y, double z, const vufMath::vufVector_4d& axis); 
-		static vufMath::vufQuaternion_d xyz_inverse_order(double x, double y, double z, const vufMath::vufVector_4d& axis);
+		inline vufIndex find_list_index(double p_t, unsigned int p_total_count) const;
+		static vufMath::vufQuaternion_d xyz_order(	double x, double y, double z, 
+													const vufMath::vufVector_4d& x_axis,
+													const vufMath::vufVector_4d& y_axis,
+													const vufMath::vufVector_4d& z_axis);
+		static vufMath::vufQuaternion_d xyz_inverse_order(	double x, double y, double z,
+															const vufMath::vufVector_4d& x_axis,
+															const vufMath::vufVector_4d& y_axis,
+															const vufMath::vufVector_4d& z_axis);
 
-		static vufMath::vufQuaternion_d yzx_order(double x, double y, double z, const vufMath::vufVector_4d& axis);
-		static vufMath::vufQuaternion_d yzx_inverse_order(double x, double y, double z, const vufMath::vufVector_4d& axis);
+		static vufMath::vufQuaternion_d yzx_order(	double x, double y, double z,
+													const vufMath::vufVector_4d& x_axis,
+													const vufMath::vufVector_4d& y_axis,
+													const vufMath::vufVector_4d& z_axis);
+		static vufMath::vufQuaternion_d yzx_inverse_order(	double x, double y, double z,
+															const vufMath::vufVector_4d& x_axis,
+															const vufMath::vufVector_4d& y_axis,
+															const vufMath::vufVector_4d& z_axis);
 
-		static vufMath::vufQuaternion_d zxy_order(double x, double y, double z, const vufMath::vufVector_4d& axis);
-		static vufMath::vufQuaternion_d zxy_inverse_order(double x, double y, double z);
+		static vufMath::vufQuaternion_d zxy_order(	double x, double y, double z,
+													const vufMath::vufVector_4d& x_axis,
+													const vufMath::vufVector_4d& y_axis,
+													const vufMath::vufVector_4d& z_axis);
+		static vufMath::vufQuaternion_d zxy_inverse_order(	double x, double y, double z,
+															const vufMath::vufVector_4d& x_axis,
+															const vufMath::vufVector_4d& y_axis,
+															const vufMath::vufVector_4d& z_axis);
 
-		static vufMath::vufQuaternion_d xzy_order(double x, double y, double z);
-		static vufMath::vufQuaternion_d xzy_inverse_order(double x, double y, double z);
+		static vufMath::vufQuaternion_d xzy_order(	double x, double y, double z,
+													const vufMath::vufVector_4d& x_axis,
+													const vufMath::vufVector_4d& y_axis,
+													const vufMath::vufVector_4d& z_axis);
+		static vufMath::vufQuaternion_d xzy_inverse_order(	double x, double y, double z,
+															const vufMath::vufVector_4d& x_axis,
+															const vufMath::vufVector_4d& y_axis,
+															const vufMath::vufVector_4d& z_axis);
 
-		static vufMath::vufQuaternion_d yxz_order(double x, double y, double z);
-		static vufMath::vufQuaternion_d yxz_inverse_order(double x, double y, double z);
+		static vufMath::vufQuaternion_d yxz_order(	double x, double y, double z,
+													const vufMath::vufVector_4d& x_axis,
+													const vufMath::vufVector_4d& y_axis,
+													const vufMath::vufVector_4d& z_axis);
+		static vufMath::vufQuaternion_d yxz_inverse_order(double x, double y, double z,
+															const vufMath::vufVector_4d& x_axis,
+															const vufMath::vufVector_4d& y_axis,
+															const vufMath::vufVector_4d& z_axis);
 
-		static vufMath::vufQuaternion_d zyx_order(double x, double y, double z);
-		static vufMath::vufQuaternion_d zyx_inverse_order(double x, double y, double z);
+		static vufMath::vufQuaternion_d zyx_order(	double x, double y, double z,
+													const vufMath::vufVector_4d& x_axis,
+													const vufMath::vufVector_4d& y_axis,
+													const vufMath::vufVector_4d& z_axis);
+		static vufMath::vufQuaternion_d zyx_inverse_order(	double x, double y, double z,
+															const vufMath::vufVector_4d& x_axis,
+															const vufMath::vufVector_4d& y_axis,
+															const vufMath::vufVector_4d& z_axis);
 
-		static std::function<vufMath::vufQuaternion_d(double, double, double)> m_order_array[];
-		static std::function<vufMath::vufQuaternion_d(double, double, double)> m_order_inverse_array[];
+		static std::function<vufMath::vufQuaternion_d(	double, double, double,
+														const vufMath::vufVector_4d&,
+														const vufMath::vufVector_4d&,
+														const vufMath::vufVector_4d&)> g_order_array[];
+		static std::function<vufMath::vufQuaternion_d(	double, double, double,
+														const vufMath::vufVector_4d&,
+														const vufMath::vufVector_4d&,
+														const vufMath::vufVector_4d&)> g_order_inverse_array[];
 	};
 }
 #endif // !VF_RM_MTRX_LST_VFK_H
