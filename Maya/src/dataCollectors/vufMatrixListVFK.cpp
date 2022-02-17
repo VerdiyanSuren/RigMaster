@@ -27,8 +27,6 @@ MObject	vufMatrixListVFK::g_out_data_attr;
 
 MObject	vufMatrixListVFK::g_scale_t_attr;
 MObject	vufMatrixListVFK::g_mix_mode_attr;
-MObject vufMatrixListVFK::g_transform_mode_attr;
-MObject vufMatrixListVFK::g_picked_attr;
 MObject	vufMatrixListVFK::g_twist_mode_attr;
 
 MObject	vufMatrixListVFK::g_in_effectors_attr;
@@ -45,12 +43,30 @@ MObject vufMatrixListVFK::g_rx_attr;
 MObject vufMatrixListVFK::g_ry_attr;
 MObject vufMatrixListVFK::g_rz_attr;
 MObject vufMatrixListVFK::g_scale_attr;
+MObject	vufMatrixListVFK::g_rotation_order;
 
 MObject vufMatrixListVFK::g_out_parent_attr;
 MObject	vufMatrixListVFK::g_out_inverse_attr;
 MObject	vufMatrixListVFK::g_outs_attr;
 
-
+std::function<vufMath::vufQuaternion_d(double, double, double)> vufMatrixListVFK::m_order_array[] =
+{
+	xyz_order,
+	yzx_order,
+	zxy_order,
+	xzy_order,
+	yxz_order,
+	zyx_order
+};
+std::function<vufMath::vufQuaternion_d(double, double, double)> vufMatrixListVFK::m_order_inverse_array[] =
+{
+	xyz_inverse_order,
+	yzx_inverse_order,
+	zxy_inverse_order,
+	xzy_inverse_order,
+	yxz_inverse_order,
+	zyx_inverse_order
+};
 vufMatrixListVFK::vufMatrixListVFK() 
 {
 	m_gen_id = ++g_unique_id;
@@ -125,24 +141,26 @@ MStatus	vufMatrixListVFK::initialize()
 		CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_rx_attr));
 		CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_ry_attr));
 		CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_rz_attr));
-		g_twist_attr = l_unit_attr_fn.create("twist", "tw", MFnUnitAttribute::kAngle, 0.0, &l_status);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
-		// translate mode attribute
-		g_transform_mode_attr = l_enum_attr_fn.create("transformMode", "tmd", 3, &l_status);
+		// rotation order
+		g_rotation_order = l_enum_attr_fn.create("mode", "md", 0, &l_status);
 		CHECK_MSTATUS_AND_RETURN_IT(l_status);
-		CHECK_MSTATUS(l_enum_attr_fn.addField("local", k_local));
-		CHECK_MSTATUS(l_enum_attr_fn.addField("picked", k_picked));
-		CHECK_MSTATUS(l_enum_attr_fn.addField("world", k_world));
+		CHECK_MSTATUS(l_enum_attr_fn.addField("xyz", k_xyz));
+		CHECK_MSTATUS(l_enum_attr_fn.addField("yzx", k_yzx));
+		CHECK_MSTATUS(l_enum_attr_fn.addField("zxy", k_zxy));
+		CHECK_MSTATUS(l_enum_attr_fn.addField("xzy", k_xzy));
+		CHECK_MSTATUS(l_enum_attr_fn.addField("yxz", k_yxz));
+		CHECK_MSTATUS(l_enum_attr_fn.addField("zyx", k_zyx));
 		CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
 		CHECK_MSTATUS(l_enum_attr_fn.setDefault(0));
-		// rotate mode attribute
+		// twist
+		g_twist_attr = l_unit_attr_fn.create("twist", "tw", MFnUnitAttribute::kAngle, 0.0, &l_status);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
+		// twist mode attribute
 		g_twist_mode_attr = l_enum_attr_fn.create("twistMode", "twd", 3, &l_status);
 		CHECK_MSTATUS_AND_RETURN_IT(l_status);
 		CHECK_MSTATUS(l_enum_attr_fn.addField("forward",	k_hierarchy));
 		CHECK_MSTATUS(l_enum_attr_fn.addField("bounded",	k_bounded));
 		CHECK_MSTATUS(l_enum_attr_fn.setStorable(true));
 		CHECK_MSTATUS(l_enum_attr_fn.setDefault(0));
-		// translate parent attribute for picked mode
-		g_picked_attr = l_matrix_attr_fn.create("translatePicked", "tXForm", MFnMatrixAttribute::kDouble, &l_status); CHECK_MSTATUS_AND_RETURN_IT(l_status);
 	}
 	// input effector compound attribute
 	g_in_effectors_attr = l_compound_attr_fn.create("effector", "ef", &l_status);	CHECK_MSTATUS_AND_RETURN_IT(l_status);
@@ -153,13 +171,12 @@ MStatus	vufMatrixListVFK::initialize()
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_cnst_a_attr));
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_sigma_b_attr));
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_cnst_b_attr));
-	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_twist_mode_attr));
-	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_transform_mode_attr));
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_translate_attr));
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_rot_compound_attr));
-	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_twist_attr));	
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_scale_attr));
-	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_picked_attr));
+	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_twist_mode_attr));
+	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_rotation_order));
+	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.addChild(g_twist_attr));	
 
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setStorable(true));
 	CHECK_MSTATUS_AND_RETURN_IT(l_compound_attr_fn.setWritable(true));
@@ -205,8 +222,6 @@ MStatus	vufMatrixListVFK::initialize()
 	l_input_attributes.push_back(&g_in_effectors_attr);
 	l_input_attributes.push_back(&g_mix_mode_attr);	
 	l_input_attributes.push_back(&g_twist_mode_attr);
-	l_input_attributes.push_back(&g_transform_mode_attr);
-	l_input_attributes.push_back(&g_picked_attr);
 	l_input_attributes.push_back(&g_t_attr);
 	l_input_attributes.push_back(&g_amount_attr);
 	l_input_attributes.push_back(&g_sigma_a_attr);
@@ -220,6 +235,7 @@ MStatus	vufMatrixListVFK::initialize()
 	l_input_attributes.push_back(&g_ry_attr);
 	l_input_attributes.push_back(&g_rz_attr);
 	l_input_attributes.push_back(&g_scale_attr);
+	l_input_attributes.push_back(&g_rotation_order);
 
 	l_output_attributes.push_back(&g_out_data_attr);
 	l_output_attributes.push_back(&g_out_parent_attr);
@@ -305,8 +321,10 @@ MStatus	vufMatrixListVFK::compute(const MPlug& p_plug, MDataBlock& p_data)
 		for (uint i = 0; i < l_eff_count; ++i)
 		{
 			MDataHandle l_input_data = l_vh.inputValue();
-			m_eff_arr[i].m_t			= l_input_data.child(g_t_attr).asDouble();
-			m_eff_arr[i].m_mode			= (int)l_input_data.child(g_mix_mode_attr).asShort();
+			m_eff_arr[i].m_t				= l_input_data.child(g_t_attr).asDouble();
+			m_eff_arr[i].m_mode				= (int)l_input_data.child(g_mix_mode_attr).asShort();
+			m_eff_arr[i].m_rotation_order	= (int)l_input_data.child(g_rotation_order).asShort();
+
 			m_eff_arr[i].m_twist_mode	= (int)l_input_data.child(g_twist_mode_attr).asShort();
 			m_eff_arr[i].m_amount		= l_input_data.child(g_amount_attr).asDouble();
 			m_eff_arr[i].m_sigma_a		= l_input_data.child(g_sigma_a_attr).asDouble();
@@ -316,12 +334,10 @@ MStatus	vufMatrixListVFK::compute(const MPlug& p_plug, MDataBlock& p_data)
 			//m_eff_arr[i].m_sigma_a *= m_eff_arr[i].m_sigma_a;
 			//m_eff_arr[i].m_sigma_b *= m_eff_arr[i].m_sigma_b;
 
-			m_eff_arr[i].m_transform_mode = (int)l_input_data.child(g_transform_mode_attr).asShort();
 			auto l_translate				= l_input_data.child(g_translate_attr).asDouble3();
 			m_eff_arr[i].m_translate.x		= l_translate[0];
 			m_eff_arr[i].m_translate.y		= l_translate[1];
 			m_eff_arr[i].m_translate.z		= l_translate[2];
-			m_eff_arr[i].m_picked_space = vufMatrix_4d::cast_from<MMatrix>(l_input_data.child(g_picked_attr).asMatrix());
 			
 			auto l_scale					= l_input_data.child(g_scale_attr).asDouble3();
 			m_eff_arr[i].m_scale.x = l_scale[0];
@@ -343,80 +359,8 @@ MStatus	vufMatrixListVFK::compute(const MPlug& p_plug, MDataBlock& p_data)
 		compute_out_array( l_in_array, l_out_array);
 		//--------------------------------------------------------------------------
 		// set out for effector root
-		if (m_outs_arr.size() != l_eff_count) m_outs_arr.resize(l_eff_count);
-		vufVector_4d l_dir_start	= l_out_array[1].get_translation_4()		- l_out_array[0].get_translation_4();
-		vufVector_4d l_dir_end		= l_out_array.back().get_translation_4()	- l_out_array[l_xfrms_count -2].get_translation_4();
-		l_dir_start.normalize_in_place();
-		l_dir_end.normalize_in_place();		
-		vufVector_4d l_x(1.0);
-		for (uint i = 0; i < l_eff_count; ++i)
-		{
-			m_outs_arr[i].m_parent.set_to_identity_in_place();
-			m_outs_arr[i].m_inverse.set_to_identity_in_place();
-			if (m_eff_arr[i].m_t <= 0.0)
-			{
-				// translate
-				vufVector_4d l_offset = l_dir_start * (m_eff_arr[i].m_t * l_length/m_scale_t) + l_out_array.front().get_translation_4();
-				m_outs_arr[i].m_parent.set_translation(l_offset);
-				// rotate 
-				vufQuaternion_d l_quat		= m_in_t_arr.front().m_quat_w;
-				vufVector_4d	l_x2		= l_quat.rotate_vector_by_quaternion(l_x);
-				vufQuaternion_d l_quat_incr = vufQuaternion_d::rotate_arc(l_x2, l_dir_start);
-				m_outs_arr[i].m_parent.set_quaternion(l_quat * l_quat_incr);
-				vufQuaternion_d l_quat_x_l(m_eff_arr[i].m_rx, m_outs_arr.front().m_parent.get_axis_x_4());
-				vufQuaternion_d l_quat_y_l(m_eff_arr[i].m_ry, m_outs_arr.front().m_parent.get_axis_y_4());
-				vufQuaternion_d l_quat_z_l(m_eff_arr[i].m_rz, m_outs_arr.front().m_parent.get_axis_z_4());
-				vufQuaternion_d l_quat_effectors = l_quat_z_l * l_quat_y_l * l_quat_x_l;
-				m_outs_arr[i].m_inverse.set_quaternion(l_quat_effectors);
-				continue;
-			}
-			if (m_eff_arr[i].m_t >= m_scale_t)
-			{
-				//translate
-				vufVector_4d l_offset = l_dir_end * ((m_eff_arr[i].m_t - m_scale_t) * l_length/m_scale_t) + l_out_array.back().get_translation_4();
-				m_outs_arr[i].m_parent.set_translation(l_offset);
-				// rotate 
-				vufQuaternion_d l_quat = m_in_t_arr.back().m_quat_w;
-				vufVector_4d	l_x2 = l_quat.rotate_vector_by_quaternion(l_x);
-				vufQuaternion_d l_quat_incr = vufQuaternion_d::rotate_arc(l_x2, l_dir_end);
-				m_outs_arr[i].m_parent.set_quaternion(l_quat * l_quat_incr);
-				vufQuaternion_d l_quat_x_l(m_eff_arr[i].m_rx, m_outs_arr.back().m_parent.get_axis_x_4());
-				vufQuaternion_d l_quat_y_l(m_eff_arr[i].m_ry, m_outs_arr.back().m_parent.get_axis_y_4());
-				vufQuaternion_d l_quat_z_l(m_eff_arr[i].m_rz, m_outs_arr.back().m_parent.get_axis_z_4());
-				vufQuaternion_d l_quat_effectors = l_quat_z_l * l_quat_y_l * l_quat_x_l;
-				m_outs_arr[i].m_inverse.set_quaternion(l_quat_effectors);
-				continue;
-			}
-			unsigned int l_prev_ndx = m_eff_arr[i].m_prev;
-			unsigned int l_next_ndx = m_eff_arr[i].m_next;
-			//parent translation
-			vufVector_4d l_pos_prev = l_out_array[l_prev_ndx].get_translation_4();
-			vufVector_4d l_pos_next = l_out_array[l_next_ndx].get_translation_4();
-			vufVector_4d l_offset = l_pos_prev * m_eff_arr[i].m_w_1 +
-									l_pos_next * m_eff_arr[i].m_w_2;
-			m_outs_arr[i].m_parent.set_translation(l_offset);
-			// parent rotation
-			vufQuaternion_d l_quat_1 = m_in_t_arr[l_prev_ndx].m_quat_w;
-			vufQuaternion_d l_quat_2 = m_in_t_arr[l_next_ndx].m_quat_w;
-			if (l_quat_1.dot(l_quat_2) < 0)
-			{
-				l_quat_2 = -l_quat_2;
-			}
-			vufQuaternion_d l_quat = l_quat_1 * m_eff_arr[i].m_w_1 +
-									 l_quat_2 * m_eff_arr[i].m_w_2;
-			l_quat.normalize_in_place();
-			vufVector_4d	l_dir = l_pos_next - l_pos_prev;
-			vufVector_4d	l_x2 = l_quat.rotate_vector_by_quaternion(l_x);
-			vufQuaternion_d l_quat_incr = vufQuaternion_d::rotate_arc(l_x2, l_dir);
-			m_outs_arr[i].m_parent.set_quaternion(l_quat * l_quat_incr);
-
-			vufQuaternion_d l_quat_x_l(m_eff_arr[i].m_rx, m_outs_arr.front().m_parent.get_axis_x_4());
-			vufQuaternion_d l_quat_y_l(m_eff_arr[i].m_ry, m_outs_arr.front().m_parent.get_axis_y_4());
-			vufQuaternion_d l_quat_z_l(m_eff_arr[i].m_rz, m_outs_arr.front().m_parent.get_axis_z_4());
-			vufQuaternion_d l_quat_effectors = l_quat_z_l * l_quat_y_l * l_quat_x_l;
-			m_outs_arr[i].m_inverse.set_quaternion(l_quat_effectors);
-		}
-
+		//compute_out_helpers(l_out_array);
+		//--------------------------------------------------------------------------
 		// set out maya attributes
 		MArrayDataHandle	l_out_handle_array = p_data.outputValue(g_outs_attr);
 		MArrayDataBuilder	l_out_array_bldr = l_out_handle_array.builder(&l_status);
@@ -493,7 +437,7 @@ double	vufMatrixListVFK::compute_input_matrix_param(const std::vector<vufMath::v
 		// compuite param for each knot
 		m_in_t_arr[i].m_t = m_scale_t * (m_in_t_arr[i].m_l / l_length);
 	}
-	// for each effector compute prev next indices
+	// for each effector compute prev, next indices
 	for (uint i = 0; i < l_eff_count; ++i)
 	{
 		double l_t = m_eff_arr[i].m_t;
@@ -528,17 +472,7 @@ double	vufMatrixListVFK::compute_input_matrix_param(const std::vector<vufMath::v
 		m_eff_arr[i].m_next = l_prev_index + 1;
 		
 	}
-	for (uint i = 0; i < l_eff_count; ++i)
-	{
-		// initialize dirs for translate and rotate
-		m_eff_arr[i].m_tx_picked_axis = m_eff_arr[i].m_picked_space.get_axis_x_4();
-		m_eff_arr[i].m_ty_picked_axis = m_eff_arr[i].m_picked_space.get_axis_y_4();
-		m_eff_arr[i].m_tz_picked_axis = m_eff_arr[i].m_picked_space.get_axis_z_4();
-
-		m_eff_arr[i].m_rx_picked_axis = m_eff_arr[i].m_picked_space.get_axis_x_4();
-		m_eff_arr[i].m_ry_picked_axis = m_eff_arr[i].m_picked_space.get_axis_y_4();
-		m_eff_arr[i].m_rz_picked_axis = m_eff_arr[i].m_picked_space.get_axis_z_4();
-	}
+	m_length = l_length;
 	return l_length;
 }
 void	vufMatrixListVFK::compute_out_array( const std::vector<vufMath::vufMatrix_4d>& p_in_array,
@@ -686,7 +620,7 @@ void	vufMatrixListVFK::compute_out_array( const std::vector<vufMath::vufMatrix_4
 	vufVector_4d l_world_y	= vufVector_4d(0.0, 1.0, 0.0);
 	vufVector_4d l_world_z	= vufVector_4d(0.0, 0.0, 1.0);
 	
-	// compute values for rotations
+	// compute values for rotations	
 	for (unsigned int i = 0; i < l_xfrms_count; ++i)
 	{
 		vufVector_4d l_scale		= vufVector_4d();
@@ -697,32 +631,12 @@ void	vufMatrixListVFK::compute_out_array( const std::vector<vufMath::vufMatrix_4
 		vufQuaternion_d l_quat_l = vufQuaternion_d();
 		for (unsigned int j = 0; j < l_eff_count; ++j)
 		{
-			//std::cout << " worldÆ " << m_eff_arr[j].m_rotate_mode << std::endl;
-			if (m_eff_arr[j].m_transform_mode == k_local)
-			{
-				auto& l_local_matr = i == 0 ? m_eff_arr[j].m_picked_space : p_out_array[i - 1];
-				vufQuaternion_d l_quat_x_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_rx, l_local_matr.get_axis_x_4());
-				vufQuaternion_d l_quat_y_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_ry, l_local_matr.get_axis_y_4());
-				vufQuaternion_d l_quat_z_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_rz, l_local_matr.get_axis_z_4());
-				vufQuaternion_d l_quat_effectors = l_quat_z_l * l_quat_y_l *l_quat_x_l;
-				l_quat_w *= l_quat_effectors.get_conjugated();
-			}
-			if (m_eff_arr[j].m_transform_mode == k_picked)
-			{
-				vufQuaternion_d l_quat_x_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_rx, m_eff_arr[j].m_rx_picked_axis);
-				vufQuaternion_d l_quat_y_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_ry, m_eff_arr[j].m_ry_picked_axis);
-				vufQuaternion_d l_quat_z_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_rz, m_eff_arr[j].m_rz_picked_axis);
-				vufQuaternion_d l_quat_effectors = l_quat_z_l * l_quat_y_l *l_quat_x_l;
-				l_quat_w *= l_quat_effectors.get_conjugated();
-			}
-			if (m_eff_arr[j].m_transform_mode == k_world)
-			{
-				vufQuaternion_d l_quat_x_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_rx,	l_world_x);
-				vufQuaternion_d l_quat_y_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_ry,	l_world_y);
-				vufQuaternion_d l_quat_z_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_rz,	l_world_z);
-				vufQuaternion_d l_quat_effectors = l_quat_z_l * l_quat_y_l *l_quat_x_l;
-				l_quat_w *= l_quat_effectors.get_conjugated();
-			}
+			auto& l_local_matr = i == 0 ? p_in_array[i] : p_out_array[i - 1];
+			vufQuaternion_d l_quat_x_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_rx, l_local_matr.get_axis_x_4());
+			vufQuaternion_d l_quat_y_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_ry, l_local_matr.get_axis_y_4());
+			vufQuaternion_d l_quat_z_l(m_in_t_arr[i].m_effector_weights_r[j] * m_eff_arr[j].m_rz, l_local_matr.get_axis_z_4());
+			vufQuaternion_d l_quat_effectors = l_quat_z_l * l_quat_y_l *l_quat_x_l;
+			l_quat_w *= l_quat_effectors.get_conjugated();
 			l_scale += m_in_t_arr[i].m_effector_weights[j] * (m_eff_arr[j].m_scale - l_unit);
 		}
 		// apply computed values
@@ -736,9 +650,8 @@ void	vufMatrixListVFK::compute_out_array( const std::vector<vufMath::vufMatrix_4
 	 	}
 		else
 		{
-			//  rotate
-			//l_quat_w.normalize_in_place();
-			vufQuaternion_d l_quat_new = m_in_t_arr[i - 1].m_quat_w * m_in_t_arr[i].m_quat_r;
+		//  rotate
+			vufQuaternion_d l_quat_new = m_in_t_arr[i].m_quat_r * m_in_t_arr[i - 1].m_quat_w;
 			l_quat_new *= l_quat_w;
 			m_in_t_arr[i].m_quat_w = l_quat_new;
 			p_out_array[i].set_quaternion(l_quat_new);
@@ -747,45 +660,25 @@ void	vufMatrixListVFK::compute_out_array( const std::vector<vufMath::vufMatrix_4
 									m_in_t_arr[i].m_coord_p.z * p_out_array[i - 1].get_axis_z_4().get_normalized();
 			l_pos += p_out_array[i - 1].get_translation_4();
 			p_out_array[i].set_translation(l_pos);
-		}		
-		/*
-		for (unsigned int j = i + 1; j < l_xfrms_count; ++j)
-		{			
-			vufQuaternion_d l_quat_new = m_in_t_arr[j - 1].m_quat_w * m_in_t_arr[i].m_quat_r;
-			m_in_t_arr[j].m_quat_w = l_quat_new;
-			p_out_array[j].set_quaternion(l_quat_new);
 		}
-		*/	
 		// scale
 		p_out_array[i].set_scale_4(p_in_array[i].get_scale_4() + l_scale);
 	}
-	// set additional transforms	
+	// compute out groups
+	compute_out_helpers(p_out_array);
+	// set additional transforms
+	//vufVector_4d l_x = p_in_array[0].get_axis_x_4().get_normalized();
+	//vufVector_4d l_y = p_in_array[0].get_axis_y_4().get_normalized();
+	//vufVector_4d l_z = p_in_array[0].get_axis_z_4().get_normalized();
 	for (uint i = 0; i < l_xfrms_count; ++i)
 	{
 		vufVector_4d l_translate = vufVector_4d();
 		for (uint j = 0; j < l_eff_count; ++j)
 		{
-			if (m_eff_arr[j].m_transform_mode == k_local)
-			{
-				vufVector_4d l_translate_x = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.x) * m_in_t_arr[i].m_dir_x_n;
-				vufVector_4d l_translate_y = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.y) * m_in_t_arr[i].m_dir_y_n;
-				vufVector_4d l_translate_z = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.z) * m_in_t_arr[i].m_dir_z_n;
+			vufVector_4d l_translate_x = m_in_t_arr[i].m_effector_weights[j] * m_outs_arr[j].m_parent.get_axis_x_4() * m_eff_arr[j].m_translate.x;
+			vufVector_4d l_translate_y = m_in_t_arr[i].m_effector_weights[j] * m_outs_arr[j].m_parent.get_axis_y_4() * m_eff_arr[j].m_translate.y;
+			vufVector_4d l_translate_z = m_in_t_arr[i].m_effector_weights[j] * m_outs_arr[j].m_parent.get_axis_z_4() * m_eff_arr[j].m_translate.z;
 				l_translate += l_translate_x + l_translate_y + l_translate_z;
-			}
-			if (m_eff_arr[j].m_transform_mode == k_picked)
-			{
-				vufVector_4d l_translate_x = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.x) * m_eff_arr[j].m_tx_picked_axis;
-				vufVector_4d l_translate_y = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.y) * m_eff_arr[j].m_ty_picked_axis;
-				vufVector_4d l_translate_z = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.z) * m_eff_arr[j].m_tz_picked_axis;
-				l_translate += l_translate_x + l_translate_y + l_translate_z;
-			}
-			if (m_eff_arr[j].m_transform_mode == k_world)
-			{
-				vufVector_4d l_translate_x = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.x) * l_world_x;
-				vufVector_4d l_translate_y = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.y) * l_world_y;
-				vufVector_4d l_translate_z = (m_in_t_arr[i].m_effector_weights[j] * m_eff_arr[j].m_translate.z) * l_world_z;
-				l_translate += l_translate_x + l_translate_y + l_translate_z;
-			}
 		}
 		p_out_array[i].set_translation(p_out_array[i].get_translation_4() + l_translate);
 	}
@@ -819,6 +712,88 @@ void	vufMatrixListVFK::compute_out_array( const std::vector<vufMath::vufMatrix_4
 		//std::cout << l_twist << std::endl;
 	}
 }
+void	vufMatrixListVFK::compute_out_helpers(std::vector<vufMath::vufMatrix_4d>& p_out_array)
+{
+	unsigned int l_eff_count	= (unsigned int)m_eff_arr.size();
+	unsigned int l_xfrms_count	= (unsigned int)p_out_array.size();
+	if (m_outs_arr.size() != l_eff_count) m_outs_arr.resize(l_eff_count);
+	vufVector_4d l_dir_start	= p_out_array[1].get_translation_4()		- p_out_array[0].get_translation_4();
+	vufVector_4d l_dir_end		= p_out_array.back().get_translation_4()	- p_out_array[l_xfrms_count -2].get_translation_4();
+	l_dir_start.normalize_in_place();
+	l_dir_end.normalize_in_place();
+	vufVector_4d l_world_x(1.0);
+	vufVector_4d l_world_y(0.0,1.0);
+	vufVector_4d l_world_z(0.0,0.0,1.0);
+	vufVector_4d l_x(1.0);
+	for (uint i = 0; i < l_eff_count; ++i)
+	{
+		m_outs_arr[i].m_parent.set_to_identity_in_place();
+		m_outs_arr[i].m_inverse.set_to_identity_in_place();
+		if (m_eff_arr[i].m_t <= 0.0)
+		{
+			// translate
+			vufVector_4d l_offset = l_dir_start * (m_eff_arr[i].m_t * m_length/m_scale_t) + p_out_array.front().get_translation_4();
+			m_outs_arr[i].m_parent.set_translation(l_offset);
+			// rotate 
+			vufQuaternion_d l_quat		= m_in_t_arr.front().m_quat_w;
+			//vufVector_4d	l_x2		= l_quat.rotate_vector_by_quaternion(l_x);
+			//vufQuaternion_d l_quat_incr = vufQuaternion_d::rotate_arc(l_x2, l_dir_start);
+			m_outs_arr[i].m_parent.set_quaternion(l_quat);// *l_quat_incr);
+			vufQuaternion_d l_quat_x_l(-m_eff_arr[i].m_rx, l_world_x);
+			vufQuaternion_d l_quat_y_l(-m_eff_arr[i].m_ry, l_world_y);
+			vufQuaternion_d l_quat_z_l(-m_eff_arr[i].m_rz, l_world_z);
+			vufQuaternion_d l_quat_effectors = l_quat_x_l * l_quat_y_l * l_quat_z_l;
+			m_outs_arr[i].m_inverse.set_quaternion(l_quat_effectors.conjugate_in_place());
+			continue;
+		}
+		if (m_eff_arr[i].m_t >= m_scale_t)
+		{
+			//translate
+			vufVector_4d l_offset = l_dir_end * ((m_eff_arr[i].m_t - m_scale_t) * m_length/m_scale_t) + p_out_array.back().get_translation_4();
+			m_outs_arr[i].m_parent.set_translation(l_offset);
+			// rotate 
+			vufQuaternion_d l_quat = m_in_t_arr.back().m_quat_w;
+			//vufVector_4d	l_x2 = l_quat.rotate_vector_by_quaternion(l_x);
+			//vufQuaternion_d l_quat_incr = vufQuaternion_d::rotate_arc(l_x2, l_dir_end);
+			m_outs_arr[i].m_parent.set_quaternion(l_quat);// *l_quat_incr);
+			vufQuaternion_d l_quat_x_l(-m_eff_arr[i].m_rx, l_world_x);
+			vufQuaternion_d l_quat_y_l(-m_eff_arr[i].m_ry, l_world_y);
+			vufQuaternion_d l_quat_z_l(-m_eff_arr[i].m_rz, l_world_z);
+			vufQuaternion_d l_quat_effectors = l_quat_x_l * l_quat_y_l * l_quat_z_l;
+			m_outs_arr[i].m_inverse.set_quaternion(l_quat_effectors.conjugate_in_place());
+			continue;
+		}
+		unsigned int l_prev_ndx = m_eff_arr[i].m_prev;
+		unsigned int l_next_ndx = m_eff_arr[i].m_next;
+		//parent translation
+		vufVector_4d l_pos_prev = p_out_array[l_prev_ndx].get_translation_4();
+		vufVector_4d l_pos_next = p_out_array[l_next_ndx].get_translation_4();
+		vufVector_4d l_offset = l_pos_prev * m_eff_arr[i].m_w_1 +
+								l_pos_next * m_eff_arr[i].m_w_2;
+		m_outs_arr[i].m_parent.set_translation(l_offset);
+		// parent rotation
+		vufQuaternion_d l_quat_1 = m_in_t_arr[l_prev_ndx].m_quat_w;
+		vufQuaternion_d l_quat_2 = m_in_t_arr[l_next_ndx].m_quat_w;
+		if (l_quat_1.dot(l_quat_2) < 0)
+		{
+			l_quat_2 = -l_quat_2;
+		}
+		vufQuaternion_d l_quat = l_quat_1 * m_eff_arr[i].m_w_1 +
+									l_quat_2 * m_eff_arr[i].m_w_2;
+		l_quat.normalize_in_place();
+		//vufVector_4d	l_dir = l_pos_next - l_pos_prev;
+		//vufVector_4d	l_x2 = l_quat.rotate_vector_by_quaternion(l_x);
+		//vufQuaternion_d l_quat_incr = vufQuaternion_d::rotate_arc(l_x2, l_dir);
+		//m_outs_arr[i].m_parent.set_quaternion(l_quat * l_quat_incr);
+		m_outs_arr[i].m_parent.set_quaternion(l_quat);// *l_quat_incr);
+
+		vufQuaternion_d l_quat_x_l(-m_eff_arr[i].m_rx, l_world_x);
+		vufQuaternion_d l_quat_y_l(-m_eff_arr[i].m_ry, l_world_y);
+		vufQuaternion_d l_quat_z_l(-m_eff_arr[i].m_rz, l_world_z);
+		vufQuaternion_d l_quat_effectors = l_quat_x_l * l_quat_y_l * l_quat_z_l;
+		m_outs_arr[i].m_inverse.set_quaternion(l_quat_effectors.conjugate_in_place());
+	}
+}
 vufMatrixListVFK::vufIndex vufMatrixListVFK::find_list_index(double p_t, unsigned int p_total_count) const
 {
 	if (p_t <= 0.0) return { 0,0 };
@@ -832,4 +807,112 @@ vufMatrixListVFK::vufIndex vufMatrixListVFK::find_list_index(double p_t, unsigne
 		}
 	}
 	return { l_prev_index , l_prev_index + 1 };
+}
+vufQuaternion_d vufMatrixListVFK::xyz_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_z * l_y * l_x;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::xyz_inverse_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(-x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(-y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(-z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_x * l_y * l_z;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::yzx_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_x * l_z * l_y ;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::yzx_inverse_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(-x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(-y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(-z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_y * l_z * l_x;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::zxy_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_y * l_x * l_z;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::zxy_inverse_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(-x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(-y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(-z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_z * l_x * l_y;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::xzy_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_y * l_z * l_x;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::xzy_inverse_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(-x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(-y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(-z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_x * l_z * l_y;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::yxz_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_z * l_x * l_y;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::yxz_inverse_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(-x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(-y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(-z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_y * l_x * l_z;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::zyx_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_x * l_y * l_z;
+	l_res.conjugate_in_place();
+	return l_res;
+}
+vufQuaternion_d vufMatrixListVFK::zyx_inverse_order(double x, double y, double z)
+{
+	vufQuaternion_d l_x(-x, vufVector_4d::x_unit_dir);
+	vufQuaternion_d l_y(-y, vufVector_4d::y_unit_dir);
+	vufQuaternion_d l_z(-z, vufVector_4d::z_unit_dir);
+	vufQuaternion_d l_res = l_z * l_y * l_x;
+	l_res.conjugate_in_place();
+	return l_res;
 }
