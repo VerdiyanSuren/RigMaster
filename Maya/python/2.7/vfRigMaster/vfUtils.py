@@ -1,4 +1,5 @@
-
+import os
+import json
 import maya.cmds as cmds
 import math
 #---------------------------------------------------
@@ -8,6 +9,7 @@ import math
 _MTRX_LIST_NODE 	= "vfMtrxList"
 _MTRX_NULL_NODE 	= "vfMtrxListNull"
 _MTRX_LOOK_NODE 	= "vfMtrxListLookAt"
+_MTRX_SPRNG_NODE 	= "vfMtrxListSpring"
 _MTRX_DCMPS_NODE 	= "vfMtrxListDcmps"
 _MTRX_LCTR_NODE 	= "vfMtrxListLocator"
 _MTRX_VFK_NODE 		= "vfMtrxListVFK"
@@ -15,6 +17,7 @@ _MTRX_VFK_NODE 		= "vfMtrxListVFK"
 _PLUG_IN_MMTRX_BLDR 	= "inXForms"
 _PLUG_OUT_MMTRX_BLDR 	= "outXForms"
 _PLUG_IN_MTRX_LST 		= "inMatrixList"
+_PLUG_IN_MTRX_LST_RST	= "inMatrixListRest"
 _PLUG_OUT_MTRX_LST 		= "outMatrixList"
 #---------------------------------------------------
 #			DOUBLE LIST NODES AND PLUGE
@@ -39,6 +42,25 @@ _CURVE_LCTR_NODE = "vfCrvLocator"
 
 _PLUG_IN_CRV 		= "inCurve"
 _PLUG_OUT_CRV 		= "outCurve"
+
+_DOC = {}
+try:
+	current_dir = os.path.dirname(os.path.abspath(__file__))
+	doc_file = os.path.join(current_dir,'doc.json')
+	#print doc_file
+	with open(doc_file, 'r') as file:
+		_DOC = json.load(file)
+except:
+	cmds.error('{0}. Failed to load doc file'.format(current_dir))
+
+_MODULE_NAME =   __name__.split('.')[1]
+def help(*args):
+	classes = _DOC[_MODULE_NAME].keys()
+	print "{0} has classes:".format(_MODULE_NAME)
+	for i in classes:
+		print (i)
+	
+	
 #--------------------------------------------
 # import vufRM
 # reload(vufRM)
@@ -93,8 +115,7 @@ class helpers(object):
 														depth = depth - 1)
 						res.update(res2)
 		return res
-						
-				
+	
 #--------------------------------------------
 #	Matrix Collector Class
 #--------------------------------------------
@@ -117,6 +138,23 @@ res['decompose']   = utls.matr.add_decompose(node_name = res['null'], dags_to = 
 print res
 	'''
 	@staticmethod
+	def help(*args):		
+		if (len(args) == 0):
+			print '------------------------------------------'
+			result = []
+			#print all
+			for key in _DOC[_MODULE_NAME]['matr'].keys():
+				result.append(key)
+				print key
+			return result
+		#print requared function help
+		fnctns = _DOC[_MODULE_NAME]['matr'].keys()
+		for fnc in args:
+			print '------------------------------------------'
+			for txt in _DOC[_MODULE_NAME]['matr'][fnc]:
+				print txt
+				
+	@staticmethod
 	def create_from_dags( dags = [], new_node_name = "matrixCollector", world_space = True):
 		if (len(dags) == 0):
 			return ""
@@ -135,7 +173,7 @@ print res
 	@staticmethod
 	def create_from_selection( new_node_name = "matrixCollector", world_space = True):
 		dag_s = cmds.ls(sl = True, ap = True, tr = True )
-		return matrCollector.create_from_dags(dags = dag_s, new_node_name = new_node_name, world_space = world_space)
+		return matr.create_from_dags(dags = dag_s, new_node_name = new_node_name, world_space = world_space)
 	@staticmethod
 	def add_null( node_name, new_node_name = "matrixNull"):
 		if (cmds.objExists(node_name) == True and  cmds.attributeQuery(_PLUG_OUT_MTRX_LST,node = node_name, exists = True) == True):
@@ -281,8 +319,15 @@ print res
 		node_vfk = cmds.rename(node_vfk,new_node_name)
 		return node_vfk
 	@staticmethod
-	def add_spring(node_name = ''):
-		pass
+	def add_spring(node_name = '', new_node_name = 'MtrxSpring'):
+		if (cmds.objExists(node_name) == True and  cmds.attributeQuery(_PLUG_OUT_MTRX_LST,node = node_name, exists = True) == True):
+			node_spring 		= cmds.createNode(_MTRX_SPRNG_NODE )
+			cmds.connectAttr("{0}.{1}".format(node_name, _PLUG_OUT_MTRX_LST),"{0}.{1}".format(node_spring, _PLUG_IN_MTRX_LST), f = True)
+			cmds.connectAttr("{0}.{1}".format(node_name, _PLUG_OUT_MTRX_LST),"{0}.{1}".format(node_spring, _PLUG_IN_MTRX_LST_RST), f = True)
+			cmds.connectAttr("time1.outTime","{0}.time".format(node_spring), f = True)
+			node_spring = cmds.rename(node_spring,new_node_name)
+			return node_spring
+		return ""
 	@staticmethod
 	def add_length_constrain(node_name = ''):
 		pass

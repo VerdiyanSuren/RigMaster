@@ -37,7 +37,7 @@ class matrTest(object):
 		print ('effectors: ',effects)
 		
 		res = {}
-		res['collector']   = uts.matr.create_from_dags( dags = drivers, world_space = False	) # create collector from selected objects
+		res['collector']   = uts.matr.create_from_dags( dags = drivers, world_space = True	) # create collector from selected objects
 		res['inputs']      = uts.matr.get_inputs(       node_name = res['collector'])
 		res['look_at']     = uts.matr.add_look(			node_name = res['collector'])
 		res['vfk']         = uts.matr.add_vfk(			node_name = res['look_at'], effectors = effects, param_scale = param_scale, new_node_name = "vfkTest" )

@@ -14,7 +14,7 @@ std::ostream& operator,(std::ostream& out, std::ostream& (*f)(std::ostream&))
 const char* g_in_mbld_long_s	= "inXForms",			*g_in_mbld_s	= "ixs";
 const char* g_out_mbld_long_s	= "outXForms",			*g_out_mbld_s	= "oxs";
 const char* g_in_mlist_long_s	= "inMatrixList",		*g_in_mlist_s	= "iml";
-const char* g_in_mlist2_long_s	= "inMatrixList2",		*g_in_mlist_s	= "im2";
+const char* g_in_mlist2_long_s	= "inMatrixList2",		*g_in_mlist2_s	= "im2";
 const char* g_in_mlist_rest_long_s = "inMatrixListRest", * g_in_mlist_rest_s = "imr";
 
 const char* g_out_mlist_long_s	= "outMatrixList",		*g_out_mlist_s	= "oml";
