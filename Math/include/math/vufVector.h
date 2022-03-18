@@ -887,6 +887,13 @@ namespace vufMath
 			}
 			return vufVector4<T>(detX / det, detY / det, detZ / det);
 		}
+		inline T get_angle(const vufVector4<T>& v) const
+		{
+			vufVector4<T> l_one = get_normalized();
+			vufVector4<T> l_two = v.get_normalized();
+			T l_cos = l_one.dot(l_two);
+			return std::acos(VF_CLAMP(-1.0,1.0,l_cos));
+		}
 		//-----------------------------------	
 		inline vufVector4<T>& add_in_place(const vufVector4<T>& v1, const vufVector4<T>& v2)
 		{
@@ -1071,6 +1078,11 @@ namespace vufMath
 		{
 			return vufVector4<T>(x * d, y * d, z * d);
 		}
+		inline vufVector4<T> operator/(T d) const
+		{
+			return vufVector4<T>(x / d, y / d, z / d);
+		}
+
 		inline vufVector4<T> operator*(const vufMatrix4<T>& p_matr) const
 		{
 			vufVector4<T> l_res;
@@ -1097,6 +1109,12 @@ namespace vufMath
 			x *= d;
 			y *= d;
 			z *= d;
+			return *this;
+		}
+		inline vufVector4<T>& operator/=(T d) {
+			x /= d;
+			y /= d;
+			z /= d;
 			return *this;
 		}
 		inline vufVector4<T>& operator*=(const vufMatrix4<T>& p_matr)

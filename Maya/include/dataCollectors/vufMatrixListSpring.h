@@ -5,11 +5,11 @@
 #include <maya/MFloatArray.h>
 #include <math/vufVector.h>
 #include <math/vufMatrix.h>
+#include <math/vufVector.h>
 #include <vector>
 
 namespace vufRM
 {
-	template< typename T>
 	class vufFakeSpringSolver
 	{
 	public:
@@ -19,82 +19,77 @@ namespace vufRM
 			k_to_mem,
 			k_from_mem
 		};
-		inline void set_lists(	std::vector < vufMath::vufMatrix4<T>>& p_rest_list,
-								std::vector < vufMath::vufMatrix4<T>>& p_deform_list,
-								std::vector < vufMath::vufMatrix4<T>>& p_out_list)
+		inline void set_lists(	std::vector < vufMath::vufMatrix_4d>& p_deform_list,
+								std::vector < vufMath::vufMatrix_4d>& p_out_list,
+								std::vector < vufMath::vufMatrix_4d>& p_rest_list
+							)
 		{
-			l_rest_list_ptr		= &p_rest_list;
-			l_deform_list_ptr	= &p_deform_list;
-			l_out_list_ptr		= &p_out_list;
+			m_in_ptr	= &p_deform_list;
+			m_out_ptr	= &p_out_list;
+			m_rest_ptr	= &p_rest_list;
 		}
-		inline bool init()
-		{
-			if (l_rest_list_ptr		== nullptr ||
-				l_deform_list_ptr	== nullptr ||
-				l_out_list_ptr		== nullptr)
-			{
-				return false;
-			}
-			auto l_size = l_deform_list_ptr->size();
-			if (l_size != m_knots_lin_stif_arr.size())
-			{
-				m_knots_lin_stif_arr.resize(l_size);
-				m_knots_lin_mass_arr.resize(l_size);
-				m_knots_lin_damp_arr.resize(l_size);
-				m_knots_lin_ampl_arr.resize(l_size);
-
-				m_knots_rot_inhr_arr.resize(l_size);
-				m_knots_rot_stif_arr.resize(l_size);
-				m_knots_rot_mass_arr.resize(l_size);
-				m_knots_rot_damp_arr.resize(l_size);
-				m_knots_rot_ampl_arr.resize(l_size);
-			}
-			return true;
-		}
-
-		inline void solve()
-		{
-			T l_deltaTime = m_current_time - m_prev_time;
-			if (l_deltaTime > 0.0)
-			{
-				// time is changed. lets update state variable
-				m_dt_lin = l_deltaTime / (T)m_lin_iter;
-				m_dt_rot = l_deltaTime / (T)m_rot_iter;
-			}
-
-		}
-		void solveVerletLinear()
-		{
-			
-		}
-
-		bool	m_enable		= true;
-		int		m_init_frame	= 1;
-
+		bool init();
+		void solve();
+		void solveVerletLinear(double p_delta_time);
+		void solveVerletRot(double p_delta_time);
+	private:
+		bool	m_valid			= false;
+		bool	m_enable_lin	= true;
+		bool	m_enable_rot	= true;
+		//bool	m_pin_first		= false;
+		//bool	m_pin_last	= false;
+		double	m_init_time		= 1.0;
 		int		m_cache_mode	= k_pass;
 		int		m_lin_iter		= 1;
 		int		m_rot_iter		= 1;
-		inline void set_time(T p_time) { m_current_time = p_time; }
-	private:
-		std::vector < vufMath::vufMatrix4<T>>* l_rest_list_ptr	= nullptr;
-		std::vector < vufMath::vufMatrix4<T>>* l_deform_list_ptr = nullptr;
-		std::vector < vufMath::vufMatrix4<T>>* l_out_list_ptr	= nullptr;
 	public:
-		std::vector<T> m_knots_lin_stif_arr	= std::vector<T>();
-		std::vector<T> m_knots_lin_mass_arr	= std::vector<T>();
-		std::vector<T> m_knots_lin_damp_arr	= std::vector<T>();
-		std::vector<vufMath::vufVector4<T>> m_knots_lin_ampl_arr = std::vector<vufMath::vufVector4<T>>();
-
-		std::vector<T> m_knots_rot_inhr_arr	= std::vector<T>();
-		std::vector<T> m_knots_rot_stif_arr	= std::vector<T>();
-		std::vector<T> m_knots_rot_mass_arr	= std::vector<T>();
-		std::vector<T> m_knots_rot_damp_arr	= std::vector<T>();
-		std::vector< vufMath::vufVector4<T>> m_knots_rot_ampl_arr	= std::vector< vufMath::vufVector4<T>>();
+		inline void set_enable_lin(bool val)		{ m_enable_lin = val; }
+		inline void set_enable_rot(bool val)		{ m_enable_rot = val; }
+		inline void set_init_time(double p_time)	{ m_init_time = p_time; }
+		inline void set_cache_mode(int p_mode)		{ m_cache_mode = p_mode; }
+		inline void set_time(double p_time)			{ m_current_time = p_time; }
+		inline void set_lin_iter(int p_iter)		{ m_lin_iter = p_iter < 1 ? 1 :p_iter; }
+		inline void set_rot_iter(int p_iter)		{ m_rot_iter = p_iter < 1 ? 1 : p_iter; }
+		inline void compute_radiuses();
 	private:
-		T m_dt_lin = 0.0;
-		T m_dt_rot = 0.0;
-		T m_current_time = 0.0;// in seconds
-		T m_prev_time = 0.0;
+		// pointers to extern arrays of rest> deformed and simulation result
+		std::vector < vufMath::vufMatrix_4d>* m_in_ptr		= nullptr;
+		std::vector < vufMath::vufMatrix_4d>* m_out_ptr		= nullptr;
+		std::vector < vufMath::vufMatrix_4d>* m_rest_ptr	= nullptr;
+		// linear spring
+		std::vector<vufMath::vufVector_4d> m_lin_mstr_prev	= std::vector<vufMath::vufVector_4d>();
+
+		std::vector<vufMath::vufVector_4d> m_lin_p_curr	= std::vector<vufMath::vufVector_4d>();	//R
+		std::vector<vufMath::vufVector_4d> m_lin_p_prev	= std::vector<vufMath::vufVector_4d>();	//R prime
+		std::vector<vufMath::vufVector_4d> m_lin_res_offset = std::vector<vufMath::vufVector_4d>();
+		// rotation spring
+		std::vector<double> m_radius = std::vector<double>();
+		std::vector<vufMath::vufVector_4d> m_rot_mstr_prev		= std::vector<vufMath::vufVector_4d>();
+		std::vector<vufMath::vufVector_4d> m_rot_mstr_vel		= std::vector<vufMath::vufVector_4d>();
+		std::vector<vufMath::vufVector_4d> m_rot_mstr_axis_prev = std::vector<vufMath::vufVector_4d>();
+		std::vector<vufMath::vufVector_4d> m_rot_mstr_angle_prev= std::vector<vufMath::vufVector_4d>();
+		
+		std::vector<vufMath::vufVector_4d> m_x_axis_curr		= std::vector<vufMath::vufVector_4d>();
+		std::vector<vufMath::vufVector_4d> m_x_axis_prev		= std::vector<vufMath::vufVector_4d>();
+		std::vector<vufMath::vufVector_4d> m_rot_res_axis_offset = std::vector<vufMath::vufVector_4d>();
+		std::vector<double>				   m_rot_res_angle_offset= std::vector<double>();
+		// gravity
+		vufMath::vufVector_4d				 m_gravity			= vufMath::vufVector_4d();
+	public:
+		std::vector<double> m_lin_stif	= std::vector<double>();
+		std::vector<double> m_lin_mass	= std::vector<double>();
+		std::vector<double> m_lin_damp	= std::vector<double>();
+		std::vector<vufMath::vufVector_4d> m_lin_ampl = std::vector<vufMath::vufVector_4d>();
+
+		std::vector<double> m_rot_inhr	= std::vector<double>();
+		std::vector<double> m_rot_stif	= std::vector<double>();
+		std::vector<double> m_rot_mass	= std::vector<double>();
+		std::vector<double> m_rot_damp	= std::vector<double>();
+		std::vector< vufMath::vufVector_4d> m_rot_ampl	= std::vector< vufMath::vufVector_4d>();
+	private:
+		double	m_current_time = 0.0;// in seconds
+		double	m_prev_time = 0.0;
+
 	};
 	class vufMatrixListSpringNode : public MPxNode
 	{
@@ -117,6 +112,8 @@ namespace vufRM
 		static MObject	g_in_cache_mode_attr;
 		static MObject	g_in_time_attr;
 		static MObject	g_in_enable_attr;
+		static MObject	g_in_enable_lin_attr;
+		static MObject	g_in_enable_rot_attr;
 		static MObject	g_in_init_frame_attr;
 		
 		//static MObject	g_in_translation_compound_attr;
@@ -161,7 +158,7 @@ namespace vufRM
 		MFloatArray		m_knots_rot_dump_array;
 		MFloatArray		m_knots_rot_ampl_array;
 
-		vufFakeSpringSolver<double> m_engine = vufFakeSpringSolver<double>();
+		vufFakeSpringSolver m_engine = vufFakeSpringSolver();
 	};
 }
 #endif // !VF_RM_SPRING_NODE_H

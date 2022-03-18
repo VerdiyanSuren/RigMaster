@@ -69,7 +69,7 @@ MStatus	vufMatrixListNode::compute(const MPlug& p_plug, MDataBlock& p_data)
 	if (p_plug == g_data_out_attr)
 	{	
 		MStatus l_status;
-vuf::vufTimer l_timer("Matrix collector node compute: ");
+//vuf::vufTimer l_timer("Matrix collector node compute: ");
 		//------------------------------------------------------------------------------
 		// handle out data
 		std::shared_ptr<vufMatrixListData>	l_out_data;
